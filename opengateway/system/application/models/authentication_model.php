@@ -21,7 +21,7 @@ class Authentication_model extends Model
 		else {
 			$row = $query->row();
 			if($secret_key == $row->secret_key) {
-				return TRUE;
+				return $row->client_id;
 			}
 			else {
 				return FALSE;

@@ -40,7 +40,9 @@ class Response
 		
 		$errors = array(
 					'1000' => 'Invalid request.',
-					'1001' => 'Unable to authenticate.'
+					'1001' => 'Unable to authenticate.',
+					'1002' => 'Invalid request type.',
+					'1003' => 'Required fields are missing.'
 				);
 				
 		$error_array = array(

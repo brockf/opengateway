@@ -5,9 +5,13 @@ $url = "http://localhost/gateway/";
 $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 <request>
 	<authentication>
-		<apiID>123456789123456789</apiID>
-		<secretKey>dsdf324854s2d1f8s5g43sd21f</secretKey>
+		<api_id>123456789123456789</api_id>
+		<secret_key>dsdf324854s2d1f8s5g43sd21f</secret_key>
 	</authentication>
+	<request>CreateUser</request>
+	<request_params>
+		
+	</request_params>
 </request>';
 
 $postfields = "request=".$post_string; 
