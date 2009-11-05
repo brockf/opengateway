@@ -35,8 +35,7 @@ class Response
 	// return a formatted error response to the client
 	function Error ($code) {
 		if (!$code) {
-			log_message('error','Error code not passed to function.');
-			return $this->Error('01','System error.');
+			$this->SystemError('Error code not passed to function.');
 		}
 		
 		$errors = array(
@@ -50,5 +49,12 @@ class Response
 					);
 				
 		return $this->FormatResponse($error_array);
+	}
+	
+	// a system error, not a client error
+	function SystemError ($text) {
+		log_message('error','Error code not passed to function.');
+		echo $this->Error('01','System error.');
+		die();
 	}
 }
