@@ -35,7 +35,8 @@ class Response
 	// return a formatted error response to the client
 	function Error ($code) {
 		if (!$code) {
-			die(show_error('No error code supplied.'));
+			log_message('error','Error code not passed to function.');
+			return $this->Error('01','System error.');
 		}
 		
 		$errors = array(
