@@ -9,45 +9,28 @@ class Gateway extends Controller {
 	
 	function index()
 	{
-		//Grab the request
+		// grab the request
 		$request = $this->input->post('request');
 		
-		//Find out if the request is valid XML
+		// find out if the request is valid XML
 		$xml = simplexml_load_string($request);
 		
-		//If it is not valid XML...
-		if(!$xml)
-		{
-			//Use the reponse library to format the XML response
-			$response = array('error' => 'Invalid Request',
-							  'errorNum' => '1000'
-							  );
-			echo $this->response->format_response($response);
-			exit;
+		// if it is not valid XML...
+		if(!$xml) {
+			die($this->response->Error(1000));
 		}
 		
-		//Get the api ID and secret key
+		// get the api ID and secret key
 		$api_id = $xml->authentication->apiID;
 		$secret_key = $xml->authentication->secretKey;
 		
-		//authenticate the api ID
+		// authenticate the api ID
 		$this->load->model('authentication_model', 'auth');
-		$auth_ok = $this->auth->authenticate($api_id, $secret_key);
 		
-		if(!$auth_ok)
-		{
-			//Use the reponse library to format the XML response
-			$response = array('error' => 'Invalid API ID or Secret Key',
-							  'errorNum' => '1001'
-							  );
-			echo $this->response->format_response($response);
-			exit;
-		}
-		
-		
+		if(!$this->auth->Authenticate($api_id, $secret_key)) {
+			die($this->response->Error(1001));
+		}	
 	}
-	
-	
 }
 
 /* End of file gateway.php */
