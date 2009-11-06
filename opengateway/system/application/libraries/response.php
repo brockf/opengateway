@@ -39,16 +39,18 @@ class Response
 		}
 		
 		$errors = array(
-					'1000' => 'Invalid request.',
-					'1001' => 'Unable to authenticate.',
-					'1002' => 'Invalid request type.',
-					'1003' => 'Required fields are missing.'
-				);
+							'1000' => 'Invalid request.',
+							'1001' => 'Unable to authenticate.',
+							'1002' => 'Invalid request type.',
+							'1003' => 'Required fields are missing.',
+							'2000' => 'Client is not authorized to create new clients.'
+							);
+		
 				
 		$error_array = array(
-					'error' => $code,
-					'error_text' => $errors[$code]
-					);
+							'error' => $code,
+							'error_text' => $errors[$code]
+							);
 				
 		return $this->FormatResponse($error_array);
 	}

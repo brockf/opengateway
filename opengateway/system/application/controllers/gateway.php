@@ -30,14 +30,15 @@ class Gateway extends Controller {
 		// authenticate the api ID
 		$this->load->model('authentication_model', 'auth');
 		
-		$client_id = $this->auth->Authenticate($api_id, $secret_key);
+		$client = $this->auth->Authenticate($api_id, $secret_key);
+		$client_id = $client->client_id;
 		
 		if(!$client_id) {
 			die($this->response->Error(1001));
 		}	
 		
 		// Get the request type
-		$request_type = "$xml->request";
+		$request_type = (string)$xml->request;
 		
 		// validate the request type
 		$this->load->model('request_type_model', 'request_type');
@@ -47,11 +48,14 @@ class Gateway extends Controller {
 			die($this->response->Error(1002));
 		}
 		
-		$request_params = $xml->request_params;
+		$request_params = $xml->params->children();
 		
 		// Load the correct model and method
 		$this->load->model($request_type_model);
-		$this->$request_type_model->$request_type($client_id, $request_params);
+		$response = $this->$request_type_model->$request_type($client_id, $request_params);
+		
+		// Echo the response
+		echo $this->response->FormatResponse($response);
 		
 	}
 }

@@ -16,8 +16,7 @@ class Log_model extends Model
 								 );
 			
 			$this->db->insert('request_log', $insert_data);
-		}
-		else {
+		} else {
 			return FALSE;
 		}
 	}
@@ -28,12 +27,11 @@ class Log_model extends Model
 			$timestamp = date('Y-m-d H:i:s');
 			$insert_data = array('timestamp' 	=> $timestamp,
 								 'remote_ip' 	=> $_SERVER['REMOTE_ADDR'],
-								 'request' 		=> $request
+								 'error' 		=> $error
 								 );
 			
 			$this->db->insert('error_log', $insert_data);
-		}
-		else {
+		} else {
 			return FALSE;
 		}
 	}
