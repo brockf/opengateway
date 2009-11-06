@@ -1,4 +1,5 @@
 <?php
+
 class Authentication_model extends Model
 {
 	function Authentication_model()

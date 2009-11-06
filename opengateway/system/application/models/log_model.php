@@ -1,4 +1,5 @@
 <?php
+
 class Log_model extends Model
 {
 	function Log_Model()

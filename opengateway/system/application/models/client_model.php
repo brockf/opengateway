@@ -1,4 +1,5 @@
 <?php
+
 class Client_model extends Model
 {
 	function Client_model()

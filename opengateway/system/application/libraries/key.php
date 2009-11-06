@@ -1,4 +1,5 @@
 <?php
+
 class Key
 {
     function AssignRandValue()
@@ -12,10 +13,10 @@ class Key
 
     function GenerateKey($length = 8)
     {
-        if($length>0)
+        if($length > 0)
         {
             $rand_id="";
-            for($i=1; $i<=$length; $i++)
+            for($i = 1; $i <= $length; $i++)
             {
                 $rand_id .= $this->AssignRandValue();
             }

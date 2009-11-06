@@ -1,4 +1,5 @@
 <?php
+
 class Request_type_model extends Model
 {
 	function Request_type_model()
