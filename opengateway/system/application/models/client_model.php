@@ -30,17 +30,17 @@ class Client_model extends Model
 		// Create the new Client
 		$insert_data = array(
 							'client_type_id'	=> 2,
-							'first_name' 		=> (string)$params->first_name,
-							'last_name'  		=> (string)$params->last_name,
-							'company'	 		=> (string)$params->company,
-							'address_1'  		=> (string)$params->address_1,
-							'address_2'  		=> (string)$params->address_2,
-							'city'				=> (string)$params->city,
-							'state'		 		=> (string)$params->state,
-							'postal_code'		=> (string)$params->postal_code,
-							'country'	 		=> (string)$params->country,
-							'phone'				=> (string)$params->phone,
-							'email'		 		=> (string)$params->email,
+							'first_name' 		=> $params['first_name'],
+							'last_name'  		=> $params['last_name'],
+							'company'	 		=> $params['company'],
+							'address_1'  		=> $params['address_1'],
+							'address_2'  		=> $params['address_2'],
+							'city'				=> $params['city'],
+							'state'		 		=> $params['state'],
+							'postal_code'		=> $params['postal_code'],
+							'country'	 		=> $params['country'],
+							'phone'				=> $params['phone'],
+							'email'		 		=> $params['email'],
 							'parent_client_id' 	=> $client_id,
 							'api_id'			=> $api_id,
 							'secret_key'		=> $secret_key
@@ -69,5 +69,10 @@ class Client_model extends Model
 		} else {
 			return FALSE;
 		}
+	}
+	
+	function NewGateway($client_id = FALSE, $params = FALSE)
+	{
+		
 	}
 }

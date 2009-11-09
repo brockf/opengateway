@@ -43,7 +43,10 @@ class Response
 							'1001' => 'Unable to authenticate.',
 							'1002' => 'Invalid request type.',
 							'1003' => 'Required fields are missing.',
-							'2000' => 'Client is not authorized to create new clients.'
+							'1004' => 'Required fields are missing for this request',
+							'2000' => 'Client is not authorized to create new clients.',
+							'2001' => 'Invalid External API.',
+							'3000' => 'Invalid gateway ID for this client.'
 							);
 		
 				

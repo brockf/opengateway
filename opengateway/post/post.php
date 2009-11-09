@@ -5,21 +5,22 @@ $url = "http://localhost/gateway/";
 $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 <request>
 	<authentication>
-		<api_id>123456789123456789</api_id>
-		<secret_key>dsdf324854s2d1f8s5g43sd21f</secret_key>
+		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>
+		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>
 	</authentication>
-	<request>NewClient</request>
+	<request>NewGateway</request>
 	<params>
-		<first_name>David</first_name>
-		<last_name>Ryan</last_name>
-		<company>ABC Inc.</company>
-		<address_1>123 Main Street</address_1>
-		<city>Denver</city>
-		<state>CO</state>
-		<postal_code>80220</postal_code>
-		<country>US</country>
-		<phone>303319812</phone>
-		<email>daveryan187@yahoo.com</email>
+		<client_id>17</client_id>
+		<gateway_type>psigate</gateway_type>
+		<enabled>1</enabled>
+		<store_id>1234564789</store_id>
+		<passphrase>23ggsdfy4sragb4h564w5hba464</passphrase>
+		<mode>live</mode>
+		<accept_visa>1</accept_visa>
+		<accept_mc>1</accept_mc>
+		<accept_amex>1</accept_amex>
+		<accept_discover>1</accept_discover>
+		<accept_dc>1</accept_dc>
 	</params>
 </request>';
 
