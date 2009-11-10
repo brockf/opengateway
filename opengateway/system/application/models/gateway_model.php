@@ -130,10 +130,15 @@ class Gateway_model extends Model
 		$gateway_id = $params['gateway_id'];
 		$CI->load->model('gateway_model');
 		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
+		
+		// Get the customer details
+		$CI->load->model('customer_model');
+		$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
+		
 		// Load the proper library
 		$gateway_name = $gateway['name'];
 		$this->load->library('payment/'.$gateway_name);
-		return $this->$gateway_name->Charge($client_id, $gateway, $params);
+		return $this->$gateway_name->Charge($client_id, $gateway, $customer, $params);
 		
 	}
 }

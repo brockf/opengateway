@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50136
 File Encoding         : 65001
 
-Date: 2009-11-09 23:16:15
+Date: 2009-11-10 00:51:23
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -32,8 +32,8 @@ CREATE TABLE `client_gateway_params` (
 INSERT INTO `client_gateway_params` VALUES ('1', '3', 'client_id', '17');
 INSERT INTO `client_gateway_params` VALUES ('2', '3', 'gateway_type', 'authnet');
 INSERT INTO `client_gateway_params` VALUES ('3', '3', 'enabled', '1');
-INSERT INTO `client_gateway_params` VALUES ('4', '3', 'login_id', '8wd65QSj');
-INSERT INTO `client_gateway_params` VALUES ('5', '3', 'transaction_key', '8CP6zJ7uD875J6tY');
+INSERT INTO `client_gateway_params` VALUES ('4', '3', 'login_id', '4k63CQat5Jc');
+INSERT INTO `client_gateway_params` VALUES ('5', '3', 'transaction_key', '45y2KgjF6c26dATd');
 INSERT INTO `client_gateway_params` VALUES ('6', '3', 'enable_arb', '1');
 INSERT INTO `client_gateway_params` VALUES ('7', '3', 'mode', 'dev');
 INSERT INTO `client_gateway_params` VALUES ('8', '3', 'accept_visa', '1');
@@ -196,6 +196,34 @@ INSERT INTO `clients` VALUES ('16', '2', 'David', '', '', '', '', '', '', '', ''
 INSERT INTO `clients` VALUES ('17', '2', 'David', 'Ryan', 'ABC Inc.', '123 Main Street', null, 'Denver', 'CO', '80220', 'US', '303319812', 'daveryan187@yahoo.com', '1', 'EB4RTDHWE5F18BDC8ZJ3', 'FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3');
 
 -- ----------------------------
+-- Table structure for `customers`
+-- ----------------------------
+DROP TABLE IF EXISTS `customers`;
+CREATE TABLE `customers` (
+  `customer_id` int(11) NOT NULL AUTO_INCREMENT,
+  `client_id` int(11) NOT NULL,
+  `first_name` varchar(11) NOT NULL,
+  `last_name` varchar(11) NOT NULL,
+  `company` varchar(11) NOT NULL,
+  `internal_id` varchar(11) NOT NULL,
+  `address_1` varchar(11) NOT NULL,
+  `address_2` varchar(11) NOT NULL,
+  `city` varchar(11) NOT NULL,
+  `state` varchar(11) NOT NULL,
+  `postal_code` varchar(11) NOT NULL,
+  `phone` varchar(11) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `active` tinyint(4) NOT NULL,
+  PRIMARY KEY (`customer_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of customers
+-- ----------------------------
+INSERT INTO `customers` VALUES ('1', '17', 'David', 'Ryan', 'ABC Inc.', '12343434', '123 Main St', 'APT 1', 'Denver', 'CO', '80220', '', '', '1');
+INSERT INTO `customers` VALUES ('2', '17', 'David', 'Ryan', 'ABC Inc.', '12343434', '123 Main St', 'APT 1', 'Denver', 'CO', '80220', '3033319812', 'daveryan187@yahoo.com', '1');
+
+-- ----------------------------
 -- Table structure for `external_api_required_fields`
 -- ----------------------------
 DROP TABLE IF EXISTS `external_api_required_fields`;
@@ -274,6 +302,24 @@ INSERT INTO `external_apis` VALUES ('4', 'netbilling', '', '', '');
 INSERT INTO `external_apis` VALUES ('5', 'psigate', '', '', '');
 
 -- ----------------------------
+-- Table structure for `orders`
+-- ----------------------------
+DROP TABLE IF EXISTS `orders`;
+CREATE TABLE `orders` (
+  `order_id` int(11) NOT NULL AUTO_INCREMENT,
+  `client_id` int(11) NOT NULL,
+  `gateway_id` int(11) NOT NULL,
+  `card_last_4` varchar(4) NOT NULL,
+  `amount` varchar(11) NOT NULL,
+  `timestamp` datetime NOT NULL,
+  PRIMARY KEY (`order_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of orders
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for `request_log`
 -- ----------------------------
 DROP TABLE IF EXISTS `request_log`;
@@ -283,7 +329,7 @@ CREATE TABLE `request_log` (
   `remote_ip` varchar(11) NOT NULL,
   `request` text NOT NULL,
   PRIMARY KEY (`request_log_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=370 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=400 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of request_log
@@ -657,6 +703,36 @@ INSERT INTO `request_log` VALUES ('366', '2009-11-10 04:50:21', '127.0.0.1', '<?
 INSERT INTO `request_log` VALUES ('367', '2009-11-10 04:51:47', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<first_name>David</first_name>\n		<last_name>Ryan</last_name>\n		<address_1>123 Main Street</address_1>\n		<address_2>APT 1</address_2>\n		<city>Denver</city>\n		<state>CO</state>\n		<postal_code>80220</postal_code>\n	</params>\n</request>');
 INSERT INTO `request_log` VALUES ('368', '2009-11-10 04:55:09', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<first_name>David</first_name>\n		<last_name>Ryan</last_name>\n		<address_1>123 Main Street</address_1>\n		<address_2>APT 1</address_2>\n		<city>Denver</city>\n		<state>CO</state>\n		<postal_code>80220</postal_code>\n	</params>\n</request>');
 INSERT INTO `request_log` VALUES ('369', '2009-11-10 04:55:16', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<first_name>David</first_name>\n		<last_name>Ryan</last_name>\n		<address_1>123 Main Street</address_1>\n		<address_2>APT 1</address_2>\n		<city>Denver</city>\n		<state>CO</state>\n		<postal_code>80220</postal_code>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('370', '2009-11-10 05:19:22', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<first_name>David</first_name>\n		<last_name>Ryan</last_name>\n		<address_1>123 Main Street</address_1>\n		<address_2>APT 1</address_2>\n		<city>Denver</city>\n		<state>CO</state>\n		<postal_code>80220</postal_code>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('371', '2009-11-10 05:24:42', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<first_name>David</first_name>\n		<last_name>Ryan</last_name>\n		<address_1>123 Main Street</address_1>\n		<address_2>APT 1</address_2>\n		<city>Denver</city>\n		<state>CO</state>\n		<postal_code>80220</postal_code>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('372', '2009-11-10 05:24:56', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<first_name>David</first_name>\n		<last_name>Ryan</last_name>\n		<address_1>123 Main Street</address_1>\n		<address_2>APT 1</address_2>\n		<city>Denver</city>\n		<state>CO</state>\n		<postal_code>80220</postal_code>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('373', '2009-11-10 05:41:29', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<first_name>David</first_name>\n		<last_name>Ryan</last_name>\n		<address_1>123 Main Street</address_1>\n		<address_2>APT 1</address_2>\n		<city>Denver</city>\n		<state>CO</state>\n		<postal_code>80220</postal_code>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('374', '2009-11-10 05:41:41', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewCustomer</request>\n	<params>\n		<first_name>David</first_name>\n		<last_name>Ryan</last_name>\n		<company>ABC Inc.</company>\n		<internal_id>12343434</internal_id>\n		<address_1>123 Main Street</address_1>\n		<address_2>APT 1</address_2>\n		<city>Denver</city>\n		<state>CO</state>\n		<postal_code>80220</postal_code>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('375', '2009-11-10 05:48:34', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewCustomer</request>\n	<params>\n		<first_name>David</first_name>\n		<last_name>Ryan</last_name>\n		<company>ABC Inc.</company>\n		<internal_id>12343434</internal_id>\n		<address_1>123 Main Street</address_1>\n		<address_2>APT 1</address_2>\n		<city>Denver</city>\n		<state>CO</state>\n		<postal_code>80220</postal_code>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('376', '2009-11-10 05:54:51', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewCustomer</request>\n	<params>\n		<first_name>David</first_name>\n		<last_name>Ryan</last_name>\n		<company>ABC Inc.</company>\n		<internal_id>12343434</internal_id>\n		<address_1>123 Main Street</address_1>\n		<address_2>APT 1</address_2>\n		<city>Denver</city>\n		<state>CO</state>\n		<postal_code>80220</postal_code>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('377', '2009-11-10 05:57:37', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewCustomer</request>\n	<params>\n		<first_name>David</first_name>\n		<last_name>Ryan</last_name>\n		<company>ABC Inc.</company>\n		<internal_id>12343434</internal_id>\n		<address_1>123 Main Street</address_1>\n		<address_2>APT 1</address_2>\n		<city>Denver</city>\n		<state>CO</state>\n		<postal_code>80220</postal_code>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('378', '2009-11-10 05:57:49', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewCustomer</request>\n	<params>\n		<first_name>David</first_name>\n		<last_name>Ryan</last_name>\n		<company>ABC Inc.</company>\n		<internal_id>12343434</internal_id>\n		<address_1>123 Main Street</address_1>\n		<address_2>APT 1</address_2>\n		<city>Denver</city>\n		<state>CO</state>\n		<postal_code>80220</postal_code>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('379', '2009-11-10 06:06:33', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewCustomer</request>\n	<params>\n		<first_name>David</first_name>\n		<last_name>Ryan</last_name>\n		<company>ABC Inc.</company>\n		<internal_id>12343434</internal_id>\n		<address_1>123 Main Street</address_1>\n		<address_2>APT 1</address_2>\n		<city>Denver</city>\n		<state>CO</state>\n		<postal_code>80220</postal_code>\n		<phone>3033319812</phone>\n		<email>daveryan187@yahoo.com</email>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('380', '2009-11-10 06:09:35', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<customer_id>2</customer_id>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('381', '2009-11-10 06:09:55', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<customer_id>2</customer_id>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('382', '2009-11-10 06:12:20', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('383', '2009-11-10 06:14:52', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Goods and Services</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('384', '2009-11-10 06:16:16', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Goods and Services</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('385', '2009-11-10 06:16:30', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Goods and Services</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('386', '2009-11-10 06:17:31', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Goods and Services</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('387', '2009-11-10 06:17:40', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Goods and Services</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('388', '2009-11-10 06:18:01', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Goods and Services</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('389', '2009-11-10 06:41:18', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Goods and Services</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('390', '2009-11-10 06:41:41', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Goods and Services</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('391', '2009-11-10 06:43:06', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Goods and Services</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('392', '2009-11-10 06:43:29', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Goods and Services</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('393', '2009-11-10 06:43:52', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Goods and Services</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('394', '2009-11-10 06:44:13', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Goods and Services</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('395', '2009-11-10 06:44:53', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Goods and Services</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('396', '2009-11-10 06:45:26', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Goods and Services</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('397', '2009-11-10 06:45:52', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Goods and Services</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('398', '2009-11-10 06:48:16', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Goods and Services</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('399', '2009-11-10 06:50:43', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Goods and Services</description>\n	</params>\n</request>');
 
 -- ----------------------------
 -- Table structure for `request_types`
@@ -674,6 +750,7 @@ CREATE TABLE `request_types` (
 -- ----------------------------
 INSERT INTO `request_types` VALUES ('1', 'NewClient', 'client_model');
 INSERT INTO `request_types` VALUES ('2', 'NewGateway', 'gateway_model');
+INSERT INTO `request_types` VALUES ('4', 'NewCustomer', 'customer_model');
 INSERT INTO `request_types` VALUES ('3', 'Charge', 'gateway_model');
 
 -- ----------------------------

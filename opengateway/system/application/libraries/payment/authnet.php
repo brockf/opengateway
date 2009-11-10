@@ -1,11 +1,8 @@
 <?php
 class authnet
 {
-	function Charge($client_id, $gateway, $params)
-	{
-		
-		print_r($gateway);
-		
+	function Charge($client_id, $gateway, $customer, $params)
+	{	
 		// Get the proper URL
 		switch($gateway['mode'])
 		{
@@ -35,13 +32,13 @@ class authnet
 			"x_exp_date"		=> $params['exp_month'].$params['exp_year'],
 		
 			"x_amount"			=> $params['amount'],
-			"x_description"		=> "Sample Transaction",
+			"x_description"		=> $params['description'],
 		
-			"x_first_name"		=> "John",
-			"x_last_name"		=> "Doe",
-			"x_address"			=> "1234 Street",
-			"x_state"			=> "WA",
-			"x_zip"				=> "98004"
+			"x_first_name"		=> $customer['first_name'],
+			"x_last_name"		=> $customer['last_name'],
+			"x_address"			=> $customer['address_1'].' '.$customer['address_2'],
+			"x_state"			=> $customer['state'],
+			"x_zip"				=> $customer['postal_code']
 			);
 			
 		$post_string = "";
@@ -49,15 +46,12 @@ class authnet
 			{ $post_string .= "$key=" . urlencode( $value ) . "&"; }
 		$post_string = rtrim( $post_string, "& " );
 		
-		echo $post_string;
-		
 		$this->Process($post_url, $post_string);
 		
 	}
 	
 	function Process($post_url, $post_string)
 	{
-		echo $post_url;
 		$request = curl_init($post_url); // initiate curl object
 		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
 		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
