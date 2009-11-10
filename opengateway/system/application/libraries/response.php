@@ -46,7 +46,8 @@ class Response
 							'1004' => 'Required fields are missing for this request',
 							'2000' => 'Client is not authorized to create new clients.',
 							'2001' => 'Invalid External API.',
-							'3000' => 'Invalid gateway ID for this client.'
+							'3000' => 'Invalid gateway ID for this client.',
+							'3001' => 'Gateway ID is required.'
 							);
 		
 				
