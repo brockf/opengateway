@@ -8,19 +8,21 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>
 		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>
 	</authentication>
-	<request>NewGateway</request>
+	<request>Charge</request>
 	<params>
-		<client_id>17</client_id>
-		<gateway_type>psigate</gateway_type>
-		<enabled>1</enabled>
-		<store_id>1234564789</store_id>
-		<passphrase>23ggsdfy4sragb4h564w5hba464</passphrase>
-		<mode>live</mode>
-		<accept_visa>1</accept_visa>
-		<accept_mc>1</accept_mc>
-		<accept_amex>1</accept_amex>
-		<accept_discover>1</accept_discover>
-		<accept_dc>1</accept_dc>
+		<gateway_id>3</gateway_id>
+		<amount>19.99</amount>
+		<card_num>4007000000027</card_num>
+		<exp_month>10</exp_month>
+		<exp_year>2011</exp_year>
+		<cvv>123</cvv>
+		<first_name>David</first_name>
+		<last_name>Ryan</last_name>
+		<address_1>123 Main Street</address_1>
+		<address_2>APT 1</address_2>
+		<city>Denver</city>
+		<state>CO</state>
+		<postal_code>80220</postal_code>
 	</params>
 </request>';
 

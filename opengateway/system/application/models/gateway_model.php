@@ -78,22 +78,22 @@ class Gateway_model extends Model
 		if($query->num_rows > 0) {
 			
 			$row = $query->row();
-			$data = new stdObj();
-			$data->url_live = $row->prod_url;
-			$data->url_test = $row->test_url;
-			$data->url_dev = $row->dev_url;
+			$data = array();
+			$data['url_live'] = $row->prod_url;
+			$data['url_test'] = $row->test_url;
+			$data['url_dev'] = $row->dev_url;
+			$data['name'] = $row->name;
 		    
 			// Get the params
 			$this->db->where('client_gateway_id', $gateway_id);
 			$query = $this->db->get('client_gateway_params');
 			if($query->num_rows() > 0) {
-				$data .= $query->result();
+				foreach($query->result() as $row) {
+					$data[$row->field] = $row->value;
+				}
+				
+				return $data;
 			}
-			
-			
-			
-			
-			
 		} else {
 			die($this->response->Error(3000));
 		}	
@@ -116,5 +116,24 @@ class Gateway_model extends Model
 				return FALSE;
 			}
 		}
+	}
+	
+	function Charge($client_id, $params)
+	{
+		if(!isset($params['gateway_id'])) {
+			die($this->response->Error(3001));
+		}
+		
+		$CI =& get_instance();
+		
+		// Get the gateway info to load the proper library
+		$gateway_id = $params['gateway_id'];
+		$CI->load->model('gateway_model');
+		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
+		// Load the proper library
+		$gateway_name = $gateway['name'];
+		$this->load->library('payment/'.$gateway_name);
+		return $this->$gateway_name->Charge($client_id, $gateway, $params);
+		
 	}
 }
