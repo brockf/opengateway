@@ -36,7 +36,7 @@ class authnet
 		
 			"x_first_name"		=> $customer['first_name'],
 			"x_last_name"		=> $customer['last_name'],
-			"x_address"			=> $customer['address_1'].' '.$customer['address_2'],
+			"x_address"			=> $customer['address_1'].'-'.$customer['address_2'],
 			"x_state"			=> $customer['state'],
 			"x_zip"				=> $customer['postal_code']
 			);
