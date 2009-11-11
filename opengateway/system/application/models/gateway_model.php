@@ -126,6 +126,10 @@ class Gateway_model extends Model
 		
 		$CI =& get_instance();
 		
+		// Create a new order
+		$CI->load->model('order_model');
+		$order_id = $CI->order_model->CreateNewOrder($client_id, $params);
+		
 		// Get the gateway info to load the proper library
 		$gateway_id = $params['gateway_id'];
 		$CI->load->model('gateway_model');
@@ -138,7 +142,7 @@ class Gateway_model extends Model
 		// Load the proper library
 		$gateway_name = $gateway['name'];
 		$this->load->library('payment/'.$gateway_name);
-		return $this->$gateway_name->Charge($client_id, $gateway, $customer, $params);
+		return $this->$gateway_name->Charge($client_id, $order_id, $gateway, $customer, $params);
 		
 	}
 }

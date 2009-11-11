@@ -22,6 +22,11 @@ class Log_model extends Model
 		}
 	}
 	
+	function LogApiResponse($gateway_name, $insert_data)
+	{
+		$this->db->insert($gateway_name.'_log', $insert_data);
+	}
+	
 	function LogError($error = FALSE)
 	{
 		if($error) {

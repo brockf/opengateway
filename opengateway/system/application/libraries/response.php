@@ -32,6 +32,27 @@ class Response
 		}
 	}
 	
+	// return the transaction response
+	function TransactionResponse($code)
+	{
+		if (!$code) {
+			$this->SystemError('Response code not passed to function.');
+		}
+		
+		$response = array(
+							'1' => 'Transaction approved.',
+							'2' => 'Transaction declined'
+							);
+		
+				
+		$response_array = array(
+							'response_code' => $code,
+							'response_text' => $response[$code]
+							);
+				
+		return $response_array;
+	}
+	
 	// return a formatted error response to the client
 	function Error ($code) {
 		if (!$code) {
