@@ -15,16 +15,17 @@ class Field_validation
 		
 		$params = array_keys($params);
 		
-		foreach($required_fields as $required_value)
-		{
-			foreach($required_value as $key => $value)
+		if($required_fields) {
+			foreach($required_fields as $required_value)
 			{
-				if(!in_array($value, $params)) {
-						$error = TRUE;
+				foreach($required_value as $key => $value)
+				{
+					if(!in_array($value, $params)) {
+							$error = TRUE;
+					}
 				}
 			}
-		}
-			 
+		}	 
 		if($error) {
 			die($CI->response->Error(1003));
 		} else {

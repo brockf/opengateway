@@ -33,7 +33,7 @@ class Response
 	}
 	
 	// return the transaction response
-	function TransactionResponse($code)
+	function TransactionResponse($code, $response_array = FALSE)
 	{
 		if (!$code) {
 			$this->SystemError('Response code not passed to function.');
@@ -45,12 +45,16 @@ class Response
 							);
 		
 				
-		$response_array = array(
+		$responses = array(
 							'response_code' => $code,
 							'response_text' => $response[$code]
 							);
-				
-		return $response_array;
+							
+		if($response_array) {
+			$response = array_merge($responses, $response_array);
+		}
+							
+		return $response;
 	}
 	
 	// return a formatted error response to the client
@@ -69,7 +73,8 @@ class Response
 							'2001' => 'Invalid External API.',
 							'3000' => 'Invalid gateway ID for this client.',
 							'3001' => 'Gateway ID is required.',
-							'4000' => 'Invalid cusomter ID.'
+							'4000' => 'Invalid customer ID.',
+							'4001' => 'Inavlid Order ID.'
 							);
 		
 				

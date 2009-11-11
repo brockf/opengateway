@@ -14,7 +14,7 @@ class Gateway_model extends Model
 		
 		// Validate the required fields
 		$this->load->library('field_validation');
-		$this->field_validation->ValidateRequiredGatewayFields($gateway_type, $params);
+		$request_type_id = $this->field_validation->ValidateRequiredGatewayFields($gateway_type, $params);
 		
 		// Get the external API id
 		$external_api_id = $this->GetExternalApiId($gateway_type);
@@ -82,6 +82,9 @@ class Gateway_model extends Model
 			$data['url_live'] = $row->prod_url;
 			$data['url_test'] = $row->test_url;
 			$data['url_dev'] = $row->dev_url;
+			$data['arb_url_live'] = $row->arb_prod_url;
+			$data['arb_url_test'] = $row->arb_test_url;
+			$data['arb_url_dev'] = $row->arb_dev_url;
 			$data['name'] = $row->name;
 		    
 			// Get the params
@@ -126,6 +129,12 @@ class Gateway_model extends Model
 		
 		$CI =& get_instance();
 		
+		// Validate the required fields
+		$this->load->library('field_validation');
+		$this->field_validation->ValidateRequiredFields('Charge', $params);
+		
+		
+		
 		// Create a new order
 		$CI->load->model('order_model');
 		$order_id = $CI->order_model->CreateNewOrder($client_id, $params);
@@ -144,5 +153,168 @@ class Gateway_model extends Model
 		$this->load->library('payment/'.$gateway_name);
 		return $this->$gateway_name->Charge($client_id, $order_id, $gateway, $customer, $params);
 		
+	}
+	
+	function Auth($client_id, $params)
+	{
+		if(!isset($params['gateway_id'])) {
+			die($this->response->Error(3001));
+		}
+		
+		$CI =& get_instance();
+		
+		// Validate the required fields
+		$this->load->library('field_validation');
+		$this->field_validation->ValidateRequiredFields('Auth', $params);
+		
+		// Create a new order
+		$CI->load->model('order_model');
+		$order_id = $CI->order_model->CreateNewOrder($client_id, $params);
+		
+		// Get the gateway info to load the proper library
+		$gateway_id = $params['gateway_id'];
+		$CI->load->model('gateway_model');
+		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
+		
+		// Get the customer details
+		$CI->load->model('customer_model');
+		$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
+		
+		// Load the proper library
+		$gateway_name = $gateway['name'];
+		$this->load->library('payment/'.$gateway_name);
+		return $this->$gateway_name->Auth($client_id, $order_id, $gateway, $customer, $params);
+	}
+	
+	function Capture($client_id, $params)
+	{
+		if(!isset($params['gateway_id'])) {
+			die($this->response->Error(3001));
+		}
+		
+		$CI =& get_instance();
+		
+		// Get the order details
+		$CI->load->model('order_model');
+		$order = $CI->order_model->GetOrder($client_id, $params['order_id']);
+		$order_id = $order->order_id;
+		
+		
+		// Validate the required fields
+		$this->load->library('field_validation');
+		$this->field_validation->ValidateRequiredFields('Capture', $params);
+		
+		// Get the gateway info to load the proper library
+		$gateway_id = $params['gateway_id'];
+		$CI->load->model('gateway_model');
+		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
+		
+		// Get the customer details
+		$CI->load->model('customer_model');
+		$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
+		
+		// Load the proper library
+		$gateway_name = $gateway['name'];
+		$this->load->library('payment/'.$gateway_name);
+		return $this->$gateway_name->Capture($client_id, $order_id, $gateway, $customer, $params);
+	}
+	
+	function Credit($client_id, $params)
+	{
+		if(!isset($params['gateway_id'])) {
+			die($this->response->Error(3001));
+		}
+		
+		$CI =& get_instance();
+		
+		// Get the order details
+		$CI->load->model('order_model');
+		$order = $CI->order_model->GetOrder($client_id, $params['order_id']);
+		$order_id = $order->order_id;
+		
+		
+		// Validate the required fields
+		$this->load->library('field_validation');
+		$this->field_validation->ValidateRequiredFields('Credit', $params);
+		
+		// Get the gateway info to load the proper library
+		$gateway_id = $params['gateway_id'];
+		$CI->load->model('gateway_model');
+		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
+		
+		// Get the customer details
+		$CI->load->model('customer_model');
+		$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
+		
+		// Load the proper library
+		$gateway_name = $gateway['name'];
+		$this->load->library('payment/'.$gateway_name);
+		return $this->$gateway_name->Credit($client_id, $order_id, $gateway, $customer, $params);
+	}
+	
+	function Void($client_id, $params)
+	{
+		if(!isset($params['gateway_id'])) {
+			die($this->response->Error(3001));
+		}
+		
+		$CI =& get_instance();
+		
+		// Get the order details
+		$CI->load->model('order_model');
+		$order = $CI->order_model->GetOrder($client_id, $params['order_id']);
+		$order_id = $order->order_id;
+		
+		
+		// Validate the required fields
+		$this->load->library('field_validation');
+		$this->field_validation->ValidateRequiredFields('Void', $params);
+		
+		// Get the gateway info to load the proper library
+		$gateway_id = $params['gateway_id'];
+		$CI->load->model('gateway_model');
+		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
+		
+		// Get the customer details
+		$CI->load->model('customer_model');
+		$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
+		
+		// Load the proper library
+		$gateway_name = $gateway['name'];
+		$this->load->library('payment/'.$gateway_name);
+		return $this->$gateway_name->Void($client_id, $order_id, $gateway, $customer, $params);
+	}
+	
+	function NewRecurring($client_id, $params)
+	{
+		if(!isset($params['gateway_id'])) {
+			die($this->response->Error(3001));
+		}
+		
+		$CI =& get_instance();
+		
+		// Get the order details
+		$CI->load->model('order_model');
+		$order = $CI->order_model->GetOrder($client_id, $params['order_id']);
+		$order_id = $order->order_id;
+		
+		
+		// Validate the required fields
+		$this->load->library('field_validation');
+		$this->field_validation->ValidateRequiredFields('NewRecurring', $params);
+		
+		// Get the gateway info to load the proper library
+		$gateway_id = $params['gateway_id'];
+		$CI->load->model('gateway_model');
+		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
+		
+		// Get the customer details
+		$CI->load->model('customer_model');
+		$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
+		
+		// Load the proper library
+		$gateway_name = $gateway['name'];
+		$this->load->library('payment/'.$gateway_name);
+		return $this->$gateway_name->NewRecurring($client_id, $order_id, $gateway, $customer, $params);
 	}
 }
