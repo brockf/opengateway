@@ -342,10 +342,59 @@ function Auth($client_id, $order_id, $gateway, $customer, $params)
         "</ARBCreateSubscriptionRequest>";
 		
 		$response = $this->ProcessXML($order_id, $post_url, $content);
-		
+
 		if($response['success'] == TRUE){
 			$response_array = array('order_id' => $order_id);
 			$response = $CI->response->TransactionResponse(1, $response_array);
+			// create the subscription
+			$CI->load->model('recurring_model');
+			$CI->recurring_model->SaveRecurring($client_id, $order_id, $params['gateway_id'], $customer['customer_id'], $params, $repsonse['api_reference']);
+		} else {
+			$response_array = array('reason' => $response['reason']);
+			$response = $CI->response->TransactionResponse(2, $response_array);
+		}
+		
+		return $response;
+		
+	}
+	
+function CancelRecurring($client_id, $order_id, $gateway, $params)
+	{		
+		$CI =& get_instance();
+		
+		// Get the proper URL
+		switch($gateway['mode'])
+		{
+			case 'live':
+				$post_url = $gateway['arb_url_live'];
+			break;
+			case 'test':
+				$post_url = $gateway['arb_url_test'];
+			break;
+			case 'dev':
+				$post_url = $gateway['arb_url_dev'];
+			break;
+		}
+		
+		//build xml to post
+		$content =
+        "<?xml version=\"1.0\" encoding=\"utf-8\"?>" .
+        "<ARBCancelSubscriptionRequest> xmlns=\"AnetApi/xml/v1/schema/AnetApiSchema.xsd\">" .
+        "<merchantAuthentication>".
+        "<name>" . $gateway['login_id'] . "</name>".
+        "<transactionKey>" . $gateway['transaction_key'] . "</transactionKey>".
+        "</merchantAuthentication>".
+		"<subscriptionID>" . $api_reference . "</subscriptionID>".
+        "</ARBCancelSubscriptionRequest>";
+		
+		$response = $this->ProcessXML($order_id, $post_url, $content);
+
+		if($response['success'] == TRUE){
+			$response_array = array('order_id' => $order_id);
+			$response = $CI->response->TransactionResponse(1, $response_array);
+			// create the subscription
+			$CI->load->model('recurring_model');
+			$CI->recurring_model->SaveRecurring($client_id, $order_id, $params['gateway_id'], $customer['customer_id'], $params, $repsonse['api_reference']);
 		} else {
 			$response_array = array('reason' => $response['reason']);
 			$response = $CI->response->TransactionResponse(2, $response_array);
@@ -406,6 +455,7 @@ function Auth($client_id, $order_id, $gateway, $customer, $params)
 		
 		if($response->messages->resultCode == 'Ok') {
 			$response['success'] = TRUE;
+			$response['api_reference'] = (string)$response->subscriptionId;
 		} else {
 			$response['success'] = FALSE;
 			$response['reason'] = (string)$response->messages->message->text;
@@ -464,4 +514,5 @@ function Auth($client_id, $order_id, $gateway, $customer, $params)
 		$CI->log_model->LogApiResponse('authnet', $insert_data);
 		
 	}
+	
 }

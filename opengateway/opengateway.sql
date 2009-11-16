@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50136
 File Encoding         : 65001
 
-Date: 2009-11-11 17:53:43
+Date: 2009-11-15 20:12:34
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -62,7 +62,7 @@ CREATE TABLE `authnet_log` (
   `card_code_response` varchar(1) DEFAULT NULL,
   `cardholder_authentication_verification_response` varchar(1) DEFAULT NULL,
   PRIMARY KEY (`response_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=98 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=102 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of authnet_log
@@ -164,6 +164,10 @@ INSERT INTO `authnet_log` VALUES ('94', '33', '?<?xml vers', null, null, null, n
 INSERT INTO `authnet_log` VALUES ('95', '33', '?<?xml vers', null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 INSERT INTO `authnet_log` VALUES ('96', '33', '?<?xml vers', null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 INSERT INTO `authnet_log` VALUES ('97', '33', '?<?xml vers', null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+INSERT INTO `authnet_log` VALUES ('98', '34', '1', '1', '1', '(TESTMODE) This transaction has been approved.', '0', 'P', '0', '', 'Goods and Services', '19.99', 'CC', 'auth_capture', '', 'David', 'Ryan', '', '123 Main St-APT 1', '', 'CO', '80220', '', '', '', '', '', '', null, '', '', '', '', '', '0.00', '0.00', '0.00', '0', '', '588997408689BBD9B68FC22901CDE7BA', '', '');
+INSERT INTO `authnet_log` VALUES ('99', '35', '1', '1', '1', '(TESTMODE) This transaction has been approved.', '0', 'P', '0', '', 'Goods and Services', '19.99', 'CC', 'auth_capture', '', 'David', 'Ryan', '', '123 Main St-APT 1', '', 'CO', '80220', '', '', '', '', '', '', null, '', '', '', '', '', '0.00', '0.00', '0.00', '0', '', '588997408689BBD9B68FC22901CDE7BA', '', '');
+INSERT INTO `authnet_log` VALUES ('100', '36', '1', '1', '1', '(TESTMODE) This transaction has been approved.', '0', 'P', '0', '', 'Goods and Services', '19.99', 'CC', 'auth_capture', '', 'David', 'Ryan', '', '123 Main St-APT 1', '', 'CO', '80220', '', '', '', '', '', '', null, '', '', '', '', '', '0.00', '0.00', '0.00', '0', '', '588997408689BBD9B68FC22901CDE7BA', '', '');
+INSERT INTO `authnet_log` VALUES ('101', '38', '1', '1', '1', '(TESTMODE) This transaction has been approved.', '0', 'P', '0', '', 'Goods and Services', '19.99', 'CC', 'auth_capture', '', 'David', 'Ryan', '', '123 Main St-APT 1', '', 'CO', '80220', '', '', '', '', '', '', null, '', '', '', '', '', '0.00', '0.00', '0.00', '0', '', '588997408689BBD9B68FC22901CDE7BA', '', '');
 
 -- ----------------------------
 -- Table structure for `client_gateway_params`
@@ -465,13 +469,17 @@ CREATE TABLE `order_authorizations` (
   `tran_id` int(11) NOT NULL,
   `authorization_code` varchar(20) NOT NULL,
   PRIMARY KEY (`order_authorization_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of order_authorizations
 -- ----------------------------
 INSERT INTO `order_authorizations` VALUES ('1', '32', '0', '000000');
 INSERT INTO `order_authorizations` VALUES ('2', '33', '0', '000000');
+INSERT INTO `order_authorizations` VALUES ('3', '34', '0', '000000');
+INSERT INTO `order_authorizations` VALUES ('4', '35', '0', '000000');
+INSERT INTO `order_authorizations` VALUES ('5', '36', '0', '000000');
+INSERT INTO `order_authorizations` VALUES ('6', '38', '0', '000000');
 
 -- ----------------------------
 -- Table structure for `orders`
@@ -485,7 +493,7 @@ CREATE TABLE `orders` (
   `amount` varchar(11) NOT NULL,
   `timestamp` datetime NOT NULL,
   PRIMARY KEY (`order_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=34 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=52 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of orders
@@ -523,6 +531,46 @@ INSERT INTO `orders` VALUES ('30', '17', '3', '0027', '19.99', '2009-11-11 21:29
 INSERT INTO `orders` VALUES ('31', '17', '3', '0027', '19.99', '2009-11-11 21:30:28');
 INSERT INTO `orders` VALUES ('32', '17', '3', '0027', '19.99', '2009-11-11 21:31:00');
 INSERT INTO `orders` VALUES ('33', '17', '3', '0027', '19.99', '2009-11-11 21:36:42');
+INSERT INTO `orders` VALUES ('34', '17', '3', '0027', '19.99', '2009-11-15 03:17:50');
+INSERT INTO `orders` VALUES ('35', '17', '3', '0027', '19.99', '2009-11-15 03:18:06');
+INSERT INTO `orders` VALUES ('36', '17', '3', '0027', '19.99', '2009-11-15 03:22:18');
+INSERT INTO `orders` VALUES ('37', '17', '3', '0027', '19.99', '2009-11-16 01:12:41');
+INSERT INTO `orders` VALUES ('38', '17', '3', '0027', '19.99', '2009-11-16 01:15:41');
+INSERT INTO `orders` VALUES ('39', '17', '3', '0027', '24.99', '2009-11-16 01:15:50');
+INSERT INTO `orders` VALUES ('40', '17', '3', '0027', '24.99', '2009-11-16 01:19:38');
+INSERT INTO `orders` VALUES ('41', '17', '3', '0027', '24.99', '2009-11-16 01:20:36');
+INSERT INTO `orders` VALUES ('42', '17', '3', '0027', '24.99', '2009-11-16 01:21:48');
+INSERT INTO `orders` VALUES ('43', '17', '3', '0027', '24.99', '2009-11-16 01:27:10');
+INSERT INTO `orders` VALUES ('44', '17', '3', '0027', '24.99', '2009-11-16 01:27:51');
+INSERT INTO `orders` VALUES ('45', '17', '3', '0027', '24.99', '2009-11-16 01:30:22');
+INSERT INTO `orders` VALUES ('46', '17', '3', '0027', '24.99', '2009-11-16 01:30:45');
+INSERT INTO `orders` VALUES ('47', '17', '3', '0027', '24.99', '2009-11-16 01:31:43');
+INSERT INTO `orders` VALUES ('48', '17', '3', '0027', '24.99', '2009-11-16 01:32:42');
+INSERT INTO `orders` VALUES ('49', '17', '3', '0027', '24.99', '2009-11-16 01:33:21');
+INSERT INTO `orders` VALUES ('50', '17', '3', '0027', '24.99', '2009-11-16 01:42:48');
+INSERT INTO `orders` VALUES ('51', '17', '3', '0027', '24.99', '2009-11-16 01:42:58');
+
+-- ----------------------------
+-- Table structure for `recurring_payments`
+-- ----------------------------
+DROP TABLE IF EXISTS `recurring_payments`;
+CREATE TABLE `recurring_payments` (
+  `recurring_payment_id` int(11) NOT NULL AUTO_INCREMENT,
+  `client_id` int(11) NOT NULL,
+  `gateway_id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `start_date` date NOT NULL,
+  `number_occurences` int(11) NOT NULL,
+  `amount` decimal(10,0) NOT NULL,
+  `api_reference` varchar(255) NOT NULL,
+  PRIMARY KEY (`recurring_payment_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of recurring_payments
+-- ----------------------------
+INSERT INTO `recurring_payments` VALUES ('1', '17', '49', '3', '2', '2009-12-01', '12', '25', '');
 
 -- ----------------------------
 -- Table structure for `request_log`
@@ -534,7 +582,7 @@ CREATE TABLE `request_log` (
   `remote_ip` varchar(11) NOT NULL,
   `request` text NOT NULL,
   PRIMARY KEY (`request_log_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=584 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=602 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of request_log
@@ -1122,6 +1170,24 @@ INSERT INTO `request_log` VALUES ('580', '2009-11-11 23:50:28', '127.0.0.1', '<?
 INSERT INTO `request_log` VALUES ('581', '2009-11-11 23:50:43', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewRecurring</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<order_id>33</order_id>\n		<interval>30</interval>\n		<interval_unit>days</interval_unit>\n		<total_occurences>12</total_occurences>\n		<trial_occurences>0</trial_occurences>\n		<start_date>2009-12-01</start_date>\n		<amount>24.99</amount>\n		<trial_amount>0</trial_amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Monthly Supply</description>\n	</params>\n</request>');
 INSERT INTO `request_log` VALUES ('582', '2009-11-11 23:52:13', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewRecurring</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<order_id>33</order_id>\n		<interval>30</interval>\n		<interval_unit>days</interval_unit>\n		<total_occurences>12</total_occurences>\n		<trial_occurences>0</trial_occurences>\n		<start_date>2009-12-01</start_date>\n		<amount>24.99</amount>\n		<trial_amount>0</trial_amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Monthly Supply</description>\n	</params>\n</request>');
 INSERT INTO `request_log` VALUES ('583', '2009-11-11 23:52:46', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewRecurring</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<order_id>33</order_id>\n		<interval>30</interval>\n		<interval_unit>days</interval_unit>\n		<total_occurences>12</total_occurences>\n		<trial_occurences>0</trial_occurences>\n		<start_date>2009-12-01</start_date>\n		<amount>24.99</amount>\n		<trial_amount>0</trial_amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Monthly Supply</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('584', '2009-11-15 03:17:50', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Goods and Services</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('585', '2009-11-15 03:18:06', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Goods and Services</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('586', '2009-11-15 03:22:18', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Goods and Services</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('587', '2009-11-16 01:12:40', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Goods and Services</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('588', '2009-11-16 01:15:41', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<amount>19.99</amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Goods and Services</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('589', '2009-11-16 01:15:50', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewRecurring</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<order_id>33</order_id>\n		<interval>30</interval>\n		<interval_unit>days</interval_unit>\n		<total_occurences>12</total_occurences>\n		<trial_occurences>0</trial_occurences>\n		<start_date>2009-12-01</start_date>\n		<amount>24.99</amount>\n		<trial_amount>0</trial_amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Monthly Supply</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('590', '2009-11-16 01:19:38', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewRecurring</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<order_id>33</order_id>\n		<interval>30</interval>\n		<interval_unit>days</interval_unit>\n		<total_occurences>12</total_occurences>\n		<trial_occurences>0</trial_occurences>\n		<start_date>2009-12-01</start_date>\n		<amount>24.99</amount>\n		<trial_amount>0</trial_amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Monthly Supply</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('591', '2009-11-16 01:20:36', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewRecurring</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<order_id>33</order_id>\n		<interval>30</interval>\n		<interval_unit>days</interval_unit>\n		<total_occurences>12</total_occurences>\n		<trial_occurences>0</trial_occurences>\n		<start_date>2009-12-01</start_date>\n		<amount>24.99</amount>\n		<trial_amount>0</trial_amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Monthly Supply</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('592', '2009-11-16 01:21:48', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewRecurring</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<order_id>33</order_id>\n		<interval>30</interval>\n		<interval_unit>days</interval_unit>\n		<total_occurences>12</total_occurences>\n		<trial_occurences>0</trial_occurences>\n		<start_date>2009-12-01</start_date>\n		<amount>24.99</amount>\n		<trial_amount>0</trial_amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Monthly Supply</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('593', '2009-11-16 01:27:10', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewRecurring</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<order_id>33</order_id>\n		<interval>30</interval>\n		<interval_unit>days</interval_unit>\n		<total_occurences>12</total_occurences>\n		<trial_occurences>0</trial_occurences>\n		<start_date>2009-12-01</start_date>\n		<amount>24.99</amount>\n		<trial_amount>0</trial_amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Monthly Supply</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('594', '2009-11-16 01:27:51', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewRecurring</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<order_id>33</order_id>\n		<interval>30</interval>\n		<interval_unit>days</interval_unit>\n		<total_occurences>12</total_occurences>\n		<trial_occurences>0</trial_occurences>\n		<start_date>2009-12-01</start_date>\n		<amount>24.99</amount>\n		<trial_amount>0</trial_amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Monthly Supply</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('595', '2009-11-16 01:30:22', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewRecurring</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<order_id>33</order_id>\n		<interval>30</interval>\n		<interval_unit>days</interval_unit>\n		<total_occurences>12</total_occurences>\n		<trial_occurences>0</trial_occurences>\n		<start_date>2009-12-01</start_date>\n		<amount>24.99</amount>\n		<trial_amount>0</trial_amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Monthly Supply</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('596', '2009-11-16 01:30:45', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewRecurring</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<order_id>33</order_id>\n		<interval>30</interval>\n		<interval_unit>days</interval_unit>\n		<total_occurences>12</total_occurences>\n		<trial_occurences>0</trial_occurences>\n		<start_date>2009-12-01</start_date>\n		<amount>24.99</amount>\n		<trial_amount>0</trial_amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Monthly Supply</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('597', '2009-11-16 01:31:43', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewRecurring</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<order_id>33</order_id>\n		<interval>30</interval>\n		<interval_unit>days</interval_unit>\n		<total_occurences>12</total_occurences>\n		<trial_occurences>0</trial_occurences>\n		<start_date>2009-12-01</start_date>\n		<amount>24.99</amount>\n		<trial_amount>0</trial_amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Monthly Supply</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('598', '2009-11-16 01:32:42', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewRecurring</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<order_id>33</order_id>\n		<interval>30</interval>\n		<interval_unit>days</interval_unit>\n		<total_occurences>12</total_occurences>\n		<trial_occurences>0</trial_occurences>\n		<start_date>2009-12-01</start_date>\n		<amount>24.99</amount>\n		<trial_amount>0</trial_amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Monthly Supply</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('599', '2009-11-16 01:33:21', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewRecurring</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<order_id>33</order_id>\n		<interval>30</interval>\n		<interval_unit>days</interval_unit>\n		<total_occurences>12</total_occurences>\n		<trial_occurences>0</trial_occurences>\n		<start_date>2009-12-01</start_date>\n		<amount>24.99</amount>\n		<trial_amount>0</trial_amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Monthly Supply</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('600', '2009-11-16 01:42:47', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewRecurring</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<order_id>33</order_id>\n		<interval>30</interval>\n		<interval_unit>days</interval_unit>\n		<total_occurences>12</total_occurences>\n		<trial_occurences>0</trial_occurences>\n		<start_date>2009-12-01</start_date>\n		<amount>24.99</amount>\n		<trial_amount>0</trial_amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Monthly Supply</description>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('601', '2009-11-16 01:42:58', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewRecurring</request>\n	<params>\n		<gateway_id>3</gateway_id>\n		<customer_id>2</customer_id>\n		<order_id>33</order_id>\n		<interval>30</interval>\n		<interval_unit>days</interval_unit>\n		<total_occurences>12</total_occurences>\n		<trial_occurences>0</trial_occurences>\n		<start_date>2009-12-01</start_date>\n		<amount>24.99</amount>\n		<trial_amount>0</trial_amount>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n		<description>Monthly Supply</description>\n	</params>\n</request>');
 
 -- ----------------------------
 -- Table structure for `request_types`
@@ -1146,6 +1212,7 @@ INSERT INTO `request_types` VALUES ('6', 'Auth', 'gateway_model');
 INSERT INTO `request_types` VALUES ('7', 'Credit', 'gateway_model');
 INSERT INTO `request_types` VALUES ('8', 'Void', 'gateway_model');
 INSERT INTO `request_types` VALUES ('9', 'NewRecurring', 'gateway_model');
+INSERT INTO `request_types` VALUES ('10', 'CancelRecurring', 'gateway_model');
 
 -- ----------------------------
 -- Table structure for `required_fields`

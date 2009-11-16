@@ -74,7 +74,8 @@ class Response
 							'3000' => 'Invalid gateway ID for this client.',
 							'3001' => 'Gateway ID is required.',
 							'4000' => 'Invalid customer ID.',
-							'4001' => 'Inavlid Order ID.'
+							'4001' => 'Inavlid Order ID.',
+							'5000' => 'Not a valid recurring subscription'
 							);
 		
 				

@@ -293,11 +293,9 @@ class Gateway_model extends Model
 		
 		$CI =& get_instance();
 		
-		// Get the order details
+		// Create a new order
 		$CI->load->model('order_model');
-		$order = $CI->order_model->GetOrder($client_id, $params['order_id']);
-		$order_id = $order->order_id;
-		
+		$order_id = $CI->order_model->CreateNewOrder($client_id, $params);
 		
 		// Validate the required fields
 		$this->load->library('field_validation');
@@ -311,10 +309,46 @@ class Gateway_model extends Model
 		// Get the customer details
 		$CI->load->model('customer_model');
 		$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
-		
+			
 		// Load the proper library
 		$gateway_name = $gateway['name'];
 		$this->load->library('payment/'.$gateway_name);
 		return $this->$gateway_name->NewRecurring($client_id, $order_id, $gateway, $customer, $params);
+	}
+	
+	function CancelRecurring($client_id, $params)
+	{
+		if(!isset($params['gateway_id'])) {
+			die($this->response->Error(3001));
+		}
+		
+		$CI =& get_instance();
+		
+		// Get the order details
+		$CI->load->model('order_model');
+		$order = $CI->order_model->GetOrder($client_id, $params['order_id']);
+		$order_id = $order->order_id;
+		
+		// Validate the required fields
+		$this->load->library('field_validation');
+		$this->field_validation->ValidateRequiredFields('NewRecurring', $params);
+		
+		// Get the gateway info to load the proper library
+		$gateway_id = $params['gateway_id'];
+		$CI->load->model('gateway_model');
+		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
+		
+		// Get the customer details
+		$CI->load->model('customer_model');
+		$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
+
+		// Get the subscription information
+		$CI->load->model('recurring_model');
+		$subscription = $CI->recurring_model->GetRecurringDetails($client_id, $order_id);
+		
+		// Load the proper library
+		$gateway_name = $gateway['name'];
+		$this->load->library('payment/'.$gateway_name);
+		return $this->$gateway_name->NewRecurring($client_id, $order_id, $gateway, $subscription->api_reference);
 	}
 }
