@@ -7,17 +7,23 @@ class Order_model extends Model
 		parent::Model();
 	}
 	
-	function CreateNewOrder($client_id, $params)
+	function CreateNewOrder($client_id, $params, $credit_card)
 	{
+		
 		$timestamp = date('Y-m-d H:i:s');
 		$insert_data = array(
 							'client_id' 	 => $client_id,
 							'gateway_id' 	 => $params['gateway_id'],
-							'card_last_four' => substr($params['card_num'],-4,4),
+							'card_last_four' => substr($credit_card->card_num,-4,4),
 							'amount'		 => $params['amount'],
 							'timestamp'		 => $timestamp
 							);	
 		
+		if(isset($params['customer_ip_address'])) {
+			$insert_data['customer_ip_address'] = $params['customer_ip_address'];
+		}					
+		
+							
 		$this->db->insert('orders', $insert_data);
 		
 		return $this->db->insert_id();

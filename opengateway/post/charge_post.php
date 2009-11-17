@@ -9,16 +9,17 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>
 	</authentication>
 	<request>Charge</request>
-	<params>
-		<gateway_id>3</gateway_id>
-		<customer_id>2</customer_id>
-		<amount>19.99</amount>
+	<gateway_id>3</gateway_id>
+	<customer_id>2</customer_id>
+	<credit_card>
 		<card_num>4007000000027</card_num>
 		<exp_month>10</exp_month>
 		<exp_year>2011</exp_year>
 		<cvv>123</cvv>
-		<description>Goods and Services</description>
-	</params>
+	</credit_card>
+	<customer_ip_address>127.0.0.1</customer_ip_address>
+	<amount>19.99</amount>
+	<description>Goods and Services</description>
 </request>';
 
 $postfields = 'request='.$post_string; 

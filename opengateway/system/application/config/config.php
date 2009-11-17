@@ -324,6 +324,13 @@ $config['rewrite_short_tags'] = FALSE;
 */
 $config['proxy_ips'] = '';
 
+/*
+|--------------------------------------------------------------------------
+| OpenGateway Config
+|--------------------------------------------------------------------------
+|
+*/
+$config['max_recurring_days_from_today'] = 365;
 
 /* End of file config.php */
 /* Location: ./system/application/config/config.php */

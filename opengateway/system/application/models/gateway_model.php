@@ -121,7 +121,7 @@ class Gateway_model extends Model
 		}
 	}
 	
-	function Charge($client_id, $params)
+	function Charge($client_id, $params, $xml)
 	{
 		if(!isset($params['gateway_id'])) {
 			die($this->response->Error(3001));
@@ -133,29 +133,34 @@ class Gateway_model extends Model
 		$this->load->library('field_validation');
 		$this->field_validation->ValidateRequiredFields('Charge', $params);
 		
-		
+		// Get the credit card object
+		$credit_card = $xml->credit_card;
 		
 		// Create a new order
 		$CI->load->model('order_model');
-		$order_id = $CI->order_model->CreateNewOrder($client_id, $params);
+		$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $credit_card);
 		
 		// Get the gateway info to load the proper library
 		$gateway_id = $params['gateway_id'];
 		$CI->load->model('gateway_model');
 		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
 		
-		// Get the customer details
-		$CI->load->model('customer_model');
-		$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
+		// Get the customer details if a customer id was included
+		if(isset($params['customer_id'])) {
+			$CI->load->model('customer_model');
+			$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
+		} else {
+			$customer = array();
+		}
 		
 		// Load the proper library
 		$gateway_name = $gateway['name'];
 		$this->load->library('payment/'.$gateway_name);
-		return $this->$gateway_name->Charge($client_id, $order_id, $gateway, $customer, $params);
+		return $this->$gateway_name->Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card);
 		
 	}
 	
-	function Auth($client_id, $params)
+	function Auth($client_id, $params, $xml)
 	{
 		if(!isset($params['gateway_id'])) {
 			die($this->response->Error(3001));
@@ -167,23 +172,30 @@ class Gateway_model extends Model
 		$this->load->library('field_validation');
 		$this->field_validation->ValidateRequiredFields('Auth', $params);
 		
+		// Get the credit card object
+		$credit_card = $xml->credit_card;
+		
 		// Create a new order
 		$CI->load->model('order_model');
-		$order_id = $CI->order_model->CreateNewOrder($client_id, $params);
+		$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $credit_card);
 		
 		// Get the gateway info to load the proper library
 		$gateway_id = $params['gateway_id'];
 		$CI->load->model('gateway_model');
 		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
 		
-		// Get the customer details
-		$CI->load->model('customer_model');
-		$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
+		// Get the customer details if a customer id was included
+		if(isset($params['customer_id'])) {
+			$CI->load->model('customer_model');
+			$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
+		} else {
+			$customer = array();
+		}
 		
 		// Load the proper library
 		$gateway_name = $gateway['name'];
 		$this->load->library('payment/'.$gateway_name);
-		return $this->$gateway_name->Auth($client_id, $order_id, $gateway, $customer, $params);
+		return $this->$gateway_name->Auth($client_id, $order_id, $gateway, $customer, $params, $credit_card);
 	}
 	
 	function Capture($client_id, $params)
@@ -265,7 +277,6 @@ class Gateway_model extends Model
 		$order = $CI->order_model->GetOrder($client_id, $params['order_id']);
 		$order_id = $order->order_id;
 		
-		
 		// Validate the required fields
 		$this->load->library('field_validation');
 		$this->field_validation->ValidateRequiredFields('Void', $params);
@@ -285,7 +296,7 @@ class Gateway_model extends Model
 		return $this->$gateway_name->Void($client_id, $order_id, $gateway, $customer, $params);
 	}
 	
-	function NewRecurring($client_id, $params)
+	function Recur($client_id, $params, $xml)
 	{
 		if(!isset($params['gateway_id'])) {
 			die($this->response->Error(3001));
@@ -293,9 +304,12 @@ class Gateway_model extends Model
 		
 		$CI =& get_instance();
 		
+		// Get the credit card object
+		$credit_card = $xml->credit_card;
+		
 		// Create a new order
 		$CI->load->model('order_model');
-		$order_id = $CI->order_model->CreateNewOrder($client_id, $params);
+		$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $credit_card);
 		
 		// Validate the required fields
 		$this->load->library('field_validation');
@@ -306,14 +320,46 @@ class Gateway_model extends Model
 		$CI->load->model('gateway_model');
 		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
 		
-		// Get the customer details
-		$CI->load->model('customer_model');
-		$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
-			
+		// Get the customer details if a customer id was included
+		if(isset($params['customer_id'])) {
+			$CI->load->model('customer_model');
+			$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
+		} else {
+			$customer = array();
+		}
+
+		// Get the subscription details
+		$recur = $xml->recur;
+		
+		// Validate the start date to make sure it is in the future
+		if(isset($recur->start_date)) {
+			if(strtotime($recur->start_date) < time()) {
+			die($this->response->Error(5001));
+			} else {
+				$start_date = date('Y-m-d', strtotime($recur->start_date));
+			}
+		} else {
+			$start_date = date('Y-m-d', (time() + ($recur->interval * 86400)));
+		}
+		
+		// If an end date was passed, make sure it's valid
+		if(isset($recur->end_date)) {
+			if(strtotime($recur->end_date) < time()) {
+			die($this->response->Error(5002));
+			} elseif(strtotime($recur->end_date) < strtotime($start_date)) {
+				die($this->response->Error(5003));
+			} else {
+				$end_date = date('Y-m-d', strtotime($recur->end_date));
+			}
+		} else {
+			// Find the end date based on the interval and the max end date
+			$end_date = date('Y-m-d', strtotime($start_date) + ($this->config->item('max_recurring_days_from_today') * 86400));
+		}
+		
 		// Load the proper library
 		$gateway_name = $gateway['name'];
 		$this->load->library('payment/'.$gateway_name);
-		return $this->$gateway_name->NewRecurring($client_id, $order_id, $gateway, $customer, $params);
+		return $this->$gateway_name->Recur($client_id, $order_id, $gateway, $customer, $params, $start_date, $end_date, $recur->interval, $credit_card);
 	}
 	
 	function CancelRecurring($client_id, $params)

@@ -75,7 +75,10 @@ class Response
 							'3001' => 'Gateway ID is required.',
 							'4000' => 'Invalid customer ID.',
 							'4001' => 'Inavlid Order ID.',
-							'5000' => 'Not a valid recurring subscription'
+							'5000' => 'Not a valid recurring subscription.',
+							'5001' => 'Start date cannot be in the past.',
+							'5002' => 'End date cannot be in the past',
+							'5003' => 'End date must be later than start date.'
 							);
 		
 				

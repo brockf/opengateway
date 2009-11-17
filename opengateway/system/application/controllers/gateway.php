@@ -48,16 +48,14 @@ class Gateway extends Controller {
 			die($this->response->Error(1002));
 		}
 		
-		$request_params = $xml->params->children();
-		
-		foreach($request_params as $key => $value)
+		foreach($xml as $key => $value)
 		{
 			$params[(string)$key] = (string)$value;
 		}
 		
 		// Load the correct model and method
 		$this->load->model($request_type_model);
-		$response = $this->$request_type_model->$request_type($client_id, $params);
+		$response = $this->$request_type_model->$request_type($client_id, $params, $xml);
 		
 		// Echo the response
 		echo $this->response->FormatResponse($response);

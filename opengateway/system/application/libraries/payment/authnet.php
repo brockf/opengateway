@@ -1,8 +1,9 @@
 <?php
 class authnet
 {
-	function Charge($client_id, $order_id, $gateway, $customer, $params)
-	{	
+	function Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card)
+	{			
+		
 		// Get the proper URL
 		switch($gateway['mode'])
 		{
@@ -19,32 +20,40 @@ class authnet
 		
 		$post_values = array(
 			"x_login"			=> $gateway['login_id'],
-			"x_tran_key"		=> $gateway['transaction_key'],
-		
+			"x_tran_key"		=> $gateway['transaction_key'],		
 			"x_version"			=> "3.1",
 			"x_delim_data"		=> "TRUE",
 			"x_delim_char"		=> "|",
-			"x_relay_response"	=> "FALSE",
-		
+			"x_relay_response"	=> "FALSE",		
 			"x_type"			=> "AUTH_CAPTURE",
 			"x_method"			=> "CC",
-			"x_card_num"		=> $params['card_num'],
-			"x_exp_date"		=> $params['exp_month'].$params['exp_year'],
-		
-			"x_amount"			=> $params['amount'],
-			"x_description"		=> $params['description'],
-		
-			"x_first_name"		=> $customer['first_name'],
-			"x_last_name"		=> $customer['last_name'],
-			"x_address"			=> $customer['address_1'].'-'.$customer['address_2'],
-			"x_state"			=> $customer['state'],
-			"x_zip"				=> $customer['postal_code']
+			"x_card_num"		=> $credit_card->card_num,
+			"x_exp_date"		=> $credit_card->exp_month.$credit_card->exp_year,
+			"x_amount"			=> $params['amount']
 			);
+
+		if(isset($credit_card->cvv)) {
+			$post_values['x_card_code'] = $credit_card->cvv;
+		}	
+		
+		if(isset($params['customer_id'])) {
+			$post_values['x_first_name'] = $customer['first_name'];
+			$post_values['x_last_name'] = $customer['last_name'];
+			$post_values['x_address'] = $customer['address_1'].'-'.$customer['address_2'];
+			$post_values['x_state'] = $customer['state'];
+			$post_values['x_zip'] = $customer['postal_code'];
+		}
+		
+		if(isset($params['description'])) {
+			$post_values['x_description'] = $params['description'];
+		}
 			
 		$post_string = "";
 		foreach( $post_values as $key => $value )
 			{ $post_string .= "$key=" . urlencode( $value ) . "&"; }
 		$post_string = rtrim( $post_string, "& " );
+		
+		echo $post_string;
 		
 		$response = $this->Process($order_id, $post_url, $post_string);
 		
@@ -61,7 +70,7 @@ class authnet
 		return $response;
 	}
 
-function Auth($client_id, $order_id, $gateway, $customer, $params)
+	function Auth($client_id, $order_id, $gateway, $customer, $params, $credit_card)
 	{	
 		// Get the proper URL
 		switch($gateway['mode'])
@@ -79,27 +88,33 @@ function Auth($client_id, $order_id, $gateway, $customer, $params)
 		
 		$post_values = array(
 			"x_login"			=> $gateway['login_id'],
-			"x_tran_key"		=> $gateway['transaction_key'],
-		
+			"x_tran_key"		=> $gateway['transaction_key'],		
 			"x_version"			=> "3.1",
 			"x_delim_data"		=> "TRUE",
 			"x_delim_char"		=> "|",
-			"x_relay_response"	=> "FALSE",
-		
+			"x_relay_response"	=> "FALSE",		
 			"x_type"			=> "AUTH_ONLY",
 			"x_method"			=> "CC",
-			"x_card_num"		=> $params['card_num'],
-			"x_exp_date"		=> $params['exp_month'].$params['exp_year'],
-		
-			"x_amount"			=> $params['amount'],
-			"x_description"		=> $params['description'],
-		
-			"x_first_name"		=> $customer['first_name'],
-			"x_last_name"		=> $customer['last_name'],
-			"x_address"			=> $customer['address_1'].' - '.$customer['address_2'],
-			"x_state"			=> $customer['state'],
-			"x_zip"				=> $customer['postal_code']
+			"x_card_num"		=> $credit_card->card_num,
+			"x_exp_date"		=> $credit_card->exp_month.$credit_card->exp_year,
+			"x_amount"			=> $params['amount']
 			);
+
+		if(isset($credit_card->cvv)) {
+			$post_values['x_card_code'] = $credit_card->cvv;
+		}	
+		
+		if(isset($params['customer_id'])) {
+			$post_values['x_first_name'] = $customer['first_name'];
+			$post_values['x_last_name'] = $customer['last_name'];
+			$post_values['x_address'] = $customer['address_1'].'-'.$customer['address_2'];
+			$post_values['x_state'] = $customer['state'];
+			$post_values['x_zip'] = $customer['postal_code'];
+		}
+		
+		if(isset($params['description'])) {
+			$post_values['x_description'] = $params['description'];
+		}
 			
 		$post_string = "";
 		foreach( $post_values as $key => $value )
@@ -288,7 +303,7 @@ function Auth($client_id, $order_id, $gateway, $customer, $params)
 		return $response;
 	}
 	
-	function NewRecurring($client_id, $order_id, $gateway, $customer, $params)
+	function Recur($client_id, $order_id, $gateway, $customer, $params, $start_date, $end_date, $interval, $credit_card)
 	{		
 		$CI =& get_instance();
 		
@@ -304,42 +319,41 @@ function Auth($client_id, $order_id, $gateway, $customer, $params)
 			case 'dev':
 				$post_url = $gateway['arb_url_dev'];
 			break;
-		}
+		} 
+		
+		// Figure the total number of occurrences
+		$total_occurences = round((strtotime($end_date) - strtotime($start_date)) / ($interval * 86400), 0);
 		
 		//build xml to post
-		$content =
-        "<?xml version=\"1.0\" encoding=\"utf-8\"?>" .
-        "<ARBCreateSubscriptionRequest xmlns=\"AnetApi/xml/v1/schema/AnetApiSchema.xsd\">" .
-        "<merchantAuthentication>".
-        "<name>" . $gateway['login_id'] . "</name>".
-        "<transactionKey>" . $gateway['transaction_key'] . "</transactionKey>".
-        "</merchantAuthentication>".
-		"<refId>" . $order_id . "</refId>".
-        "<subscription>".
-        "<name>" . $params['description'] . "</name>".
-        "<paymentSchedule>".
-        "<interval>".
-        "<length>". $params['interval'] ."</length>".
-        "<unit>". $params['interval_unit'] ."</unit>".
-        "</interval>".
-        "<startDate>" . $params['start_date'] . "</startDate>".
-        "<totalOccurrences>". $params['total_occurences'] . "</totalOccurrences>".
-        "<trialOccurrences>". $params['trial_occurences'] . "</trialOccurrences>".
-        "</paymentSchedule>".
-        "<amount>". $params['amount'] ."</amount>".
-        "<trialAmount>" . $params['trial_amount'] . "</trialAmount>".
-        "<payment>".
-        "<creditCard>".
-        "<cardNumber>" . $params['card_num'] . "</cardNumber>".
-        "<expirationDate>" . $params['exp_month'].$params['exp_year'] . "</expirationDate>".
-        "</creditCard>".
-        "</payment>".
-        "<billTo>".
-        "<firstName>". $customer['first_name'] . "</firstName>".
-        "<lastName>" . $customer['last_name']. "</lastName>".
-        "</billTo>".
-        "</subscription>".
-        "</ARBCreateSubscriptionRequest>";
+		$content['ARBCreateSubscriptionRequest']['merchantAuthentication']['name'] = $gateway['login_id'];
+		$content['ARBCreateSubscriptionRequest']['merchantAuthentication']['transactionKey'] = $gateway['transaction_key'];
+		$content['ARBCreateSubscriptionRequest']['refId'] = $order_id;
+		$content['ARBCreateSubscriptionRequest']['subscription']['name'] = $params['description'];
+		$content['ARBCreateSubscriptionRequest']['subscription']['paymentSchedule']['interval']['length'] = $interval;
+		$content['ARBCreateSubscriptionRequest']['subscription']['paymentSchedule']['interval']['unit'] = 'days';
+		$content['ARBCreateSubscriptionRequest']['subscription']['paymentSchedule']['startDate'] = $start_date;
+		$content['ARBCreateSubscriptionRequest']['subscription']['paymentSchedule']['totalOccurrences'] = $total_occurences;
+		//$content['ARBCreateSubscriptionRequest']['subscription']['paymentSchedule']['trialOccurrences'] = $recur->trial_occurences;
+		$content['ARBCreateSubscriptionRequest']['subscription']['amount'] = $params['amount'];
+		//$content['ARBCreateSubscriptionRequest']['subscription']['trialAmount'] = $params['trial_amount'];
+		$content['ARBCreateSubscriptionRequest']['subscription']['payment']['creditCard']['cardNumber'] = $credit_card->card_num;
+		$content['ARBCreateSubscriptionRequest']['subscription']['payment']['creditCard']['cardNumber'] = $credit_card->card_num;
+		$content['ARBCreateSubscriptionRequest']['subscription']['payment']['creditCard']['expirationDate'] = $credit_card->exp_month.$credit_card->exp_year;
+		$content['ARBCreateSubscriptionRequest']['subscription']['billTo']['firstName'] = $customer['first_name'];
+		$content['ARBCreateSubscriptionRequest']['subscription']['billTo']['lastName'] = $customer['last_name'];
+		
+		//Load the XML library
+		$CI->load->library('xml');
+		$CI->xml->setXMLEncoding('utf-8');
+		$CI->xml->setXMLVersion('1.0');
+		
+		//Format the XML
+		$CI->xml->setArray($content);
+		$content = $CI->xml->outputXML('return');
+		
+		$content = str_replace('<ARBCreateSubscriptionRequest>', '<ARBCreateSubscriptionRequest xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd">', $content);
+		
+		echo $content;
 		
 		$response = $this->ProcessXML($order_id, $post_url, $content);
 
