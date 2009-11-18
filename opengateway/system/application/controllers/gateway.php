@@ -40,6 +40,9 @@ class Gateway extends Controller {
 		// Get the request type
 		$request_type = (string)$xml->request;
 		
+		// Make sure the first letter is capitalized
+		$request_type = ucfirst($request_type);
+		
 		// validate the request type
 		$this->load->model('request_type_model', 'request_type');
 		$request_type_model = $this->request_type->ValidateRequestType($request_type);

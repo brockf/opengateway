@@ -353,8 +353,6 @@ class authnet
 		
 		$content = str_replace('<ARBCreateSubscriptionRequest>', '<ARBCreateSubscriptionRequest xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd">', $content);
 		
-		echo $content;
-		
 		$response = $this->ProcessXML($order_id, $post_url, $content);
 
 		if($response['success'] == TRUE){
