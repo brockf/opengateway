@@ -10,18 +10,16 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 	</authentication>
 	<request>Recur</request>
 	<gateway_id>3</gateway_id>
-	<customer_id>2</customer_id>
 	<amount>24.99</amount>
 	<description>Monthly Supply</description>
 	<credit_card>
+		<name>David Ryan</name>
 		<card_num>4007000000027</card_num>
 		<exp_month>10</exp_month>
 		<exp_year>2011</exp_year>
 		<cvv>123</cvv>
 	</credit_card>
 	<recur>
-		
-		<end_date>2010-12-01</end_date>
 		<interval>30</interval>
 		<notify_url>http://localhost/notify.php</notify_url>
 	</recur>

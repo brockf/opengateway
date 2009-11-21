@@ -307,9 +307,6 @@ class Gateway_model extends Model
 		// Get the credit card object
 		$credit_card = $xml->credit_card;
 		
-		// Create a new order
-		$CI->load->model('order_model');
-		$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $credit_card);
 		
 		// Validate the required fields
 		$this->load->library('field_validation');
@@ -321,20 +318,27 @@ class Gateway_model extends Model
 		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
 		
 		// Get the customer details if a customer id was included
+		$CI->load->model('customer_model');
+		
 		if(isset($params['customer_id'])) {
-			$CI->load->model('customer_model');
 			$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
 		} else {
-			$customer = array();
+			// If a customer ID was not passed we need to make sure that a cardholder name was
+			if(!isset($credit_card->name)) {
+				die($this->response->Error(5004));
+			} else {
+				$name = explode(' ', $credit_card->name);
+				$customer['customer_id'] = $CI->customer_model->NewARBCustomer($client_id, $name[0], $name[1]);
+			}
 		}
-
+		
 		// Get the subscription details
 		$recur = $xml->recur;
 		
 		// Validate the start date to make sure it is in the future
 		if(isset($recur->start_date)) {
 			if(strtotime($recur->start_date) < time()) {
-			die($this->response->Error(5001));
+				die($this->response->Error(5001));
 			} else {
 				$start_date = date('Y-m-d', strtotime($recur->start_date));
 			}
@@ -345,7 +349,7 @@ class Gateway_model extends Model
 		// If an end date was passed, make sure it's valid
 		if(isset($recur->end_date)) {
 			if(strtotime($recur->end_date) < time()) {
-			die($this->response->Error(5002));
+				die($this->response->Error(5002));
 			} elseif(strtotime($recur->end_date) < strtotime($start_date)) {
 				die($this->response->Error(5003));
 			} else {
@@ -356,10 +360,17 @@ class Gateway_model extends Model
 			$end_date = date('Y-m-d', strtotime($start_date) + ($this->config->item('max_recurring_days_from_today') * 86400));
 		}
 		
+		// Figure the total number of occurrences
+		$total_occurrences = round((strtotime($end_date) - strtotime($start_date)) / ($recur->interval * 86400), 0);
+		
+		// Save the subscription info
+		$CI->load->model('subscription_model');
+		$subscription_id = $CI->subscription_model->SaveSubscription($client_id, $params['gateway_id'], $customer['customer_id'], $start_date, $end_date, $total_occurrences, $params);
+		
 		// Load the proper library
 		$gateway_name = $gateway['name'];
 		$this->load->library('payment/'.$gateway_name);
-		return $this->$gateway_name->Recur($client_id, $order_id, $gateway, $customer, $params, $start_date, $end_date, $recur->interval, $credit_card);
+		return $this->$gateway_name->Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $recur->interval, $credit_card, $subscription_id);
 	}
 	
 	function CancelRecurring($client_id, $params)

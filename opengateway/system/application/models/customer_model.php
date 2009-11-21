@@ -32,6 +32,29 @@ class Customer_model extends Model
 							
 	}
 	
+	function NewARBCustomer($client_id, $first_name, $last_name, $company = '', $internal_id = '', $address_1 = '', $address_2 = '', $city = '', $state = '', $postal_code = '', $phone = '', $email = '')
+	{
+		$insert_data = array(
+							'client_id'		=> $client_id,
+							'first_name' 	=> $first_name,
+							'last_name' 	=> $last_name,
+							'company'		=> $company,
+							'internal_id' 	=> $internal_id,
+							'address_1'		=> $address_1,
+							'address_2'		=> $address_2,
+							'city'			=> $city,
+							'state'			=> $state,
+							'postal_code'	=> $postal_code,
+							'phone'			=> $phone,
+							'email'			=> $email,
+							'active'		=> 1
+							);
+		$this->db->insert('customers', $insert_data);
+		
+		return $this->db->insert_id();
+							
+	}
+	
 	// Get the customer info
 	function GetCustomerDetails($client_id, $customer_id)
 	{

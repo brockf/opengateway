@@ -78,7 +78,10 @@ class Response
 							'5000' => 'Not a valid recurring subscription.',
 							'5001' => 'Start date cannot be in the past.',
 							'5002' => 'End date cannot be in the past',
-							'5003' => 'End date must be later than start date.'
+							'5003' => 'End date must be later than start date.',
+							'5004' => 'A customer ID or cardholder name must be supplied.',
+							'5005' => 'Error creating customer profile.',
+							'5006' => 'Error creating customer payment profile.'
 							);
 		
 				

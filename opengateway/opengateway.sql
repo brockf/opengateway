@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50136
 File Encoding         : 65001
 
-Date: 2009-11-16 23:40:12
+Date: 2009-11-20 22:20:51
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -62,7 +62,7 @@ CREATE TABLE `authnet_log` (
   `card_code_response` varchar(1) DEFAULT NULL,
   `cardholder_authentication_verification_response` varchar(1) DEFAULT NULL,
   PRIMARY KEY (`response_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=129 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=131 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of authnet_log
@@ -195,6 +195,8 @@ INSERT INTO `authnet_log` VALUES ('125', '75', '3', '2', '33', '(TESTMODE) Credi
 INSERT INTO `authnet_log` VALUES ('126', '76', '1', '1', '1', '(TESTMODE) This transaction has been approved.', '0', 'P', '0', '', 'Goods and Services', '19.99', 'CC', 'auth_only', '', 'David', 'Ryan', '', '123 Main St-APT 1', '', 'CO', '80220', '', '', '', '', '', '', null, '', '', '', '', '', '0.00', '0.00', '0.00', '0', '', '588997408689BBD9B68FC22901CDE7BA', '', '');
 INSERT INTO `authnet_log` VALUES ('127', '77', '1', '1', '1', '(TESTMODE) This transaction has been approved.', '0', 'P', '0', '', 'Goods and Services', '19.99', 'CC', 'auth_only', '', 'David', 'Ryan', '', '123 Main St-APT 1', '', 'CO', '80220', '', '', '', '', '', '', null, '', '', '', '', '', '0.00', '0.00', '0.00', '0', '', '588997408689BBD9B68FC22901CDE7BA', '', '');
 INSERT INTO `authnet_log` VALUES ('128', '78', '1', '1', '1', '(TESTMODE) This transaction has been approved.', '0', 'P', '0', '', 'Goods and Services', '19.99', 'CC', 'auth_only', '', 'David', 'Ryan', '', '123 Main St-APT 1', '', 'CO', '80220', '', '', '', '', '', '', null, '', '', '', '', '', '0.00', '0.00', '0.00', '0', '', '588997408689BBD9B68FC22901CDE7BA', '', '');
+INSERT INTO `authnet_log` VALUES ('129', '85', '1', '1', '1', '(TESTMODE) This transaction has been approved.', '0', 'P', '0', '', 'Goods and Services', '19.99', 'CC', 'auth_capture', '', 'David', 'Ryan', '', '123 Main St-APT 1', '', 'CO', '80220', '', '', '', '', '', '', null, '', '', '', '', '', '0.00', '0.00', '0.00', '0', '', '588997408689BBD9B68FC22901CDE7BA', '', '');
+INSERT INTO `authnet_log` VALUES ('130', '86', '1', '1', '1', '(TESTMODE) This transaction has been approved.', '0', 'P', '0', '', 'Goods and Services', '19.99', 'CC', 'auth_capture', '', 'David', 'Ryan', '', '123 Main St-APT 1', '', 'CO', '80220', '', '', '', '', '', '', null, '', '', '', '', '', '0.00', '0.00', '0.00', '0', '', '588997408689BBD9B68FC22901CDE7BA', '', '');
 
 -- ----------------------------
 -- Table structure for `client_gateway_params`
@@ -397,13 +399,47 @@ CREATE TABLE `customers` (
   `email` varchar(255) NOT NULL,
   `active` tinyint(4) NOT NULL,
   PRIMARY KEY (`customer_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=37 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of customers
 -- ----------------------------
 INSERT INTO `customers` VALUES ('1', '17', 'David', 'Ryan', 'ABC Inc.', '12343434', '123 Main St', 'APT 1', 'Denver', 'CO', '80220', '', '', '1');
 INSERT INTO `customers` VALUES ('2', '17', 'David', 'Ryan', 'ABC Inc.', '12343434', '123 Main St', 'APT 1', 'Denver', 'CO', '80220', '3033319812', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('3', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('4', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('5', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('6', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('7', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('8', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('9', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('10', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('11', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('12', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('13', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('14', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('15', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('16', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('17', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('18', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('19', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('20', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('21', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('22', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('23', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('24', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('25', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('26', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('27', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('28', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('29', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('30', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('31', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('32', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('33', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('34', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('35', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
+INSERT INTO `customers` VALUES ('36', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '', '', '1');
 
 -- ----------------------------
 -- Table structure for `external_api_required_fields`
@@ -496,7 +532,7 @@ CREATE TABLE `order_authorizations` (
   `tran_id` int(11) NOT NULL,
   `authorization_code` varchar(20) NOT NULL,
   PRIMARY KEY (`order_authorization_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=27 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=29 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of order_authorizations
@@ -527,6 +563,8 @@ INSERT INTO `order_authorizations` VALUES ('23', '74', '0', '000000');
 INSERT INTO `order_authorizations` VALUES ('24', '76', '0', '000000');
 INSERT INTO `order_authorizations` VALUES ('25', '77', '0', '000000');
 INSERT INTO `order_authorizations` VALUES ('26', '78', '0', '000000');
+INSERT INTO `order_authorizations` VALUES ('27', '85', '0', '000000');
+INSERT INTO `order_authorizations` VALUES ('28', '86', '0', '000000');
 
 -- ----------------------------
 -- Table structure for `orders`
@@ -536,100 +574,193 @@ CREATE TABLE `orders` (
   `order_id` int(11) NOT NULL AUTO_INCREMENT,
   `client_id` int(11) NOT NULL,
   `gateway_id` int(11) NOT NULL,
+  `subscription_id` int(11) NOT NULL,
   `card_last_four` varchar(4) NOT NULL,
   `amount` varchar(11) NOT NULL,
   `customer_ip_address` varchar(14) DEFAULT NULL,
   `timestamp` datetime NOT NULL,
   PRIMARY KEY (`order_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=85 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=177 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of orders
 -- ----------------------------
-INSERT INTO `orders` VALUES ('1', '17', '3', '0027', '19.99', null, '0000-00-00 00:00:00');
-INSERT INTO `orders` VALUES ('2', '17', '3', '0027', '19.99', null, '2009-11-11 01:05:36');
-INSERT INTO `orders` VALUES ('3', '17', '3', '0027', '19.99', null, '2009-11-11 19:53:14');
-INSERT INTO `orders` VALUES ('4', '17', '3', '0027', '19.99', null, '2009-11-11 19:53:14');
-INSERT INTO `orders` VALUES ('5', '17', '3', '0027', '19.99', null, '2009-11-11 19:53:39');
-INSERT INTO `orders` VALUES ('6', '17', '3', '0027', '19.99', null, '2009-11-11 19:54:46');
-INSERT INTO `orders` VALUES ('7', '17', '3', '0027', '19.99', null, '2009-11-11 19:56:57');
-INSERT INTO `orders` VALUES ('8', '17', '3', '0027', '19.99', null, '2009-11-11 19:58:25');
-INSERT INTO `orders` VALUES ('9', '17', '3', '0027', '19.99', null, '2009-11-11 19:59:08');
-INSERT INTO `orders` VALUES ('10', '17', '3', '0027', '19.99', null, '2009-11-11 20:08:03');
-INSERT INTO `orders` VALUES ('11', '17', '3', '0027', '19.99', null, '2009-11-11 20:09:33');
-INSERT INTO `orders` VALUES ('12', '17', '3', '0027', '19.99', null, '2009-11-11 20:10:14');
-INSERT INTO `orders` VALUES ('13', '17', '3', '0027', '19.99', null, '2009-11-11 20:10:33');
-INSERT INTO `orders` VALUES ('14', '17', '3', '0027', '19.99', null, '2009-11-11 20:11:04');
-INSERT INTO `orders` VALUES ('15', '17', '3', '0027', '19.99', null, '2009-11-11 20:12:57');
-INSERT INTO `orders` VALUES ('16', '17', '3', '0027', '19.99', null, '2009-11-11 20:13:03');
-INSERT INTO `orders` VALUES ('17', '17', '3', '0027', '19.99', null, '2009-11-11 20:15:16');
-INSERT INTO `orders` VALUES ('18', '17', '3', '0027', '19.99', null, '2009-11-11 20:17:00');
-INSERT INTO `orders` VALUES ('19', '17', '3', '0027', '19.99', null, '2009-11-11 21:00:32');
-INSERT INTO `orders` VALUES ('20', '17', '3', '0027', '19.99', null, '2009-11-11 21:01:40');
-INSERT INTO `orders` VALUES ('21', '17', '3', '0027', '19.99', null, '2009-11-11 21:02:03');
-INSERT INTO `orders` VALUES ('22', '17', '3', '0027', '19.99', null, '2009-11-11 21:03:34');
-INSERT INTO `orders` VALUES ('23', '17', '3', '0027', '19.99', null, '2009-11-11 21:03:39');
-INSERT INTO `orders` VALUES ('24', '17', '3', '0027', '19.99', null, '2009-11-11 21:04:59');
-INSERT INTO `orders` VALUES ('25', '17', '3', '0027', '19.99', null, '2009-11-11 21:05:24');
-INSERT INTO `orders` VALUES ('26', '17', '3', '0027', '19.99', null, '2009-11-11 21:07:03');
-INSERT INTO `orders` VALUES ('27', '17', '3', '0027', '19.99', null, '2009-11-11 21:09:19');
-INSERT INTO `orders` VALUES ('28', '17', '3', '0027', '19.99', null, '2009-11-11 21:28:53');
-INSERT INTO `orders` VALUES ('29', '17', '3', '0027', '19.99', null, '2009-11-11 21:29:39');
-INSERT INTO `orders` VALUES ('30', '17', '3', '0027', '19.99', null, '2009-11-11 21:29:52');
-INSERT INTO `orders` VALUES ('31', '17', '3', '0027', '19.99', null, '2009-11-11 21:30:28');
-INSERT INTO `orders` VALUES ('32', '17', '3', '0027', '19.99', null, '2009-11-11 21:31:00');
-INSERT INTO `orders` VALUES ('33', '17', '3', '0027', '19.99', null, '2009-11-11 21:36:42');
-INSERT INTO `orders` VALUES ('34', '17', '3', '0027', '19.99', null, '2009-11-15 03:17:50');
-INSERT INTO `orders` VALUES ('35', '17', '3', '0027', '19.99', null, '2009-11-15 03:18:06');
-INSERT INTO `orders` VALUES ('36', '17', '3', '0027', '19.99', null, '2009-11-15 03:22:18');
-INSERT INTO `orders` VALUES ('37', '17', '3', '0027', '19.99', null, '2009-11-16 01:12:41');
-INSERT INTO `orders` VALUES ('38', '17', '3', '0027', '19.99', null, '2009-11-16 01:15:41');
-INSERT INTO `orders` VALUES ('39', '17', '3', '0027', '24.99', null, '2009-11-16 01:15:50');
-INSERT INTO `orders` VALUES ('40', '17', '3', '0027', '24.99', null, '2009-11-16 01:19:38');
-INSERT INTO `orders` VALUES ('41', '17', '3', '0027', '24.99', null, '2009-11-16 01:20:36');
-INSERT INTO `orders` VALUES ('42', '17', '3', '0027', '24.99', null, '2009-11-16 01:21:48');
-INSERT INTO `orders` VALUES ('43', '17', '3', '0027', '24.99', null, '2009-11-16 01:27:10');
-INSERT INTO `orders` VALUES ('44', '17', '3', '0027', '24.99', null, '2009-11-16 01:27:51');
-INSERT INTO `orders` VALUES ('45', '17', '3', '0027', '24.99', null, '2009-11-16 01:30:22');
-INSERT INTO `orders` VALUES ('46', '17', '3', '0027', '24.99', null, '2009-11-16 01:30:45');
-INSERT INTO `orders` VALUES ('47', '17', '3', '0027', '24.99', null, '2009-11-16 01:31:43');
-INSERT INTO `orders` VALUES ('48', '17', '3', '0027', '24.99', null, '2009-11-16 01:32:42');
-INSERT INTO `orders` VALUES ('49', '17', '3', '0027', '24.99', null, '2009-11-16 01:33:21');
-INSERT INTO `orders` VALUES ('50', '17', '3', '0027', '24.99', null, '2009-11-16 01:42:48');
-INSERT INTO `orders` VALUES ('51', '17', '3', '0027', '24.99', null, '2009-11-16 01:42:58');
-INSERT INTO `orders` VALUES ('52', '17', '3', '0027', '19.99', null, '2009-11-17 01:21:18');
-INSERT INTO `orders` VALUES ('53', '17', '3', '0', '19.99', null, '2009-11-17 01:35:51');
-INSERT INTO `orders` VALUES ('54', '17', '3', '0', '19.99', null, '2009-11-17 01:37:19');
-INSERT INTO `orders` VALUES ('55', '17', '3', '0', '19.99', null, '2009-11-17 02:22:38');
-INSERT INTO `orders` VALUES ('56', '17', '3', '0', '19.99', null, '2009-11-17 02:25:15');
-INSERT INTO `orders` VALUES ('57', '17', '3', '0', '19.99', null, '2009-11-17 02:25:38');
-INSERT INTO `orders` VALUES ('58', '17', '3', '0027', '19.99', null, '2009-11-17 02:25:54');
-INSERT INTO `orders` VALUES ('59', '17', '3', '0027', '19.99', null, '2009-11-17 02:27:45');
-INSERT INTO `orders` VALUES ('60', '17', '3', '0027', '19.99', null, '2009-11-17 02:29:11');
-INSERT INTO `orders` VALUES ('61', '17', '3', '0027', '19.99', null, '2009-11-17 02:35:34');
-INSERT INTO `orders` VALUES ('62', '17', '3', '0027', '19.99', null, '2009-11-17 02:36:44');
-INSERT INTO `orders` VALUES ('63', '17', '3', '0027', '19.99', null, '2009-11-17 02:39:20');
-INSERT INTO `orders` VALUES ('64', '17', '3', '0027', '19.99', null, '2009-11-17 02:41:16');
-INSERT INTO `orders` VALUES ('65', '17', '3', '0027', '19.99', '127.0.0.1', '2009-11-17 02:41:27');
-INSERT INTO `orders` VALUES ('66', '17', '3', '0027', '19.99', '127.0.0.1', '2009-11-17 02:46:18');
-INSERT INTO `orders` VALUES ('67', '17', '3', '0027', '19.99', '127.0.0.1', '2009-11-17 02:47:33');
-INSERT INTO `orders` VALUES ('68', '17', '3', '0027', '19.99', '127.0.0.1', '2009-11-17 02:48:33');
-INSERT INTO `orders` VALUES ('69', '17', '3', '0027', '19.99', '127.0.0.1', '2009-11-17 02:49:08');
-INSERT INTO `orders` VALUES ('70', '17', '3', '0027', '19.99', '127.0.0.1', '2009-11-17 02:50:33');
-INSERT INTO `orders` VALUES ('71', '17', '3', '0027', '19.99', '127.0.0.1', '2009-11-17 02:51:25');
-INSERT INTO `orders` VALUES ('72', '17', '3', '0027', '19.99', '127.0.0.1', '2009-11-17 02:51:37');
-INSERT INTO `orders` VALUES ('73', '17', '3', '0027', '19.99', null, '2009-11-17 02:52:05');
-INSERT INTO `orders` VALUES ('74', '17', '3', '0027', '19.99', '127.0.0.1', '2009-11-17 02:56:26');
-INSERT INTO `orders` VALUES ('75', '17', '3', '0', '19.99', '127.0.0.1', '2009-11-17 02:57:56');
-INSERT INTO `orders` VALUES ('76', '17', '3', '0', '19.99', '127.0.0.1', '2009-11-17 02:59:17');
-INSERT INTO `orders` VALUES ('77', '17', '3', '0027', '19.99', '127.0.0.1', '2009-11-17 02:59:42');
-INSERT INTO `orders` VALUES ('78', '17', '3', '0027', '19.99', '127.0.0.1', '2009-11-17 03:20:36');
-INSERT INTO `orders` VALUES ('79', '17', '3', '0', '24.99', null, '2009-11-17 03:48:56');
-INSERT INTO `orders` VALUES ('80', '17', '3', '0', '24.99', null, '2009-11-17 03:49:51');
-INSERT INTO `orders` VALUES ('81', '17', '3', '0', '24.99', null, '2009-11-17 03:52:18');
-INSERT INTO `orders` VALUES ('82', '17', '3', '0027', '24.99', null, '2009-11-17 03:53:59');
-INSERT INTO `orders` VALUES ('83', '17', '3', '0027', '24.99', null, '2009-11-17 03:56:43');
-INSERT INTO `orders` VALUES ('84', '17', '3', '0027', '24.99', null, '2009-11-17 05:05:43');
+INSERT INTO `orders` VALUES ('1', '17', '3', '0', '0027', '19.99', null, '0000-00-00 00:00:00');
+INSERT INTO `orders` VALUES ('2', '17', '3', '0', '0027', '19.99', null, '2009-11-11 01:05:36');
+INSERT INTO `orders` VALUES ('3', '17', '3', '0', '0027', '19.99', null, '2009-11-11 19:53:14');
+INSERT INTO `orders` VALUES ('4', '17', '3', '0', '0027', '19.99', null, '2009-11-11 19:53:14');
+INSERT INTO `orders` VALUES ('5', '17', '3', '0', '0027', '19.99', null, '2009-11-11 19:53:39');
+INSERT INTO `orders` VALUES ('6', '17', '3', '0', '0027', '19.99', null, '2009-11-11 19:54:46');
+INSERT INTO `orders` VALUES ('7', '17', '3', '0', '0027', '19.99', null, '2009-11-11 19:56:57');
+INSERT INTO `orders` VALUES ('8', '17', '3', '0', '0027', '19.99', null, '2009-11-11 19:58:25');
+INSERT INTO `orders` VALUES ('9', '17', '3', '0', '0027', '19.99', null, '2009-11-11 19:59:08');
+INSERT INTO `orders` VALUES ('10', '17', '3', '0', '0027', '19.99', null, '2009-11-11 20:08:03');
+INSERT INTO `orders` VALUES ('11', '17', '3', '0', '0027', '19.99', null, '2009-11-11 20:09:33');
+INSERT INTO `orders` VALUES ('12', '17', '3', '0', '0027', '19.99', null, '2009-11-11 20:10:14');
+INSERT INTO `orders` VALUES ('13', '17', '3', '0', '0027', '19.99', null, '2009-11-11 20:10:33');
+INSERT INTO `orders` VALUES ('14', '17', '3', '0', '0027', '19.99', null, '2009-11-11 20:11:04');
+INSERT INTO `orders` VALUES ('15', '17', '3', '0', '0027', '19.99', null, '2009-11-11 20:12:57');
+INSERT INTO `orders` VALUES ('16', '17', '3', '0', '0027', '19.99', null, '2009-11-11 20:13:03');
+INSERT INTO `orders` VALUES ('17', '17', '3', '0', '0027', '19.99', null, '2009-11-11 20:15:16');
+INSERT INTO `orders` VALUES ('18', '17', '3', '0', '0027', '19.99', null, '2009-11-11 20:17:00');
+INSERT INTO `orders` VALUES ('19', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:00:32');
+INSERT INTO `orders` VALUES ('20', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:01:40');
+INSERT INTO `orders` VALUES ('21', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:02:03');
+INSERT INTO `orders` VALUES ('22', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:03:34');
+INSERT INTO `orders` VALUES ('23', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:03:39');
+INSERT INTO `orders` VALUES ('24', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:04:59');
+INSERT INTO `orders` VALUES ('25', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:05:24');
+INSERT INTO `orders` VALUES ('26', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:07:03');
+INSERT INTO `orders` VALUES ('27', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:09:19');
+INSERT INTO `orders` VALUES ('28', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:28:53');
+INSERT INTO `orders` VALUES ('29', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:29:39');
+INSERT INTO `orders` VALUES ('30', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:29:52');
+INSERT INTO `orders` VALUES ('31', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:30:28');
+INSERT INTO `orders` VALUES ('32', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:31:00');
+INSERT INTO `orders` VALUES ('33', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:36:42');
+INSERT INTO `orders` VALUES ('34', '17', '3', '0', '0027', '19.99', null, '2009-11-15 03:17:50');
+INSERT INTO `orders` VALUES ('35', '17', '3', '0', '0027', '19.99', null, '2009-11-15 03:18:06');
+INSERT INTO `orders` VALUES ('36', '17', '3', '0', '0027', '19.99', null, '2009-11-15 03:22:18');
+INSERT INTO `orders` VALUES ('37', '17', '3', '0', '0027', '19.99', null, '2009-11-16 01:12:41');
+INSERT INTO `orders` VALUES ('38', '17', '3', '0', '0027', '19.99', null, '2009-11-16 01:15:41');
+INSERT INTO `orders` VALUES ('39', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:15:50');
+INSERT INTO `orders` VALUES ('40', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:19:38');
+INSERT INTO `orders` VALUES ('41', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:20:36');
+INSERT INTO `orders` VALUES ('42', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:21:48');
+INSERT INTO `orders` VALUES ('43', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:27:10');
+INSERT INTO `orders` VALUES ('44', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:27:51');
+INSERT INTO `orders` VALUES ('45', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:30:22');
+INSERT INTO `orders` VALUES ('46', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:30:45');
+INSERT INTO `orders` VALUES ('47', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:31:43');
+INSERT INTO `orders` VALUES ('48', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:32:42');
+INSERT INTO `orders` VALUES ('49', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:33:21');
+INSERT INTO `orders` VALUES ('50', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:42:48');
+INSERT INTO `orders` VALUES ('51', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:42:58');
+INSERT INTO `orders` VALUES ('52', '17', '3', '0', '0027', '19.99', null, '2009-11-17 01:21:18');
+INSERT INTO `orders` VALUES ('53', '17', '3', '0', '0', '19.99', null, '2009-11-17 01:35:51');
+INSERT INTO `orders` VALUES ('54', '17', '3', '0', '0', '19.99', null, '2009-11-17 01:37:19');
+INSERT INTO `orders` VALUES ('55', '17', '3', '0', '0', '19.99', null, '2009-11-17 02:22:38');
+INSERT INTO `orders` VALUES ('56', '17', '3', '0', '0', '19.99', null, '2009-11-17 02:25:15');
+INSERT INTO `orders` VALUES ('57', '17', '3', '0', '0', '19.99', null, '2009-11-17 02:25:38');
+INSERT INTO `orders` VALUES ('58', '17', '3', '0', '0027', '19.99', null, '2009-11-17 02:25:54');
+INSERT INTO `orders` VALUES ('59', '17', '3', '0', '0027', '19.99', null, '2009-11-17 02:27:45');
+INSERT INTO `orders` VALUES ('60', '17', '3', '0', '0027', '19.99', null, '2009-11-17 02:29:11');
+INSERT INTO `orders` VALUES ('61', '17', '3', '0', '0027', '19.99', null, '2009-11-17 02:35:34');
+INSERT INTO `orders` VALUES ('62', '17', '3', '0', '0027', '19.99', null, '2009-11-17 02:36:44');
+INSERT INTO `orders` VALUES ('63', '17', '3', '0', '0027', '19.99', null, '2009-11-17 02:39:20');
+INSERT INTO `orders` VALUES ('64', '17', '3', '0', '0027', '19.99', null, '2009-11-17 02:41:16');
+INSERT INTO `orders` VALUES ('65', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:41:27');
+INSERT INTO `orders` VALUES ('66', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:46:18');
+INSERT INTO `orders` VALUES ('67', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:47:33');
+INSERT INTO `orders` VALUES ('68', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:48:33');
+INSERT INTO `orders` VALUES ('69', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:49:08');
+INSERT INTO `orders` VALUES ('70', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:50:33');
+INSERT INTO `orders` VALUES ('71', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:51:25');
+INSERT INTO `orders` VALUES ('72', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:51:37');
+INSERT INTO `orders` VALUES ('73', '17', '3', '0', '0027', '19.99', null, '2009-11-17 02:52:05');
+INSERT INTO `orders` VALUES ('74', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:56:26');
+INSERT INTO `orders` VALUES ('75', '17', '3', '0', '0', '19.99', '127.0.0.1', '2009-11-17 02:57:56');
+INSERT INTO `orders` VALUES ('76', '17', '3', '0', '0', '19.99', '127.0.0.1', '2009-11-17 02:59:17');
+INSERT INTO `orders` VALUES ('77', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:59:42');
+INSERT INTO `orders` VALUES ('78', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 03:20:36');
+INSERT INTO `orders` VALUES ('79', '17', '3', '0', '0', '24.99', null, '2009-11-17 03:48:56');
+INSERT INTO `orders` VALUES ('80', '17', '3', '0', '0', '24.99', null, '2009-11-17 03:49:51');
+INSERT INTO `orders` VALUES ('81', '17', '3', '0', '0', '24.99', null, '2009-11-17 03:52:18');
+INSERT INTO `orders` VALUES ('82', '17', '3', '0', '0027', '24.99', null, '2009-11-17 03:53:59');
+INSERT INTO `orders` VALUES ('83', '17', '3', '0', '0027', '24.99', null, '2009-11-17 03:56:43');
+INSERT INTO `orders` VALUES ('84', '17', '3', '0', '0027', '24.99', null, '2009-11-17 05:05:43');
+INSERT INTO `orders` VALUES ('85', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-20 20:13:13');
+INSERT INTO `orders` VALUES ('86', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-20 20:13:19');
+INSERT INTO `orders` VALUES ('87', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:32:25');
+INSERT INTO `orders` VALUES ('88', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:32:30');
+INSERT INTO `orders` VALUES ('89', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:32:35');
+INSERT INTO `orders` VALUES ('90', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:32:41');
+INSERT INTO `orders` VALUES ('91', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:32:48');
+INSERT INTO `orders` VALUES ('92', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:33:49');
+INSERT INTO `orders` VALUES ('93', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:54:10');
+INSERT INTO `orders` VALUES ('94', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:54:16');
+INSERT INTO `orders` VALUES ('95', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:54:28');
+INSERT INTO `orders` VALUES ('96', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:54:36');
+INSERT INTO `orders` VALUES ('97', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:55:23');
+INSERT INTO `orders` VALUES ('98', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:55:45');
+INSERT INTO `orders` VALUES ('99', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:56:09');
+INSERT INTO `orders` VALUES ('100', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:57:17');
+INSERT INTO `orders` VALUES ('101', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:57:22');
+INSERT INTO `orders` VALUES ('102', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:58:21');
+INSERT INTO `orders` VALUES ('103', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:58:28');
+INSERT INTO `orders` VALUES ('104', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:58:33');
+INSERT INTO `orders` VALUES ('105', '17', '3', '0', '0027', '24.99', null, '2009-11-20 21:01:00');
+INSERT INTO `orders` VALUES ('106', '17', '3', '0', '0027', '24.99', null, '2009-11-20 21:01:07');
+INSERT INTO `orders` VALUES ('107', '17', '3', '0', '0027', '24.99', null, '2009-11-20 21:01:11');
+INSERT INTO `orders` VALUES ('108', '17', '3', '0', '0027', '24.99', null, '2009-11-20 21:01:16');
+INSERT INTO `orders` VALUES ('109', '17', '3', '0', '0027', '24.99', null, '2009-11-20 21:01:22');
+INSERT INTO `orders` VALUES ('110', '17', '3', '0', '0027', '24.99', null, '2009-11-20 22:12:31');
+INSERT INTO `orders` VALUES ('111', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:19:41');
+INSERT INTO `orders` VALUES ('112', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:27:17');
+INSERT INTO `orders` VALUES ('113', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:27:39');
+INSERT INTO `orders` VALUES ('114', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:29:13');
+INSERT INTO `orders` VALUES ('115', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:30:20');
+INSERT INTO `orders` VALUES ('116', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:31:13');
+INSERT INTO `orders` VALUES ('117', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:31:41');
+INSERT INTO `orders` VALUES ('118', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:33:25');
+INSERT INTO `orders` VALUES ('119', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:33:51');
+INSERT INTO `orders` VALUES ('120', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:34:58');
+INSERT INTO `orders` VALUES ('121', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:35:50');
+INSERT INTO `orders` VALUES ('122', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:38:02');
+INSERT INTO `orders` VALUES ('123', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:50:57');
+INSERT INTO `orders` VALUES ('124', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:51:48');
+INSERT INTO `orders` VALUES ('125', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:00:34');
+INSERT INTO `orders` VALUES ('126', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:00:59');
+INSERT INTO `orders` VALUES ('127', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:01:16');
+INSERT INTO `orders` VALUES ('128', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:04:26');
+INSERT INTO `orders` VALUES ('129', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:04:49');
+INSERT INTO `orders` VALUES ('130', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:06:01');
+INSERT INTO `orders` VALUES ('131', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:06:07');
+INSERT INTO `orders` VALUES ('132', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:06:13');
+INSERT INTO `orders` VALUES ('133', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:52:21');
+INSERT INTO `orders` VALUES ('134', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:52:25');
+INSERT INTO `orders` VALUES ('135', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:59:34');
+INSERT INTO `orders` VALUES ('136', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:59:36');
+INSERT INTO `orders` VALUES ('137', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:59:48');
+INSERT INTO `orders` VALUES ('138', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:59:59');
+INSERT INTO `orders` VALUES ('139', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:00:02');
+INSERT INTO `orders` VALUES ('140', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:00:14');
+INSERT INTO `orders` VALUES ('141', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:01:17');
+INSERT INTO `orders` VALUES ('142', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:07:34');
+INSERT INTO `orders` VALUES ('143', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:08:01');
+INSERT INTO `orders` VALUES ('144', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:08:53');
+INSERT INTO `orders` VALUES ('145', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:10:01');
+INSERT INTO `orders` VALUES ('146', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:10:19');
+INSERT INTO `orders` VALUES ('147', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:10:25');
+INSERT INTO `orders` VALUES ('148', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:10:31');
+INSERT INTO `orders` VALUES ('149', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:14:55');
+INSERT INTO `orders` VALUES ('150', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:15:48');
+INSERT INTO `orders` VALUES ('151', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:43:37');
+INSERT INTO `orders` VALUES ('152', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:44:43');
+INSERT INTO `orders` VALUES ('153', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:51:09');
+INSERT INTO `orders` VALUES ('154', '17', '3', '28', '0027', '24.99', null, '2009-11-21 02:51:11');
+INSERT INTO `orders` VALUES ('155', '17', '3', '29', '0027', '24.99', null, '2009-11-21 02:52:43');
+INSERT INTO `orders` VALUES ('156', '17', '3', '30', '0027', '24.99', null, '2009-11-21 02:57:27');
+INSERT INTO `orders` VALUES ('157', '17', '3', '31', '0027', '24.99', null, '2009-11-21 02:59:14');
+INSERT INTO `orders` VALUES ('158', '17', '3', '32', '0027', '24.99', null, '2009-11-21 03:34:35');
+INSERT INTO `orders` VALUES ('159', '17', '3', '33', '0027', '24.99', null, '2009-11-21 04:06:08');
+INSERT INTO `orders` VALUES ('160', '17', '3', '34', '0027', '24.99', null, '2009-11-21 04:06:12');
+INSERT INTO `orders` VALUES ('161', '17', '3', '35', '0027', '24.99', null, '2009-11-21 04:06:48');
+INSERT INTO `orders` VALUES ('162', '17', '3', '36', '0027', '24.99', null, '2009-11-21 04:07:14');
+INSERT INTO `orders` VALUES ('163', '17', '3', '37', '0027', '24.99', null, '2009-11-21 04:08:40');
+INSERT INTO `orders` VALUES ('164', '17', '3', '38', '0027', '24.99', null, '2009-11-21 04:09:16');
+INSERT INTO `orders` VALUES ('165', '17', '3', '39', '0027', '24.99', null, '2009-11-21 04:10:21');
+INSERT INTO `orders` VALUES ('166', '17', '3', '40', '0027', '24.99', null, '2009-11-21 04:11:24');
+INSERT INTO `orders` VALUES ('167', '17', '3', '41', '0027', '24.99', null, '2009-11-21 04:12:15');
+INSERT INTO `orders` VALUES ('168', '17', '3', '42', '0027', '24.99', null, '2009-11-21 04:12:36');
+INSERT INTO `orders` VALUES ('169', '17', '3', '43', '0027', '24.99', null, '2009-11-21 04:14:20');
+INSERT INTO `orders` VALUES ('170', '17', '3', '44', '0027', '24.99', null, '2009-11-21 04:15:09');
+INSERT INTO `orders` VALUES ('171', '17', '3', '45', '0027', '24.99', null, '2009-11-21 04:15:35');
+INSERT INTO `orders` VALUES ('172', '17', '3', '46', '0027', '24.99', null, '2009-11-21 04:16:02');
+INSERT INTO `orders` VALUES ('173', '17', '3', '47', '0027', '24.99', null, '2009-11-21 04:16:24');
+INSERT INTO `orders` VALUES ('174', '17', '3', '48', '0027', '24.99', null, '2009-11-21 04:16:55');
+INSERT INTO `orders` VALUES ('175', '17', '3', '49', '0027', '24.99', null, '2009-11-21 04:17:24');
+INSERT INTO `orders` VALUES ('176', '17', '3', '50', '0027', '24.99', null, '2009-11-21 04:20:02');
 
 -- ----------------------------
 -- Table structure for `recurring_payments`
@@ -639,7 +770,6 @@ CREATE TABLE `recurring_payments` (
   `recurring_payment_id` int(11) NOT NULL AUTO_INCREMENT,
   `client_id` int(11) NOT NULL,
   `gateway_id` int(11) NOT NULL,
-  `order_id` int(11) NOT NULL,
   `customer_id` int(11) NOT NULL,
   `start_date` date NOT NULL,
   `number_occurences` int(11) NOT NULL,
@@ -651,7 +781,7 @@ CREATE TABLE `recurring_payments` (
 -- ----------------------------
 -- Records of recurring_payments
 -- ----------------------------
-INSERT INTO `recurring_payments` VALUES ('1', '17', '49', '3', '2', '2009-12-01', '12', '25', '');
+INSERT INTO `recurring_payments` VALUES ('1', '17', '49', '2', '2009-12-01', '12', '25', '');
 
 -- ----------------------------
 -- Table structure for `request_log`
@@ -663,7 +793,7 @@ CREATE TABLE `request_log` (
   `remote_ip` varchar(11) NOT NULL,
   `request` text NOT NULL,
   PRIMARY KEY (`request_log_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=644 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=737 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of request_log
@@ -1311,6 +1441,99 @@ INSERT INTO `request_log` VALUES ('640', '2009-11-17 03:52:17', '127.0.0.1', '<?
 INSERT INTO `request_log` VALUES ('641', '2009-11-17 03:53:59', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewRecurring</request>\n	<gateway_id>3</gateway_id>\n	<customer_id>2</customer_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<start_date>2009-12-01</start_date>\n		<end_date>2010-12-01</end_date>\n		<interval>365</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
 INSERT INTO `request_log` VALUES ('642', '2009-11-17 03:56:43', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewRecurring</request>\n	<gateway_id>3</gateway_id>\n	<customer_id>2</customer_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<start_date>2009-12-01</start_date>\n		<end_date>2010-12-01</end_date>\n		<interval>365</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
 INSERT INTO `request_log` VALUES ('643', '2009-11-17 05:05:43', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewRecurring</request>\n	<gateway_id>3</gateway_id>\n	<customer_id>2</customer_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<start_date>2009-12-01</start_date>\n		<end_date>2010-12-01</end_date>\n		<interval>365</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('644', '2009-11-20 20:13:13', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<gateway_id>3</gateway_id>\n	<customer_id>2</customer_id>\n	<credit_card>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<customer_ip_address>127.0.0.1</customer_ip_address>\n	<amount>19.99</amount>\n	<description>Goods and Services</description>\n</request>');
+INSERT INTO `request_log` VALUES ('645', '2009-11-20 20:13:19', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<gateway_id>3</gateway_id>\n	<customer_id>2</customer_id>\n	<credit_card>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<customer_ip_address>127.0.0.1</customer_ip_address>\n	<amount>19.99</amount>\n	<description>Goods and Services</description>\n</request>');
+INSERT INTO `request_log` VALUES ('646', '2009-11-20 20:32:04', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('647', '2009-11-20 20:32:10', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('648', '2009-11-20 20:32:25', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('649', '2009-11-20 20:32:30', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('650', '2009-11-20 20:32:35', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('651', '2009-11-20 20:32:41', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('652', '2009-11-20 20:32:48', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('653', '2009-11-20 20:33:49', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('654', '2009-11-20 20:54:10', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('655', '2009-11-20 20:54:16', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('656', '2009-11-20 20:54:28', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('657', '2009-11-20 20:54:36', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('658', '2009-11-20 20:55:23', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('659', '2009-11-20 20:55:45', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('660', '2009-11-20 20:56:09', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('661', '2009-11-20 20:57:17', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('662', '2009-11-20 20:57:22', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('663', '2009-11-20 20:58:21', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('664', '2009-11-20 20:58:28', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('665', '2009-11-20 20:58:33', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('666', '2009-11-20 21:01:00', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('667', '2009-11-20 21:01:07', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('668', '2009-11-20 21:01:11', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('669', '2009-11-20 21:01:16', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('670', '2009-11-20 21:01:22', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('671', '2009-11-20 22:12:31', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('672', '2009-11-21 00:19:41', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('673', '2009-11-21 00:27:17', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('674', '2009-11-21 00:27:39', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('675', '2009-11-21 00:29:13', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('676', '2009-11-21 00:30:20', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('677', '2009-11-21 00:31:13', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('678', '2009-11-21 00:31:41', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('679', '2009-11-21 00:33:25', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('680', '2009-11-21 00:33:51', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('681', '2009-11-21 00:34:58', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('682', '2009-11-21 00:35:50', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('683', '2009-11-21 00:38:02', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('684', '2009-11-21 00:50:57', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('685', '2009-11-21 00:51:48', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('686', '2009-11-21 01:00:34', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('687', '2009-11-21 01:00:59', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('688', '2009-11-21 01:01:16', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('689', '2009-11-21 01:04:26', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('690', '2009-11-21 01:04:49', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('691', '2009-11-21 01:06:01', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('692', '2009-11-21 01:06:07', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('693', '2009-11-21 01:06:13', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('694', '2009-11-21 01:52:21', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('695', '2009-11-21 01:52:25', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('696', '2009-11-21 01:59:34', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('697', '2009-11-21 01:59:36', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('698', '2009-11-21 01:59:48', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('699', '2009-11-21 01:59:59', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('700', '2009-11-21 02:00:02', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('701', '2009-11-21 02:00:14', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('702', '2009-11-21 02:01:17', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('703', '2009-11-21 02:07:34', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('704', '2009-11-21 02:08:01', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('705', '2009-11-21 02:08:53', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('706', '2009-11-21 02:10:01', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('707', '2009-11-21 02:10:19', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('708', '2009-11-21 02:10:25', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('709', '2009-11-21 02:10:31', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('710', '2009-11-21 02:14:55', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('711', '2009-11-21 02:15:48', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('712', '2009-11-21 02:43:37', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('713', '2009-11-21 02:44:43', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('714', '2009-11-21 02:51:09', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('715', '2009-11-21 02:52:41', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('716', '2009-11-21 02:57:25', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('717', '2009-11-21 02:59:12', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('718', '2009-11-21 03:34:33', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('719', '2009-11-21 04:06:05', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('720', '2009-11-21 04:06:10', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('721', '2009-11-21 04:06:46', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('722', '2009-11-21 04:07:12', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('723', '2009-11-21 04:08:38', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('724', '2009-11-21 04:09:14', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('725', '2009-11-21 04:10:19', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('726', '2009-11-21 04:11:22', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('727', '2009-11-21 04:12:13', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('728', '2009-11-21 04:12:34', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('729', '2009-11-21 04:14:18', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('730', '2009-11-21 04:15:07', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('731', '2009-11-21 04:15:33', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('732', '2009-11-21 04:16:00', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('733', '2009-11-21 04:16:22', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('734', '2009-11-21 04:16:53', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('735', '2009-11-21 04:17:22', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('736', '2009-11-21 04:20:01', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>3</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4007000000027</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notify_url>http://localhost/notify.php</notify_url>\n	</recur>\n</request>');
 
 -- ----------------------------
 -- Table structure for `request_types`
@@ -1334,7 +1557,7 @@ INSERT INTO `request_types` VALUES ('5', 'Capture', 'gateway_model');
 INSERT INTO `request_types` VALUES ('6', 'Auth', 'gateway_model');
 INSERT INTO `request_types` VALUES ('7', 'Credit', 'gateway_model');
 INSERT INTO `request_types` VALUES ('8', 'Void', 'gateway_model');
-INSERT INTO `request_types` VALUES ('9', 'NewRecurring', 'gateway_model');
+INSERT INTO `request_types` VALUES ('9', 'Recur', 'gateway_model');
 INSERT INTO `request_types` VALUES ('10', 'CancelRecurring', 'gateway_model');
 
 -- ----------------------------
@@ -1378,3 +1601,76 @@ INSERT INTO `required_fields` VALUES ('32', '8', 'gateway_id');
 INSERT INTO `required_fields` VALUES ('33', '8', 'order_id');
 INSERT INTO `required_fields` VALUES ('34', '9', 'customer_id');
 INSERT INTO `required_fields` VALUES ('35', '9', 'gateway_id');
+
+-- ----------------------------
+-- Table structure for `subscriptions`
+-- ----------------------------
+DROP TABLE IF EXISTS `subscriptions`;
+CREATE TABLE `subscriptions` (
+  `subscription_id` int(11) NOT NULL AUTO_INCREMENT,
+  `client_id` int(11) NOT NULL,
+  `gateway_id` int(11) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `notification_url` varchar(255) DEFAULT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  `number_occurences` int(11) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `api_customer_reference` varchar(255) DEFAULT NULL,
+  `api_payment_reference` varchar(255) DEFAULT NULL,
+  `active` tinyint(4) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`subscription_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=51 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+
+-- ----------------------------
+-- Records of subscriptions
+-- ----------------------------
+INSERT INTO `subscriptions` VALUES ('2', '17', '3', '1', null, '2009-12-21', '2010-12-21', '12', '25.00', '816288', null, '1');
+INSERT INTO `subscriptions` VALUES ('3', '17', '3', '1', null, '2009-12-21', '2010-12-21', '12', '25.00', '816294', null, '1');
+INSERT INTO `subscriptions` VALUES ('4', '17', '3', '1', null, '2009-12-21', '2010-12-21', '12', '24.99', '816295', null, '1');
+INSERT INTO `subscriptions` VALUES ('5', '17', '3', '1', null, '2009-12-21', '2010-12-21', '12', '24.99', '816297', null, '1');
+INSERT INTO `subscriptions` VALUES ('6', '17', '3', '1', null, '2009-12-21', '2010-12-21', '12', '24.99', '816300', null, '1');
+INSERT INTO `subscriptions` VALUES ('7', '17', '3', '1', null, '2009-12-21', '2010-12-21', '12', '24.99', '816308', null, '1');
+INSERT INTO `subscriptions` VALUES ('8', '17', '3', '1', null, '2009-12-21', '2010-12-21', '0', '24.99', null, null, '1');
+INSERT INTO `subscriptions` VALUES ('9', '17', '3', '1', null, '2009-12-21', '2010-12-21', '0', '24.99', null, null, '1');
+INSERT INTO `subscriptions` VALUES ('10', '17', '3', '1', null, '2009-12-21', '2010-12-21', '12', '24.99', null, null, '1');
+INSERT INTO `subscriptions` VALUES ('11', '17', '3', '1', null, '2009-12-21', '2010-12-21', '12', '24.99', null, null, '1');
+INSERT INTO `subscriptions` VALUES ('12', '17', '3', '1', null, '2009-12-21', '2010-12-21', '12', '24.99', '816322', null, '1');
+INSERT INTO `subscriptions` VALUES ('13', '17', '3', '1', null, '2009-12-21', '2010-12-21', '12', '24.99', '816323', null, '1');
+INSERT INTO `subscriptions` VALUES ('14', '17', '3', '1', null, '2009-12-21', '2010-12-21', '12', '24.99', '816325', null, '1');
+INSERT INTO `subscriptions` VALUES ('15', '17', '3', '1', null, '2009-12-21', '2010-12-21', '12', '24.99', '816326', null, '1');
+INSERT INTO `subscriptions` VALUES ('16', '17', '3', '1', null, '2009-12-21', '2010-12-21', '12', '24.99', '816327', null, '1');
+INSERT INTO `subscriptions` VALUES ('17', '17', '3', '1', null, '2009-12-21', '2010-12-21', '12', '24.99', '816329', null, '1');
+INSERT INTO `subscriptions` VALUES ('18', '17', '3', '1', null, '2009-12-21', '2010-12-21', '12', '24.99', '816403', null, '1');
+INSERT INTO `subscriptions` VALUES ('19', '17', '3', '1', null, '2009-12-21', '2010-12-21', '12', '24.99', '816404', null, '1');
+INSERT INTO `subscriptions` VALUES ('20', '17', '3', '1', null, '2009-12-21', '2010-12-21', '12', '24.99', '816406', null, '1');
+INSERT INTO `subscriptions` VALUES ('21', '17', '3', '7', null, '2009-12-21', '2010-12-21', '12', '24.99', '816411', null, '1');
+INSERT INTO `subscriptions` VALUES ('22', '17', '3', '8', null, '2009-12-21', '2010-12-21', '12', '24.99', '816410', null, '1');
+INSERT INTO `subscriptions` VALUES ('23', '17', '3', '9', null, '2009-12-21', '2010-12-21', '12', '24.99', '816412', null, '1');
+INSERT INTO `subscriptions` VALUES ('24', '17', '3', '10', null, '2009-12-21', '2010-12-21', '12', '24.99', '816413', null, '1');
+INSERT INTO `subscriptions` VALUES ('25', '17', '3', '11', null, '2009-12-21', '2010-12-21', '12', '24.99', '816414', null, '1');
+INSERT INTO `subscriptions` VALUES ('26', '17', '3', '12', null, '2009-12-21', '2010-12-21', '12', '24.99', '816427', '751320', '1');
+INSERT INTO `subscriptions` VALUES ('27', '17', '3', '13', null, '2009-12-21', '2010-12-21', '12', '24.99', '816428', '751321', '1');
+INSERT INTO `subscriptions` VALUES ('28', '17', '3', '14', null, '2009-12-21', '2010-12-21', '12', '24.99', '816432', '751325', '1');
+INSERT INTO `subscriptions` VALUES ('29', '17', '3', '15', null, '2009-12-21', '2010-12-21', '12', '24.99', '816434', '751327', '1');
+INSERT INTO `subscriptions` VALUES ('30', '17', '3', '16', null, '2009-12-21', '2010-12-21', '12', '24.99', '816440', '751333', '1');
+INSERT INTO `subscriptions` VALUES ('31', '17', '3', '17', null, '2009-12-21', '2010-12-21', '12', '24.99', '816441', '751334', '1');
+INSERT INTO `subscriptions` VALUES ('32', '17', '3', '18', null, '2009-12-21', '2010-12-21', '12', '24.99', '816454', '751345', '1');
+INSERT INTO `subscriptions` VALUES ('33', '17', '3', '19', null, '2009-12-21', '2010-12-21', '12', '24.99', '816461', '751352', '1');
+INSERT INTO `subscriptions` VALUES ('34', '17', '3', '20', null, '2009-12-21', '2010-12-21', '12', '24.99', '816462', '751353', '1');
+INSERT INTO `subscriptions` VALUES ('35', '17', '3', '21', null, '2009-12-21', '2010-12-21', '12', '24.99', '816463', '751354', '1');
+INSERT INTO `subscriptions` VALUES ('36', '17', '3', '22', null, '2009-12-21', '2010-12-21', '12', '24.99', '816464', '751355', '1');
+INSERT INTO `subscriptions` VALUES ('37', '17', '3', '23', null, '2009-12-21', '2010-12-21', '12', '24.99', '816465', '751356', '1');
+INSERT INTO `subscriptions` VALUES ('38', '17', '3', '24', null, '2009-12-21', '2010-12-21', '12', '24.99', '816467', '751358', '1');
+INSERT INTO `subscriptions` VALUES ('39', '17', '3', '25', null, '2009-12-21', '2010-12-21', '12', '24.99', '816469', '751360', '1');
+INSERT INTO `subscriptions` VALUES ('40', '17', '3', '26', null, '2009-12-21', '2010-12-21', '12', '24.99', '816470', '751361', '1');
+INSERT INTO `subscriptions` VALUES ('41', '17', '3', '27', null, '2009-12-21', '2010-12-21', '12', '24.99', '816471', '751362', '1');
+INSERT INTO `subscriptions` VALUES ('42', '17', '3', '28', null, '2009-12-21', '2010-12-21', '12', '24.99', '816472', '751363', '1');
+INSERT INTO `subscriptions` VALUES ('43', '17', '3', '29', null, '2009-12-21', '2010-12-21', '12', '24.99', '816473', '751364', '1');
+INSERT INTO `subscriptions` VALUES ('44', '17', '3', '30', null, '2009-12-21', '2010-12-21', '12', '24.99', '816475', '751366', '1');
+INSERT INTO `subscriptions` VALUES ('45', '17', '3', '31', null, '2009-12-21', '2010-12-21', '12', '24.99', '816476', '751367', '1');
+INSERT INTO `subscriptions` VALUES ('46', '17', '3', '32', null, '2009-12-21', '2010-12-21', '12', '24.99', '816477', '751368', '1');
+INSERT INTO `subscriptions` VALUES ('47', '17', '3', '33', null, '2009-12-21', '2010-12-21', '12', '24.99', '816479', '751370', '1');
+INSERT INTO `subscriptions` VALUES ('48', '17', '3', '34', null, '2009-12-21', '2010-12-21', '12', '24.99', '816480', '751371', '1');
+INSERT INTO `subscriptions` VALUES ('49', '17', '3', '35', null, '2009-12-21', '2010-12-21', '12', '24.99', '816481', '751372', '1');
+INSERT INTO `subscriptions` VALUES ('50', '17', '3', '36', null, '2009-12-21', '2010-12-21', '12', '24.99', '816483', '751374', '0');

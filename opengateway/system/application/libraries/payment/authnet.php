@@ -53,8 +53,6 @@ class authnet
 			{ $post_string .= "$key=" . urlencode( $value ) . "&"; }
 		$post_string = rtrim( $post_string, "& " );
 		
-		echo $post_string;
-		
 		$response = $this->Process($order_id, $post_url, $post_string);
 		
 		$CI =& get_instance();
@@ -303,8 +301,59 @@ class authnet
 		return $response;
 	}
 	
-	function Recur($client_id, $order_id, $gateway, $customer, $params, $start_date, $end_date, $interval, $credit_card)
+	function Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $interval, $credit_card, $subscription_id)
 	{		
+		$CI =& get_instance();
+		
+		// Create a new authnet profile
+		$response = $this->CreateProfile($gateway, $subscription_id);
+		if($response) {
+			$profile_id = $response['profile_id'];	
+		} else {
+			die($CI->response->Error(5005));
+		}
+		
+		// save the api_customer_reference
+		$CI->load->model('subscription_model');
+		$CI->subscription_model->SaveApiCustomerReference($subscription_id, $profile_id);
+		
+		// Create the payment profile
+		$response = $this->CreatePaymentProfile($profile_id, $gateway, $credit_card);
+		if($response) {
+			$payment_profile_id = $response['payment_profile_id'];	
+		} else {
+			die($CI->response->Error(5006));
+		}
+		
+		// Save the api_payment_reference
+		$CI->subscription_model->SaveApiPaymentReference($subscription_id, $payment_profile_id);
+		
+		// Create an order for today's payment
+		$CI->load->model('order_model');
+		$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $credit_card, $subscription_id);
+		
+		// Process today's payment
+		$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $profile_id, $payment_profile_id, $params);
+		
+		if($response['success'] == TRUE){
+			$response_array = array('order_id' => $order_id, 'subscription_id' => $subscription_id);
+			$response = $CI->response->TransactionResponse(1, $response_array);
+		} else {
+			// Make the subscription inactive
+			$CI->subscription_model->MakeInactive($subscription_id);
+			
+			$response_array = array('reason' => $response['reason']);
+			$response = $CI->response->TransactionResponse(2, $response_array);
+		}
+		
+		return $response;
+		
+		
+		
+	}
+	
+	function CreateProfile($gateway, $subscription_id)
+	{
 		$CI =& get_instance();
 		
 		// Get the proper URL
@@ -319,59 +368,47 @@ class authnet
 			case 'dev':
 				$post_url = $gateway['arb_url_dev'];
 			break;
-		} 
+		}
 		
-		// Figure the total number of occurrences
-		$total_occurences = round((strtotime($end_date) - strtotime($start_date)) / ($interval * 86400), 0);
+		$content =
+		"<?xml version=\"1.0\" encoding=\"utf-8\"?>" .
+		"<createCustomerProfileRequest xmlns=\"AnetApi/xml/v1/schema/AnetApiSchema.xsd\">".
+		"<merchantAuthentication>
+	        <name>".$gateway['login_id']."</name>
+	        <transactionKey>".$gateway['transaction_key']."</transactionKey>
+	    </merchantAuthentication>
+		".
+		"<profile>".
+		"<merchantCustomerId>".$subscription_id."</merchantCustomerId>".
+		"</profile>".
+		"</createCustomerProfileRequest>";
 		
-		//build xml to post
-		$content['ARBCreateSubscriptionRequest']['merchantAuthentication']['name'] = $gateway['login_id'];
-		$content['ARBCreateSubscriptionRequest']['merchantAuthentication']['transactionKey'] = $gateway['transaction_key'];
-		$content['ARBCreateSubscriptionRequest']['refId'] = $order_id;
-		$content['ARBCreateSubscriptionRequest']['subscription']['name'] = $params['description'];
-		$content['ARBCreateSubscriptionRequest']['subscription']['paymentSchedule']['interval']['length'] = $interval;
-		$content['ARBCreateSubscriptionRequest']['subscription']['paymentSchedule']['interval']['unit'] = 'days';
-		$content['ARBCreateSubscriptionRequest']['subscription']['paymentSchedule']['startDate'] = $start_date;
-		$content['ARBCreateSubscriptionRequest']['subscription']['paymentSchedule']['totalOccurrences'] = $total_occurences;
-		//$content['ARBCreateSubscriptionRequest']['subscription']['paymentSchedule']['trialOccurrences'] = $recur->trial_occurences;
-		$content['ARBCreateSubscriptionRequest']['subscription']['amount'] = $params['amount'];
-		//$content['ARBCreateSubscriptionRequest']['subscription']['trialAmount'] = $params['trial_amount'];
-		$content['ARBCreateSubscriptionRequest']['subscription']['payment']['creditCard']['cardNumber'] = $credit_card->card_num;
-		$content['ARBCreateSubscriptionRequest']['subscription']['payment']['creditCard']['cardNumber'] = $credit_card->card_num;
-		$content['ARBCreateSubscriptionRequest']['subscription']['payment']['creditCard']['expirationDate'] = $credit_card->exp_month.$credit_card->exp_year;
-		$content['ARBCreateSubscriptionRequest']['subscription']['billTo']['firstName'] = $customer['first_name'];
-		$content['ARBCreateSubscriptionRequest']['subscription']['billTo']['lastName'] = $customer['last_name'];
+		$request = curl_init($post_url); // initiate curl object
+		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
+		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
+		curl_setopt($request, CURLOPT_HTTPHEADER, Array("Content-Type: text/xml"));
+		curl_setopt($request, CURLOPT_POSTFIELDS, $content); // use HTTP POST to send form data
+		curl_setopt($request, CURLOPT_SSL_VERIFYPEER, FALSE); // uncomment this line if you get no gateway response.
+		$post_response = curl_exec($request); // execute curl post and store results in $post_response
 		
-		//Load the XML library
-		$CI->load->library('xml');
-		$CI->xml->setXMLEncoding('utf-8');
-		$CI->xml->setXMLVersion('1.0');
+		curl_close($request); // close curl object
 		
-		//Format the XML
-		$CI->xml->setArray($content);
-		$content = $CI->xml->outputXML('return');
+		@$response = simplexml_load_string($post_response);
 		
-		$content = str_replace('<ARBCreateSubscriptionRequest>', '<ARBCreateSubscriptionRequest xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd">', $content);
-		
-		$response = $this->ProcessXML($order_id, $post_url, $content);
-
-		if($response['success'] == TRUE){
-			$response_array = array('order_id' => $order_id);
-			$response = $CI->response->TransactionResponse(1, $response_array);
-			// create the subscription
-			$CI->load->model('recurring_model');
-			$CI->recurring_model->SaveRecurring($client_id, $order_id, $params['gateway_id'], $customer['customer_id'], $params, $repsonse['api_reference']);
+		if($response->messages->resultCode == 'Ok') {
+			$response['success'] = TRUE;
+			$response['profile_id'] = (string)$response->customerProfileId;
 		} else {
-			$response_array = array('reason' => $response['reason']);
-			$response = $CI->response->TransactionResponse(2, $response_array);
+			$response['success'] = FALSE;
+			$response['reason'] = (string)$response->messages->message->text;
 		}
 		
 		return $response;
 		
 	}
 	
-function CancelRecurring($client_id, $order_id, $gateway, $params)
-	{		
+	function CreatePaymentProfile($profile_id, $gateway, $credit_card)
+	{
 		$CI =& get_instance();
 		
 		// Get the proper URL
@@ -388,33 +425,125 @@ function CancelRecurring($client_id, $order_id, $gateway, $params)
 			break;
 		}
 		
-		//build xml to post
-		$content =
-        "<?xml version=\"1.0\" encoding=\"utf-8\"?>" .
-        "<ARBCancelSubscriptionRequest> xmlns=\"AnetApi/xml/v1/schema/AnetApiSchema.xsd\">" .
-        "<merchantAuthentication>".
-        "<name>" . $gateway['login_id'] . "</name>".
-        "<transactionKey>" . $gateway['transaction_key'] . "</transactionKey>".
-        "</merchantAuthentication>".
-		"<subscriptionID>" . $api_reference . "</subscriptionID>".
-        "</ARBCancelSubscriptionRequest>";
-		
-		$response = $this->ProcessXML($order_id, $post_url, $content);
-
-		if($response['success'] == TRUE){
-			$response_array = array('order_id' => $order_id);
-			$response = $CI->response->TransactionResponse(1, $response_array);
-			// create the subscription
-			$CI->load->model('recurring_model');
-			$CI->recurring_model->SaveRecurring($client_id, $order_id, $params['gateway_id'], $customer['customer_id'], $params, $repsonse['api_reference']);
+		if(isset($customer['first_name'])) {
+			$first_name = $customer['first_name'];
+			$last_name = $customer['last_name'];
 		} else {
-			$response_array = array('reason' => $response['reason']);
-			$response = $CI->response->TransactionResponse(2, $response_array);
+			$name = explode(' ', $credit_card->name);
+			$first_name = $name[0];
+			$last_name = $name[1];
+		}
+		
+		$content =
+		"<?xml version=\"1.0\" encoding=\"utf-8\"?>" .
+		"<createCustomerPaymentProfileRequest xmlns=\"AnetApi/xml/v1/schema/AnetApiSchema.xsd\">" .
+		"<merchantAuthentication>
+	        <name>".$gateway['login_id']."</name>
+	        <transactionKey>".$gateway['transaction_key']."</transactionKey>
+	    </merchantAuthentication>
+		".
+		"<customerProfileId>" . $profile_id . "</customerProfileId>".
+		"<paymentProfile>".
+		"<billTo>".
+		 "<firstName>".$first_name."</firstName>".
+		 "<lastName>".$last_name."</lastName>".
+		"</billTo>".
+		"<payment>".
+		 "<creditCard>".
+		  "<cardNumber>".$credit_card->card_num."</cardNumber>".
+		  "<expirationDate>".$credit_card->exp_year."-".$credit_card->exp_month."</expirationDate>". // required format for API is YYYY-MM
+		 "</creditCard>".
+		"</payment>".
+		"</paymentProfile>".
+		"<validationMode>testMode</validationMode>". // or testMode
+		"</createCustomerPaymentProfileRequest>";
+		
+		$request = curl_init($post_url); // initiate curl object
+		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
+		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
+		curl_setopt($request, CURLOPT_HTTPHEADER, Array("Content-Type: text/xml"));
+		curl_setopt($request, CURLOPT_POSTFIELDS, $content); // use HTTP POST to send form data
+		curl_setopt($request, CURLOPT_SSL_VERIFYPEER, FALSE); // uncomment this line if you get no gateway response.
+		$post_response = curl_exec($request); // execute curl post and store results in $post_response
+		
+		curl_close($request); // close curl object
+		
+		@$response = simplexml_load_string($post_response);
+		
+		if($response->messages->resultCode == 'Ok') {
+			$response['success'] = TRUE;
+			$response['payment_profile_id'] = (string)$response->customerPaymentProfileId;
+		} else {
+			$response['success'] = FALSE;
+			$response['reason'] = (string)$response->messages->message->text;
+		}
+		
+		return $response;
+
+	}
+	
+	function ChargeRecurring($client_id, $gateway, $order_id, $profile_id, $payment_profile_id, $params)
+	{
+		
+		$CI =& get_instance();
+		
+		// Get the proper URL
+		switch($gateway['mode'])
+		{
+			case 'live':
+				$post_url = $gateway['arb_url_live'];
+			break;
+			case 'test':
+				$post_url = $gateway['arb_url_test'];
+			break;
+			case 'dev':
+				$post_url = $gateway['arb_url_dev'];
+			break;
+		}
+		
+		$content =
+		"<?xml version=\"1.0\" encoding=\"utf-8\"?>" .
+		"<createCustomerProfileTransactionRequest xmlns=\"AnetApi/xml/v1/schema/AnetApiSchema.xsd\">" .
+		 "<merchantAuthentication>
+	        <name>".$gateway['login_id']."</name>
+	        <transactionKey>".$gateway['transaction_key']."</transactionKey>
+	    </merchantAuthentication>".
+		"<transaction>".
+		"<profileTransAuthCapture>".
+		"<amount>" . $params['amount']. "</amount>". 
+		"<customerProfileId>" . $profile_id . "</customerProfileId>".
+		"<customerPaymentProfileId>" . $payment_profile_id . "</customerPaymentProfileId>".
+		"<order>".
+		"<invoiceNumber>".$order_id."</invoiceNumber>".
+		"</order>".
+		"</profileTransAuthCapture>".
+		"</transaction>".
+		"</createCustomerProfileTransactionRequest>";
+		
+		$request = curl_init($post_url); // initiate curl object
+		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
+		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
+		curl_setopt($request, CURLOPT_HTTPHEADER, Array("Content-Type: text/xml"));
+		curl_setopt($request, CURLOPT_POSTFIELDS, $content); // use HTTP POST to send form data
+		curl_setopt($request, CURLOPT_SSL_VERIFYPEER, FALSE); // uncomment this line if you get no gateway response.
+		$post_response = curl_exec($request); // execute curl post and store results in $post_response
+		
+		curl_close($request); // close curl object
+		
+		@$response = simplexml_load_string($post_response);
+		
+		if($response->messages->resultCode == 'Ok') {
+			$response['success'] = TRUE;
+		} else {
+			$response['success'] = FALSE;
+			$response['reason'] = (string)$response->messages->message->text;
 		}
 		
 		return $response;
 		
 	}
+	
+	
 	
 	function Process($order_id, $post_url, $post_string)
 	{
@@ -447,33 +576,6 @@ function CancelRecurring($client_id, $order_id, $gateway, $params)
 
 		return $response;
 
-	}
-	
-	function ProcessXML($order_id, $post_url, $content)
-	{
-		$CI =& get_instance();
-		
-		$request = curl_init($post_url); // initiate curl object
-		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
-		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
-		curl_setopt($request, CURLOPT_HTTPHEADER, Array("Content-Type: text/xml"));
-		curl_setopt($request, CURLOPT_POSTFIELDS, $content); // use HTTP POST to send form data
-		curl_setopt($request, CURLOPT_SSL_VERIFYPEER, FALSE); // uncomment this line if you get no gateway response.
-		$post_response = curl_exec($request); // execute curl post and store results in $post_response
-		
-		curl_close ($request); // close curl object
-		
-		@$response = simplexml_load_string($post_response);
-		
-		if($response->messages->resultCode == 'Ok') {
-			$response['success'] = TRUE;
-			$response['api_reference'] = (string)$response->subscriptionId;
-		} else {
-			$response['success'] = FALSE;
-			$response['reason'] = (string)$response->messages->message->text;
-		}
-		
-		return $response;
 	}
 	
 	function LogResponse($order_id, $response)
