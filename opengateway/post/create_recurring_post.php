@@ -21,7 +21,7 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 	</credit_card>
 	<recur>
 		<interval>30</interval>
-		<notify_url>http://localhost/notify.php</notify_url>
+		<notification_url>http://localhost/notify.php</notification_url>
 	</recur>
 </request>';
 

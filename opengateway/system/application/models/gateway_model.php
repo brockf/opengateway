@@ -360,12 +360,19 @@ class Gateway_model extends Model
 			$end_date = date('Y-m-d', strtotime($start_date) + ($this->config->item('max_recurring_days_from_today') * 86400));
 		}
 		
+		// Check for a notification URL
+	if(isset($recur->notification_url)) {
+			$notification_url = $recur->notification_url;
+		} else {
+			$notification_url = '';
+		}
+		
 		// Figure the total number of occurrences
 		$total_occurrences = round((strtotime($end_date) - strtotime($start_date)) / ($recur->interval * 86400), 0);
 		
 		// Save the subscription info
 		$CI->load->model('subscription_model');
-		$subscription_id = $CI->subscription_model->SaveSubscription($client_id, $params['gateway_id'], $customer['customer_id'], $start_date, $end_date, $total_occurrences, $params);
+		$subscription_id = $CI->subscription_model->SaveSubscription($client_id, $params['gateway_id'], $customer['customer_id'], $start_date, $end_date, $total_occurrences, $notification_url, $params);
 		
 		// Load the proper library
 		$gateway_name = $gateway['name'];

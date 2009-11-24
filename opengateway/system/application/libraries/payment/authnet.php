@@ -347,9 +347,6 @@ class authnet
 		}
 		
 		return $response;
-		
-		
-		
 	}
 	
 	function CreateProfile($gateway, $subscription_id)
@@ -533,6 +530,14 @@ class authnet
 		@$response = simplexml_load_string($post_response);
 		
 		if($response->messages->resultCode == 'Ok') {
+			// Send a notification to the notification URL
+			// $CI->load->library('notify');
+			// $CI->notify->SendNotification($subscription_id);
+			
+			// Get the auth code
+			$post_response = explode(',', $response->DirectResponse);
+			$CI->load->model('order_authorization_model');
+			$CI->order_authorization_model->SaveAuthorization($order_id, $post_response[6], $post_response[4]);
 			$response['success'] = TRUE;
 		} else {
 			$response['success'] = FALSE;

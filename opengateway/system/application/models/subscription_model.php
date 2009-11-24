@@ -8,7 +8,7 @@ class Subscription_model extends Model
 	}
 	
 	// Save a new recurring subscription
-	function SaveSubscription($client_id, $gateway_id, $customer_id, $start_date, $end_date, $total_occurrences, $params)
+	function SaveSubscription($client_id, $gateway_id, $customer_id, $start_date, $end_date, $total_occurrences, $notification_url, $params)
 	{
 		$insert_data = array(
 							'client_id' 		=> $client_id,
@@ -17,12 +17,9 @@ class Subscription_model extends Model
 							'start_date' 		=> $start_date,
 							'end_date'			=> $end_date,
 							'number_occurences' => $total_occurrences,
-							'amount'			=> $params['amount']
-			  				);
-
-		if(isset($params['notification_url'])) {
-			$insert_data['notification_url'] = $params['notification_url'];
-		}	  				
+							'notification_url'	=> stripslashes($notification_url),
+							'amount'			=> $params['amount'],
+			  				);  					  				
 			  				
 		$this->db->insert('subscriptions', $insert_data);
 		
