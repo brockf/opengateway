@@ -426,7 +426,7 @@ class authnet
 			$first_name = $customer['first_name'];
 			$last_name = $customer['last_name'];
 		} else {
-			$name = explode(' ', $credit_card->name);
+			$name = explode(' ', (string)$credit_card->name);
 			$first_name = $name[0];
 			$last_name = $name[1];
 		}
@@ -447,8 +447,8 @@ class authnet
 		"</billTo>".
 		"<payment>".
 		 "<creditCard>".
-		  "<cardNumber>".$credit_card->card_num."</cardNumber>".
-		  "<expirationDate>".$credit_card->exp_year."-".$credit_card->exp_month."</expirationDate>". // required format for API is YYYY-MM
+		  "<cardNumber>".(string)$credit_card->card_num."</cardNumber>".
+		  "<expirationDate>".(string)$credit_card->exp_year."-".(string)$credit_card->exp_month."</expirationDate>". // required format for API is YYYY-MM
 		 "</creditCard>".
 		"</payment>".
 		"</paymentProfile>".
@@ -480,8 +480,7 @@ class authnet
 	}
 	
 	function ChargeRecurring($client_id, $gateway, $order_id, $profile_id, $payment_profile_id, $params)
-	{
-		
+	{		
 		$CI =& get_instance();
 		
 		// Get the proper URL

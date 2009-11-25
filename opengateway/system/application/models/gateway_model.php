@@ -361,7 +361,7 @@ class Gateway_model extends Model
 		}
 		
 		// Check for a notification URL
-	if(isset($recur->notification_url)) {
+		if(isset($recur->notification_url)) {
 			$notification_url = $recur->notification_url;
 		} else {
 			$notification_url = '';
