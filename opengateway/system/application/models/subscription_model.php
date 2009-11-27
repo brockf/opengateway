@@ -42,6 +42,14 @@ class Subscription_model extends Model
 		$this->db->update('subscriptions', $update_data);
 	}
 	
+	function SaveApiAuthNumber($subscription_id, $api_auth_number)
+	{
+		$update_data = array('api_auth_number' => $api_auth_number);
+		
+		$this->db->where('subscription_id', $subscription_id);
+		$this->db->update('subscriptions', $update_data);
+	}
+	
 	function MakeInactive($subscription_id)
 	{
 		$update_data = array('active' => 0);
@@ -50,11 +58,11 @@ class Subscription_model extends Model
 		$this->db->update('subscriptions', $update_data);
 	}
 	
-	function GetRecurringDetails($client_id, $order_id)
+	function GetSubscriptionDetails($client_id, $subscription_id)
 	{
 		$this->db->where('client_id', $client_id);
-		$this->db->where('order_id', $order_id);
-		$query = $this->db->get('recurring_payments');
+		$this->db->where('subscription_id', $subscription_id);
+		$query = $this->db->get('subscriptions');
 		if($query->num_rows() > 0) {
 			return $query->row();
 		} else {

@@ -9,12 +9,12 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>
 	</authentication>
 	<request>Recur</request>
-	<gateway_id>3</gateway_id>
+	<gateway_id>17</gateway_id>
 	<amount>24.99</amount>
 	<description>Monthly Supply</description>
 	<credit_card>
 		<name>David Ryan</name>
-		<card_num>4007000000027</card_num>
+		<card_num>4111111111111111</card_num>
 		<exp_month>10</exp_month>
 		<exp_year>2011</exp_year>
 		<cvv>123</cvv>
@@ -31,7 +31,7 @@ $ch = curl_init();
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); 
 curl_setopt($ch, CURLOPT_URL,$url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($ch, CURLOPT_TIMEOUT, 4);
+curl_setopt($ch, CURLOPT_TIMEOUT, 10);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields); 
 
 

@@ -337,7 +337,7 @@ class authnet
 		
 		if($response['success'] == TRUE){
 			$response_array = array('order_id' => $order_id, 'subscription_id' => $subscription_id);
-			$response = $CI->response->TransactionResponse(1, $response_array);
+			$response = $CI->response->TransactionResponse(100, $response_array);
 		} else {
 			// Make the subscription inactive
 			$CI->subscription_model->MakeInactive($subscription_id);
@@ -345,6 +345,17 @@ class authnet
 			$response_array = array('reason' => $response['reason']);
 			$response = $CI->response->TransactionResponse(2, $response_array);
 		}
+		
+		return $response;
+	}
+	
+	function CancelRecur($client_id, $subscription)
+	{
+		$CI =& get_instance();
+		$CI->load->model('subscription_model');
+		$CI->subscription_model->MakeInactive($subscription->subscription_id);
+		$response_array = array('subscription_id' => $subscription->subscription_id);
+		$response = $CI->response->TransactionResponse(101, $response_array);
 		
 		return $response;
 	}
@@ -534,7 +545,7 @@ class authnet
 			// $CI->notify->SendNotification($subscription_id);
 			
 			// Get the auth code
-			$post_response = explode(',', $response->DirectResponse);
+			$post_response = explode(',', $response->directResponse);
 			$CI->load->model('order_authorization_model');
 			$CI->order_authorization_model->SaveAuthorization($order_id, $post_response[6], $post_response[4]);
 			$response['success'] = TRUE;

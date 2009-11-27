@@ -33,7 +33,7 @@ class Field_validation
 		}
 	}
 	
-function ValidateRequiredGatewayFields($gateway_type, $params)
+function ValidateRequiredGatewayFields($gateway_type, $xml_params)
 	{
 		// Load the CI object
 		$CI =& get_instance();
@@ -43,6 +43,11 @@ function ValidateRequiredGatewayFields($gateway_type, $params)
 		// Validate that all required fields are present
 		$CI->load->model('gateway_model');
 		$required_fields = $CI->gateway_model->GetRequiredGatewayFields($gateway_type);
+		
+		foreach($xml_params->children() as $key => $value)
+		{
+			$params[(string)$key] = (string)$value;
+		}
 		
 		$params = array_keys($params);
 		

@@ -41,7 +41,9 @@ class Response
 		
 		$response = array(
 							'1' => 'Transaction approved.',
-							'2' => 'Transaction declined'
+							'2' => 'Transaction declined',
+							'100' => 'Subscription created.',
+							'101' => 'Subscription cancelled.'
 							);
 		
 				
@@ -69,12 +71,13 @@ class Response
 							'1002' => 'Invalid request type.',
 							'1003' => 'Required fields are missing.',
 							'1004' => 'Required fields are missing for this request',
+							'1005' => 'Gateway type is required.',
 							'2000' => 'Client is not authorized to create new clients.',
 							'2001' => 'Invalid External API.',
 							'3000' => 'Invalid gateway ID for this client.',
 							'3001' => 'Gateway ID is required.',
 							'4000' => 'Invalid customer ID.',
-							'4001' => 'Inavlid Order ID.',
+							'4001' => 'Invalid Order ID.',
 							'5000' => 'Not a valid recurring subscription.',
 							'5001' => 'Start date cannot be in the past.',
 							'5002' => 'End date cannot be in the past',

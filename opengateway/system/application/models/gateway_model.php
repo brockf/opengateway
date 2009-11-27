@@ -7,23 +7,29 @@ class Gateway_model extends Model
 	}
 	
 	// Create a new instance of a gateway
-	function NewGateway($client_id = FALSE, $params = FALSE)
+	function NewGateway($client_id = FALSE, $params = FALSE, $xml = FALSE)
 	{
+		$gateway_params = $xml->params;
+		
 		// Get the gateway type
-		$gateway_type = $params['gateway_type'];
+		if(!isset($gateway_params->gateway_type)) {
+			die($this->response->Error(1005));
+		}
+		
+		$gateway_type = (string)$gateway_params->gateway_type;
 		
 		// Validate the required fields
 		$this->load->library('field_validation');
-		$request_type_id = $this->field_validation->ValidateRequiredGatewayFields($gateway_type, $params);
+		$request_type_id = $this->field_validation->ValidateRequiredGatewayFields($gateway_type, $gateway_params);
 		
 		// Get the external API id
 		$external_api_id = $this->GetExternalApiId($gateway_type);
 		
 		// Create the new Gateway
 		$insert_data = array(
-							'client_id' 		=> $params['client_id'],
+							'client_id' 		=> $gateway_params->client_id,
 							'external_api_id' 	=> $external_api_id,
-							'enabled'			=> $params['enabled']
+							'enabled'			=> $gateway_params->enabled
 							);  
 		
 		$this->db->insert('client_gateways', $insert_data);
@@ -31,16 +37,16 @@ class Gateway_model extends Model
 		$new_gateway_id = $this->db->insert_id();
 		
 		//Add the params, but not the client id or gateway type
-		unset($params['client_id']);
-		unset($params['gateway_type']);
-		unset($params['enabled']);
+		unset($gateway_params->client_id);
+		unset($gateway_params->gateway_type);
+		unset($gateway_params->enabled);
 		
-		foreach($params as $key => $value)
+		foreach($gateway_params->children() as $key => $value)
 		{
 			$insert_data = array(
 								'client_gateway_id'	=> $new_gateway_id,
-								'field' 			=> $key,
-								'value'				=> $value
+								'field' 			=> (string)$key,
+								'value'				=> (string)$value
 								);  
 		
 			$this->db->insert('client_gateway_params', $insert_data);
@@ -328,7 +334,10 @@ class Gateway_model extends Model
 				die($this->response->Error(5004));
 			} else {
 				$name = explode(' ', $credit_card->name);
+				$customer['first_name'] = $name[0];
+				$customer['last_name'] = $name[1];
 				$customer['customer_id'] = $CI->customer_model->NewARBCustomer($client_id, $name[0], $name[1]);
+				
 			}
 		}
 		
@@ -380,7 +389,7 @@ class Gateway_model extends Model
 		return $this->$gateway_name->Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $recur->interval, $credit_card, $subscription_id);
 	}
 	
-	function CancelRecurring($client_id, $params)
+	function CancelRecur($client_id, $params)
 	{
 		if(!isset($params['gateway_id'])) {
 			die($this->response->Error(3001));
@@ -388,31 +397,22 @@ class Gateway_model extends Model
 		
 		$CI =& get_instance();
 		
-		// Get the order details
-		$CI->load->model('order_model');
-		$order = $CI->order_model->GetOrder($client_id, $params['order_id']);
-		$order_id = $order->order_id;
-		
 		// Validate the required fields
 		$this->load->library('field_validation');
-		$this->field_validation->ValidateRequiredFields('NewRecurring', $params);
+		$this->field_validation->ValidateRequiredFields('CancelRecur', $params);
 		
 		// Get the gateway info to load the proper library
 		$gateway_id = $params['gateway_id'];
 		$CI->load->model('gateway_model');
 		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
-		
-		// Get the customer details
-		$CI->load->model('customer_model');
-		$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
 
 		// Get the subscription information
-		$CI->load->model('recurring_model');
-		$subscription = $CI->recurring_model->GetRecurringDetails($client_id, $order_id);
+		$CI->load->model('subscription_model');
+		$subscription = $CI->subscription_model->GetSubscriptionDetails($client_id, $params['subscription_id']);
 		
 		// Load the proper library
 		$gateway_name = $gateway['name'];
 		$this->load->library('payment/'.$gateway_name);
-		return $this->$gateway_name->NewRecurring($client_id, $order_id, $gateway, $subscription->api_reference);
+		return $this->$gateway_name->CancelRecur($client_id, $subscription);
 	}
 }
