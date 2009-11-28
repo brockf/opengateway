@@ -17,7 +17,7 @@ class Customer_model extends Model
 							
 	}
 	
-	// Save new customer
+	// Save new customer 
 	function SaveNewCustomer($client_id, $first_name, $last_name, $company = '', $internal_id = '', $address_1 = '', $address_2 = '', $city = '', $state = '', $postal_code = '', $phone = '', $email = '')
 	{
 		$insert_data = array(
