@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50136
 File Encoding         : 65001
 
-Date: 2009-11-27 16:59:27
+Date: 2009-11-28 16:45:26
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -226,7 +226,7 @@ CREATE TABLE `client_gateway_params` (
   `field` varchar(255) NOT NULL,
   `value` varchar(255) NOT NULL,
   PRIMARY KEY (`client_gateway_params_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=101 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=109 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of client_gateway_params
@@ -331,6 +331,14 @@ INSERT INTO `client_gateway_params` VALUES ('97', '17', 'accept_mc', '1');
 INSERT INTO `client_gateway_params` VALUES ('98', '17', 'accept_discover', '1');
 INSERT INTO `client_gateway_params` VALUES ('99', '17', 'accept_amex', '1');
 INSERT INTO `client_gateway_params` VALUES ('100', '17', 'accept_dc', '1');
+INSERT INTO `client_gateway_params` VALUES ('101', '18', 'mode', 'live');
+INSERT INTO `client_gateway_params` VALUES ('102', '18', 'terminal_id', 'A00427-01');
+INSERT INTO `client_gateway_params` VALUES ('103', '18', 'password', 'testus');
+INSERT INTO `client_gateway_params` VALUES ('104', '18', 'accept_visa', '1');
+INSERT INTO `client_gateway_params` VALUES ('105', '18', 'accept_mc', '1');
+INSERT INTO `client_gateway_params` VALUES ('106', '18', 'accept_discover', '1');
+INSERT INTO `client_gateway_params` VALUES ('107', '18', 'accept_amex', '1');
+INSERT INTO `client_gateway_params` VALUES ('108', '18', 'accept_dc', '1');
 
 -- ----------------------------
 -- Table structure for `client_gateways`
@@ -341,28 +349,14 @@ CREATE TABLE `client_gateways` (
   `client_id` int(11) NOT NULL,
   `external_api_id` int(11) NOT NULL,
   `enabled` tinyint(4) NOT NULL,
+  `create_date` date NOT NULL,
   PRIMARY KEY (`client_gateway_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of client_gateways
 -- ----------------------------
-INSERT INTO `client_gateways` VALUES ('1', '17', '1', '0');
-INSERT INTO `client_gateways` VALUES ('3', '17', '1', '0');
-INSERT INTO `client_gateways` VALUES ('4', '17', '1', '0');
-INSERT INTO `client_gateways` VALUES ('5', '17', '2', '1');
-INSERT INTO `client_gateways` VALUES ('6', '17', '3', '1');
-INSERT INTO `client_gateways` VALUES ('7', '17', '4', '1');
-INSERT INTO `client_gateways` VALUES ('8', '17', '5', '1');
-INSERT INTO `client_gateways` VALUES ('9', '17', '5', '1');
-INSERT INTO `client_gateways` VALUES ('10', '17', '5', '1');
-INSERT INTO `client_gateways` VALUES ('11', '17', '5', '1');
-INSERT INTO `client_gateways` VALUES ('12', '17', '2', '1');
-INSERT INTO `client_gateways` VALUES ('13', '17', '2', '1');
-INSERT INTO `client_gateways` VALUES ('14', '17', '2', '1');
-INSERT INTO `client_gateways` VALUES ('15', '17', '2', '1');
-INSERT INTO `client_gateways` VALUES ('16', '17', '2', '1');
-INSERT INTO `client_gateways` VALUES ('17', '17', '2', '1');
+INSERT INTO `client_gateways` VALUES ('18', '17', '2', '1', '2009-11-28');
 
 -- ----------------------------
 -- Table structure for `client_types`
@@ -590,7 +584,7 @@ CREATE TABLE `exact_log` (
   `MerchantURL` varchar(255) NOT NULL,
   `CTR` text NOT NULL,
   PRIMARY KEY (`response_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=34 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=36 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of exact_log
@@ -628,6 +622,8 @@ INSERT INTO `exact_log` VALUES ('30', '287', 'A00049-01', '#######', '40', '24.9
 INSERT INTO `exact_log` VALUES ('31', '287', 'A00049-01', '#######', '30', '24.99', '0.00', '1111', '825483776', '', '1011', 'David Ryan', '', '0', '0', '0', '0', '0', '287', 'Processed by:\nE-xact Transaction Gateway :- Version 9.1.0 B47\nCopyright 2009\n{2665:23*}', '0', '', '0', '1', '0', 'Transaction Normal', 'E-xact ConnectionShop', '12634 Evergreen Place', 'Whitby', 'ON', 'Canada', 'L1M 0A6', 'www.e-xact.com', '========== TRANSACTION RECORD =========\n \nE-xact ConnectionShop\n12634 Evergreen Place\nWhitby, ON L1M 0A6\nwww.e-xact.com\n \nTYPE: Purchase\n \nACCT: Visa             $24.99 CAD\n \nCARD NUMBER : ############1111\nTRANS. REF. : \nDATE/TIME   : 27 Nov 09 14:59:57\nREFERENCE # : 66001047 0010010640 M\nAUTHOR.#    : ET5958\n \n      00 Approved - Thank You 028\n \nSIGNATURE\n\n\n\n_______________________________________\n\n\n \nCardholder will pay card issuer\nabove amount pursuant to Cardholder\nAgreement.');
 INSERT INTO `exact_log` VALUES ('32', '288', 'A00049-01', '#######', '40', '24.99', '0.00', '1111', '825483788', '', '1011', 'David Ryan', '123', '1', '0', '0', '0', '0', '107', 'Processed by:\nE-xact Transaction Gateway :- Version 9.1.0 B47\nCopyright 2009\n{2665:23*}', '0', '', '0', '1', '0', 'Transaction Normal', 'E-xact ConnectionShop', '12634 Evergreen Place', 'Whitby', 'ON', 'Canada', 'L1M 0A6', 'www.e-xact.com', '========== TRANSACTION RECORD =========\n \nE-xact ConnectionShop\n12634 Evergreen Place\nWhitby, ON L1M 0A6\nwww.e-xact.com\n \nTYPE: Pre-Authorization\n \nACCT: Visa             $24.99 CAD\n \nCARD NUMBER : ############1111\nTRANS. REF. : \nDATE/TIME   : 27 Nov 09 15:00:01\nREFERENCE # : 66001047 0010010650 M\nAUTHOR.#    : ET0001\n \n      00 Approved - Thank You 028\n \nSIGNATURE\n\n\n\n_______________________________________\n\n\n \nCardholder will pay card issuer\nabove amount pursuant to Cardholder\nAgreement.');
 INSERT INTO `exact_log` VALUES ('33', '288', 'A00049-01', '#######', '30', '24.99', '0.00', '1111', '825483800', '', '1011', 'David Ryan', '', '0', '0', '0', '0', '0', '288', 'Processed by:\nE-xact Transaction Gateway :- Version 9.1.0 B47\nCopyright 2009\n{2665:23*}', '0', '', '0', '1', '0', 'Transaction Normal', 'E-xact ConnectionShop', '12634 Evergreen Place', 'Whitby', 'ON', 'Canada', 'L1M 0A6', 'www.e-xact.com', '========== TRANSACTION RECORD =========\n \nE-xact ConnectionShop\n12634 Evergreen Place\nWhitby, ON L1M 0A6\nwww.e-xact.com\n \nTYPE: Purchase\n \nACCT: Visa             $24.99 CAD\n \nCARD NUMBER : ############1111\nTRANS. REF. : \nDATE/TIME   : 27 Nov 09 15:00:04\nREFERENCE # : 66001047 0010010660 M\nAUTHOR.#    : ET0005\n \n      00 Approved - Thank You 028\n \nSIGNATURE\n\n\n\n_______________________________________\n\n\n \nCardholder will pay card issuer\nabove amount pursuant to Cardholder\nAgreement.');
+INSERT INTO `exact_log` VALUES ('34', '292', 'A00049-01', '#######', '0', '19.99', '0.00', '1111', '825623813', '', '1011', 'David Ryan', '123', '1', '0', '0', '0', '0', '292', 'Processed by:\nE-xact Transaction Gateway :- Version 9.1.0 B47\nCopyright 2009\n{2665:23*}', '0', '', '0', '1', '0', 'Transaction Normal', 'E-xact ConnectionShop', '12634 Evergreen Place', 'Whitby', 'ON', 'Canada', 'L1M 0A6', 'www.e-xact.com', '========== TRANSACTION RECORD =========\n \nE-xact ConnectionShop\n12634 Evergreen Place\nWhitby, ON L1M 0A6\nwww.e-xact.com\n \nTYPE: Purchase\n \nACCT: Visa             $19.99 CAD\n \nCARD NUMBER : ############1111\nTRANS. REF. : \nDATE/TIME   : 28 Nov 09 13:18:20\nREFERENCE # : 66001047 0010011190 M\nAUTHOR.#    : ET1821\n \n      00 Approved - Thank You 028\n \nSIGNATURE\n\n\n\n_______________________________________\n\n\n \nCardholder will pay card issuer\nabove amount pursuant to Cardholder\nAgreement.');
+INSERT INTO `exact_log` VALUES ('35', '293', 'A00049-01', '#######', '0', '19.99', '0.00', '1111', '825624416', '', '1011', 'David Ryan', '123', '1', '0', '0', '0', '0', '293', 'Processed by:\nE-xact Transaction Gateway :- Version 9.1.0 B47\nCopyright 2009\n{2665:23*}', '0', '', '0', '1', '0', 'Transaction Normal', 'E-xact ConnectionShop', '12634 Evergreen Place', 'Whitby', 'ON', 'Canada', 'L1M 0A6', 'www.e-xact.com', '========== TRANSACTION RECORD =========\n \nE-xact ConnectionShop\n12634 Evergreen Place\nWhitby, ON L1M 0A6\nwww.e-xact.com\n \nTYPE: Purchase\n \nACCT: Visa             $19.99 CAD\n \nCARD NUMBER : ############1111\nTRANS. REF. : \nDATE/TIME   : 28 Nov 09 13:21:28\nREFERENCE # : 66001047 0010011200 M\nAUTHOR.#    : ET2128\n \n      00 Approved - Thank You 028\n \nSIGNATURE\n\n\n\n_______________________________________\n\n\n \nCardholder will pay card issuer\nabove amount pursuant to Cardholder\nAgreement.');
 
 -- ----------------------------
 -- Table structure for `external_api_required_fields`
@@ -720,7 +716,7 @@ CREATE TABLE `order_authorizations` (
   `tran_id` int(11) NOT NULL,
   `authorization_code` varchar(20) NOT NULL,
   PRIMARY KEY (`order_authorization_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=55 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=57 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of order_authorizations
@@ -779,6 +775,8 @@ INSERT INTO `order_authorizations` VALUES ('51', '285', '0', '');
 INSERT INTO `order_authorizations` VALUES ('52', '286', '0', '');
 INSERT INTO `order_authorizations` VALUES ('53', '287', '0', '');
 INSERT INTO `order_authorizations` VALUES ('54', '288', '0', '');
+INSERT INTO `order_authorizations` VALUES ('55', '292', '825623813', '');
+INSERT INTO `order_authorizations` VALUES ('56', '293', '825624416', '');
 
 -- ----------------------------
 -- Table structure for `orders`
@@ -788,305 +786,311 @@ CREATE TABLE `orders` (
   `order_id` int(11) NOT NULL AUTO_INCREMENT,
   `client_id` int(11) NOT NULL,
   `gateway_id` int(11) NOT NULL,
+  `customer_id` int(11) DEFAULT '0',
   `subscription_id` int(11) NOT NULL,
   `card_last_four` varchar(4) NOT NULL,
   `amount` varchar(11) NOT NULL,
   `customer_ip_address` varchar(14) DEFAULT NULL,
   `timestamp` datetime NOT NULL,
   PRIMARY KEY (`order_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=289 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=294 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of orders
 -- ----------------------------
-INSERT INTO `orders` VALUES ('1', '17', '3', '0', '0027', '19.99', null, '0000-00-00 00:00:00');
-INSERT INTO `orders` VALUES ('2', '17', '3', '0', '0027', '19.99', null, '2009-11-11 01:05:36');
-INSERT INTO `orders` VALUES ('3', '17', '3', '0', '0027', '19.99', null, '2009-11-11 19:53:14');
-INSERT INTO `orders` VALUES ('4', '17', '3', '0', '0027', '19.99', null, '2009-11-11 19:53:14');
-INSERT INTO `orders` VALUES ('5', '17', '3', '0', '0027', '19.99', null, '2009-11-11 19:53:39');
-INSERT INTO `orders` VALUES ('6', '17', '3', '0', '0027', '19.99', null, '2009-11-11 19:54:46');
-INSERT INTO `orders` VALUES ('7', '17', '3', '0', '0027', '19.99', null, '2009-11-11 19:56:57');
-INSERT INTO `orders` VALUES ('8', '17', '3', '0', '0027', '19.99', null, '2009-11-11 19:58:25');
-INSERT INTO `orders` VALUES ('9', '17', '3', '0', '0027', '19.99', null, '2009-11-11 19:59:08');
-INSERT INTO `orders` VALUES ('10', '17', '3', '0', '0027', '19.99', null, '2009-11-11 20:08:03');
-INSERT INTO `orders` VALUES ('11', '17', '3', '0', '0027', '19.99', null, '2009-11-11 20:09:33');
-INSERT INTO `orders` VALUES ('12', '17', '3', '0', '0027', '19.99', null, '2009-11-11 20:10:14');
-INSERT INTO `orders` VALUES ('13', '17', '3', '0', '0027', '19.99', null, '2009-11-11 20:10:33');
-INSERT INTO `orders` VALUES ('14', '17', '3', '0', '0027', '19.99', null, '2009-11-11 20:11:04');
-INSERT INTO `orders` VALUES ('15', '17', '3', '0', '0027', '19.99', null, '2009-11-11 20:12:57');
-INSERT INTO `orders` VALUES ('16', '17', '3', '0', '0027', '19.99', null, '2009-11-11 20:13:03');
-INSERT INTO `orders` VALUES ('17', '17', '3', '0', '0027', '19.99', null, '2009-11-11 20:15:16');
-INSERT INTO `orders` VALUES ('18', '17', '3', '0', '0027', '19.99', null, '2009-11-11 20:17:00');
-INSERT INTO `orders` VALUES ('19', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:00:32');
-INSERT INTO `orders` VALUES ('20', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:01:40');
-INSERT INTO `orders` VALUES ('21', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:02:03');
-INSERT INTO `orders` VALUES ('22', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:03:34');
-INSERT INTO `orders` VALUES ('23', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:03:39');
-INSERT INTO `orders` VALUES ('24', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:04:59');
-INSERT INTO `orders` VALUES ('25', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:05:24');
-INSERT INTO `orders` VALUES ('26', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:07:03');
-INSERT INTO `orders` VALUES ('27', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:09:19');
-INSERT INTO `orders` VALUES ('28', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:28:53');
-INSERT INTO `orders` VALUES ('29', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:29:39');
-INSERT INTO `orders` VALUES ('30', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:29:52');
-INSERT INTO `orders` VALUES ('31', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:30:28');
-INSERT INTO `orders` VALUES ('32', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:31:00');
-INSERT INTO `orders` VALUES ('33', '17', '3', '0', '0027', '19.99', null, '2009-11-11 21:36:42');
-INSERT INTO `orders` VALUES ('34', '17', '3', '0', '0027', '19.99', null, '2009-11-15 03:17:50');
-INSERT INTO `orders` VALUES ('35', '17', '3', '0', '0027', '19.99', null, '2009-11-15 03:18:06');
-INSERT INTO `orders` VALUES ('36', '17', '3', '0', '0027', '19.99', null, '2009-11-15 03:22:18');
-INSERT INTO `orders` VALUES ('37', '17', '3', '0', '0027', '19.99', null, '2009-11-16 01:12:41');
-INSERT INTO `orders` VALUES ('38', '17', '3', '0', '0027', '19.99', null, '2009-11-16 01:15:41');
-INSERT INTO `orders` VALUES ('39', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:15:50');
-INSERT INTO `orders` VALUES ('40', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:19:38');
-INSERT INTO `orders` VALUES ('41', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:20:36');
-INSERT INTO `orders` VALUES ('42', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:21:48');
-INSERT INTO `orders` VALUES ('43', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:27:10');
-INSERT INTO `orders` VALUES ('44', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:27:51');
-INSERT INTO `orders` VALUES ('45', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:30:22');
-INSERT INTO `orders` VALUES ('46', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:30:45');
-INSERT INTO `orders` VALUES ('47', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:31:43');
-INSERT INTO `orders` VALUES ('48', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:32:42');
-INSERT INTO `orders` VALUES ('49', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:33:21');
-INSERT INTO `orders` VALUES ('50', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:42:48');
-INSERT INTO `orders` VALUES ('51', '17', '3', '0', '0027', '24.99', null, '2009-11-16 01:42:58');
-INSERT INTO `orders` VALUES ('52', '17', '3', '0', '0027', '19.99', null, '2009-11-17 01:21:18');
-INSERT INTO `orders` VALUES ('53', '17', '3', '0', '0', '19.99', null, '2009-11-17 01:35:51');
-INSERT INTO `orders` VALUES ('54', '17', '3', '0', '0', '19.99', null, '2009-11-17 01:37:19');
-INSERT INTO `orders` VALUES ('55', '17', '3', '0', '0', '19.99', null, '2009-11-17 02:22:38');
-INSERT INTO `orders` VALUES ('56', '17', '3', '0', '0', '19.99', null, '2009-11-17 02:25:15');
-INSERT INTO `orders` VALUES ('57', '17', '3', '0', '0', '19.99', null, '2009-11-17 02:25:38');
-INSERT INTO `orders` VALUES ('58', '17', '3', '0', '0027', '19.99', null, '2009-11-17 02:25:54');
-INSERT INTO `orders` VALUES ('59', '17', '3', '0', '0027', '19.99', null, '2009-11-17 02:27:45');
-INSERT INTO `orders` VALUES ('60', '17', '3', '0', '0027', '19.99', null, '2009-11-17 02:29:11');
-INSERT INTO `orders` VALUES ('61', '17', '3', '0', '0027', '19.99', null, '2009-11-17 02:35:34');
-INSERT INTO `orders` VALUES ('62', '17', '3', '0', '0027', '19.99', null, '2009-11-17 02:36:44');
-INSERT INTO `orders` VALUES ('63', '17', '3', '0', '0027', '19.99', null, '2009-11-17 02:39:20');
-INSERT INTO `orders` VALUES ('64', '17', '3', '0', '0027', '19.99', null, '2009-11-17 02:41:16');
-INSERT INTO `orders` VALUES ('65', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:41:27');
-INSERT INTO `orders` VALUES ('66', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:46:18');
-INSERT INTO `orders` VALUES ('67', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:47:33');
-INSERT INTO `orders` VALUES ('68', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:48:33');
-INSERT INTO `orders` VALUES ('69', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:49:08');
-INSERT INTO `orders` VALUES ('70', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:50:33');
-INSERT INTO `orders` VALUES ('71', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:51:25');
-INSERT INTO `orders` VALUES ('72', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:51:37');
-INSERT INTO `orders` VALUES ('73', '17', '3', '0', '0027', '19.99', null, '2009-11-17 02:52:05');
-INSERT INTO `orders` VALUES ('74', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:56:26');
-INSERT INTO `orders` VALUES ('75', '17', '3', '0', '0', '19.99', '127.0.0.1', '2009-11-17 02:57:56');
-INSERT INTO `orders` VALUES ('76', '17', '3', '0', '0', '19.99', '127.0.0.1', '2009-11-17 02:59:17');
-INSERT INTO `orders` VALUES ('77', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:59:42');
-INSERT INTO `orders` VALUES ('78', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 03:20:36');
-INSERT INTO `orders` VALUES ('79', '17', '3', '0', '0', '24.99', null, '2009-11-17 03:48:56');
-INSERT INTO `orders` VALUES ('80', '17', '3', '0', '0', '24.99', null, '2009-11-17 03:49:51');
-INSERT INTO `orders` VALUES ('81', '17', '3', '0', '0', '24.99', null, '2009-11-17 03:52:18');
-INSERT INTO `orders` VALUES ('82', '17', '3', '0', '0027', '24.99', null, '2009-11-17 03:53:59');
-INSERT INTO `orders` VALUES ('83', '17', '3', '0', '0027', '24.99', null, '2009-11-17 03:56:43');
-INSERT INTO `orders` VALUES ('84', '17', '3', '0', '0027', '24.99', null, '2009-11-17 05:05:43');
-INSERT INTO `orders` VALUES ('85', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-20 20:13:13');
-INSERT INTO `orders` VALUES ('86', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-20 20:13:19');
-INSERT INTO `orders` VALUES ('87', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:32:25');
-INSERT INTO `orders` VALUES ('88', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:32:30');
-INSERT INTO `orders` VALUES ('89', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:32:35');
-INSERT INTO `orders` VALUES ('90', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:32:41');
-INSERT INTO `orders` VALUES ('91', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:32:48');
-INSERT INTO `orders` VALUES ('92', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:33:49');
-INSERT INTO `orders` VALUES ('93', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:54:10');
-INSERT INTO `orders` VALUES ('94', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:54:16');
-INSERT INTO `orders` VALUES ('95', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:54:28');
-INSERT INTO `orders` VALUES ('96', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:54:36');
-INSERT INTO `orders` VALUES ('97', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:55:23');
-INSERT INTO `orders` VALUES ('98', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:55:45');
-INSERT INTO `orders` VALUES ('99', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:56:09');
-INSERT INTO `orders` VALUES ('100', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:57:17');
-INSERT INTO `orders` VALUES ('101', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:57:22');
-INSERT INTO `orders` VALUES ('102', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:58:21');
-INSERT INTO `orders` VALUES ('103', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:58:28');
-INSERT INTO `orders` VALUES ('104', '17', '3', '0', '0027', '24.99', null, '2009-11-20 20:58:33');
-INSERT INTO `orders` VALUES ('105', '17', '3', '0', '0027', '24.99', null, '2009-11-20 21:01:00');
-INSERT INTO `orders` VALUES ('106', '17', '3', '0', '0027', '24.99', null, '2009-11-20 21:01:07');
-INSERT INTO `orders` VALUES ('107', '17', '3', '0', '0027', '24.99', null, '2009-11-20 21:01:11');
-INSERT INTO `orders` VALUES ('108', '17', '3', '0', '0027', '24.99', null, '2009-11-20 21:01:16');
-INSERT INTO `orders` VALUES ('109', '17', '3', '0', '0027', '24.99', null, '2009-11-20 21:01:22');
-INSERT INTO `orders` VALUES ('110', '17', '3', '0', '0027', '24.99', null, '2009-11-20 22:12:31');
-INSERT INTO `orders` VALUES ('111', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:19:41');
-INSERT INTO `orders` VALUES ('112', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:27:17');
-INSERT INTO `orders` VALUES ('113', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:27:39');
-INSERT INTO `orders` VALUES ('114', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:29:13');
-INSERT INTO `orders` VALUES ('115', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:30:20');
-INSERT INTO `orders` VALUES ('116', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:31:13');
-INSERT INTO `orders` VALUES ('117', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:31:41');
-INSERT INTO `orders` VALUES ('118', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:33:25');
-INSERT INTO `orders` VALUES ('119', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:33:51');
-INSERT INTO `orders` VALUES ('120', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:34:58');
-INSERT INTO `orders` VALUES ('121', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:35:50');
-INSERT INTO `orders` VALUES ('122', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:38:02');
-INSERT INTO `orders` VALUES ('123', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:50:57');
-INSERT INTO `orders` VALUES ('124', '17', '3', '0', '0027', '24.99', null, '2009-11-21 00:51:48');
-INSERT INTO `orders` VALUES ('125', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:00:34');
-INSERT INTO `orders` VALUES ('126', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:00:59');
-INSERT INTO `orders` VALUES ('127', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:01:16');
-INSERT INTO `orders` VALUES ('128', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:04:26');
-INSERT INTO `orders` VALUES ('129', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:04:49');
-INSERT INTO `orders` VALUES ('130', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:06:01');
-INSERT INTO `orders` VALUES ('131', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:06:07');
-INSERT INTO `orders` VALUES ('132', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:06:13');
-INSERT INTO `orders` VALUES ('133', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:52:21');
-INSERT INTO `orders` VALUES ('134', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:52:25');
-INSERT INTO `orders` VALUES ('135', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:59:34');
-INSERT INTO `orders` VALUES ('136', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:59:36');
-INSERT INTO `orders` VALUES ('137', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:59:48');
-INSERT INTO `orders` VALUES ('138', '17', '3', '0', '0027', '24.99', null, '2009-11-21 01:59:59');
-INSERT INTO `orders` VALUES ('139', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:00:02');
-INSERT INTO `orders` VALUES ('140', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:00:14');
-INSERT INTO `orders` VALUES ('141', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:01:17');
-INSERT INTO `orders` VALUES ('142', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:07:34');
-INSERT INTO `orders` VALUES ('143', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:08:01');
-INSERT INTO `orders` VALUES ('144', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:08:53');
-INSERT INTO `orders` VALUES ('145', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:10:01');
-INSERT INTO `orders` VALUES ('146', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:10:19');
-INSERT INTO `orders` VALUES ('147', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:10:25');
-INSERT INTO `orders` VALUES ('148', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:10:31');
-INSERT INTO `orders` VALUES ('149', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:14:55');
-INSERT INTO `orders` VALUES ('150', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:15:48');
-INSERT INTO `orders` VALUES ('151', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:43:37');
-INSERT INTO `orders` VALUES ('152', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:44:43');
-INSERT INTO `orders` VALUES ('153', '17', '3', '0', '0027', '24.99', null, '2009-11-21 02:51:09');
-INSERT INTO `orders` VALUES ('154', '17', '3', '28', '0027', '24.99', null, '2009-11-21 02:51:11');
-INSERT INTO `orders` VALUES ('155', '17', '3', '29', '0027', '24.99', null, '2009-11-21 02:52:43');
-INSERT INTO `orders` VALUES ('156', '17', '3', '30', '0027', '24.99', null, '2009-11-21 02:57:27');
-INSERT INTO `orders` VALUES ('157', '17', '3', '31', '0027', '24.99', null, '2009-11-21 02:59:14');
-INSERT INTO `orders` VALUES ('158', '17', '3', '32', '0027', '24.99', null, '2009-11-21 03:34:35');
-INSERT INTO `orders` VALUES ('159', '17', '3', '33', '0027', '24.99', null, '2009-11-21 04:06:08');
-INSERT INTO `orders` VALUES ('160', '17', '3', '34', '0027', '24.99', null, '2009-11-21 04:06:12');
-INSERT INTO `orders` VALUES ('161', '17', '3', '35', '0027', '24.99', null, '2009-11-21 04:06:48');
-INSERT INTO `orders` VALUES ('162', '17', '3', '36', '0027', '24.99', null, '2009-11-21 04:07:14');
-INSERT INTO `orders` VALUES ('163', '17', '3', '37', '0027', '24.99', null, '2009-11-21 04:08:40');
-INSERT INTO `orders` VALUES ('164', '17', '3', '38', '0027', '24.99', null, '2009-11-21 04:09:16');
-INSERT INTO `orders` VALUES ('165', '17', '3', '39', '0027', '24.99', null, '2009-11-21 04:10:21');
-INSERT INTO `orders` VALUES ('166', '17', '3', '40', '0027', '24.99', null, '2009-11-21 04:11:24');
-INSERT INTO `orders` VALUES ('167', '17', '3', '41', '0027', '24.99', null, '2009-11-21 04:12:15');
-INSERT INTO `orders` VALUES ('168', '17', '3', '42', '0027', '24.99', null, '2009-11-21 04:12:36');
-INSERT INTO `orders` VALUES ('169', '17', '3', '43', '0027', '24.99', null, '2009-11-21 04:14:20');
-INSERT INTO `orders` VALUES ('170', '17', '3', '44', '0027', '24.99', null, '2009-11-21 04:15:09');
-INSERT INTO `orders` VALUES ('171', '17', '3', '45', '0027', '24.99', null, '2009-11-21 04:15:35');
-INSERT INTO `orders` VALUES ('172', '17', '3', '46', '0027', '24.99', null, '2009-11-21 04:16:02');
-INSERT INTO `orders` VALUES ('173', '17', '3', '47', '0027', '24.99', null, '2009-11-21 04:16:24');
-INSERT INTO `orders` VALUES ('174', '17', '3', '48', '0027', '24.99', null, '2009-11-21 04:16:55');
-INSERT INTO `orders` VALUES ('175', '17', '3', '49', '0027', '24.99', null, '2009-11-21 04:17:24');
-INSERT INTO `orders` VALUES ('176', '17', '3', '50', '0027', '24.99', null, '2009-11-21 04:20:02');
-INSERT INTO `orders` VALUES ('177', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:33:30');
-INSERT INTO `orders` VALUES ('178', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:33:38');
-INSERT INTO `orders` VALUES ('179', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:33:49');
-INSERT INTO `orders` VALUES ('180', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:33:56');
-INSERT INTO `orders` VALUES ('181', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:34:02');
-INSERT INTO `orders` VALUES ('182', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:34:06');
-INSERT INTO `orders` VALUES ('183', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:34:12');
-INSERT INTO `orders` VALUES ('184', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:34:19');
-INSERT INTO `orders` VALUES ('185', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:34:31');
-INSERT INTO `orders` VALUES ('186', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:34:35');
-INSERT INTO `orders` VALUES ('187', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:34:50');
-INSERT INTO `orders` VALUES ('188', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:40:41');
-INSERT INTO `orders` VALUES ('189', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 21:44:28');
-INSERT INTO `orders` VALUES ('190', '17', '3', '51', '0027', '24.99', null, '2009-11-24 21:47:45');
-INSERT INTO `orders` VALUES ('191', '17', '3', '52', '0027', '24.99', null, '2009-11-24 21:52:55');
-INSERT INTO `orders` VALUES ('192', '17', '3', '53', '0027', '24.99', null, '2009-11-24 21:53:27');
-INSERT INTO `orders` VALUES ('193', '17', '3', '54', '0027', '24.99', null, '2009-11-24 21:54:15');
-INSERT INTO `orders` VALUES ('194', '17', '3', '55', '0027', '24.99', null, '2009-11-24 21:58:51');
-INSERT INTO `orders` VALUES ('195', '17', '3', '56', '0027', '24.99', null, '2009-11-24 22:01:03');
-INSERT INTO `orders` VALUES ('196', '17', '3', '57', '0027', '24.99', null, '2009-11-24 22:01:08');
-INSERT INTO `orders` VALUES ('197', '17', '3', '58', '0027', '24.99', null, '2009-11-24 22:09:42');
-INSERT INTO `orders` VALUES ('198', '17', '3', '59', '0027', '24.99', null, '2009-11-24 22:14:27');
-INSERT INTO `orders` VALUES ('199', '17', '3', '60', '0027', '24.99', null, '2009-11-24 22:18:27');
-INSERT INTO `orders` VALUES ('200', '17', '3', '61', '0027', '24.99', null, '2009-11-24 23:01:37');
-INSERT INTO `orders` VALUES ('201', '17', '3', '62', '0027', '24.99', null, '2009-11-24 23:07:45');
-INSERT INTO `orders` VALUES ('202', '17', '3', '63', '0027', '24.99', null, '2009-11-24 23:08:53');
-INSERT INTO `orders` VALUES ('203', '17', '3', '64', '0027', '24.99', null, '2009-11-24 23:12:03');
-INSERT INTO `orders` VALUES ('204', '17', '3', '65', '0027', '24.99', null, '2009-11-24 23:16:32');
-INSERT INTO `orders` VALUES ('205', '17', '3', '66', '0027', '24.99', null, '2009-11-24 23:20:45');
-INSERT INTO `orders` VALUES ('206', '17', '3', '67', '0027', '24.99', null, '2009-11-24 23:21:09');
-INSERT INTO `orders` VALUES ('207', '17', '3', '68', '0027', '24.99', null, '2009-11-24 23:24:42');
-INSERT INTO `orders` VALUES ('208', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 21:17:14');
-INSERT INTO `orders` VALUES ('209', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 21:18:07');
-INSERT INTO `orders` VALUES ('210', '17', '3', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 22:48:00');
-INSERT INTO `orders` VALUES ('211', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 22:48:19');
-INSERT INTO `orders` VALUES ('212', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 22:48:43');
-INSERT INTO `orders` VALUES ('213', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 22:48:43');
-INSERT INTO `orders` VALUES ('214', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 22:56:08');
-INSERT INTO `orders` VALUES ('215', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 22:56:31');
-INSERT INTO `orders` VALUES ('216', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 22:57:33');
-INSERT INTO `orders` VALUES ('217', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 22:57:39');
-INSERT INTO `orders` VALUES ('218', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 22:59:38');
-INSERT INTO `orders` VALUES ('219', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 22:59:46');
-INSERT INTO `orders` VALUES ('220', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 23:01:38');
-INSERT INTO `orders` VALUES ('221', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 23:01:38');
-INSERT INTO `orders` VALUES ('222', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 23:02:01');
-INSERT INTO `orders` VALUES ('223', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 23:02:01');
-INSERT INTO `orders` VALUES ('224', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 23:02:36');
-INSERT INTO `orders` VALUES ('225', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 23:09:11');
-INSERT INTO `orders` VALUES ('226', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 23:10:36');
-INSERT INTO `orders` VALUES ('227', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 23:11:01');
-INSERT INTO `orders` VALUES ('228', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:01:42');
-INSERT INTO `orders` VALUES ('229', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:04:29');
-INSERT INTO `orders` VALUES ('230', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:05:16');
-INSERT INTO `orders` VALUES ('231', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:05:22');
-INSERT INTO `orders` VALUES ('232', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:05:28');
-INSERT INTO `orders` VALUES ('233', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:05:34');
-INSERT INTO `orders` VALUES ('234', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:05:39');
-INSERT INTO `orders` VALUES ('235', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:05:44');
-INSERT INTO `orders` VALUES ('236', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:05:49');
-INSERT INTO `orders` VALUES ('237', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:06:19');
-INSERT INTO `orders` VALUES ('238', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:07:41');
-INSERT INTO `orders` VALUES ('239', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:10:20');
-INSERT INTO `orders` VALUES ('240', '17', '17', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:10:35');
-INSERT INTO `orders` VALUES ('241', '17', '17', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:11:29');
-INSERT INTO `orders` VALUES ('242', '17', '17', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:11:29');
-INSERT INTO `orders` VALUES ('243', '17', '17', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:13:01');
-INSERT INTO `orders` VALUES ('244', '17', '17', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:18:47');
-INSERT INTO `orders` VALUES ('245', '17', '17', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:19:38');
-INSERT INTO `orders` VALUES ('246', '17', '17', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:22:15');
-INSERT INTO `orders` VALUES ('247', '17', '17', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:22:39');
-INSERT INTO `orders` VALUES ('248', '17', '17', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:23:05');
-INSERT INTO `orders` VALUES ('249', '17', '17', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:23:42');
-INSERT INTO `orders` VALUES ('250', '17', '17', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:23:42');
-INSERT INTO `orders` VALUES ('251', '17', '17', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:29:46');
-INSERT INTO `orders` VALUES ('252', '17', '17', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:50:56');
-INSERT INTO `orders` VALUES ('253', '17', '17', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:52:44');
-INSERT INTO `orders` VALUES ('254', '17', '17', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:53:03');
-INSERT INTO `orders` VALUES ('255', '17', '17', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:53:20');
-INSERT INTO `orders` VALUES ('256', '17', '17', '0', '1111', '19.99', '127.0.0.1', '2009-11-27 18:02:15');
-INSERT INTO `orders` VALUES ('257', '17', '17', '0', '1111', '19.99', '127.0.0.1', '2009-11-27 18:02:15');
-INSERT INTO `orders` VALUES ('258', '17', '17', '0', '1111', '19.99', '127.0.0.1', '2009-11-27 18:02:40');
-INSERT INTO `orders` VALUES ('259', '17', '17', '0', '1111', '19.99', '127.0.0.1', '2009-11-27 18:22:18');
-INSERT INTO `orders` VALUES ('260', '17', '17', '0', '1111', '19.99', '127.0.0.1', '2009-11-27 18:22:30');
-INSERT INTO `orders` VALUES ('261', '17', '17', '0', '1111', '19.99', '127.0.0.1', '2009-11-27 18:30:15');
-INSERT INTO `orders` VALUES ('262', '17', '17', '0', '1111', '19.99', '127.0.0.1', '2009-11-27 18:35:44');
-INSERT INTO `orders` VALUES ('263', '17', '17', '81', '1111', '24.99', null, '2009-11-27 19:01:43');
-INSERT INTO `orders` VALUES ('264', '17', '17', '82', '1111', '24.99', null, '2009-11-27 19:04:54');
-INSERT INTO `orders` VALUES ('265', '17', '17', '83', '1111', '24.99', null, '2009-11-27 19:09:20');
-INSERT INTO `orders` VALUES ('266', '17', '17', '84', '1111', '24.99', null, '2009-11-27 19:09:55');
-INSERT INTO `orders` VALUES ('267', '17', '17', '85', '1111', '24.99', null, '2009-11-27 19:10:20');
-INSERT INTO `orders` VALUES ('268', '17', '17', '86', '1111', '24.99', null, '2009-11-27 19:19:23');
-INSERT INTO `orders` VALUES ('269', '17', '17', '87', '1111', '24.99', null, '2009-11-27 19:20:19');
-INSERT INTO `orders` VALUES ('270', '17', '17', '88', '1111', '24.99', null, '2009-11-27 19:21:39');
-INSERT INTO `orders` VALUES ('271', '17', '17', '90', '1111', '24.99', null, '2009-11-27 19:34:36');
-INSERT INTO `orders` VALUES ('272', '17', '17', '91', '1111', '24.99', null, '2009-11-27 19:35:03');
-INSERT INTO `orders` VALUES ('273', '17', '17', '92', '1111', '24.99', null, '2009-11-27 19:35:28');
-INSERT INTO `orders` VALUES ('274', '17', '17', '93', '1111', '24.99', null, '2009-11-27 19:35:55');
-INSERT INTO `orders` VALUES ('275', '17', '17', '94', '1111', '24.99', null, '2009-11-27 19:36:25');
-INSERT INTO `orders` VALUES ('276', '17', '17', '95', '1111', '24.99', null, '2009-11-27 19:41:38');
-INSERT INTO `orders` VALUES ('277', '17', '17', '96', '1111', '24.99', null, '2009-11-27 19:42:06');
-INSERT INTO `orders` VALUES ('278', '17', '17', '97', '1111', '24.99', null, '2009-11-27 19:42:37');
-INSERT INTO `orders` VALUES ('279', '17', '17', '98', '1111', '24.99', null, '2009-11-27 19:43:21');
-INSERT INTO `orders` VALUES ('280', '17', '17', '99', '1111', '24.99', null, '2009-11-27 22:48:07');
-INSERT INTO `orders` VALUES ('281', '17', '17', '100', '1111', '24.99', null, '2009-11-27 22:50:03');
-INSERT INTO `orders` VALUES ('282', '17', '17', '101', '1111', '24.99', null, '2009-11-27 22:54:18');
-INSERT INTO `orders` VALUES ('283', '17', '17', '102', '1111', '24.99', null, '2009-11-27 22:54:38');
-INSERT INTO `orders` VALUES ('284', '17', '17', '103', '1111', '24.99', null, '2009-11-27 22:55:01');
-INSERT INTO `orders` VALUES ('285', '17', '17', '104', '1111', '24.99', null, '2009-11-27 22:56:26');
-INSERT INTO `orders` VALUES ('286', '17', '17', '105', '1111', '24.99', null, '2009-11-27 22:58:42');
-INSERT INTO `orders` VALUES ('287', '17', '17', '106', '1111', '24.99', null, '2009-11-27 22:58:53');
-INSERT INTO `orders` VALUES ('288', '17', '17', '107', '1111', '24.99', null, '2009-11-27 22:59:08');
+INSERT INTO `orders` VALUES ('1', '17', '3', '0', '0', '0027', '19.99', null, '0000-00-00 00:00:00');
+INSERT INTO `orders` VALUES ('2', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 01:05:36');
+INSERT INTO `orders` VALUES ('3', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 19:53:14');
+INSERT INTO `orders` VALUES ('4', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 19:53:14');
+INSERT INTO `orders` VALUES ('5', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 19:53:39');
+INSERT INTO `orders` VALUES ('6', '17', '3', '2', '0', '0027', '19.99', null, '2009-11-11 19:54:46');
+INSERT INTO `orders` VALUES ('7', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 19:56:57');
+INSERT INTO `orders` VALUES ('8', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 19:58:25');
+INSERT INTO `orders` VALUES ('9', '17', '3', '2', '0', '0027', '19.99', null, '2009-11-11 19:59:08');
+INSERT INTO `orders` VALUES ('10', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 20:08:03');
+INSERT INTO `orders` VALUES ('11', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 20:09:33');
+INSERT INTO `orders` VALUES ('12', '17', '3', '2', '0', '0027', '19.99', null, '2009-11-11 20:10:14');
+INSERT INTO `orders` VALUES ('13', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 20:10:33');
+INSERT INTO `orders` VALUES ('14', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 20:11:04');
+INSERT INTO `orders` VALUES ('15', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 20:12:57');
+INSERT INTO `orders` VALUES ('16', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 20:13:03');
+INSERT INTO `orders` VALUES ('17', '17', '3', '2', '0', '0027', '19.99', null, '2009-11-11 20:15:16');
+INSERT INTO `orders` VALUES ('18', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 20:17:00');
+INSERT INTO `orders` VALUES ('19', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 21:00:32');
+INSERT INTO `orders` VALUES ('20', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 21:01:40');
+INSERT INTO `orders` VALUES ('21', '17', '3', '1', '0', '0027', '19.99', null, '2009-11-11 21:02:03');
+INSERT INTO `orders` VALUES ('22', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 21:03:34');
+INSERT INTO `orders` VALUES ('23', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 21:03:39');
+INSERT INTO `orders` VALUES ('24', '17', '3', '3', '0', '0027', '19.99', null, '2009-11-11 21:04:59');
+INSERT INTO `orders` VALUES ('25', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 21:05:24');
+INSERT INTO `orders` VALUES ('26', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 21:07:03');
+INSERT INTO `orders` VALUES ('27', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 21:09:19');
+INSERT INTO `orders` VALUES ('28', '17', '3', '2', '0', '0027', '19.99', null, '2009-11-11 21:28:53');
+INSERT INTO `orders` VALUES ('29', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 21:29:39');
+INSERT INTO `orders` VALUES ('30', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 21:29:52');
+INSERT INTO `orders` VALUES ('31', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 21:30:28');
+INSERT INTO `orders` VALUES ('32', '17', '3', '2', '0', '0027', '19.99', null, '2009-11-11 21:31:00');
+INSERT INTO `orders` VALUES ('33', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-11 21:36:42');
+INSERT INTO `orders` VALUES ('34', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-15 03:17:50');
+INSERT INTO `orders` VALUES ('35', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-15 03:18:06');
+INSERT INTO `orders` VALUES ('36', '17', '3', '1', '0', '0027', '19.99', null, '2009-11-15 03:22:18');
+INSERT INTO `orders` VALUES ('37', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-16 01:12:41');
+INSERT INTO `orders` VALUES ('38', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-16 01:15:41');
+INSERT INTO `orders` VALUES ('39', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-16 01:15:50');
+INSERT INTO `orders` VALUES ('40', '17', '3', '6', '0', '0027', '24.99', null, '2009-11-16 01:19:38');
+INSERT INTO `orders` VALUES ('41', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-16 01:20:36');
+INSERT INTO `orders` VALUES ('42', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-16 01:21:48');
+INSERT INTO `orders` VALUES ('43', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-16 01:27:10');
+INSERT INTO `orders` VALUES ('44', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-16 01:27:51');
+INSERT INTO `orders` VALUES ('45', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-16 01:30:22');
+INSERT INTO `orders` VALUES ('46', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-16 01:30:45');
+INSERT INTO `orders` VALUES ('47', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-16 01:31:43');
+INSERT INTO `orders` VALUES ('48', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-16 01:32:42');
+INSERT INTO `orders` VALUES ('49', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-16 01:33:21');
+INSERT INTO `orders` VALUES ('50', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-16 01:42:48');
+INSERT INTO `orders` VALUES ('51', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-16 01:42:58');
+INSERT INTO `orders` VALUES ('52', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-17 01:21:18');
+INSERT INTO `orders` VALUES ('53', '17', '3', '0', '0', '0', '19.99', null, '2009-11-17 01:35:51');
+INSERT INTO `orders` VALUES ('54', '17', '3', '0', '0', '0', '19.99', null, '2009-11-17 01:37:19');
+INSERT INTO `orders` VALUES ('55', '17', '3', '0', '0', '0', '19.99', null, '2009-11-17 02:22:38');
+INSERT INTO `orders` VALUES ('56', '17', '3', '0', '0', '0', '19.99', null, '2009-11-17 02:25:15');
+INSERT INTO `orders` VALUES ('57', '17', '3', '0', '0', '0', '19.99', null, '2009-11-17 02:25:38');
+INSERT INTO `orders` VALUES ('58', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-17 02:25:54');
+INSERT INTO `orders` VALUES ('59', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-17 02:27:45');
+INSERT INTO `orders` VALUES ('60', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-17 02:29:11');
+INSERT INTO `orders` VALUES ('61', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-17 02:35:34');
+INSERT INTO `orders` VALUES ('62', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-17 02:36:44');
+INSERT INTO `orders` VALUES ('63', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-17 02:39:20');
+INSERT INTO `orders` VALUES ('64', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-17 02:41:16');
+INSERT INTO `orders` VALUES ('65', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:41:27');
+INSERT INTO `orders` VALUES ('66', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:46:18');
+INSERT INTO `orders` VALUES ('67', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:47:33');
+INSERT INTO `orders` VALUES ('68', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:48:33');
+INSERT INTO `orders` VALUES ('69', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:49:08');
+INSERT INTO `orders` VALUES ('70', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:50:33');
+INSERT INTO `orders` VALUES ('71', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:51:25');
+INSERT INTO `orders` VALUES ('72', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:51:37');
+INSERT INTO `orders` VALUES ('73', '17', '3', '0', '0', '0027', '19.99', null, '2009-11-17 02:52:05');
+INSERT INTO `orders` VALUES ('74', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:56:26');
+INSERT INTO `orders` VALUES ('75', '17', '3', '0', '0', '0', '19.99', '127.0.0.1', '2009-11-17 02:57:56');
+INSERT INTO `orders` VALUES ('76', '17', '3', '0', '0', '0', '19.99', '127.0.0.1', '2009-11-17 02:59:17');
+INSERT INTO `orders` VALUES ('77', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 02:59:42');
+INSERT INTO `orders` VALUES ('78', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-17 03:20:36');
+INSERT INTO `orders` VALUES ('79', '17', '3', '0', '0', '0', '24.99', null, '2009-11-17 03:48:56');
+INSERT INTO `orders` VALUES ('80', '17', '3', '0', '0', '0', '24.99', null, '2009-11-17 03:49:51');
+INSERT INTO `orders` VALUES ('81', '17', '3', '0', '0', '0', '24.99', null, '2009-11-17 03:52:18');
+INSERT INTO `orders` VALUES ('82', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-17 03:53:59');
+INSERT INTO `orders` VALUES ('83', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-17 03:56:43');
+INSERT INTO `orders` VALUES ('84', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-17 05:05:43');
+INSERT INTO `orders` VALUES ('85', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-20 20:13:13');
+INSERT INTO `orders` VALUES ('86', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-20 20:13:19');
+INSERT INTO `orders` VALUES ('87', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 20:32:25');
+INSERT INTO `orders` VALUES ('88', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 20:32:30');
+INSERT INTO `orders` VALUES ('89', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 20:32:35');
+INSERT INTO `orders` VALUES ('90', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 20:32:41');
+INSERT INTO `orders` VALUES ('91', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 20:32:48');
+INSERT INTO `orders` VALUES ('92', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 20:33:49');
+INSERT INTO `orders` VALUES ('93', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 20:54:10');
+INSERT INTO `orders` VALUES ('94', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 20:54:16');
+INSERT INTO `orders` VALUES ('95', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 20:54:28');
+INSERT INTO `orders` VALUES ('96', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 20:54:36');
+INSERT INTO `orders` VALUES ('97', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 20:55:23');
+INSERT INTO `orders` VALUES ('98', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 20:55:45');
+INSERT INTO `orders` VALUES ('99', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 20:56:09');
+INSERT INTO `orders` VALUES ('100', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 20:57:17');
+INSERT INTO `orders` VALUES ('101', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 20:57:22');
+INSERT INTO `orders` VALUES ('102', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 20:58:21');
+INSERT INTO `orders` VALUES ('103', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 20:58:28');
+INSERT INTO `orders` VALUES ('104', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 20:58:33');
+INSERT INTO `orders` VALUES ('105', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 21:01:00');
+INSERT INTO `orders` VALUES ('106', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 21:01:07');
+INSERT INTO `orders` VALUES ('107', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 21:01:11');
+INSERT INTO `orders` VALUES ('108', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 21:01:16');
+INSERT INTO `orders` VALUES ('109', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 21:01:22');
+INSERT INTO `orders` VALUES ('110', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-20 22:12:31');
+INSERT INTO `orders` VALUES ('111', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 00:19:41');
+INSERT INTO `orders` VALUES ('112', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 00:27:17');
+INSERT INTO `orders` VALUES ('113', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 00:27:39');
+INSERT INTO `orders` VALUES ('114', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 00:29:13');
+INSERT INTO `orders` VALUES ('115', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 00:30:20');
+INSERT INTO `orders` VALUES ('116', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 00:31:13');
+INSERT INTO `orders` VALUES ('117', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 00:31:41');
+INSERT INTO `orders` VALUES ('118', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 00:33:25');
+INSERT INTO `orders` VALUES ('119', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 00:33:51');
+INSERT INTO `orders` VALUES ('120', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 00:34:58');
+INSERT INTO `orders` VALUES ('121', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 00:35:50');
+INSERT INTO `orders` VALUES ('122', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 00:38:02');
+INSERT INTO `orders` VALUES ('123', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 00:50:57');
+INSERT INTO `orders` VALUES ('124', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 00:51:48');
+INSERT INTO `orders` VALUES ('125', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 01:00:34');
+INSERT INTO `orders` VALUES ('126', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 01:00:59');
+INSERT INTO `orders` VALUES ('127', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 01:01:16');
+INSERT INTO `orders` VALUES ('128', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 01:04:26');
+INSERT INTO `orders` VALUES ('129', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 01:04:49');
+INSERT INTO `orders` VALUES ('130', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 01:06:01');
+INSERT INTO `orders` VALUES ('131', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 01:06:07');
+INSERT INTO `orders` VALUES ('132', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 01:06:13');
+INSERT INTO `orders` VALUES ('133', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 01:52:21');
+INSERT INTO `orders` VALUES ('134', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 01:52:25');
+INSERT INTO `orders` VALUES ('135', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 01:59:34');
+INSERT INTO `orders` VALUES ('136', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 01:59:36');
+INSERT INTO `orders` VALUES ('137', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 01:59:48');
+INSERT INTO `orders` VALUES ('138', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 01:59:59');
+INSERT INTO `orders` VALUES ('139', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 02:00:02');
+INSERT INTO `orders` VALUES ('140', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 02:00:14');
+INSERT INTO `orders` VALUES ('141', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 02:01:17');
+INSERT INTO `orders` VALUES ('142', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 02:07:34');
+INSERT INTO `orders` VALUES ('143', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 02:08:01');
+INSERT INTO `orders` VALUES ('144', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 02:08:53');
+INSERT INTO `orders` VALUES ('145', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 02:10:01');
+INSERT INTO `orders` VALUES ('146', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 02:10:19');
+INSERT INTO `orders` VALUES ('147', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 02:10:25');
+INSERT INTO `orders` VALUES ('148', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 02:10:31');
+INSERT INTO `orders` VALUES ('149', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 02:14:55');
+INSERT INTO `orders` VALUES ('150', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 02:15:48');
+INSERT INTO `orders` VALUES ('151', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 02:43:37');
+INSERT INTO `orders` VALUES ('152', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 02:44:43');
+INSERT INTO `orders` VALUES ('153', '17', '3', '0', '0', '0027', '24.99', null, '2009-11-21 02:51:09');
+INSERT INTO `orders` VALUES ('154', '17', '3', '0', '28', '0027', '24.99', null, '2009-11-21 02:51:11');
+INSERT INTO `orders` VALUES ('155', '17', '3', '0', '29', '0027', '24.99', null, '2009-11-21 02:52:43');
+INSERT INTO `orders` VALUES ('156', '17', '3', '0', '30', '0027', '24.99', null, '2009-11-21 02:57:27');
+INSERT INTO `orders` VALUES ('157', '17', '3', '0', '31', '0027', '24.99', null, '2009-11-21 02:59:14');
+INSERT INTO `orders` VALUES ('158', '17', '3', '0', '32', '0027', '24.99', null, '2009-11-21 03:34:35');
+INSERT INTO `orders` VALUES ('159', '17', '3', '0', '33', '0027', '24.99', null, '2009-11-21 04:06:08');
+INSERT INTO `orders` VALUES ('160', '17', '3', '0', '34', '0027', '24.99', null, '2009-11-21 04:06:12');
+INSERT INTO `orders` VALUES ('161', '17', '3', '0', '35', '0027', '24.99', null, '2009-11-21 04:06:48');
+INSERT INTO `orders` VALUES ('162', '17', '3', '0', '36', '0027', '24.99', null, '2009-11-21 04:07:14');
+INSERT INTO `orders` VALUES ('163', '17', '3', '0', '37', '0027', '24.99', null, '2009-11-21 04:08:40');
+INSERT INTO `orders` VALUES ('164', '17', '3', '0', '38', '0027', '24.99', null, '2009-11-21 04:09:16');
+INSERT INTO `orders` VALUES ('165', '17', '3', '0', '39', '0027', '24.99', null, '2009-11-21 04:10:21');
+INSERT INTO `orders` VALUES ('166', '17', '3', '0', '40', '0027', '24.99', null, '2009-11-21 04:11:24');
+INSERT INTO `orders` VALUES ('167', '17', '3', '0', '41', '0027', '24.99', null, '2009-11-21 04:12:15');
+INSERT INTO `orders` VALUES ('168', '17', '3', '0', '42', '0027', '24.99', null, '2009-11-21 04:12:36');
+INSERT INTO `orders` VALUES ('169', '17', '3', '0', '43', '0027', '24.99', null, '2009-11-21 04:14:20');
+INSERT INTO `orders` VALUES ('170', '17', '3', '0', '44', '0027', '24.99', null, '2009-11-21 04:15:09');
+INSERT INTO `orders` VALUES ('171', '17', '3', '0', '45', '0027', '24.99', null, '2009-11-21 04:15:35');
+INSERT INTO `orders` VALUES ('172', '17', '3', '0', '46', '0027', '24.99', null, '2009-11-21 04:16:02');
+INSERT INTO `orders` VALUES ('173', '17', '3', '0', '47', '0027', '24.99', null, '2009-11-21 04:16:24');
+INSERT INTO `orders` VALUES ('174', '17', '3', '0', '48', '0027', '24.99', null, '2009-11-21 04:16:55');
+INSERT INTO `orders` VALUES ('175', '17', '3', '0', '49', '0027', '24.99', null, '2009-11-21 04:17:24');
+INSERT INTO `orders` VALUES ('176', '17', '3', '0', '50', '0027', '24.99', null, '2009-11-21 04:20:02');
+INSERT INTO `orders` VALUES ('177', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:33:30');
+INSERT INTO `orders` VALUES ('178', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:33:38');
+INSERT INTO `orders` VALUES ('179', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:33:49');
+INSERT INTO `orders` VALUES ('180', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:33:56');
+INSERT INTO `orders` VALUES ('181', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:34:02');
+INSERT INTO `orders` VALUES ('182', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:34:06');
+INSERT INTO `orders` VALUES ('183', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:34:12');
+INSERT INTO `orders` VALUES ('184', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:34:19');
+INSERT INTO `orders` VALUES ('185', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:34:31');
+INSERT INTO `orders` VALUES ('186', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:34:35');
+INSERT INTO `orders` VALUES ('187', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:34:50');
+INSERT INTO `orders` VALUES ('188', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 01:40:41');
+INSERT INTO `orders` VALUES ('189', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-24 21:44:28');
+INSERT INTO `orders` VALUES ('190', '17', '3', '0', '51', '0027', '24.99', null, '2009-11-24 21:47:45');
+INSERT INTO `orders` VALUES ('191', '17', '3', '0', '52', '0027', '24.99', null, '2009-11-24 21:52:55');
+INSERT INTO `orders` VALUES ('192', '17', '3', '0', '53', '0027', '24.99', null, '2009-11-24 21:53:27');
+INSERT INTO `orders` VALUES ('193', '17', '3', '0', '54', '0027', '24.99', null, '2009-11-24 21:54:15');
+INSERT INTO `orders` VALUES ('194', '17', '3', '0', '55', '0027', '24.99', null, '2009-11-24 21:58:51');
+INSERT INTO `orders` VALUES ('195', '17', '3', '0', '56', '0027', '24.99', null, '2009-11-24 22:01:03');
+INSERT INTO `orders` VALUES ('196', '17', '3', '0', '57', '0027', '24.99', null, '2009-11-24 22:01:08');
+INSERT INTO `orders` VALUES ('197', '17', '3', '0', '58', '0027', '24.99', null, '2009-11-24 22:09:42');
+INSERT INTO `orders` VALUES ('198', '17', '3', '0', '59', '0027', '24.99', null, '2009-11-24 22:14:27');
+INSERT INTO `orders` VALUES ('199', '17', '3', '0', '60', '0027', '24.99', null, '2009-11-24 22:18:27');
+INSERT INTO `orders` VALUES ('200', '17', '3', '0', '61', '0027', '24.99', null, '2009-11-24 23:01:37');
+INSERT INTO `orders` VALUES ('201', '17', '3', '0', '62', '0027', '24.99', null, '2009-11-24 23:07:45');
+INSERT INTO `orders` VALUES ('202', '17', '3', '0', '63', '0027', '24.99', null, '2009-11-24 23:08:53');
+INSERT INTO `orders` VALUES ('203', '17', '3', '0', '64', '0027', '24.99', null, '2009-11-24 23:12:03');
+INSERT INTO `orders` VALUES ('204', '17', '3', '0', '65', '0027', '24.99', null, '2009-11-24 23:16:32');
+INSERT INTO `orders` VALUES ('205', '17', '3', '0', '66', '0027', '24.99', null, '2009-11-24 23:20:45');
+INSERT INTO `orders` VALUES ('206', '17', '3', '0', '67', '0027', '24.99', null, '2009-11-24 23:21:09');
+INSERT INTO `orders` VALUES ('207', '17', '3', '0', '68', '0027', '24.99', null, '2009-11-24 23:24:42');
+INSERT INTO `orders` VALUES ('208', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 21:17:14');
+INSERT INTO `orders` VALUES ('209', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 21:18:07');
+INSERT INTO `orders` VALUES ('210', '17', '3', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 22:48:00');
+INSERT INTO `orders` VALUES ('211', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 22:48:19');
+INSERT INTO `orders` VALUES ('212', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 22:48:43');
+INSERT INTO `orders` VALUES ('213', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 22:48:43');
+INSERT INTO `orders` VALUES ('214', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 22:56:08');
+INSERT INTO `orders` VALUES ('215', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 22:56:31');
+INSERT INTO `orders` VALUES ('216', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 22:57:33');
+INSERT INTO `orders` VALUES ('217', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 22:57:39');
+INSERT INTO `orders` VALUES ('218', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 22:59:38');
+INSERT INTO `orders` VALUES ('219', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 22:59:46');
+INSERT INTO `orders` VALUES ('220', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 23:01:38');
+INSERT INTO `orders` VALUES ('221', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 23:01:38');
+INSERT INTO `orders` VALUES ('222', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 23:02:01');
+INSERT INTO `orders` VALUES ('223', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 23:02:01');
+INSERT INTO `orders` VALUES ('224', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 23:02:36');
+INSERT INTO `orders` VALUES ('225', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 23:09:11');
+INSERT INTO `orders` VALUES ('226', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 23:10:36');
+INSERT INTO `orders` VALUES ('227', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-25 23:11:01');
+INSERT INTO `orders` VALUES ('228', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:01:42');
+INSERT INTO `orders` VALUES ('229', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:04:29');
+INSERT INTO `orders` VALUES ('230', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:05:16');
+INSERT INTO `orders` VALUES ('231', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:05:22');
+INSERT INTO `orders` VALUES ('232', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:05:28');
+INSERT INTO `orders` VALUES ('233', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:05:34');
+INSERT INTO `orders` VALUES ('234', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:05:39');
+INSERT INTO `orders` VALUES ('235', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:05:44');
+INSERT INTO `orders` VALUES ('236', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:05:49');
+INSERT INTO `orders` VALUES ('237', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:06:19');
+INSERT INTO `orders` VALUES ('238', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:07:41');
+INSERT INTO `orders` VALUES ('239', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:10:20');
+INSERT INTO `orders` VALUES ('240', '17', '17', '0', '0', '0027', '19.99', '127.0.0.1', '2009-11-26 01:10:35');
+INSERT INTO `orders` VALUES ('241', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:11:29');
+INSERT INTO `orders` VALUES ('242', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:11:29');
+INSERT INTO `orders` VALUES ('243', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:13:01');
+INSERT INTO `orders` VALUES ('244', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:18:47');
+INSERT INTO `orders` VALUES ('245', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:19:38');
+INSERT INTO `orders` VALUES ('246', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:22:15');
+INSERT INTO `orders` VALUES ('247', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:22:39');
+INSERT INTO `orders` VALUES ('248', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:23:05');
+INSERT INTO `orders` VALUES ('249', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:23:42');
+INSERT INTO `orders` VALUES ('250', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:23:42');
+INSERT INTO `orders` VALUES ('251', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:29:46');
+INSERT INTO `orders` VALUES ('252', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:50:56');
+INSERT INTO `orders` VALUES ('253', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:52:44');
+INSERT INTO `orders` VALUES ('254', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:53:03');
+INSERT INTO `orders` VALUES ('255', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-26 01:53:20');
+INSERT INTO `orders` VALUES ('256', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-27 18:02:15');
+INSERT INTO `orders` VALUES ('257', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-27 18:02:15');
+INSERT INTO `orders` VALUES ('258', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-27 18:02:40');
+INSERT INTO `orders` VALUES ('259', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-27 18:22:18');
+INSERT INTO `orders` VALUES ('260', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-27 18:22:30');
+INSERT INTO `orders` VALUES ('261', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-27 18:30:15');
+INSERT INTO `orders` VALUES ('262', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-27 18:35:44');
+INSERT INTO `orders` VALUES ('263', '17', '17', '0', '81', '1111', '24.99', null, '2009-11-27 19:01:43');
+INSERT INTO `orders` VALUES ('264', '17', '17', '0', '82', '1111', '24.99', null, '2009-11-27 19:04:54');
+INSERT INTO `orders` VALUES ('265', '17', '17', '0', '83', '1111', '24.99', null, '2009-11-27 19:09:20');
+INSERT INTO `orders` VALUES ('266', '17', '17', '0', '84', '1111', '24.99', null, '2009-11-27 19:09:55');
+INSERT INTO `orders` VALUES ('267', '17', '17', '0', '85', '1111', '24.99', null, '2009-11-27 19:10:20');
+INSERT INTO `orders` VALUES ('268', '17', '17', '0', '86', '1111', '24.99', null, '2009-11-27 19:19:23');
+INSERT INTO `orders` VALUES ('269', '17', '17', '0', '87', '1111', '24.99', null, '2009-11-27 19:20:19');
+INSERT INTO `orders` VALUES ('270', '17', '17', '0', '88', '1111', '24.99', null, '2009-11-27 19:21:39');
+INSERT INTO `orders` VALUES ('271', '17', '17', '0', '90', '1111', '24.99', null, '2009-11-27 19:34:36');
+INSERT INTO `orders` VALUES ('272', '17', '17', '0', '91', '1111', '24.99', null, '2009-11-27 19:35:03');
+INSERT INTO `orders` VALUES ('273', '17', '17', '0', '92', '1111', '24.99', null, '2009-11-27 19:35:28');
+INSERT INTO `orders` VALUES ('274', '17', '17', '0', '93', '1111', '24.99', null, '2009-11-27 19:35:55');
+INSERT INTO `orders` VALUES ('275', '17', '17', '0', '94', '1111', '24.99', null, '2009-11-27 19:36:25');
+INSERT INTO `orders` VALUES ('276', '17', '17', '0', '95', '1111', '24.99', null, '2009-11-27 19:41:38');
+INSERT INTO `orders` VALUES ('277', '17', '17', '0', '96', '1111', '24.99', null, '2009-11-27 19:42:06');
+INSERT INTO `orders` VALUES ('278', '17', '17', '0', '97', '1111', '24.99', null, '2009-11-27 19:42:37');
+INSERT INTO `orders` VALUES ('279', '17', '17', '0', '98', '1111', '24.99', null, '2009-11-27 19:43:21');
+INSERT INTO `orders` VALUES ('280', '17', '17', '0', '99', '1111', '24.99', null, '2009-11-27 22:48:07');
+INSERT INTO `orders` VALUES ('281', '17', '17', '0', '100', '1111', '24.99', null, '2009-11-27 22:50:03');
+INSERT INTO `orders` VALUES ('282', '17', '17', '0', '101', '1111', '24.99', null, '2009-11-27 22:54:18');
+INSERT INTO `orders` VALUES ('283', '17', '17', '0', '102', '1111', '24.99', null, '2009-11-27 22:54:38');
+INSERT INTO `orders` VALUES ('284', '17', '17', '0', '103', '1111', '24.99', null, '2009-11-27 22:55:01');
+INSERT INTO `orders` VALUES ('285', '17', '17', '0', '104', '1111', '24.99', null, '2009-11-27 22:56:26');
+INSERT INTO `orders` VALUES ('286', '17', '17', '0', '105', '1111', '24.99', null, '2009-11-27 22:58:42');
+INSERT INTO `orders` VALUES ('287', '17', '17', '0', '106', '1111', '24.99', null, '2009-11-27 22:58:53');
+INSERT INTO `orders` VALUES ('288', '17', '17', '0', '107', '1111', '24.99', null, '2009-11-27 22:59:08');
+INSERT INTO `orders` VALUES ('289', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-28 21:05:15');
+INSERT INTO `orders` VALUES ('290', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-28 21:16:08');
+INSERT INTO `orders` VALUES ('291', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-28 21:16:42');
+INSERT INTO `orders` VALUES ('292', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-28 21:17:21');
+INSERT INTO `orders` VALUES ('293', '17', '17', '0', '0', '1111', '19.99', '127.0.0.1', '2009-11-28 21:20:33');
 
 -- ----------------------------
 -- Table structure for `recurring_payments`
@@ -1119,7 +1123,7 @@ CREATE TABLE `request_log` (
   `remote_ip` varchar(11) NOT NULL,
   `request` text NOT NULL,
   PRIMARY KEY (`request_log_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=935 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=1048 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of request_log
@@ -2058,6 +2062,119 @@ INSERT INTO `request_log` VALUES ('931', '2009-11-27 22:56:26', '127.0.0.1', '<?
 INSERT INTO `request_log` VALUES ('932', '2009-11-27 22:58:42', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>17</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4111111111111111</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notification_url>http://localhost/notify.php</notification_url>\n	</recur>\n</request>');
 INSERT INTO `request_log` VALUES ('933', '2009-11-27 22:58:53', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>17</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4111111111111111</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notification_url>http://localhost/notify.php</notification_url>\n	</recur>\n</request>');
 INSERT INTO `request_log` VALUES ('934', '2009-11-27 22:59:08', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Recur</request>\n	<gateway_id>17</gateway_id>\n	<amount>24.99</amount>\n	<description>Monthly Supply</description>\n	<credit_card>\n		<name>David Ryan</name>\n		<card_num>4111111111111111</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<recur>\n		<interval>30</interval>\n		<notification_url>http://localhost/notify.php</notification_url>\n	</recur>\n</request>');
+INSERT INTO `request_log` VALUES ('935', '2009-11-28 21:05:15', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<gateway_id>17</gateway_id>\n	<customer_id>2</customer_id>\n	<credit_card>\n		<card_num>4111111111111111</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<customer_ip_address>127.0.0.1</customer_ip_address>\n	<amount>19.99</amount>\n	<description>Goods and Services</description>\n</request>');
+INSERT INTO `request_log` VALUES ('936', '2009-11-28 21:11:16', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>NewGateway</request>\n	<params>\n		<client_id>17</client_id>\n		<enabled>1</enabled>\n		<mode>live</mode>\n		<gateway_type>exact</gateway_type>\n		<terminal_id>A00427-01</terminal_id>\n		<password>testus</password>\n		<accept_visa>1</accept_visa>\n		<accept_mc>1</accept_mc>\n		<accept_discover>1</accept_discover>\n		<accept_amex>1</accept_amex>\n		<accept_dc>1</accept_dc>\n	</params>\n</request>');
+INSERT INTO `request_log` VALUES ('937', '2009-11-28 21:16:08', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<gateway_id>17</gateway_id>\n	<customer_id>2</customer_id>\n	<credit_card>\n		<card_num>4111111111111111</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<customer_ip_address>127.0.0.1</customer_ip_address>\n	<amount>19.99</amount>\n	<description>Goods and Services</description>\n</request>');
+INSERT INTO `request_log` VALUES ('938', '2009-11-28 21:16:42', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<gateway_id>17</gateway_id>\n	<customer_id>2</customer_id>\n	<credit_card>\n		<card_num>4111111111111111</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<customer_ip_address>127.0.0.1</customer_ip_address>\n	<amount>19.99</amount>\n	<description>Goods and Services</description>\n</request>');
+INSERT INTO `request_log` VALUES ('939', '2009-11-28 21:17:21', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<request>Charge</request>\n	<gateway_id>17</gateway_id>\n	<customer_id>2</customer_id>\n	<credit_card>\n		<card_num>4111111111111111</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<customer_ip_address>127.0.0.1</customer_ip_address>\n	<amount>19.99</amount>\n	<description>Goods and Services</description>\n</request>');
+INSERT INTO `request_log` VALUES ('940', '2009-11-28 21:20:33', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>Charge</type>\n	<gateway_id>17</gateway_id>\n	<customer_id>2</customer_id>\n	<credit_card>\n		<card_num>4111111111111111</card_num>\n		<exp_month>10</exp_month>\n		<exp_year>2011</exp_year>\n		<cvv>123</cvv>\n	</credit_card>\n	<customer_ip_address>127.0.0.1</customer_ip_address>\n	<amount>19.99</amount>\n	<description>Goods and Services</description>\n</request>');
+INSERT INTO `request_log` VALUES ('941', '2009-11-28 21:22:47', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<gateway_id>17</gateway_id>\n</request>');
+INSERT INTO `request_log` VALUES ('942', '2009-11-28 21:23:16', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<gateway_id>17</gateway_id>\n</request>');
+INSERT INTO `request_log` VALUES ('943', '2009-11-28 21:23:38', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<gateway_id>17</gateway_id>\n</request>');
+INSERT INTO `request_log` VALUES ('944', '2009-11-28 21:24:53', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<gateway_id>17</gateway_id>\n</request>');
+INSERT INTO `request_log` VALUES ('945', '2009-11-28 21:27:31', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<gateway_id>17</gateway_id>\n</request>');
+INSERT INTO `request_log` VALUES ('946', '2009-11-28 21:27:56', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<gateway_id>17</gateway_id>\n</request>');
+INSERT INTO `request_log` VALUES ('947', '2009-11-28 21:28:08', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('948', '2009-11-28 21:28:09', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('949', '2009-11-28 21:28:25', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('950', '2009-11-28 21:28:25', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('951', '2009-11-28 21:28:25', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('952', '2009-11-28 21:28:26', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('953', '2009-11-28 21:28:26', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('954', '2009-11-28 21:28:26', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('955', '2009-11-28 21:28:26', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('956', '2009-11-28 21:28:26', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('957', '2009-11-28 21:28:26', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('958', '2009-11-28 21:28:54', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('959', '2009-11-28 21:30:55', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('960', '2009-11-28 21:30:56', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('961', '2009-11-28 21:30:56', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('962', '2009-11-28 21:30:56', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('963', '2009-11-28 21:30:56', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('964', '2009-11-28 21:30:56', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('965', '2009-11-28 21:30:57', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('966', '2009-11-28 21:30:57', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('967', '2009-11-28 21:31:18', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('968', '2009-11-28 21:32:00', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('969', '2009-11-28 21:32:00', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('970', '2009-11-28 21:32:01', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('971', '2009-11-28 21:32:01', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('972', '2009-11-28 21:32:01', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('973', '2009-11-28 21:32:01', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('974', '2009-11-28 21:32:01', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('975', '2009-11-28 21:32:13', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('976', '2009-11-28 21:32:46', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('977', '2009-11-28 21:33:15', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('978', '2009-11-28 21:33:16', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('979', '2009-11-28 21:33:16', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('980', '2009-11-28 21:33:16', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('981', '2009-11-28 21:33:16', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('982', '2009-11-28 21:33:16', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('983', '2009-11-28 21:33:17', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('984', '2009-11-28 21:33:31', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('985', '2009-11-28 21:34:01', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('986', '2009-11-28 21:39:53', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('987', '2009-11-28 21:41:08', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('988', '2009-11-28 21:41:29', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('989', '2009-11-28 21:41:56', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('990', '2009-11-28 21:43:22', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('991', '2009-11-28 21:53:50', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('992', '2009-11-28 21:54:31', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('993', '2009-11-28 21:55:00', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('994', '2009-11-28 21:55:52', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('995', '2009-11-28 21:56:16', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('996', '2009-11-28 21:57:46', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('997', '2009-11-28 21:58:43', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('998', '2009-11-28 21:59:20', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('999', '2009-11-28 22:01:06', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('1000', '2009-11-28 22:02:40', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('1001', '2009-11-28 22:07:50', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('1002', '2009-11-28 22:16:15', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('1003', '2009-11-28 22:16:17', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('1004', '2009-11-28 22:16:17', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('1005', '2009-11-28 22:16:18', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('1006', '2009-11-28 22:17:11', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('1007', '2009-11-28 22:17:24', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('1008', '2009-11-28 22:18:10', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('1009', '2009-11-28 22:25:08', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('1010', '2009-11-28 22:27:32', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n</request>');
+INSERT INTO `request_log` VALUES ('1011', '2009-11-28 22:29:02', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-12-17</start_date>\n</request>');
+INSERT INTO `request_log` VALUES ('1012', '2009-11-28 22:29:04', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-12-17</start_date>\n</request>');
+INSERT INTO `request_log` VALUES ('1013', '2009-11-28 22:29:04', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-12-17</start_date>\n</request>');
+INSERT INTO `request_log` VALUES ('1014', '2009-11-28 22:29:04', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-12-17</start_date>\n</request>');
+INSERT INTO `request_log` VALUES ('1015', '2009-11-28 22:29:14', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	\n</request>');
+INSERT INTO `request_log` VALUES ('1016', '2009-11-28 22:29:25', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-11-17</start_date>\n</request>');
+INSERT INTO `request_log` VALUES ('1017', '2009-11-28 22:29:55', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-11-10</start_date>\n</request>');
+INSERT INTO `request_log` VALUES ('1018', '2009-11-28 22:30:38', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-11-10</start_date>\n</request>');
+INSERT INTO `request_log` VALUES ('1019', '2009-11-28 22:30:52', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-11-10</start_date>\n	<limit>1</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1020', '2009-11-28 22:31:34', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-11-10</start_date>\n	<limit>1</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1021', '2009-11-28 22:31:56', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-11-10</start_date>\n	<limit>1</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1022', '2009-11-28 22:32:26', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-11-10</start_date>\n	<limit>1</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1023', '2009-11-28 22:32:27', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-11-10</start_date>\n	<limit>1</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1024', '2009-11-28 22:32:27', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-11-10</start_date>\n	<limit>1</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1025', '2009-11-28 22:32:28', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-11-10</start_date>\n	<limit>1</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1026', '2009-11-28 22:32:28', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-11-10</start_date>\n	<limit>1</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1027', '2009-11-28 22:32:33', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-11-10</start_date>\n	<limit>1</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1028', '2009-11-28 22:32:33', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-11-10</start_date>\n	<limit>1</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1029', '2009-11-28 22:32:47', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-11-10</start_date>\n	<limit>50</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1030', '2009-11-28 22:34:06', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-11-17</start_date>\n	<limit>50</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1031', '2009-11-28 22:34:38', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-11-17</start_date>\n	<limit>50</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1032', '2009-11-28 22:34:51', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-11-17</start_date>\n	<limit>50</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1033', '2009-11-28 22:35:24', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-11-17</start_date>\n	<end_date>2009-11-17</end_date>\n	<limit>50</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1034', '2009-11-28 22:35:48', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-11-17</start_date>\n	<end_date>2009-11-17</end_date>\n	<limit>50</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1035', '2009-11-28 22:36:16', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-11-17</start_date>\n	<end_date>2009-11-18</end_date>\n	<limit>50</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1036', '2009-11-28 22:36:36', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<start_date>2009-11-17</start_date>\n	<end_date>2009-11-18</end_date>\n	<limit>50</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1037', '2009-11-28 22:38:50', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<recurring_only>1</recurring_only>\n	<end_date>2009-11-18</end_date>\n	<limit>50</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1038', '2009-11-28 22:38:58', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<recurring_only>1</recurring_only>\n	<end_date>2009-11-25</end_date>\n	<limit>50</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1039', '2009-11-28 22:39:31', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<customer_id>2</customer_id>\n	<end_date>2009-11-25</end_date>\n	<limit>50</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1040', '2009-11-28 22:40:27', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<customer_id>2</customer_id>\n	<end_date>2009-11-25</end_date>\n	<limit>50</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1041', '2009-11-28 22:40:46', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<customer_id>2</customer_id>\n	<end_date>2009-11-25</end_date>\n	<limit>50</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1042', '2009-11-28 22:41:04', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<customer_id>2</customer_id>\n	<end_date>2009-11-25</end_date>\n	<limit>50</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1043', '2009-11-28 22:41:40', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<customer_id>2</customer_id>\n	<end_date>2009-11-25</end_date>\n	<limit>50</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1044', '2009-11-28 22:42:04', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<end_date>2009-11-25</end_date>\n	<limit>50</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1045', '2009-11-28 22:42:25', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<end_date>2009-11-25</end_date>\n	<limit>1000</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1046', '2009-11-28 22:42:57', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<end_date>2009-11-25</end_date>\n	<limit>1000</limit>\n</request>');
+INSERT INTO `request_log` VALUES ('1047', '2009-11-28 22:44:03', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<request>\n	<authentication>\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\n	</authentication>\n	<type>GetCharges</type>\n	<customer_internal_id>12343434</customer_internal_id>\n	<limit>1000</limit>\n</request>');
 
 -- ----------------------------
 -- Table structure for `request_types`
@@ -2083,6 +2200,7 @@ INSERT INTO `request_types` VALUES ('7', 'Credit', 'gateway_model');
 INSERT INTO `request_types` VALUES ('8', 'Void', 'gateway_model');
 INSERT INTO `request_types` VALUES ('9', 'Recur', 'gateway_model');
 INSERT INTO `request_types` VALUES ('10', 'CancelRecur', 'gateway_model');
+INSERT INTO `request_types` VALUES ('11', 'GetCharges', 'gateway_model');
 
 -- ----------------------------
 -- Table structure for `required_fields`

@@ -22,7 +22,11 @@ class Order_model extends Model
 		
 		if(isset($params['customer_ip_address'])) {
 			$insert_data['customer_ip_address'] = $params['customer_ip_address'];
-		}					
+		}
+
+		if(isset($params['customer_id'])) {
+			$insert_data['customer_id'] = $params['customer_id'];
+		}
 		
 							
 		$this->db->insert('orders', $insert_data);

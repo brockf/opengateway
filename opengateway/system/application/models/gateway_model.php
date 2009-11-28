@@ -26,10 +26,14 @@ class Gateway_model extends Model
 		$external_api_id = $this->GetExternalApiId($gateway_type);
 		
 		// Create the new Gateway
+		
+		$create_date = date('Y-m-d');
+		
 		$insert_data = array(
 							'client_id' 		=> $gateway_params->client_id,
 							'external_api_id' 	=> $external_api_id,
-							'enabled'			=> $gateway_params->enabled
+							'enabled'			=> $gateway_params->enabled,
+							'create_date'		=> $create_date
 							);  
 		
 		$this->db->insert('client_gateways', $insert_data);
@@ -59,78 +63,14 @@ class Gateway_model extends Model
 
 	}
 	
-	// Get the gateway id
-	function GetExternalApiId($gateway_name = FALSE)
-	{
-		if($gateway_name) {
-			$this->db->where('name', $gateway_name);
-			$query = $this->db->get('external_apis');
-			if($query->num_rows > 0) {
-				return $query->row()->external_api_id;
-			} else {
-				die($this->response->Error(2001));
-			}
-			
-		}
-	}
 	
-	// Get the gateway details
-	function GetGatewayDetails($client_id, $gateway_id)
-	{
-		$this->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
-		$this->db->where('client_gateways.client_id', $client_id);
-		$this->db->where('client_gateways.client_gateway_id', $gateway_id);
-		$query = $this->db->get('client_gateways');
-		if($query->num_rows > 0) {
-			
-			$row = $query->row();
-			$data = array();
-			$data['url_live'] = $row->prod_url;
-			$data['url_test'] = $row->test_url;
-			$data['url_dev'] = $row->dev_url;
-			$data['arb_url_live'] = $row->arb_prod_url;
-			$data['arb_url_test'] = $row->arb_test_url;
-			$data['arb_url_dev'] = $row->arb_dev_url;
-			$data['name'] = $row->name;
-		    
-			// Get the params
-			$this->db->where('client_gateway_id', $gateway_id);
-			$query = $this->db->get('client_gateway_params');
-			if($query->num_rows() > 0) {
-				foreach($query->result() as $row) {
-					$data[$row->field] = $row->value;
-				}
-				
-				return $data;
-			}
-		} else {
-			die($this->response->Error(3000));
-		}	
-		
-		
-	}
-	
-	// Get the required fields
-	function GetRequiredGatewayFields($gateway_type = FALSE)
-	{
-		if($gateway_type)
-		{
-			$this->db->select('external_api_required_fields.field_name');
-			$this->db->join('external_api_required_fields', 'external_api_required_fields.external_api_id = external_apis.external_api_id', 'inner');
-			$this->db->where('external_apis.name', $gateway_type);
-			$query = $this->db->get('external_apis');
-			if($query->num_rows() > 0) {
-				return $query->result_array();	
-			} else {
-				return FALSE;
-			}
-		}
-	}
 	
 	function Charge($client_id, $params, $xml)
 	{
-		if(!isset($params['gateway_id'])) {
-			die($this->response->Error(3001));
+		if(isset($params['gateway_id'])) {
+			$gateway_id = $params['gateway_id'];
+		} else {
+			$gateway_id = FALSE;
 		}
 		
 		$CI =& get_instance();
@@ -147,9 +87,7 @@ class Gateway_model extends Model
 		$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $credit_card);
 		
 		// Get the gateway info to load the proper library
-		$gateway_id = $params['gateway_id'];
-		$CI->load->model('gateway_model');
-		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
+		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
 		
 		// Get the customer details if a customer id was included
 		if(isset($params['customer_id'])) {
@@ -168,8 +106,10 @@ class Gateway_model extends Model
 	
 	function Recur($client_id, $params, $xml)
 	{
-		if(!isset($params['gateway_id'])) {
-			die($this->response->Error(3001));
+	if(isset($params['gateway_id'])) {
+			$gateway_id = $params['gateway_id'];
+		} else {
+			$gateway_id = FALSE;
 		}
 		
 		$CI =& get_instance();
@@ -183,9 +123,7 @@ class Gateway_model extends Model
 		$this->field_validation->ValidateRequiredFields('NewRecurring', $params);
 		
 		// Get the gateway info to load the proper library
-		$gateway_id = $params['gateway_id'];
-		$CI->load->model('gateway_model');
-		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
+		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
 		
 		// Get the customer details if a customer id was included
 		$CI->load->model('customer_model');
@@ -255,8 +193,10 @@ class Gateway_model extends Model
 	
 	function CancelRecur($client_id, $params)
 	{
-		if(!isset($params['gateway_id'])) {
-			die($this->response->Error(3001));
+		if(isset($params['gateway_id'])) {
+			$gateway_id = $params['gateway_id'];
+		} else {
+			$gateway_id = FALSE;
 		}
 		
 		$CI =& get_instance();
@@ -266,9 +206,7 @@ class Gateway_model extends Model
 		$this->field_validation->ValidateRequiredFields('CancelRecur', $params);
 		
 		// Get the gateway info to load the proper library
-		$gateway_id = $params['gateway_id'];
-		$CI->load->model('gateway_model');
-		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
+		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
 
 		// Get the subscription information
 		$CI->load->model('subscription_model');
@@ -280,6 +218,161 @@ class Gateway_model extends Model
 		return $this->$gateway_name->CancelRecur($client_id, $subscription);
 	}
 	
+	function GetCharges($client_id, $params, $xml)
+	{
+		
+		// Make sure they only get their own charge
+		$this->db->where('orders.client_id', $client_id);
+		
+		// Check which search paramaters are set
+		
+		if(isset($xml->gateway_id)) {
+			$this->db->where('gateway_id', (string)$xml->gateway_id);
+		}
+		
+		if(isset($xml->start_date)) {
+			$start_date = date('Y-m-d H:i:s', strtotime((string)$xml->start_date));
+			$this->db->where('timestamp >=', $start_date);
+		}
+		
+		if(isset($xml->end_date)) {
+			$end_date = date('Y-m-d H:i:s', strtotime((string)$xml->end_date));
+			$this->db->where('timestamp <=', $end_date);
+		}
+		
+		if(isset($xml->customer_id)) {
+			$this->db->where('orders.customer_id', (string)$xml->customer_id);
+		}
+		
+		if(isset($xml->customer_internal_id)) {
+			$this->db->where('customers.internal_id', (string)$xml->customer_internal_id);
+		}
+		
+		if(isset($xml->recurring_only) && (string)$xml->recurring_only == 1) {
+			$this->db->where('orders.subscription_id <>', 0);
+		}
+		
+		if(isset($xml->limit)) {
+			$this->db->limit((string)$xml->limit);
+		} else {
+			$this->db->limit($this->config->item('query_result_default_limit'));
+		}
+		
+		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
+		$query = $this->db->get('orders');
+		if($query->num_rows() > 0) {
+			$data['results'] = $query->num_rows();
+			$i=0;
+			foreach($query->result() as $row) {
+				$data['charges'][$i.'charge']['id'] = $row->order_id;
+				$data['charges'][$i.'charge']['gateway_id'] = $row->gateway_id;
+				$data['charges'][$i.'charge']['date'] = $row->timestamp;
+				$data['charges'][$i.'charge']['amount'] = $row->amount;
+				$data['charges'][$i.'charge']['card_last_four'] = $row->card_last_four;
+				
+				if($row->subscription_id != 0) {
+					$data['charges'][$i.'charge']['recurring_id'] = $row->subscription_id;
+				}
+				
+				if($row->customer_id != 0) {
+					$data['charges'][$i.'charge']['customer']['id'] = $row->customer_id;
+					$data['charges'][$i.'charge']['customer']['internal_id'] = $row->internal_id;
+					$data['charges'][$i.'charge']['customer']['firstname'] = $row->first_name;
+					$data['charges'][$i.'charge']['customer']['lastname'] = $row->last_name;
+					$data['charges'][$i.'charge']['customer']['company'] = $row->company;
+					$data['charges'][$i.'charge']['customer']['address_1'] = $row->address_1;
+					$data['charges'][$i.'charge']['customer']['address_2'] = $row->address_2;
+					$data['charges'][$i.'charge']['customer']['city'] = $row->city;
+					$data['charges'][$i.'charge']['customer']['state'] = $row->state;
+					$data['charges'][$i.'charge']['customer']['postal_code'] = $row->postal_code;
+					$data['charges'][$i.'charge']['customer']['email'] = $row->email;
+					$data['charges'][$i.'charge']['customer']['phone'] = $row->phone;
+				}
+				
+				$i++;
+			}
+		} else {
+			$data['results'] = 0;
+		}
+		
+		return $data;
+		
+		
+	}
+	
+// Get the gateway id
+	function GetExternalApiId($gateway_name = FALSE)
+	{
+		if($gateway_name) {
+			$this->db->where('name', $gateway_name);
+			$query = $this->db->get('external_apis');
+			if($query->num_rows > 0) {
+				return $query->row()->external_api_id;
+			} else {
+				die($this->response->Error(2001));
+			}
+			
+		}
+	}
+	
+	// Get the gateway details
+	function GetGatewayDetails($client_id, $gateway_id = FALSE)
+	{
+		// If they have not passed a gateway ID, we will choose the first one created.
+		if($gateway_id) {
+			$this->db->where('client_gateways.client_gateway_id', $gateway_id);
+		} else {
+			$this->db->order_by('create_date', 'ASC');
+		}
+		
+		$this->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
+		$this->db->where('client_gateways.client_id', $client_id);
+		$this->db->limit(1);
+		$query = $this->db->get('client_gateways');
+		if($query->num_rows > 0) {
+			
+			$row = $query->row();
+			$data = array();
+			$data['url_live'] = $row->prod_url;
+			$data['url_test'] = $row->test_url;
+			$data['url_dev'] = $row->dev_url;
+			$data['arb_url_live'] = $row->arb_prod_url;
+			$data['arb_url_test'] = $row->arb_test_url;
+			$data['arb_url_dev'] = $row->arb_dev_url;
+			$data['name'] = $row->name;
+			
+			// Get the params
+			$this->db->where('client_gateway_id', $gateway_id);
+			$query = $this->db->get('client_gateway_params');
+			if($query->num_rows() > 0) {
+				foreach($query->result() as $row) {
+					$data[$row->field] = $row->value;
+				}
+			}
+			return $data;
+		} else {
+			die($this->response->Error(3000));
+		}	
+		
+		
+	}
+	
+	// Get the required fields
+	function GetRequiredGatewayFields($gateway_type = FALSE)
+	{
+		if($gateway_type)
+		{
+			$this->db->select('external_api_required_fields.field_name');
+			$this->db->join('external_api_required_fields', 'external_api_required_fields.external_api_id = external_apis.external_api_id', 'inner');
+			$this->db->where('external_apis.name', $gateway_type);
+			$query = $this->db->get('external_apis');
+			if($query->num_rows() > 0) {
+				return $query->result_array();	
+			} else {
+				return FALSE;
+			}
+		}
+	}
 	/* Future Code - This may be used in the future.  Please code above this line.
 	
 	function Auth($client_id, $params, $xml)

@@ -38,7 +38,7 @@ class Gateway extends Controller {
 		}	
 		
 		// Get the request type
-		$request_type = (string)$xml->request;
+		$request_type = (string)$xml->type;
 		
 		// Make sure the first letter is capitalized
 		$request_type = ucfirst($request_type);
