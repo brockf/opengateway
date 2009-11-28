@@ -7,32 +7,18 @@ class Customer_model extends Model
 		parent::Model();
 	}
 	
-	// Save new customer
+	// Create new customer
 	function NewCustomer($client_id, $params)
 	{
-		$insert_data = array(
-							'client_id'		=> $client_id,
-							'first_name' 	=> $params['first_name'],
-							'last_name' 	=> $params['last_name'],
-							'company'		=> $params['company'],
-							'internal_id' 	=> $params['internal_id'],
-							'address_1'		=> $params['address_1'],
-							'address_2'		=> $params['address_2'],
-							'city'			=> $params['city'],
-							'state'			=> $params['state'],
-							'postal_code'	=> $params['postal_code'],
-							'phone'			=> $params['phone'],
-							'email'			=> $params['email'],
-							'active'		=> 1
-							);
-		$this->db->insert('customers', $insert_data);
+		$customer_id = $this->SaveNewCustomer($client_id, $params['first_name'], $params['last_name'], $params['company'], $params['internal_id'], $params['address_1'], $params['address_2'], $params['city'], $params['state'], $params['postal_code'], $params['phone'], $params['email']);
 		
 		$response = array('customer_id' => $this->db->insert_id());
 		return $response;
 							
 	}
 	
-	function NewARBCustomer($client_id, $first_name, $last_name, $company = '', $internal_id = '', $address_1 = '', $address_2 = '', $city = '', $state = '', $postal_code = '', $phone = '', $email = '')
+	// Save new customer
+	function SaveNewCustomer($client_id, $first_name, $last_name, $company = '', $internal_id = '', $address_1 = '', $address_2 = '', $city = '', $state = '', $postal_code = '', $phone = '', $email = '')
 	{
 		$insert_data = array(
 							'client_id'		=> $client_id,

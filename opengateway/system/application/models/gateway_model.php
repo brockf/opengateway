@@ -336,7 +336,7 @@ class Gateway_model extends Model
 				$name = explode(' ', $credit_card->name);
 				$customer['first_name'] = $name[0];
 				$customer['last_name'] = $name[1];
-				$customer['customer_id'] = $CI->customer_model->NewARBCustomer($client_id, $name[0], $name[1]);
+				$customer['customer_id'] = $CI->customer_model->SaveNewCustomer($client_id, $name[0], $name[1]);
 				
 			}
 		}
