@@ -24,8 +24,8 @@ class Gateway extends Controller {
 		}
 		
 		// get the api ID and secret key
-		$api_id = $xml->authentication->api_id;
-		$secret_key = $xml->authentication->secret_key;
+		$api_id = (string)$xml->authentication->api_id;
+		$secret_key = (string)$xml->authentication->secret_key;
 		
 		// authenticate the api ID
 		$this->load->model('authentication_model', 'auth');
@@ -61,8 +61,7 @@ class Gateway extends Controller {
 		$response = $this->$request_type_model->$request_type($client_id, $params, $xml);
 		
 		// Echo the response
-		echo $this->response->FormatResponse($response);
-		
+		echo $this->response->FormatResponse($response, (string)$xml->format);		
 	}
 }
 

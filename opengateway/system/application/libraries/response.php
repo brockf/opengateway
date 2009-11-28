@@ -2,25 +2,40 @@
 
 class Response
 {
-	function FormatResponse ($array = '')
+	function FormatResponse ($array = '', $format = 'xml')
 	{
-		//Load the CI object
+		// Load the CI object
 		$CI =& get_instance();
 		
-		//Check to make sure an array was passed
+		// Check to make sure an array was passed
 		if(is_array($array))
 		{
-			//Load the XML library
-			$CI->load->library('xml');
-			
-			//Loop through the array and add it to our response array
+			// Loop through the array and add it to our response array
 			foreach($array as $key => $value)
 			{
 				$response['response'][$key] = $value; 
 			}
-			//Format the XML
-			$CI->xml->setArray($response);
-			$response = $CI->xml->outputXML('return');
+			
+			// check the format
+			$format = (empty($format)) ? 'xml' : $format;
+			
+			if ($format == 'xml') {
+				//Load the XML library
+				$CI->load->library('xml');
+				
+				//Format the XML
+				$CI->xml->setArray($response);
+				$response = $CI->xml->outputXML('return');
+			}
+			elseif ($format == 'php') {
+				$response = serialize($response);
+			}
+			elseif ($format == 'json') {
+				$response = $this->php_json_encode($response);
+			}
+			else {
+				return $this->FormatResponse($this->Error(1006));
+			}
 			
 			//Return it
 			return $response;
@@ -66,26 +81,27 @@ class Response
 		}
 		
 		$errors = array(
-							'1000' => 'Invalid request.',
-							'1001' => 'Unable to authenticate.',
-							'1002' => 'Invalid request type.',
-							'1003' => 'Required fields are missing.',
-							'1004' => 'Required fields are missing for this request',
-							'1005' => 'Gateway type is required.',
-							'2000' => 'Client is not authorized to create new clients.',
-							'2001' => 'Invalid External API.',
-							'3000' => 'Invalid gateway ID for this client.',
-							'3001' => 'Gateway ID is required.',
-							'4000' => 'Invalid customer ID.',
-							'4001' => 'Invalid Order ID.',
-							'5000' => 'Not a valid recurring subscription.',
-							'5001' => 'Start date cannot be in the past.',
-							'5002' => 'End date cannot be in the past',
-							'5003' => 'End date must be later than start date.',
-							'5004' => 'A customer ID or cardholder name must be supplied.',
-							'5005' => 'Error creating customer profile.',
-							'5006' => 'Error creating customer payment profile.'
-							);
+						'1000' => 'Invalid request.',
+						'1001' => 'Unable to authenticate.',
+						'1002' => 'Invalid request type.',
+						'1003' => 'Required fields are missing.',
+						'1004' => 'Required fields are missing for this request',
+						'1005' => 'Gateway type is required.',
+						'1006' => 'Invalid format passed.  Acceptable formats: xml, php, and json.',
+						'2000' => 'Client is not authorized to create new clients.',
+						'2001' => 'Invalid External API.',
+						'3000' => 'Invalid gateway ID for this client.',
+						'3001' => 'Gateway ID is required.',
+						'4000' => 'Invalid customer ID.',
+						'4001' => 'Invalid Order ID.',
+						'5000' => 'Not a valid recurring subscription.',
+						'5001' => 'Start date cannot be in the past.',
+						'5002' => 'End date cannot be in the past',
+						'5003' => 'End date must be later than start date.',
+						'5004' => 'A customer ID or cardholder name must be supplied.',
+						'5005' => 'Error creating customer profile.',
+						'5006' => 'Error creating customer payment profile.'
+						);
 		
 				
 		$error_array = array(
@@ -101,5 +117,53 @@ class Response
 		log_message('error','Error code not passed to function.');
 		echo $this->Error('01','System error.');
 		die();
+	}
+	
+	function php_json_encode($obj) {	
+	    switch (gettype($obj)) {
+	        case 'object':
+	            $obj = get_object_vars($obj);   
+	        case 'array':
+	            if ($this->array_is_associative($obj)) {
+	                $arr_out = array();
+	                foreach ($obj as $key=>$val) {
+	                    $arr_out[] = '"' . $key . '":' . php_json_encode($val);
+	                }
+	                return '{' . implode(',', $arr_out) . '}';
+	            } else {
+	                $arr_out = array();
+	                $ct = count($obj);
+	                for ($j = 0; $j < $ct; $j++) {
+	                    $arr_out[] = php_json_encode($obj[$j]);
+	                }
+	                return '[' . implode(',', $arr_out) . ']';
+	            }
+	            break;
+	        case 'NULL':
+	            return 'null';
+	            break;
+	        case 'boolean':
+	            return ($obj)? 'true' : 'false';
+	            break;
+	        case 'integer':
+	        case 'double':
+	            return $obj;
+	            break;
+	        case 'string':
+	        default:
+	            $obj = str_replace(array('\\','/','"',), array('\\\\','\/','\"'), $obj);
+	            return '"' . $obj . '"';
+	            break;
+	    }
+	}
+	
+	function array_is_associative($array) {
+		$count = count($array);
+		for ($i = 0; $i < $count; $i++) {
+			if (!array_key_exists($i, $array)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

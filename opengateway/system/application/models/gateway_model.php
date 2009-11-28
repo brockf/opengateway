@@ -166,6 +166,122 @@ class Gateway_model extends Model
 		
 	}
 	
+	function Recur($client_id, $params, $xml)
+	{
+		if(!isset($params['gateway_id'])) {
+			die($this->response->Error(3001));
+		}
+		
+		$CI =& get_instance();
+		
+		// Get the credit card object
+		$credit_card = $xml->credit_card;
+		
+		
+		// Validate the required fields
+		$this->load->library('field_validation');
+		$this->field_validation->ValidateRequiredFields('NewRecurring', $params);
+		
+		// Get the gateway info to load the proper library
+		$gateway_id = $params['gateway_id'];
+		$CI->load->model('gateway_model');
+		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
+		
+		// Get the customer details if a customer id was included
+		$CI->load->model('customer_model');
+		
+		if(isset($params['customer_id'])) {
+			$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
+		} else {
+			// If a customer ID was not passed we need to make sure that a cardholder name was
+			if(!isset($credit_card->name)) {
+				die($this->response->Error(5004));
+			} else {
+				$name = explode(' ', $credit_card->name);
+				$customer['first_name'] = $name[0];
+				$customer['last_name'] = $name[1];
+				$customer['customer_id'] = $CI->customer_model->SaveNewCustomer($client_id, $name[0], $name[1]);
+				
+			}
+		}
+		
+		// Get the subscription details
+		$recur = $xml->recur;
+		
+		// Validate the start date to make sure it is in the future
+		if(isset($recur->start_date)) {
+			if(strtotime($recur->start_date) < time()) {
+				die($this->response->Error(5001));
+			} else {
+				$start_date = date('Y-m-d', strtotime($recur->start_date));
+			}
+		} else {
+			$start_date = date('Y-m-d', (time() + ($recur->interval * 86400)));
+		}
+		
+		// If an end date was passed, make sure it's valid
+		if(isset($recur->end_date)) {
+			if(strtotime($recur->end_date) < time()) {
+				die($this->response->Error(5002));
+			} elseif(strtotime($recur->end_date) < strtotime($start_date)) {
+				die($this->response->Error(5003));
+			} else {
+				$end_date = date('Y-m-d', strtotime($recur->end_date));
+			}
+		} else {
+			// Find the end date based on the interval and the max end date
+			$end_date = date('Y-m-d', strtotime($start_date) + ($this->config->item('max_recurring_days_from_today') * 86400));
+		}
+		
+		// Check for a notification URL
+		if(isset($recur->notification_url)) {
+			$notification_url = $recur->notification_url;
+		} else {
+			$notification_url = '';
+		}
+		
+		// Figure the total number of occurrences
+		$total_occurrences = round((strtotime($end_date) - strtotime($start_date)) / ($recur->interval * 86400), 0);
+		
+		// Save the subscription info
+		$CI->load->model('subscription_model');
+		$subscription_id = $CI->subscription_model->SaveSubscription($client_id, $params['gateway_id'], $customer['customer_id'], $start_date, $end_date, $total_occurrences, $notification_url, $params);
+		
+		// Load the proper library
+		$gateway_name = $gateway['name'];
+		$this->load->library('payment/'.$gateway_name);
+		return $this->$gateway_name->Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $recur->interval, $credit_card, $subscription_id);
+	}
+	
+	function CancelRecur($client_id, $params)
+	{
+		if(!isset($params['gateway_id'])) {
+			die($this->response->Error(3001));
+		}
+		
+		$CI =& get_instance();
+		
+		// Validate the required fields
+		$this->load->library('field_validation');
+		$this->field_validation->ValidateRequiredFields('CancelRecur', $params);
+		
+		// Get the gateway info to load the proper library
+		$gateway_id = $params['gateway_id'];
+		$CI->load->model('gateway_model');
+		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
+
+		// Get the subscription information
+		$CI->load->model('subscription_model');
+		$subscription = $CI->subscription_model->GetSubscriptionDetails($client_id, $params['subscription_id']);
+		
+		// Load the proper library
+		$gateway_name = $gateway['name'];
+		$this->load->library('payment/'.$gateway_name);
+		return $this->$gateway_name->CancelRecur($client_id, $subscription);
+	}
+	
+	/* Future Code - This may be used in the future.  Please code above this line.
+	
 	function Auth($client_id, $params, $xml)
 	{
 		if(!isset($params['gateway_id'])) {
@@ -301,118 +417,5 @@ class Gateway_model extends Model
 		$this->load->library('payment/'.$gateway_name);
 		return $this->$gateway_name->Void($client_id, $order_id, $gateway, $customer, $params);
 	}
-	
-	function Recur($client_id, $params, $xml)
-	{
-		if(!isset($params['gateway_id'])) {
-			die($this->response->Error(3001));
-		}
-		
-		$CI =& get_instance();
-		
-		// Get the credit card object
-		$credit_card = $xml->credit_card;
-		
-		
-		// Validate the required fields
-		$this->load->library('field_validation');
-		$this->field_validation->ValidateRequiredFields('NewRecurring', $params);
-		
-		// Get the gateway info to load the proper library
-		$gateway_id = $params['gateway_id'];
-		$CI->load->model('gateway_model');
-		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
-		
-		// Get the customer details if a customer id was included
-		$CI->load->model('customer_model');
-		
-		if(isset($params['customer_id'])) {
-			$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
-		} else {
-			// If a customer ID was not passed we need to make sure that a cardholder name was
-			if(!isset($credit_card->name)) {
-				die($this->response->Error(5004));
-			} else {
-				$name = explode(' ', $credit_card->name);
-				$customer['first_name'] = $name[0];
-				$customer['last_name'] = $name[1];
-				$customer['customer_id'] = $CI->customer_model->SaveNewCustomer($client_id, $name[0], $name[1]);
-				
-			}
-		}
-		
-		// Get the subscription details
-		$recur = $xml->recur;
-		
-		// Validate the start date to make sure it is in the future
-		if(isset($recur->start_date)) {
-			if(strtotime($recur->start_date) < time()) {
-				die($this->response->Error(5001));
-			} else {
-				$start_date = date('Y-m-d', strtotime($recur->start_date));
-			}
-		} else {
-			$start_date = date('Y-m-d', (time() + ($recur->interval * 86400)));
-		}
-		
-		// If an end date was passed, make sure it's valid
-		if(isset($recur->end_date)) {
-			if(strtotime($recur->end_date) < time()) {
-				die($this->response->Error(5002));
-			} elseif(strtotime($recur->end_date) < strtotime($start_date)) {
-				die($this->response->Error(5003));
-			} else {
-				$end_date = date('Y-m-d', strtotime($recur->end_date));
-			}
-		} else {
-			// Find the end date based on the interval and the max end date
-			$end_date = date('Y-m-d', strtotime($start_date) + ($this->config->item('max_recurring_days_from_today') * 86400));
-		}
-		
-		// Check for a notification URL
-		if(isset($recur->notification_url)) {
-			$notification_url = $recur->notification_url;
-		} else {
-			$notification_url = '';
-		}
-		
-		// Figure the total number of occurrences
-		$total_occurrences = round((strtotime($end_date) - strtotime($start_date)) / ($recur->interval * 86400), 0);
-		
-		// Save the subscription info
-		$CI->load->model('subscription_model');
-		$subscription_id = $CI->subscription_model->SaveSubscription($client_id, $params['gateway_id'], $customer['customer_id'], $start_date, $end_date, $total_occurrences, $notification_url, $params);
-		
-		// Load the proper library
-		$gateway_name = $gateway['name'];
-		$this->load->library('payment/'.$gateway_name);
-		return $this->$gateway_name->Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $recur->interval, $credit_card, $subscription_id);
-	}
-	
-	function CancelRecur($client_id, $params)
-	{
-		if(!isset($params['gateway_id'])) {
-			die($this->response->Error(3001));
-		}
-		
-		$CI =& get_instance();
-		
-		// Validate the required fields
-		$this->load->library('field_validation');
-		$this->field_validation->ValidateRequiredFields('CancelRecur', $params);
-		
-		// Get the gateway info to load the proper library
-		$gateway_id = $params['gateway_id'];
-		$CI->load->model('gateway_model');
-		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
-
-		// Get the subscription information
-		$CI->load->model('subscription_model');
-		$subscription = $CI->subscription_model->GetSubscriptionDetails($client_id, $params['subscription_id']);
-		
-		// Load the proper library
-		$gateway_name = $gateway['name'];
-		$this->load->library('payment/'.$gateway_name);
-		return $this->$gateway_name->CancelRecur($client_id, $subscription);
-	}
+	*/
 }
