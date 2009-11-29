@@ -13,7 +13,7 @@ class Response
 			// Loop through the array and add it to our response array
 			foreach($array as $key => $value)
 			{
-				$response['response'][$key] = $value; 
+				$response[$key] = $value; 
 			}
 			
 			// check the format
@@ -21,17 +21,15 @@ class Response
 			
 			if ($format == 'xml') {
 				//Load the XML library
-				$CI->load->library('xml');
-				
-				//Format the XML
-				$CI->xml->setArray($response);
-				$response = $CI->xml->outputXML('return');
+				$CI->load->library('arraytoxml');
+
+				$response = $CI->arraytoxml->toXML($response, 'response');
 			}
 			elseif ($format == 'php') {
 				$response = serialize($response);
 			}
 			elseif ($format == 'json') {
-				$response = $this->php_json_encode($response);
+				$response = json_encode($response);
 			}
 			else {
 				return $this->FormatResponse($this->Error(1006));
@@ -100,7 +98,8 @@ class Response
 						'5003' => 'End date must be later than start date.',
 						'5004' => 'A customer ID or cardholder name must be supplied.',
 						'5005' => 'Error creating customer profile.',
-						'5006' => 'Error creating customer payment profile.'
+						'5006' => 'Error creating customer payment profile.',
+						'6000' => 'A valid Charge ID is required.'
 						);
 		
 				
