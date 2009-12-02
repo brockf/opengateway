@@ -27,13 +27,13 @@ class authnet
 			"x_relay_response"	=> "FALSE",		
 			"x_type"			=> "AUTH_CAPTURE",
 			"x_method"			=> "CC",
-			"x_card_num"		=> $credit_card->card_num,
-			"x_exp_date"		=> $credit_card->exp_month.$credit_card->exp_year,
+			"x_card_num"		=> $credit_card['card_num'],
+			"x_exp_date"		=> $credit_card['exp_month'].$credit_card['exp_year'],
 			"x_amount"			=> $params['amount']
 			);
 
 		if(isset($credit_card->cvv)) {
-			$post_values['x_card_code'] = $credit_card->cvv;
+			$post_values['x_card_code'] = $credit_card['cvv'];
 		}	
 		
 		if(isset($params['customer_id'])) {
@@ -93,13 +93,13 @@ class authnet
 			"x_relay_response"	=> "FALSE",		
 			"x_type"			=> "AUTH_ONLY",
 			"x_method"			=> "CC",
-			"x_card_num"		=> $credit_card->card_num,
-			"x_exp_date"		=> $credit_card->exp_month.$credit_card->exp_year,
+			"x_card_num"		=> $credit_card['card_num'],
+			"x_exp_date"		=> $credit_card['exp_month'].$credit_card['exp_year'],
 			"x_amount"			=> $params['amount']
 			);
 
 		if(isset($credit_card->cvv)) {
-			$post_values['x_card_code'] = $credit_card->cvv;
+			$post_values['x_card_code'] = $credit_card['cvv'];
 		}	
 		
 		if(isset($params['customer_id'])) {

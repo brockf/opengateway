@@ -23,9 +23,13 @@ class Gateway extends Controller {
 			die($this->response->Error(1000));
 		}
 		
+		// Make an array out of the XML
+		$this->load->library('arraytoxml');
+		$params = $this->arraytoxml->toArray($xml);
+		
 		// get the api ID and secret key
-		$api_id = (string)$xml->authentication->api_id;
-		$secret_key = (string)$xml->authentication->secret_key;
+		$api_id = $params['authentication']['api_id'];
+		$secret_key = $params['authentication']['secret_key'];
 		
 		// authenticate the api ID
 		$this->load->model('authentication_model', 'auth');
@@ -38,7 +42,7 @@ class Gateway extends Controller {
 		}	
 		
 		// Get the request type
-		$request_type = (string)$xml->type;
+		$request_type = $params['type'];
 		
 		// Make sure the first letter is capitalized
 		$request_type = ucfirst($request_type);
@@ -51,17 +55,22 @@ class Gateway extends Controller {
 			die($this->response->Error(1002));
 		}
 		
-		foreach($xml as $key => $value)
-		{
-			$params[(string)$key] = (string)$value;
-		}
-		
 		// Load the correct model and method
 		$this->load->model($request_type_model);
-		$response = $this->$request_type_model->$request_type($client_id, $params, $xml);
+		$response = $this->$request_type_model->$request_type($client_id, $params);
+		
+		// Make sure a proper format was passed
+		if(isset($params['format'])) {
+			$format = $params['format'];
+			if(!in_array($format, array('xml', 'json', 'php'))) {
+				die($this->response->Error(1006));
+			}
+		} else {
+			$format = 'xml';
+		}
 		
 		// Echo the response
-		echo $this->response->FormatResponse($response, (string)$xml->format);		
+		echo $this->response->FormatResponse($response, $format);		
 	}
 }
 

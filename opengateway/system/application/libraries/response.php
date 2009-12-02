@@ -17,12 +17,11 @@ class Response
 			}
 			
 			// check the format
-			$format = (empty($format)) ? 'xml' : $format;
+			$format = (!$format) ? 'xml' : $format;
 			
 			if ($format == 'xml') {
 				//Load the XML library
 				$CI->load->library('arraytoxml');
-
 				$response = $CI->arraytoxml->toXML($response, 'response');
 			}
 			elseif ($format == 'php') {
@@ -30,9 +29,6 @@ class Response
 			}
 			elseif ($format == 'json') {
 				$response = json_encode($response);
-			}
-			else {
-				return $this->FormatResponse($this->Error(1006));
 			}
 			
 			//Return it
@@ -56,7 +52,11 @@ class Response
 							'1' => 'Transaction approved.',
 							'2' => 'Transaction declined',
 							'100' => 'Subscription created.',
-							'101' => 'Subscription cancelled.'
+							'101' => 'Subscription cancelled.',
+							'102' => 'Subscription updated.',
+							'103' => 'Customer created.',
+							'104' => 'Customer updated.',
+							'104' => 'Customer deleted.'	
 							);
 		
 				
@@ -67,8 +67,10 @@ class Response
 							
 		if($response_array) {
 			$response = array_merge($responses, $response_array);
+		} else {
+			$response = $responses;
 		}
-							
+		
 		return $response;
 	}
 	
@@ -92,14 +94,17 @@ class Response
 						'3001' => 'Gateway ID is required.',
 						'4000' => 'Invalid customer ID.',
 						'4001' => 'Invalid Order ID.',
-						'5000' => 'Not a valid recurring subscription.',
+						'5000' => 'A valid Recurring ID is required.',
 						'5001' => 'Start date cannot be in the past.',
 						'5002' => 'End date cannot be in the past',
 						'5003' => 'End date must be later than start date.',
 						'5004' => 'A customer ID or cardholder name must be supplied.',
 						'5005' => 'Error creating customer profile.',
 						'5006' => 'Error creating customer payment profile.',
-						'6000' => 'A valid Charge ID is required.'
+						'6000' => 'A valid Charge ID is required.',
+						'6001' => 'A valid Customer ID is required.',
+						'6002' => 'A valid Recurring ID is required',
+						'6003' => 'Nothing to update.'
 						);
 		
 				

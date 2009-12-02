@@ -23,21 +23,21 @@ class exact
 		'ExactID'			=> $gateway['terminal_id'],	
   		'Password'			=> $gateway['password'],
 		'Transaction_Type'  => '00',
-	 	'Card_Number' 		=> $credit_card->card_num,
-		'Expiry_Date'		=> $credit_card->exp_month . substr($credit_card->exp_year,-2,2),
-		'CVD_Presence_Ind' 	=> (empty($credit_card->cvv)) ? '9' : '1',
+	 	'Card_Number' 		=> $credit_card['card_num'],
+		'Expiry_Date'		=> $credit_card['exp_month'] . substr($credit_card['exp_year'],-2,2),
+		'CVD_Presence_Ind' 	=> (empty($credit_card['cvv'])) ? '9' : '1',
 		'Customer_Ref' 		=> $order_id,
 		'DollarAmount' 		=> $params['amount']
 		  );
 		
 		if(isset($credit_card->cvv)) {
-			$trxnProperties['VerificationStr1'] = $credit_card->cvv;
+			$trxnProperties['VerificationStr1'] = $credit_card['cvv'];
 		}  
 		
 		if(isset($customer['customer_id'])) {
 			$trxnProperties['CardHoldersName'] = $customer['first_name'].' '.$customer['last_name'];
 		} else {
-			$name = explode(' ', $credit_card->card_name);
+			$name = explode(' ', $credit_card['card_name']);
 			$trxnProperties['CardHoldersName'] = $name[0].' '.$name[1];
 			
 		}
@@ -111,22 +111,22 @@ class exact
 		$trxnProperties = array(
 		'ExactID'			=> $gateway['terminal_id'],	
   		'Password'			=> $gateway['password'],
-		'Transaction_Type'  => '40',
-	 	'Card_Number' 		=> $credit_card->card_num,
-		'Expiry_Date'		=> $credit_card->exp_month . substr($credit_card->exp_year,-2,2),
-		'CVD_Presence_Ind' 	=> (empty($credit_card->cvv)) ? '9' : '1',
-		'Customer_Ref' 		=> $subscription_id,
+		'Transaction_Type'  => '00',
+	 	'Card_Number' 		=> $credit_card['card_num'],
+		'Expiry_Date'		=> $credit_card['exp_month'] . substr($credit_card['exp_year'],-2,2),
+		'CVD_Presence_Ind' 	=> (empty($credit_card['cvv'])) ? '9' : '1',
+		'Customer_Ref' 		=> $order_id,
 		'DollarAmount' 		=> $params['amount']
 		  );
 		
 		if(isset($credit_card->cvv)) {
-			$trxnProperties['VerificationStr1'] = $credit_card->cvv;
+			$trxnProperties['VerificationStr1'] = $credit_card['cvv'];
 		}  
 		
 		if(isset($customer['customer_id'])) {
 			$trxnProperties['CardHoldersName'] = $customer['first_name'].' '.$customer['last_name'];
 		} else {
-			$name = explode(' ', $credit_card->card_name);
+			$name = explode(' ', $credit_card['card_name']);
 			$trxnProperties['CardHoldersName'] = $name[0].' '.$name[1];
 			
 		}

@@ -15,7 +15,7 @@ class Order_model extends Model
 							'client_id' 	  => $client_id,
 							'gateway_id' 	  => $params['gateway_id'],
 							'subscription_id' => $subscription_id,
-							'card_last_four'  => substr($credit_card->card_num,-4,4),
+							'card_last_four'  => substr($credit_card['card_num'],-4,4),
 							'amount'		  => $params['amount'],
 							'timestamp'		  => $timestamp
 							);	
@@ -123,8 +123,58 @@ class Order_model extends Model
 		}
 		
 		$this->db->join('order_authorizations', 'order_authorizations.order_id = orders.order_id', 'inner');
-		$this->db->where('client_id', $client_id);
-		$this->db->where('orders.order_id', $xml->charge_id);
+		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
+		$this->db->where('orders.client_id', $client_id);
+		$this->db->where('orders.order_id', $params['charge_id']);
+		$this->db->limit(1);
+		$query = $this->db->get('orders');
+		if($query->num_rows() > 0) {
+			$row = $query->row();
+			$data['results'] = 1;
+			$data['charge']['id'] = $row->order_id;
+			$data['charge']['gateway_id'] = $row->gateway_id;
+			$data['charge']['date'] = $row->timestamp;
+			$data['charge']['amount'] = $row->amount;
+			$data['charge']['card_last_four'] = $row->card_last_four;
+				
+			if($row->subscription_id != 0) {
+					$data['charge']['recurring_id'] = $row->subscription_id;
+				}
+				
+			if($row->customer_id != 0) {
+				$data['charge']['customer']['id'] = $row->customer_id;
+				$data['charge']['customer']['internal_id'] = $row->internal_id;
+				$data['charge']['customer']['firstname'] = $row->first_name;
+				$data['charge']['customer']['lastname'] = $row->last_name;
+				$data['charge']['customer']['company'] = $row->company;
+				$data['charge']['customer']['address_1'] = $row->address_1;
+				$data['charge']['customer']['address_2'] = $row->address_2;
+				$data['charge']['customer']['city'] = $row->city;
+				$data['charge']['customer']['state'] = $row->state;
+				$data['charge']['customer']['postal_code'] = $row->postal_code;
+				$data['charge']['customer']['email'] = $row->email;
+				$data['charge']['customer']['phone'] = $row->phone;
+			}
+				
+		} else {
+			$data['results'] = 0;
+		}
+		
+		return $data;
+	}
+	
+	function GetLatestCharge($client_id, $params)
+	{
+		// Get the gateway type
+		if(!isset($params['customer_id'])) {
+			die($this->response->Error(6001));
+		}
+		
+		$this->db->join('order_authorizations', 'order_authorizations.order_id = orders.order_id', 'inner');
+		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
+		$this->db->where('orders.client_id', $client_id);
+		$this->db->where('orders.customer_id', $params['customer_id']);
+		$this->db->order_by('timestamp', 'DESC');
 		$this->db->limit(1);
 		$query = $this->db->get('orders');
 		if($query->num_rows() > 0) {
