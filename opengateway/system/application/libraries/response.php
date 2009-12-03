@@ -56,7 +56,14 @@ class Response
 							'102' => 'Subscription updated.',
 							'103' => 'Customer created.',
 							'104' => 'Customer updated.',
-							'104' => 'Customer deleted.'	
+							'104' => 'Customer deleted.',
+							'200' => 'Client updated.',
+							'201' => 'Client suspended.',
+							'202' => 'Client unsuspended,',
+							'203' => 'Client deleted.',
+							'204' => 'Default gateway set.',	
+							'205' => 'Gateway updated.',
+							'206' => 'Gateway deleted.'
 							);
 		
 				
@@ -90,6 +97,9 @@ class Response
 						'1006' => 'Invalid format passed.  Acceptable formats: xml, php, and json.',
 						'2000' => 'Client is not authorized to create new clients.',
 						'2001' => 'Invalid External API.',
+						'2002' => 'Username is already in use.',
+						'2003' => 'Password must contain only letters and number; it must be between 7 and 20 characters; it must contain at least one uppercase letter, one lowercase letter, and one number.',
+						'2004' => 'Invalid client ID.',
 						'3000' => 'Invalid gateway ID for this client.',
 						'3001' => 'Gateway ID is required.',
 						'4000' => 'Invalid customer ID.',

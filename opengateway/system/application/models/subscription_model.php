@@ -156,7 +156,7 @@ class Subscription_model extends Model
 		return $data;
 	}
 	
-	function UpdateRecur($client_id, $params)
+	function UpdateRecurring($client_id, $params)
 	{
 		if(!isset($params['recurring_id'])) {
 			die($this->response->Error(6002));
@@ -199,4 +199,26 @@ class Subscription_model extends Model
 		return $response;
 	}
 	
+	function CancelRecurring($client_id, $params)
+	{
+		if(!isset($params['recurring_id'])) {
+			die($this->response->Error(6002));
+		}
+	
+		$CI =& get_instance();
+		
+		// Validate the required fields
+		$this->load->library('field_validation');
+		$this->field_validation->ValidateRequiredFields('CancelRecur', $params);
+
+		// Get the subscription information
+		$CI->load->model('subscription_model');
+		$subscription = $CI->subscription_model->GetSubscriptionDetails($client_id, $params['recurring_id']);
+		
+		$this->MakeInactive($params['recurring_id']);
+		
+		$response = $this->response->TransactionResponse(101,array());
+		
+		return $response;
+	}
 }

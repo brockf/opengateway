@@ -13,19 +13,24 @@ class Field_validation
 		$CI->load->model('request_type_model');
 		$required_fields = $CI->request_type_model->GetRequiredFields($request_type);
 		
-		$params = array_keys($params);
+		$param_keys = array_keys($params);
 		
 		if($required_fields) {
 			foreach($required_fields as $required_value)
 			{
 				foreach($required_value as $key => $value)
 				{
-					if(!in_array($value, $params)) {
-							$error = TRUE;
+					if(!in_array($value, $param_keys)) {
+						$error = TRUE;
+					}
+					
+					if($params[$value] == '') {
+						$error = TRUE;
 					}
 				}
 			}
-		}	 
+		}
+			 
 		if($error) {
 			die($CI->response->Error(1003));
 		} else {
@@ -33,7 +38,7 @@ class Field_validation
 		}
 	}
 	
-function ValidateRequiredGatewayFields($gateway_type, $xml_params)
+	function ValidateRequiredGatewayFields($gateway_type, $params)
 	{
 		// Load the CI object
 		$CI =& get_instance();
@@ -43,11 +48,6 @@ function ValidateRequiredGatewayFields($gateway_type, $xml_params)
 		// Validate that all required fields are present
 		$CI->load->model('gateway_model');
 		$required_fields = $CI->gateway_model->GetRequiredGatewayFields($gateway_type);
-		
-		foreach($xml_params->children() as $key => $value)
-		{
-			$params[(string)$key] = (string)$value;
-		}
 		
 		$params = array_keys($params);
 		

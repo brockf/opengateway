@@ -7,11 +7,11 @@ class Gateway_model extends Model
 	}
 	
 	// Create a new instance of a gateway
-	function NewGateway($client_id = FALSE, $params = FALSE, $xml = FALSE)
+	function NewGateway($client_id = FALSE, $params = FALSE)
 	{
 		
 		// Get the gateway type
-		if(!isset($gateway_params->gateway_type)) {
+		if(!isset($params['gateway_type'])) {
 			die($this->response->Error(1005));
 		}
 		
@@ -19,7 +19,7 @@ class Gateway_model extends Model
 		
 		// Validate the required fields
 		$this->load->library('field_validation');
-		$request_type_id = $this->field_validation->ValidateRequiredGatewayFields($gateway_type, $gateway_params);
+		$request_type_id = $this->field_validation->ValidateRequiredGatewayFields($gateway_type, $params);
 		
 		// Get the external API id
 		$external_api_id = $this->GetExternalApiId($gateway_type);
@@ -40,9 +40,11 @@ class Gateway_model extends Model
 		$new_gateway_id = $this->db->insert_id();
 		
 		//Add the params, but not the client id or gateway type
+		unset($params['authentication']);
 		unset($params['client_id']);
 		unset($params['gateway_type']);
 		unset($params['enabled']);
+		unset($params['type']);
 		
 		foreach($params as $key => $value)
 		{
@@ -53,6 +55,17 @@ class Gateway_model extends Model
 								);  
 		
 			$this->db->insert('client_gateway_params', $insert_data);
+		}
+		
+		// If there is not default gateway, we'll set this one.
+		$CI =& get_instance();
+		$CI->load->model('client_model');
+		$client = $CI->client_model->GetClientDetails($client_id);
+		
+		if($client->default_gateway_id == 0) {
+			$update_data['default_gateway_id'] = $new_gateway_id;
+			$this->db->where('client_id', $client_id);
+			$this->db->update('clients', $update_data);
 		}
 		
 		$response = array('gateway_id' 	=> $new_gateway_id);
@@ -189,34 +202,98 @@ class Gateway_model extends Model
 		return $this->$gateway_name->Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $recur['interval'], $credit_card, $subscription_id);
 	}
 	
-	function CancelRecur($client_id, $params)
+	function MakeDefaultGateway($client_id, $params)
 	{
-		if(isset($params['gateway_id'])) {
-			$gateway_id = $params['gateway_id'];
-		} else {
-			$gateway_id = FALSE;
-		}
-		
-		$CI =& get_instance();
-		
 		// Validate the required fields
 		$this->load->library('field_validation');
-		$this->field_validation->ValidateRequiredFields('CancelRecur', $params);
+		$this->field_validation->ValidateRequiredFields('MakeDefaultGateway', $params);
 		
-		// Get the gateway info to load the proper library
-		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
-
-		// Get the subscription information
-		$CI->load->model('subscription_model');
-		$subscription = $CI->subscription_model->GetSubscriptionDetails($client_id, $params['subscription_id']);
+		// Make sure the gateway is actually theirs
+		$gateway = $this->GetGatewayDetails($client_id, $params['gateway_id']);
 		
-		// Load the proper library
-		$gateway_name = $gateway['name'];
-		$this->load->library('payment/'.$gateway_name);
-		return $this->$gateway_name->CancelRecur($client_id, $subscription);
+		if(!$gateway) {
+			die($this->response->Error(3000));
+		}
+		
+		$update_data['default_gateway_id'] = $params['gateway_id'];
+		
+		$this->db->where('client_id', $client_id);
+		$this->db->update('clients', $update_data);
+		
+		$response = $this->response->TransactionResponse(204,array());
+		
+		return $response;
+		
 	}
 	
+	function UpdateGateway($client_id, $params)
+	{
+		// Validate the required fields
+		$this->load->library('field_validation');
+		$this->field_validation->ValidateRequiredFields('MakeDefaultGateway', $params);
+		
+		// Make sure the gateway is actually theirs
+		$gateway = $this->GetGatewayDetails($client_id, $params['gateway_id']);
+		
+		if(!$gateway) {
+			die($this->response->Error(3000));
+		}
+		
+		// Get the gateway fields
+		$fields = $this->GetRequiredGatewayFields($gateway['name']);
+		
+		$i=0;
+		foreach($fields as $required_value)
+		{
+			foreach($required_value as $key => $value)
+			{
+				if(isset($params[$value]) && $params[$value] != '') {
+					$update_data['value'] = $params[$value];
+					$this->db->where('client_gateway_id', $params['gateway_id']);
+					$this->db->where('field', $value);
+					$this->db->update('client_gateway_params', $update_data);
+					$i++;
+				}
+			}
+		}
+		
+		if($i === 0) {
+			die($this->response->Error(6003));
+		}
+		
+		$response = $this->response->TransactionResponse(205,array());
+		
+		return $response;
+		
+		
+	}
 	
+	function DeleteGateway($client_id, $params)
+	{
+		// Validate the required fields
+		$this->load->library('field_validation');
+		$this->field_validation->ValidateRequiredFields('MakeDefaultGateway', $params);
+		
+		// Make sure the gateway is actually theirs
+		$gateway = $this->GetGatewayDetails($client_id, $params['gateway_id']);
+		
+		if(!$gateway) {
+			die($this->response->Error(3000));
+		}
+		
+		// Mark as deleted
+		$update_data['deleted'] = 1;
+		$this->db->where('client_gateway_id', $params['gateway_id']);
+		$this->db->update('client_gateways', $update_data);
+		
+		// Delete the client gateway params
+		$this->db->where('client_gateway_id', $params['gateway_id']);
+		$this->db->delete('client_gateway_params');
+		
+		$response = $this->response->TransactionResponse(206,array());
+		
+		return $response;
+	}
 	
 	// Get the gateway id
 	function GetExternalApiId($gateway_name = FALSE)

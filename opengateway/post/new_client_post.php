@@ -8,8 +8,20 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>
 		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>
 	</authentication>
-	<type>CancelRecurring</type>
-	<recurring_id>68</recurring_id>
+	<type>NewClient</type>
+	<first_name>Joe</first_name>
+	<last_name>Blow</last_name>
+	<company>DAR Inc.</company>
+	<address_1>123 Main Street</address_1>
+	<address_2>Apt. 3</address_2>
+	<city>Anytown</city>
+	<state>CO</state>
+	<postal_code>80220</postal_code>
+	<country>US</country>
+	<phone>3033319812</phone>
+	<email>daveryan187@yahoo.com</email>
+	<username>daveryan187</username>
+	<password>MyPassword187</password>
 </request>';
 
 $postfields = 'request='.$post_string; 
