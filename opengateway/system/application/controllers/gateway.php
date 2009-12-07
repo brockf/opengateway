@@ -42,6 +42,9 @@ class Gateway extends Controller {
 		}	
 		
 		// Get the request type
+		if(!isset($params['type'])) {
+			die($this->response->Error(1002));
+		}
 		$request_type = $params['type'];
 		
 		// Make sure the first letter is capitalized

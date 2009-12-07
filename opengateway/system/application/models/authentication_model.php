@@ -11,6 +11,8 @@ class Authentication_model extends Model
 	{
 		// pull the client from the db
 		$this->db->where('api_id', (string)$api_id);
+		$this->db->where('suspended', 0);
+		$this->db->whete('deleted', 0);
 		$this->db->limit(1);
 		$query = $this->db->get('clients');
 		

@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class Order_model</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name"><img src="../media/images/Class_logo.png"
+														alt=" Class"
+														title=" Class"
+														style="vertical-align: middle"> Order_model</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+															<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Order Model</p>
+<p class="description"><p>Contains all the methods used to create and search orders.</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> David Ryan</li>
+				<li><span class="field">version:</span> 1.0</li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_order_model.php.html">/order_model.php</a> (line <span class="field">12</span>)
+		</p>
+		
+				
+		<pre>Model
+   |
+   --Order_model</pre>
+	
+			</div>
+</div>
+
+
+
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+												<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																								<div class="method-definition">
+					<img src="../media/images/Method.png" alt=" "/>
+											<span class="method-result">int</span>
+										<a href="#CreateNewOrder" title="details" class="method-name">CreateNewOrder</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$client_id</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$params</span>, [<span class="var-type">int</span>&nbsp;<span class="var-name">$subscription_id</span> = <span class="var-default">0</span>], <span class="var-type">string</span>&nbsp;<span class="var-name">$params['gateway_id']</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$params['credit_card']['card_num']</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$params['amount']</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$params['customer_id']</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$params['customer_ip_address']</span>)
+									</div>
+																<div class="method-definition">
+					<img src="../media/images/Method.png" alt=" "/>
+											<span class="method-result">mixed</span>
+										<a href="#GetCharge" title="details" class="method-name">GetCharge</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$client_id</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$params</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['charge_id']</span>)
+									</div>
+																<div class="method-definition">
+					<img src="../media/images/Method.png" alt=" "/>
+											<span class="method-result">mixed</span>
+										<a href="#GetCharges" title="details" class="method-name">GetCharges</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$client_id</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$params</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['gateway_id']</span>, <span class="var-type">date</span>&nbsp;<span class="var-name">$params['start_date']</span>, <span class="var-type">date</span>&nbsp;<span class="var-name">$params['end_date']</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['customer_id']</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$params['customer_internal_id']</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['subscription_id']</span>, <span class="var-type">boolean</span>&nbsp;<span class="var-name">$params['recurring_only']</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['limit']</span>)
+									</div>
+																<div class="method-definition">
+					<img src="../media/images/Method.png" alt=" "/>
+											<span class="method-result">mixed</span>
+										<a href="#GetLatestCharge" title="details" class="method-name">GetLatestCharge</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$client_id</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$params</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['customer_id']</span>)
+									</div>
+																<div class="method-definition">
+					<img src="../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#Order_Model" title="details" class="method-name">Order_Model</a>
+										()
+									</div>
+											</div>
+		</div>
+	</div>		
+
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+													<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="methodCreateNewOrder" id="CreateNewOrder"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../media/images/Method.png" />
+		<span class="method-title">CreateNewOrder</span> (line <span class="line-number">34</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Create a new order.</p>
+<p class="description"><p>Creates a new order.</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The new order id</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">int</span>
+		<span class="method-name">
+			CreateNewOrder
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$client_id</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$params</span>, [<span class="var-type">int</span>&nbsp;<span class="var-name">$subscription_id</span> = <span class="var-default">0</span>], <span class="var-type">string</span>&nbsp;<span class="var-name">$params['gateway_id']</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$params['credit_card']['card_num']</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$params['amount']</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$params['customer_id']</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$params['customer_ip_address']</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$client_id</span><span class="var-description">: The client ID of the gateway client.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$subscription_id</span><span class="var-description">: If this order is part of a recurring subscription. Optional.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$params['gateway_id']</span><span class="var-description">: The gateway ID used for the order.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$params['credit_card']['card_num']</span><span class="var-description">: The card number used to save the last 4 digits.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$params['amount']</span><span class="var-description">: The amount of the order.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$params['customer_id']</span><span class="var-description">: The customer id associated with the order. Optional.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$params['customer_ip_address']</span><span class="var-description">: Customer's IP address. Optional.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$params</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodGetCharge" id="GetCharge"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<img src="../media/images/Method.png" />
+		<span class="method-title">GetCharge</span> (line <span class="line-number">186</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get Details of a specific order.</p>
+<p class="description"><p>Returns array of order details for a specific order_id.</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> Details array</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			GetCharge
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$client_id</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$params</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['charge_id']</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$client_id</span><span class="var-description">: The client ID.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$params['charge_id']</span><span class="var-description">: The order id to search for.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$params</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodGetCharges" id="GetCharges"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../media/images/Method.png" />
+		<span class="method-title">GetCharges</span> (line <span class="line-number">80</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Search Orders.</p>
+<p class="description"><p>Returns an array of results based on submitted search criteria.  All fields are optional.</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> Array containing results</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			GetCharges
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$client_id</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$params</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['gateway_id']</span>, <span class="var-type">date</span>&nbsp;<span class="var-name">$params['start_date']</span>, <span class="var-type">date</span>&nbsp;<span class="var-name">$params['end_date']</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['customer_id']</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$params['customer_internal_id']</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['subscription_id']</span>, <span class="var-type">boolean</span>&nbsp;<span class="var-name">$params['recurring_only']</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['limit']</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$client_id</span><span class="var-description">: The client ID.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$params['gateway_id']</span><span class="var-description">: The gateway ID used for the order. Optional.</span>			</li>
+					<li>
+				<span class="var-type">date</span>
+				<span class="var-name">$params['start_date']</span><span class="var-description">: Only orders after or on this date will be returned. Optional.</span>			</li>
+					<li>
+				<span class="var-type">date</span>
+				<span class="var-name">$params['end_date']</span><span class="var-description">: Only orders before or on this date will be returned. Optional.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$params['customer_id']</span><span class="var-description">: The customer id associated with the order. Optional.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$params['customer_internal_id']</span><span class="var-description">: The customer's internal id associated with the order. Optional.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$params['subscription_id']</span><span class="var-description">: Returns only recurring orders that have this subscription ID. Optional.</span>			</li>
+					<li>
+				<span class="var-type">boolean</span>
+				<span class="var-name">$params['recurring_only']</span><span class="var-description">: Returns only orders that are part of a recurring subscription. Optional.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$params['limit']</span><span class="var-description">: Limits the number of results returned. Optional.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$params</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodGetLatestCharge" id="GetLatestCharge"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<img src="../media/images/Method.png" />
+		<span class="method-title">GetLatestCharge</span> (line <span class="line-number">247</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get Details of the last order for a customer.</p>
+<p class="description"><p>Returns array of order details for a specific order_id.</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> details array</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			GetLatestCharge
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$client_id</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$params</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['customer_id']</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$client_id</span><span class="var-description">: The client ID.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$params['customer_id']</span><span class="var-description">: The order id to search for.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$params</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodOrder_Model" id="Order_Model"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../media/images/Method.png" />
+		<span class="method-title">Order_Model</span> (line <span class="line-number">14</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			Order_Model
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+						
+		</div>
+	</div>
+
+	
+	<p class="notes" id="credit">
+		Documentation generated on Mon, 07 Dec 2009 02:31:15 +0000 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+	</p>
+	</div></body>
+</html>

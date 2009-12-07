@@ -1,5 +1,14 @@
 <?php
+/**
+* Subscription Model 
+*
+* Contains all the methods used to create, update, and search subscriptions.
+*
+* @version 1.0
+* @author David Ryan
+* @package OpenGateway
 
+*/
 class Subscription_model extends Model
 {
 	function Subscription_model()
@@ -7,7 +16,22 @@ class Subscription_model extends Model
 		parent::Model();
 	}
 	
-	// Save a new recurring subscription
+	/**
+	* Create a new recurring subscription.
+	*
+	* Creates a new recurring subscription and returns the subscription ID.
+	*
+	* @param int $client_id The client ID of the gateway client.
+	* @param int $gateway_id The gateway ID
+ 	* @param int $customer_id The customer ID
+	* @param date $start_date The date the subscription should begin
+	* @param date $end_date The date the subscription should end
+	* @param int $total_occurrence The total number of charges for this subscription.
+	* @param string $notifcation_url The notification URL
+	* @param int $params['amount'] The amount to be charged
+	* 
+	* @return int The new subscription ID
+	*/
 	function SaveSubscription($client_id, $gateway_id, $customer_id, $start_date, $end_date, $total_occurrences, $notification_url, $params)
 	{
 		$timestamp = date('Y-m-d H:i:s');
@@ -28,6 +52,14 @@ class Subscription_model extends Model
 		return $this->db->insert_id();
 	}
 	
+	/**
+	* Add a customer profile ID.
+	*
+	* For API's that require a customer profile
+	*
+	* @param int $subscription_id The subscription_id
+	* @param int $api_customer_reference The customer profile id
+	*/
 	function SaveApiCustomerReference($subscription_id, $api_customer_reference)
 	{
 		$update_data = array('api_customer_reference' => $api_customer_reference);
@@ -36,6 +68,14 @@ class Subscription_model extends Model
 		$this->db->update('subscriptions', $update_data);
 	}
 	
+	/**
+	* Add a customer payment ID.
+	*
+	* For API's that require a customer payment profile
+	*
+	* @param int $subscription_id The subscription_id
+	* @param int $api_payment_reference The customer payment id
+	*/
 	function SaveApiPaymentReference($subscription_id, $api_payment_reference)
 	{
 		$update_data = array('api_payment_reference' => $api_payment_reference);
@@ -44,6 +84,14 @@ class Subscription_model extends Model
 		$this->db->update('subscriptions', $update_data);
 	}
 	
+	/**
+	* Add a Auth number.
+	*
+	* For API's that require an Auth code be used for future charges
+	*
+	* @param int $subscription_id The subscription_id
+	* @param int $api_auth_number The API auth code.
+	*/
 	function SaveApiAuthNumber($subscription_id, $api_auth_number)
 	{
 		$update_data = array('api_auth_number' => $api_auth_number);
@@ -52,6 +100,13 @@ class Subscription_model extends Model
 		$this->db->update('subscriptions', $update_data);
 	}
 	
+	/**
+	* Make a subscription inactive
+	*
+	* Makes a subscription Inactive
+	*
+	* @param int $subscription_id The subscription_id
+	*/
 	function MakeInactive($subscription_id)
 	{
 		$update_data = array('active' => 0);
@@ -60,6 +115,16 @@ class Subscription_model extends Model
 		$this->db->update('subscriptions', $update_data);
 	}
 	
+	/**
+	* Get subscription details
+	*
+	* Returns an array of details about the subscription.
+	*
+	* @param int $client_id The client ID 
+	* @param int $subscription_id The subscription_id
+	* 
+	* @return mixed Array Containing subscription details
+	*/
 	function GetSubscriptionDetails($client_id, $subscription_id)
 	{
 		$this->db->where('client_id', $client_id);
@@ -72,6 +137,23 @@ class Subscription_model extends Model
 		}
 	}
 	
+	/**
+	* Search subscriptions.
+	*
+	* Returns an array of results based on submitted search criteria.  All fields are optional.
+	*
+	* @param int $client_id The client ID.
+	* @param int $params['gateway_id'] The gateway ID used for the order. Optional.
+	* @param date $params['created_after'] Only subscriptions created after or on this date will be returned. Optional.
+	* @param date $params['created_before'] Only subscriptions created before or on this date will be returned. Optional.
+	* @param int $params['customer_id'] The customer id associated with the subscription. Optional.
+	* @param string $params['customer_internal_id'] The customer's internal id associated with the subscription. Optional.
+	* @param int $params['amount'] Only subscriptions for this amount will be returned. Optional.
+	* @param boolean $params['active'] Returns only active subscriptions. Optional.
+	* @param int $params['limit'] Limits the number of results returned. Optional.
+	* 
+	* @return mixed Array containing results
+	*/
 	function GetRecurring($client_id, $params)
 	{
 		// Make sure they only get their own charges
@@ -116,6 +198,7 @@ class Subscription_model extends Model
 		}
 		
 		$this->db->join('customers', 'customers.customer_id = subscriptions.customer_id', 'left');
+		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$query = $this->db->get('subscriptions');
 		if($query->num_rows() > 0) {
 			$data['results'] = $query->num_rows();
@@ -143,6 +226,7 @@ class Subscription_model extends Model
 					$data['recurrrings']['recurring'][$i]['customer']['city'] = $row->city;
 					$data['recurrrings']['recurring'][$i]['customer']['state'] = $row->state;
 					$data['recurrrings']['recurring'][$i]['customer']['postal_code'] = $row->postal_code;
+					$data['recurrrings']['recurring'][$i]['customer']['country'] = $row->iso2;
 					$data['recurrrings']['recurring'][$i]['customer']['email'] = $row->email;
 					$data['recurrrings']['recurring'][$i]['customer']['phone'] = $row->phone;
 				}
@@ -156,6 +240,19 @@ class Subscription_model extends Model
 		return $data;
 	}
 	
+	/**
+	* Update an existing subscription.
+	*
+	* Updates an existing subscription with new parameters.
+	*
+	* @param int $client_id The client ID of the gateway client.
+	* @param int $params['recurring_id'] The subscription ID to update.
+ 	* @param string $params['notification_url'] The new notification URL. Optional.
+	* @param int $params['customer_id'] The new customer id. Optional.
+	* @param int $params['amount'] The new amount to charge. Optional
+	* @param int $params['interval'] The new number of days between charges. Optional.
+	* 
+	*/
 	function UpdateRecurring($client_id, $params)
 	{
 		if(!isset($params['recurring_id'])) {

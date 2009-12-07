@@ -8,8 +8,8 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>
 		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>
 	</authentication>
-	<type>GetCustomers</type>
-	<first_name>Johnny</first_name>
+	<type>GetCustomer</type>
+	<customer_id>100</customer_id>
 </request>';
 
 $postfields = 'request='.$post_string; 

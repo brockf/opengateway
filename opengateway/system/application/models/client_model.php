@@ -1,5 +1,14 @@
 <?php
+/**
+* Client Model 
+*
+* Contains all the methods used to create, update, and delete clients.
+*
+* @version 1.0
+* @author David Ryan
+* @package OpenGateway
 
+*/
 class Client_model extends Model
 {
 	function Client_model()
@@ -7,7 +16,30 @@ class Client_model extends Model
 		parent::Model();
 	}
 	
-	// Create a new gateway user
+	/**
+	* Create a new gateway client
+	*
+	* Creates a new client.
+	*
+	* @param int $client_id The client ID of the Parent Client
+	* @param string $params['first_name'] Client's first name
+	* @param string $params['last_name'] Client's last name
+	* @param string $params['company'] Client's company
+	* @param string $params['address_1'] Client's address line 1.
+	* @param string $params['address_2'] Client's address line 2. Optional.
+	* @param string $params['city'] Client's city
+	* @param string $params['state'] Client's state
+	* @param string $params['postal_code'] Client's postal code
+	* @param string $params['country'] Client's country
+	* @param string $params['phone'] Client's phone
+	* @param string $params['email'] Client's email
+	* @param string $params['username'] Client's username
+	* @param string $params['password'] Client's password
+	* 
+	*
+	* 
+	* @return mixed Array containing new API ID and Secret Key
+	*/
 	function NewClient($client_id = FALSE, $params = FALSE)
 	{
 		// Make sure this client is authorized to create a child client
@@ -21,6 +53,19 @@ class Client_model extends Model
 		// Validate the required fields
 		$this->load->library('field_validation');
 		$this->field_validation->ValidateRequiredFields('NewClient', $params);
+		
+		// Make sure the country is in the proper format
+		$country_id = $this->field_validation->ValidateCountry($params['country']);
+		
+		if(!$country_id) {
+			die($this->response->Error(1007));
+		}
+		
+		$valid_email = $this->field_validation->ValidateEmailAddress($params['email']);
+		
+		if(!$valid_email) {
+			die($this->response->Error(1008));
+		}
 		
 		// Make sure the username is not already in use
 		$exists = $this->UsernameExists($params['username']);
@@ -52,7 +97,7 @@ class Client_model extends Model
 							'city'				=> $params['city'],
 							'state'		 		=> $params['state'],
 							'postal_code'		=> $params['postal_code'],
-							'country'	 		=> $params['country'],
+							'country'	 		=> $country_id,
 							'phone'				=> $params['phone'],
 							'email'		 		=> $params['email'],
 							'parent_client_id' 	=> $client_id,
@@ -81,6 +126,31 @@ class Client_model extends Model
 		return $this->UpdateClient($client_id, $params);
 	}
 	
+	
+	/**
+	* Update Client information.
+	*
+	* Updates client information.  All fields are optional
+	*
+	* @param int $client_id The client ID of the Parent Client
+	* @param string $params['first_name'] Client's first name
+	* @param string $params['last_name'] Client's last name
+	* @param string $params['company'] Client's company
+	* @param string $params['address_1'] Client's address line 1.
+	* @param string $params['address_2'] Client's address line 2.
+	* @param string $params['city'] Client's city
+	* @param string $params['state'] Client's state
+	* @param string $params['postal_code'] Client's postal code
+	* @param string $params['country'] Client's country
+	* @param string $params['phone'] Client's phone
+	* @param string $params['email'] Client's email
+	* @param string $params['username'] Client's username
+	* @param string $params['password'] Client's password
+	* 
+	*
+	* 
+	* @return mixed Result
+	*/
 	function UpdateClient($client_id, $params)
 	{
 		// Validate the required fields
@@ -132,7 +202,13 @@ class Client_model extends Model
 		}
 		
 		if(isset($params['country']) && $params['country'] != '') {
-			$update_data['country'] = $params['country'];
+			// Make sure the country is in the proper format
+			$country_id = $this->field_validation->ValidateCountry($params['country']);
+			
+			if(!$country_id) {
+				die($this->response->Error(1007));
+			}
+			$update_data['country'] = $country_id;
 		}
 		
 		if(isset($params['phone']) && $params['phone'] != '') {
@@ -140,6 +216,11 @@ class Client_model extends Model
 		}
 		
 		if(isset($params['email']) && $params['email'] != '') {
+			$valid_email = $this->field_validation->ValidateEmailAddress($params['email']);
+			
+			if(!$valid_email) {
+				die($this->response->Error(1008));
+			}
 			$update_data['email'] = $params['email'];
 		}
 		
@@ -175,6 +256,18 @@ class Client_model extends Model
 		return $response;
 	}
 	
+	
+	/**
+	* Mark a client as suspended
+	*
+	* Suspends a client.  When a client is suspended, they can no longer perform any API funcions
+	*
+	* @param int $client_id The client ID of the Parent Client
+	* @param int $params['client_id'] Client to be suspended
+
+	* 
+	* @return mixed Result
+	*/
 	function SuspendClient($client_id, $params)
 	{
 		$client = $this->GetChildClientDetails($client_id, $params['client_id']);
@@ -194,6 +287,17 @@ class Client_model extends Model
 		return $response;
 	}
 	
+	/**
+	* Mark a client as unsuspended
+	*
+	* Unsuspends a client.  Restores full functionality to a client.
+	*
+	* @param int $client_id The client ID of the Parent Client
+	* @param int $params['client_id'] Client to be suspended
+
+	* 
+	* @return mixed Result
+	*/
 	function UnsuspendClient($client_id, $params)
 	{
 		$client = $this->GetChildClientDetails($client_id, $params['client_id']);
@@ -213,6 +317,17 @@ class Client_model extends Model
 		return $response;
 	}
 	
+	/**
+	* Mark a client as deleted
+	*
+	* Deletes a client.  Does not actually delete the client, but marks it as deleted in the clients table.
+	*
+	* @param int $client_id The client ID of the Parent Client
+	* @param int $params['client_id'] Client to be deleted
+
+	* 
+	* @return mixed Result
+	*/
 	function DeleteClient($client_id, $params)
 	{
 		$client = $this->GetChildClientDetails($client_id, $params['client_id']);
@@ -232,10 +347,23 @@ class Client_model extends Model
 		return $response;
 	}
 	
-	
+	/**
+	* Get the client details for a child client.
+	*
+	* Returns a array containg all the childs client's details.  
+	* If the child does not belong to the parent, an error is returned.
+	*
+	* @param int $parent_client_id The client ID of the Parent Client
+	* @param int $child_client_id Child client
+
+	* 
+	* @return mixed Array containing all the client details.
+	*/
 	
 	function GetChildClientDetails($parent_client_id, $child_client_id)
 	{
+		$this->db->select('clients.*, countries.iso2 as country');
+		$this->db->join('countries', 'countries.country_id = clients.country_id', 'left');
 		$this->db->where('parent_client_id', $parent_client_id);
 		$this->db->where('client_id', $child_client_id);
 		$this->db->limit(1);
@@ -247,8 +375,19 @@ class Client_model extends Model
 		}
 	}
 	
+	/**
+	* Get the client details for a client.
+	*
+	* Returns a array containg all the client's details.  
+	*
+	* @param int $client_id The client ID
+	* 
+	* @return mixed Array containing all the client details.
+	*/
 	function GetClientDetails($client_id)
 	{
+		$this->db->select('clients.*, countries.iso2 as country');
+		$this->db->join('countries', 'countries.country_id = clients.country', 'left');
 		$this->db->where('client_id', $client_id);
 		$this->db->limit(1);
 		$query = $this->db->get('clients');
@@ -259,6 +398,15 @@ class Client_model extends Model
 		}
 	}
 	
+	/**
+	* Check to see if a username already exists.
+	*
+	* Returns TRUE or FALSE if the username already exists in the database.
+	*
+	* @param string $username The desired username.
+	* 
+	* @return boolean Returns TRUE or FALSE if the username already exists
+	*/
 	function UsernameExists($username)
 	{
 		$this->db->where('username', $username);
@@ -270,6 +418,15 @@ class Client_model extends Model
 		}
 	}
 	
+	/**
+	* Check to see if a passord meets strength requirements.
+	*
+	* Returns TRUE or FALSE if the password meets the requirements.
+	*
+	* @param string $password The desired password.
+	* 
+	* @return boolean Returns TRUE or FALSE if the password meets the requirements.
+	*/
 	function ValidatePassword($password)
 	{
 		if(

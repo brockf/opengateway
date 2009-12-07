@@ -1,5 +1,14 @@
 <?php
+/**
+* Customer Model 
+*
+* Contains all the methods used to create, update, and delete customers.
+*
+* @version 1.0
+* @author David Ryan
+* @package OpenGateway
 
+*/
 class Customer_model extends Model
 {
 	function Customer_model()
@@ -7,10 +16,46 @@ class Customer_model extends Model
 		parent::Model();
 	}
 	
-	// Create new customer
+	/**
+	* Create a new customer
+	*
+	* Creates a new customer.
+	*
+	* @param int $client_id The client ID of the gateway client.
+	* @param string $params['first_name'] Client's first name
+	* @param string $params['last_name'] Client's last name
+	* @param string $params['company'] Client's company. Optional.
+	* @param string $params['address_1'] Client's address line 1. Optional.
+	* @param string $params['address_2'] Client's address line 2. Optional.
+	* @param string $params['city'] Client's city. Optional.
+	* @param string $params['state'] Client's state. Optional.
+	* @param string $params['postal_code'] Client's postal code. Optional. 
+	* @param string $params['country'] Client's country. Optional.
+	* @param string $params['phone'] Client's phone. Optional.
+	* @param string $params['email'] Client's email. Optional.
+	* 
+	* @return mixed Array containing new customer_id
+	*/
 	function NewCustomer($client_id, $params)
 	{
-		$customer_id = $this->SaveNewCustomer($client_id, $params['first_name'], $params['last_name'], $params['company'], $params['internal_id'], $params['address_1'], $params['address_2'], $params['city'], $params['state'], $params['postal_code'], $params['phone'], $params['email']);
+		
+		// Make sure the country is in the proper format
+		$this->load->library('field_validation');
+		$country_id = $this->field_validation->ValidateCountry($params['country']);
+		
+		if(!$country_id) {
+			die($this->response->Error(1007));
+		}
+		
+		// Make sure the email address is valid
+		$this->load->library('field_validation');
+		$valid_email = $this->field_validation->ValidateEmailAddress($params['email']);
+		
+		if(!$valid_email) {
+			die($this->response->Error(1008));
+		}
+		
+		$customer_id = $this->SaveNewCustomer($client_id, $params['first_name'], $params['last_name'], $params['company'], $params['internal_id'], $params['address_1'], $params['address_2'], $params['city'], $params['state'], $params['postal_code'], $country_id, $params['phone'], $params['email']);
 		
 		$response = array('customer_id' => $this->db->insert_id());
 		return $response;
@@ -18,7 +63,7 @@ class Customer_model extends Model
 	}
 	
 	// Save new customer 
-	function SaveNewCustomer($client_id, $first_name, $last_name, $company = '', $internal_id = '', $address_1 = '', $address_2 = '', $city = '', $state = '', $postal_code = '', $phone = '', $email = '')
+	function SaveNewCustomer($client_id, $first_name, $last_name, $company = '', $internal_id = '', $address_1 = '', $address_2 = '', $city = '', $state = '', $postal_code = '', $country_id = '', $phone = '', $email = '')
 	{
 		$insert_data = array(
 							'client_id'		=> $client_id,
@@ -31,6 +76,7 @@ class Customer_model extends Model
 							'city'			=> $city,
 							'state'			=> $state,
 							'postal_code'	=> $postal_code,
+							'country'		=> $country_id,
 							'phone'			=> $phone,
 							'email'			=> $email,
 							'active'		=> 1
@@ -41,7 +87,16 @@ class Customer_model extends Model
 							
 	}
 	
-	// Get the customer info
+	/**
+	* Get the customer details.
+	*
+	* Returns a array containg all the customers's details.  If the customer does not belong to the client, an error is returned.
+	*
+	* @param int $client_id The client ID
+	* @param int $customer_id The customer ID
+	* 
+	* @return mixed Array containing all the customer details.
+	*/
 	function GetCustomerDetails($client_id, $customer_id)
 	{
 		$this->db->where('customer_id', $customer_id);
@@ -58,6 +113,28 @@ class Customer_model extends Model
 		}
 	}
 	
+	
+	/**
+	* Updates a customer's details.
+	*
+	* Updates a customer details. If the customer does not belong to the client, an error is returned.
+	*
+	* @param int $client_id The client ID of the gateway client.
+	* @param int $params['customer_id'] The Customer to update.
+	* @param string $params['first_name'] Customer's first name. Optional.
+	* @param string $params['last_name'] Customer's last name. Optional.
+	* @param string $params['company'] Customer's company. Optional.
+	* @param string $params['address_1'] Customer's address line 1. Optional.
+	* @param string $params['address_2'] Customer's address line 2. Optional.
+	* @param string $params['city'] Customer's city. Optional.
+	* @param string $params['state'] Customer's state. Optional.
+	* @param string $params['postal_code'] Customer's postal code. Optional. 
+	* @param string $params['country'] Customer's country. Optional.
+	* @param string $params['phone'] Customer's phone. Optional.
+	* @param string $params['email'] Customer's email. Optional.
+	* 
+	* @return mixed Array containing new customer_id
+	*/
 	function UpdateCustomer($client_id, $params)
 	{
 		if(!isset($params['customer_id'])) {
@@ -102,6 +179,13 @@ class Customer_model extends Model
 		}
 		
 		if(isset($params['country'])) {
+			// Make sure the country is in the proper format
+			$this->load->library('field_validation');
+			$country_id = $this->field_validation->ValidateCountry($params['country']);
+			
+			if(!$country_id) {
+				die($this->response->Error(1007));
+			}
 			$update_data['country'] = $params['country'];
 		}
 		
@@ -110,6 +194,11 @@ class Customer_model extends Model
 		}
 		
 		if(isset($params['email'])) {
+			$valid_email = $this->field_validation->ValidateEmailAddress($params['email']);
+			
+			if(!$valid_email) {
+				die($this->response->Error(1008));
+			}
 			$update_data['email'] = $params['email'];
 		}
 		
@@ -128,6 +217,16 @@ class Customer_model extends Model
 		return $response;
 	}
 	
+	/**
+	* Delete a customer.
+	*
+	* Marks a customer as deleted.  Does not actually delete the customer from the database, but only marks it as deleted.
+	*
+	* @param int $client_id The client ID
+	* @param int $params['customer_id'] The customer ID
+	* 
+	* @return mixed Array containing all the customer details.
+	*/
 	function DeleteCustomer($client_id, $params)
 	{
 		if(!isset($params['customer_id'])) {
@@ -144,6 +243,29 @@ class Customer_model extends Model
 		
 		return $response;
 	}
+	
+	/**
+	* Get a list of customer details.
+	*
+	* Searches the database for customers belonging to the client and returns an array with all the details.
+	* All search parameters are optional.
+	*
+	* @param int $client_id The client ID of the gateway client.
+	* @param int $params['customer_id'] Customer ID. Optional
+	* @param string $params['first_name'] Customer's first name. Optional.
+	* @param string $params['last_name'] Customer's last name. Optional.
+	* @param string $params['company'] Customer's company. Optional.
+	* @param string $params['address_1'] Customer's address line 1. Optional.
+	* @param string $params['address_2'] Customer's address line 2. Optional.
+	* @param string $params['city'] Customer's city. Optional.
+	* @param string $params['state'] Customer's state. Optional.
+	* @param string $params['postal_code'] Customer's postal code. Optional. 
+	* @param string $params['country'] Customer's country. Optional.
+	* @param string $params['phone'] Customer's phone. Optional.
+	* @param string $params['email'] Customer's email. Optional.
+	* 
+	* @return mixed Array containing the search results
+	*/
 	
 	function GetCustomers($client_id, $params)
 	{
@@ -217,6 +339,7 @@ class Customer_model extends Model
 		
 		
 		$this->db->order_by('customers.customer_id', 'DESC');
+		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$query = $this->db->get('customers');
 		if($query->num_rows() > 0) {
 			$data['results'] = $query->num_rows();
@@ -233,6 +356,7 @@ class Customer_model extends Model
 				$data['customers']['customer'][$i]['city'] = $row->city;
 				$data['customers']['customer'][$i]['state'] = $row->state;
 				$data['customers']['customer'][$i]['postal_code'] = $row->postal_code;
+				$data['customers']['customer'][$i]['country'] = $row->iso2;
 				$data['customers']['customer'][$i]['email'] = $row->email;
 				$data['customers']['customer'][$i]['phone'] = $row->phone;
 				
@@ -245,17 +369,29 @@ class Customer_model extends Model
 		return $data;
 	}
 	
+	/**
+	* Get customer details.
+	*
+	* Searches the database for customers belonging to the client and with a specific customer_id.
+	*
+	* @param int $client_id The client ID of the gateway client.
+	* @param int $params['customer_id'] Customer ID. Optional
+	* 
+	* @return mixed Array containing the search results
+	*/
+	
 	function GetCustomer($client_id, $params)
 	{
-		// Get the gateway type
+		// Get the customer id
 		if(!isset($params['customer_id'])) {
 			die($this->response->Error(4000));
 		}
 		
-		$this->db->where('orders.client_id', $client_id);
-		$this->db->where('orders.order_id', $params['charge_id']);
+		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
+		$this->db->where('customers.client_id', $client_id);
+		$this->db->where('customers.customer_id', $params['customer_id']);
 		$this->db->limit(1);
-		$query = $this->db->get('orders');
+		$query = $this->db->get('customers');
 		if($query->num_rows() > 0) {
 			$row = $query->row();
 			
@@ -269,6 +405,7 @@ class Customer_model extends Model
 			$data['customer']['city'] = $row->city;
 			$data['customer']['state'] = $row->state;
 			$data['customer']['postal_code'] = $row->postal_code;
+			$data['customer']['country'] = $row->iso2;
 			$data['customer']['email'] = $row->email;
 			$data['customer']['phone'] = $row->phone;
 				

@@ -1,7 +1,7 @@
 <?php
 
 class Response
-{
+{	
 	function FormatResponse ($array = '', $format = 'xml')
 	{
 		// Load the CI object
@@ -95,6 +95,8 @@ class Response
 						'1004' => 'Required fields are missing for this request',
 						'1005' => 'Gateway type is required.',
 						'1006' => 'Invalid format passed.  Acceptable formats: xml, php, and json.',
+						'1007' => 'Invalid country.',
+						'1008' => 'Invalid email address',
 						'2000' => 'Client is not authorized to create new clients.',
 						'2001' => 'Invalid External API.',
 						'2002' => 'Username is already in use.',
@@ -111,6 +113,11 @@ class Response
 						'5004' => 'A customer ID or cardholder name must be supplied.',
 						'5005' => 'Error creating customer profile.',
 						'5006' => 'Error creating customer payment profile.',
+						'5007' => 'Dates must be valid and in YYYY-MM-DD format.',
+						'5008' => 'Invalid credit card number',
+						'5009' => 'Invalid amount.',
+						'5010' => 'Recurring details are required.',
+						'5011' => 'Invalid interval.',
 						'6000' => 'A valid Charge ID is required.',
 						'6001' => 'A valid Customer ID is required.',
 						'6002' => 'A valid Recurring ID is required',

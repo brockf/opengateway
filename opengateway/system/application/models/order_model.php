@@ -1,5 +1,14 @@
 <?php
+/**
+* Order Model 
+*
+* Contains all the methods used to create and search orders.
+*
+* @version 1.0
+* @author David Ryan
+* @package OpenGateway
 
+*/
 class Order_model extends Model
 {
 	function Order_Model()
@@ -7,7 +16,22 @@ class Order_model extends Model
 		parent::Model();
 	}
 	
-	function CreateNewOrder($client_id, $params, $credit_card, $subscription_id = 0)
+	/**
+	* Create a new order.
+	*
+	* Creates a new order.
+	*
+	* @param int $client_id The client ID of the gateway client.
+	* @param int $subscription_id If this order is part of a recurring subscription. Optional.
+	* @param string $params['gateway_id'] The gateway ID used for the order.
+	* @param string $params['credit_card']['card_num'] The card number used to save the last 4 digits.
+	* @param string $params['amount'] The amount of the order.
+	* @param string $params['customer_id'] The customer id associated with the order. Optional.
+	* @param string $params['customer_ip_address'] Customer's IP address. Optional.
+	* 
+	* @return int $order_id The new order id
+	*/
+	function CreateNewOrder($client_id, $params, $subscription_id = 0)
 	{
 		
 		$timestamp = date('Y-m-d H:i:s');
@@ -15,7 +39,7 @@ class Order_model extends Model
 							'client_id' 	  => $client_id,
 							'gateway_id' 	  => $params['gateway_id'],
 							'subscription_id' => $subscription_id,
-							'card_last_four'  => substr($credit_card['card_num'],-4,4),
+							'card_last_four'  => substr($params['credit_card']['card_num'],-4,4),
 							'amount'		  => $params['amount'],
 							'timestamp'		  => $timestamp
 							);	
@@ -35,6 +59,24 @@ class Order_model extends Model
 		
 	}
 	
+	/**
+	* Search Orders.
+	*
+	* Returns an array of results based on submitted search criteria.  All fields are optional.
+	*
+	* @param int $client_id The client ID.
+	* @param int $params['gateway_id'] The gateway ID used for the order. Optional.
+	* @param date $params['start_date'] Only orders after or on this date will be returned. Optional.
+	* @param date $params['end_date'] Only orders before or on this date will be returned. Optional.
+	* @param int $params['customer_id'] The customer id associated with the order. Optional.
+	* @param string $params['customer_internal_id'] The customer's internal id associated with the order. Optional.
+	* @param int $params['subscription_id'] Returns only recurring orders that have this subscription ID. Optional.
+	* @param boolean $params['recurring_only'] Returns only orders that are part of a recurring subscription. Optional.
+	* @param int $params['limit'] Limits the number of results returned. Optional.
+	* 
+	* @return mixed Array containing results
+	*/
+	
 	function GetCharges($client_id, $params)
 	{
 		
@@ -47,12 +89,24 @@ class Order_model extends Model
 			$this->db->where('gateway_id', $params['gateway_id']);
 		}
 		
+		$this->load->library('field_validation');
+		
 		if(isset($params['start_date'])) {
+			$valid_date = $this->field_validation->ValidateDate($params['start_date']);
+			if(!$valid_date) {
+				die($this->response->Error(5007));
+			}
+			
 			$start_date = date('Y-m-d H:i:s', strtotime($params['start_date']));
 			$this->db->where('timestamp >=', $start_date);
 		}
 		
 		if(isset($params['end_date'])) {
+			$valid_date = $this->field_validation->ValidateDate($params['start_date']);
+			if(!$valid_date) {
+				die($this->response->Error(5007));
+			}
+			
 			$end_date = date('Y-m-d H:i:s', strtotime($params['end_date']));
 			$this->db->where('timestamp <=', $end_date);
 		}
@@ -75,7 +129,9 @@ class Order_model extends Model
 			$this->db->limit($this->config->item('query_result_default_limit'));
 		}
 		
+		
 		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
+		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$query = $this->db->get('orders');
 		if($query->num_rows() > 0) {
 			$data['results'] = $query->num_rows();
@@ -101,6 +157,7 @@ class Order_model extends Model
 					$data['charges']['charge'][$i]['customer']['address_2'] = $row->address_2;
 					$data['charges']['charge'][$i]['customer']['city'] = $row->city;
 					$data['charges']['charge'][$i]['customer']['state'] = $row->state;
+					$data['charges']['charge'][$i]['customer']['country'] = $row->iso2;
 					$data['charges']['charge'][$i]['customer']['postal_code'] = $row->postal_code;
 					$data['charges']['charge'][$i]['customer']['email'] = $row->email;
 					$data['charges']['charge'][$i]['customer']['phone'] = $row->phone;
@@ -115,15 +172,27 @@ class Order_model extends Model
 		return $data;
 	}
 	
+	/**
+	* Get Details of a specific order.
+	*
+	* Returns array of order details for a specific order_id.
+	*
+	* @param int $client_id The client ID.
+	* @param int $params['charge_id'] The order id to search for.
+	* 
+	* @return mixed Details array
+	*/
+	
 	function GetCharge($client_id, $params)
 	{
-		// Get the gateway type
+		// Get the charge ID
 		if(!isset($params['charge_id'])) {
 			die($this->response->Error(6000));
 		}
 		
 		$this->db->join('order_authorizations', 'order_authorizations.order_id = orders.order_id', 'inner');
 		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
+		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$this->db->where('orders.client_id', $client_id);
 		$this->db->where('orders.order_id', $params['charge_id']);
 		$this->db->limit(1);
@@ -152,6 +221,7 @@ class Order_model extends Model
 				$data['charge']['customer']['city'] = $row->city;
 				$data['charge']['customer']['state'] = $row->state;
 				$data['charge']['customer']['postal_code'] = $row->postal_code;
+				$data['charge']['customer']['country'] = $row->iso2;
 				$data['charge']['customer']['email'] = $row->email;
 				$data['charge']['customer']['phone'] = $row->phone;
 			}
@@ -163,6 +233,17 @@ class Order_model extends Model
 		return $data;
 	}
 	
+	/**
+	* Get Details of the last order for a customer.
+	*
+	* Returns array of order details for a specific order_id.
+	*
+	* @param int $client_id The client ID.
+	* @param int $params['customer_id'] The order id to search for.
+	* 
+	* @return mixed details array
+	*/
+	
 	function GetLatestCharge($client_id, $params)
 	{
 		// Get the gateway type
@@ -172,6 +253,7 @@ class Order_model extends Model
 		
 		$this->db->join('order_authorizations', 'order_authorizations.order_id = orders.order_id', 'inner');
 		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
+		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$this->db->where('orders.client_id', $client_id);
 		$this->db->where('orders.customer_id', $params['customer_id']);
 		$this->db->order_by('timestamp', 'DESC');
@@ -201,6 +283,7 @@ class Order_model extends Model
 				$data['charge']['customer']['city'] = $row->city;
 				$data['charge']['customer']['state'] = $row->state;
 				$data['charge']['customer']['postal_code'] = $row->postal_code;
+				$data['charge']['customer']['country'] = $row->iso2;
 				$data['charge']['customer']['email'] = $row->email;
 				$data['charge']['customer']['phone'] = $row->phone;
 			}

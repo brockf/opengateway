@@ -1,12 +1,41 @@
 <?php
+/**
+* Gateway Model 
+*
+* Contains all the methods used to create client gateways, process credit card charges, and create recurring subscriptions.
+*
+* @version 1.0
+* @author David Ryan
+* @package OpenGateway
+
+*/
+
 class Gateway_model extends Model
-{
+{	
 	function Gateway_model()
 	{
 		parent::Model();
 	}
 	
-	// Create a new instance of a gateway
+	
+	/**
+	* Create a new gateway instance
+	*
+	* Creates a new gateway instance in the client_gateways table.  Inserts the different gateway paramaters into the 
+	* client_gateway_params table.  Returns the resulting gateway_id.
+	*
+	* @param int $client_id	The Client ID
+	* @param string $params['gateway_type'] The type of gateway to be created (authnet, exact etc.)
+	* @param boolean $params['accept_mc'] Whether the gatewill will accept Mastercard
+	* @param boolean $params['accept_visa'] Whether the gatewill will accept Visa
+	* @param boolean $params['accept_amex'] Whether the gatewill will accept American Express
+	* @param boolean $params['accept_discover'] Whether the gatewill will accept Discover
+	* @param boolean $params['accept_dc'] Whether the gatewill will accept Diner's Club
+	* @param boolean $params['enabled'] Whether the gatewill is enabled or disabled
+	* @param string $params Authetication for the different gateway types
+	* 
+	* @return mixed Array with new Gateway ID
+	*/
 	function NewGateway($client_id = FALSE, $params = FALSE)
 	{
 		
@@ -74,8 +103,24 @@ class Gateway_model extends Model
 
 	}
 	
-	
-	
+	/**
+	* Process a credit card charge
+	*
+	* Processes a credit card CHARGE transaction using the gateway_id to use the proper client gateway.
+	* Returns an array response from the appropriate payment library
+	*
+	* @param int $client_id	The Client ID
+	* @param int $params['gateway_id'] The client_gateway used to process the charge
+	* @param int $params['customer_id'] The customer ID.  Required only if a cardholder name is not supplied
+	* @param int $params['credit_card']['card_num'] The credit card number
+	* @param int $params['credit_card']['exp_month'] The credit card expiration month in 2 digit format (01 - 12)
+	* @param int $params['credit_card']['exp_year'] The credit card expiration year (YYYY)
+	* @param int $params['credit_card']['name'] The credit card cardholder name.  Required only is customer ID is not supplied.
+	* @param int $params['credit_card']['cvv'] The Card Verification Value.  Optional
+	* @param int $params['amount'] The amount to be charged.  
+	* 
+	* @return mixed Array with response_code and response_text
+	*/
 	function Charge($client_id, $params)
 	{
 		if(isset($params['gateway_id'])) {
@@ -93,12 +138,26 @@ class Gateway_model extends Model
 		// Get the credit card object
 		$credit_card = $params['credit_card'];
 		
+		// Get the gateway info to load the proper library
+		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
+		
+		// Validate the Credit Card number
+		$valid_cc = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
+		
+		if(!$valid_cc) {
+			die($this->response->Error(5008));
+		}
+		
+		// Validate the amount
+		$valid_amount = $this->field_validation->ValidateAmount($params['amount']);
+		
+		if(!$valid_amount) {
+			die($this->response->Error(5009));
+		}
+		
 		// Create a new order
 		$CI->load->model('order_model');
 		$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $credit_card);
-		
-		// Get the gateway info to load the proper library
-		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
 		
 		// Get the customer details if a customer id was included
 		if(isset($params['customer_id'])) {
@@ -115,7 +174,27 @@ class Gateway_model extends Model
 		
 	}
 	
-	function Recur($client_id, $params, $xml)
+	/**
+	* Create a new recurring subscription.
+	*
+	* Creates a new recurring subscription and processes a charge for today.
+	*
+	* @param int $client_id	The Client ID
+	* @param int $params['gateway_id'] The gateway_id to be used for creating the subscription.
+	* @param int $params['credit_card']['card_num'] The credit card number
+	* @param int $params['credit_card']['exp_month'] The credit card expiration month in 2 digit format (01 - 12)
+	* @param int $params['credit_card']['exp_year'] The credit card expiration year (YYYY)
+	* @param int $params['credit_card']['name'] The credit card cardholder name.  Required only is customer ID is not supplied.
+	* @param int $params['credit_card']['cvv'] The Card Verification Value.  Optional
+	* @param date $params['recur']['start_date'] The date the subscription should start. If no start_date is supplied, today's date will be used.  Optional.
+	* @param date $params['recur']['end_date'] The date the subscription should end. If no start_date is supplied, the end_date is calculated based on a config item.  Optional.
+	* @param int $params['recur']['interval'] The number of days between subscription charges.
+	* @param int $params['amount'] The amount to be charged on each subscription date.
+	* 
+	* @return mixed Array with subscription_id
+	*/
+	
+	function Recur($client_id, $params)
 	{
 		if(isset($params['gateway_id'])) {
 			$gateway_id = $params['gateway_id'];
@@ -128,13 +207,26 @@ class Gateway_model extends Model
 		// Get the credit card object
 		$credit_card = $params['credit_card'];
 		
+		// Get the gateway info to load the proper library
+		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
+		
+		// Validate the Credit Card number
+		$valid_cc = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
+		
+		if(!$valid_cc) {
+			die($this->response->Error(5008));
+		}
+		
+		// Validate the amount
+		$valid_amount = $this->field_validation->ValidateAmount($params['amount']);
+		
+		if(!$valid_amount) {
+			die($this->response->Error(5009));
+		}
 		
 		// Validate the required fields
 		$this->load->library('field_validation');
 		$this->field_validation->ValidateRequiredFields('NewRecurring', $params);
-		
-		// Get the gateway info to load the proper library
-		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
 		
 		// Get the customer details if a customer id was included
 		$CI->load->model('customer_model');
@@ -155,7 +247,16 @@ class Gateway_model extends Model
 		}
 		
 		// Get the subscription details
+		if(!isset($params['recur'])) {
+			die($this->response->Error(5004));
+		}
+		
 		$recur = $params['recur'];
+		
+		if(!is_numeric($recur['interval'])) {
+			die($this->response->Error(5011));
+		}
+		
 		
 		// Validate the start date to make sure it is in the future
 		if(isset($recur['start_date'])) {
@@ -202,6 +303,16 @@ class Gateway_model extends Model
 		return $this->$gateway_name->Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $recur['interval'], $credit_card, $subscription_id);
 	}
 	
+	/**
+	* Set a default gateway.
+	*
+	* Sets a provided gateway_id as the default gateway for that client.
+	*
+	* @param int $client_id	The Client ID
+	* @param int $params['gateway_id'] The gateway_id to be set as default.
+	* 
+	* @return string Result
+	*/
 	function MakeDefaultGateway($client_id, $params)
 	{
 		// Validate the required fields
@@ -225,6 +336,24 @@ class Gateway_model extends Model
 		return $response;
 		
 	}
+	
+	/**
+	* Update the Client Gateway
+	*
+	* Updates the client_gateway_params with supplied details
+	*
+	* @param int $client_id The client ID
+	* @param int $params['gateway_id'] The gateway ID to update
+	* @param boolean $params['accept_mc'] Whether the gatewill will accept Mastercard
+	* @param boolean $params['accept_visa'] Whether the gatewill will accept Visa
+	* @param boolean $params['accept_amex'] Whether the gatewill will accept American Express
+	* @param boolean $params['accept_discover'] Whether the gatewill will accept Discover
+	* @param boolean $params['accept_dc'] Whether the gatewill will accept Diner's Club
+	* @param boolean $params['enabled'] Whether the gatewill is enabled or disabled
+	* @param string $params Authetication for the different gateway types
+	* 
+	* @return mixed Array containing all of the fields required for that gateway type
+	*/
 	
 	function UpdateGateway($client_id, $params)
 	{
@@ -268,6 +397,18 @@ class Gateway_model extends Model
 		
 	}
 	
+	/**
+	* Delete a gateway
+	*
+	* Marks a gateway as deleted and removes the authentication information from the client_gateway_params table.
+	* Does not actually deleted the gateway, but sets deleted to 1 in the client_gateways table.
+	*
+	* @param int $client_id	The Client ID
+	* @param int $params['gateway_id'] The gateway_id to be set as default.
+	* 
+	* @return string Result
+	*/
+	
 	function DeleteGateway($client_id, $params)
 	{
 		// Validate the required fields
@@ -295,6 +436,16 @@ class Gateway_model extends Model
 		return $response;
 	}
 	
+	/**
+	* Get the Exertnal Api ID
+	*
+	* Gets the External API ID from the external_apis table based on the gateway type ('authnet', 'exact' etc.)
+	*
+	* @param string $gateway_name The name to match with External API ID
+	* 
+	* @return int External API ID
+	*/
+	
 	// Get the gateway id
 	function GetExternalApiId($gateway_name = FALSE)
 	{
@@ -310,7 +461,16 @@ class Gateway_model extends Model
 		}
 	}
 	
-	// Get the gateway details
+	/**
+	* Get the gateway details.
+	*
+	* Returns an array containg all the details for the Client Gateway
+	*
+	* @param int $client_id	The Client ID
+	* @param int $gateway_id The gateway_id
+	* 
+	* @return mixed Array containg all gateway details
+	*/
 	function GetGatewayDetails($client_id, $gateway_id = FALSE)
 	{
 		// If they have not passed a gateway ID, we will choose the first one created.
@@ -322,6 +482,8 @@ class Gateway_model extends Model
 		
 		$this->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
 		$this->db->where('client_gateways.client_id', $client_id);
+		$this->db->where('enabled', 1);
+		$this->db->where('deleted', 0);
 		$this->db->limit(1);
 		$query = $this->db->get('client_gateways');
 		if($query->num_rows > 0) {
@@ -352,7 +514,15 @@ class Gateway_model extends Model
 		
 	}
 	
-	// Get the required fields
+	/**
+	* Get required gateway fields.
+	*
+	* Get the fields required for creating a new instance of a client_gateway depending on gateway type.
+	*
+	* @param string $gateway_type The name of the gateway ('authnet', 'exact', etc.)
+	* 
+	* @return mixed Array containing all of the fields required for that gateway type
+	*/
 	function GetRequiredGatewayFields($gateway_type = FALSE)
 	{
 		if($gateway_type)

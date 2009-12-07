@@ -8,20 +8,19 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>
 		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>
 	</authentication>
-	<request>NewCustomer</request>
-	<params>
-		<first_name>David</first_name>
-		<last_name>Ryan</last_name>
-		<company>ABC Inc.</company>
-		<internal_id>12343434</internal_id>
-		<address_1>123 Main Street</address_1>
-		<address_2>APT 1</address_2>
-		<city>Denver</city>
-		<state>CO</state>
-		<postal_code>80220</postal_code>
-		<phone>3033319812</phone>
-		<email>daveryan187@yahoo.com</email>
-	</params>
+	<type>NewCustomer</type>
+	<first_name>David</first_name>
+	<last_name>Ryan</last_name>
+	<company>ABC Inc.</company>
+	<internal_id>12343434</internal_id>
+	<address_1>123 Main Street</address_1>
+	<address_2>APT 1</address_2>
+	<city>Denver</city>
+	<state>CO</state>
+	<postal_code>80220</postal_code>
+	<country>NL</country>
+	<phone>3033319812</phone>
+	<email>daveryan187@yahoo.com</email>
 </request>';
 
 $postfields = "request=".$post_string; 

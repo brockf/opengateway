@@ -9,7 +9,7 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>
 	</authentication>
 	<type>Charge</type>
-	<gateway_id>18</gateway_id>
+	<gateway_id>28</gateway_id>
 	<customer_id>2</customer_id>
 	<credit_card>
 		<card_num>4111111111111111</card_num>

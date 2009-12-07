@@ -10,7 +10,7 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 	</authentication>
 	<type>GetCharges</type>
 	<gateway_id>3</gateway_id>
-	<format>xml</format>
+	<start_date>2008-12-31</start_date>
 	<limit>1000</limit>
 </request>';
 

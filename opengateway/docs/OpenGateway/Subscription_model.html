@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class Subscription_model</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name"><img src="../media/images/Class_logo.png"
+														alt=" Class"
+														title=" Class"
+														style="vertical-align: middle"> Subscription_model</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+															<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Subscription Model</p>
+<p class="description"><p>Contains all the methods used to create, update, and search subscriptions.</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> David Ryan</li>
+				<li><span class="field">version:</span> 1.0</li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_subscription_model.php.html">/subscription_model.php</a> (line <span class="field">12</span>)
+		</p>
+		
+				
+		<pre>Model
+   |
+   --Subscription_model</pre>
+	
+			</div>
+</div>
+
+
+
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+												<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																																																																<div class="method-definition">
+					<img src="../media/images/Constructor.png" alt=" "/>
+											<span class="method-result">Subscription_model</span>
+										<a href="#Subscription_model" title="details" class="method-name">Subscription_model</a>
+										()
+									</div>
+																<div class="method-definition">
+					<img src="../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#CancelRecurring" title="details" class="method-name">CancelRecurring</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$client_id</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$params</span>)
+									</div>
+																<div class="method-definition">
+					<img src="../media/images/Method.png" alt=" "/>
+											<span class="method-result">mixed</span>
+										<a href="#GetRecurring" title="details" class="method-name">GetRecurring</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$client_id</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$params</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['gateway_id']</span>, <span class="var-type">date</span>&nbsp;<span class="var-name">$params['created_after']</span>, <span class="var-type">date</span>&nbsp;<span class="var-name">$params['created_before']</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['customer_id']</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$params['customer_internal_id']</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['amount']</span>, <span class="var-type">boolean</span>&nbsp;<span class="var-name">$params['active']</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['limit']</span>)
+									</div>
+																<div class="method-definition">
+					<img src="../media/images/Method.png" alt=" "/>
+											<span class="method-result">mixed</span>
+										<a href="#GetSubscriptionDetails" title="details" class="method-name">GetSubscriptionDetails</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$client_id</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$subscription_id</span>)
+									</div>
+																<div class="method-definition">
+					<img src="../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#MakeInactive" title="details" class="method-name">MakeInactive</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$subscription_id</span>)
+									</div>
+																<div class="method-definition">
+					<img src="../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#SaveApiAuthNumber" title="details" class="method-name">SaveApiAuthNumber</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$subscription_id</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$api_auth_number</span>)
+									</div>
+																<div class="method-definition">
+					<img src="../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#SaveApiCustomerReference" title="details" class="method-name">SaveApiCustomerReference</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$subscription_id</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$api_customer_reference</span>)
+									</div>
+																<div class="method-definition">
+					<img src="../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#SaveApiPaymentReference" title="details" class="method-name">SaveApiPaymentReference</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$subscription_id</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$api_payment_reference</span>)
+									</div>
+																<div class="method-definition">
+					<img src="../media/images/Method.png" alt=" "/>
+											<span class="method-result">int</span>
+										<a href="#SaveSubscription" title="details" class="method-name">SaveSubscription</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$client_id</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$gateway_id</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$customer_id</span>, <span class="var-type">date</span>&nbsp;<span class="var-name">$start_date</span>, <span class="var-type">date</span>&nbsp;<span class="var-name">$end_date</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$total_occurrences</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$notification_url</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$params</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$total_occurrence</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$notifcation_url</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['amount']</span>)
+									</div>
+																<div class="method-definition">
+					<img src="../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#UpdateRecurring" title="details" class="method-name">UpdateRecurring</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$client_id</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$params</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['recurring_id']</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$params['notification_url']</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['customer_id']</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['amount']</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['interval']</span>)
+									</div>
+											</div>
+		</div>
+	</div>		
+
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+													<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="methodSubscription_model" id="Subscription_model"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<img src="../media/images/Constructor.png" />
+		<span class="method-title">Constructor Subscription_model</span> (line <span class="line-number">14</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">Subscription_model</span>
+		<span class="method-name">
+			Subscription_model
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodCancelRecurring" id="CancelRecurring"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../media/images/Method.png" />
+		<span class="method-title">CancelRecurring</span> (line <span class="line-number">299</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			CancelRecurring
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$client_id</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$params</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$client_id</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$params</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodGetRecurring" id="GetRecurring"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<img src="../media/images/Method.png" />
+		<span class="method-title">GetRecurring</span> (line <span class="line-number">157</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Search subscriptions.</p>
+<p class="description"><p>Returns an array of results based on submitted search criteria.  All fields are optional.</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> Array containing results</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			GetRecurring
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$client_id</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$params</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['gateway_id']</span>, <span class="var-type">date</span>&nbsp;<span class="var-name">$params['created_after']</span>, <span class="var-type">date</span>&nbsp;<span class="var-name">$params['created_before']</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['customer_id']</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$params['customer_internal_id']</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['amount']</span>, <span class="var-type">boolean</span>&nbsp;<span class="var-name">$params['active']</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['limit']</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$client_id</span><span class="var-description">: The client ID.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$params['gateway_id']</span><span class="var-description">: The gateway ID used for the order. Optional.</span>			</li>
+					<li>
+				<span class="var-type">date</span>
+				<span class="var-name">$params['created_after']</span><span class="var-description">: Only subscriptions created after or on this date will be returned. Optional.</span>			</li>
+					<li>
+				<span class="var-type">date</span>
+				<span class="var-name">$params['created_before']</span><span class="var-description">: Only subscriptions created before or on this date will be returned. Optional.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$params['customer_id']</span><span class="var-description">: The customer id associated with the subscription. Optional.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$params['customer_internal_id']</span><span class="var-description">: The customer's internal id associated with the subscription. Optional.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$params['amount']</span><span class="var-description">: Only subscriptions for this amount will be returned. Optional.</span>			</li>
+					<li>
+				<span class="var-type">boolean</span>
+				<span class="var-name">$params['active']</span><span class="var-description">: Returns only active subscriptions. Optional.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$params['limit']</span><span class="var-description">: Limits the number of results returned. Optional.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$params</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodGetSubscriptionDetails" id="GetSubscriptionDetails"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../media/images/Method.png" />
+		<span class="method-title">GetSubscriptionDetails</span> (line <span class="line-number">128</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get subscription details</p>
+<p class="description"><p>Returns an array of details about the subscription.</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> Array Containing subscription details</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			GetSubscriptionDetails
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$client_id</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$subscription_id</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$client_id</span><span class="var-description">: The client ID</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$subscription_id</span><span class="var-description">: The subscription_id</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodMakeInactive" id="MakeInactive"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<img src="../media/images/Method.png" />
+		<span class="method-title">MakeInactive</span> (line <span class="line-number">110</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Make a subscription inactive</p>
+<p class="description"><p>Makes a subscription Inactive</p></p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			MakeInactive
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$subscription_id</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$subscription_id</span><span class="var-description">: The subscription_id</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodSaveApiAuthNumber" id="SaveApiAuthNumber"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../media/images/Method.png" />
+		<span class="method-title">SaveApiAuthNumber</span> (line <span class="line-number">95</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Add a Auth number.</p>
+<p class="description"><p>For API's that require an Auth code be used for future charges</p></p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			SaveApiAuthNumber
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$subscription_id</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$api_auth_number</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$subscription_id</span><span class="var-description">: The subscription_id</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$api_auth_number</span><span class="var-description">: The API auth code.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodSaveApiCustomerReference" id="SaveApiCustomerReference"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<img src="../media/images/Method.png" />
+		<span class="method-title">SaveApiCustomerReference</span> (line <span class="line-number">63</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Add a customer profile ID.</p>
+<p class="description"><p>For API's that require a customer profile</p></p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			SaveApiCustomerReference
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$subscription_id</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$api_customer_reference</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$subscription_id</span><span class="var-description">: The subscription_id</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$api_customer_reference</span><span class="var-description">: The customer profile id</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodSaveApiPaymentReference" id="SaveApiPaymentReference"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../media/images/Method.png" />
+		<span class="method-title">SaveApiPaymentReference</span> (line <span class="line-number">79</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Add a customer payment ID.</p>
+<p class="description"><p>For API's that require a customer payment profile</p></p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			SaveApiPaymentReference
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$subscription_id</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$api_payment_reference</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$subscription_id</span><span class="var-description">: The subscription_id</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$api_payment_reference</span><span class="var-description">: The customer payment id</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodSaveSubscription" id="SaveSubscription"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<img src="../media/images/Method.png" />
+		<span class="method-title">SaveSubscription</span> (line <span class="line-number">35</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Create a new recurring subscription.</p>
+<p class="description"><p>Creates a new recurring subscription and returns the subscription ID.</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The new subscription ID</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">int</span>
+		<span class="method-name">
+			SaveSubscription
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$client_id</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$gateway_id</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$customer_id</span>, <span class="var-type">date</span>&nbsp;<span class="var-name">$start_date</span>, <span class="var-type">date</span>&nbsp;<span class="var-name">$end_date</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$total_occurrences</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$notification_url</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$params</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$total_occurrence</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$notifcation_url</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['amount']</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$client_id</span><span class="var-description">: The client ID of the gateway client.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$gateway_id</span><span class="var-description">: The gateway ID</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$customer_id</span><span class="var-description">: The customer ID</span>			</li>
+					<li>
+				<span class="var-type">date</span>
+				<span class="var-name">$start_date</span><span class="var-description">: The date the subscription should begin</span>			</li>
+					<li>
+				<span class="var-type">date</span>
+				<span class="var-name">$end_date</span><span class="var-description">: The date the subscription should end</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$total_occurrence</span><span class="var-description">: The total number of charges for this subscription.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$notifcation_url</span><span class="var-description">: The notification URL</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$params['amount']</span><span class="var-description">: The amount to be charged</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$total_occurrences</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$notification_url</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$params</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodUpdateRecurring" id="UpdateRecurring"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../media/images/Method.png" />
+		<span class="method-title">UpdateRecurring</span> (line <span class="line-number">256</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Update an existing subscription.</p>
+<p class="description"><p>Updates an existing subscription with new parameters.</p></p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			UpdateRecurring
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$client_id</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$params</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['recurring_id']</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$params['notification_url']</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['customer_id']</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['amount']</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$params['interval']</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$client_id</span><span class="var-description">: The client ID of the gateway client.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$params['recurring_id']</span><span class="var-description">: The subscription ID to update.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$params['notification_url']</span><span class="var-description">: The new notification URL. Optional.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$params['customer_id']</span><span class="var-description">: The new customer id. Optional.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$params['amount']</span><span class="var-description">: The new amount to charge. Optional</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$params['interval']</span><span class="var-description">: The new number of days between charges. Optional.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$params</span>			</li>
+				</ul>
+		
+			
+	</div>
+						
+		</div>
+	</div>
+
+	
+	<p class="notes" id="credit">
+		Documentation generated on Mon, 07 Dec 2009 02:31:15 +0000 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+	</p>
+	</div></body>
+</html>

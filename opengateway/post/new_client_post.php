@@ -17,10 +17,10 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 	<city>Anytown</city>
 	<state>CO</state>
 	<postal_code>80220</postal_code>
-	<country>US</country>
+	<country>USddd</country>
 	<phone>3033319812</phone>
 	<email>daveryan187@yahoo.com</email>
-	<username>daveryan187</username>
+	<username>daveryan18asd7123</username>
 	<password>MyPassword187</password>
 </request>';
 
