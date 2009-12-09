@@ -72,17 +72,23 @@ class exact
 		$response = $this->CreateProfile($client_id, $gateway, $customer, $credit_card, $subscription_id, $params, $order_id);
 		  
 		// Process today's payment
-		$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $response['transaction_tag'], $response['auth_num'], $params);
+		if(date('Y-m-d', $start_date) == date('Y-m-d')) {
+			$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $response['transaction_tag'], $response['auth_num'], $params);
 		
-		if($response['success'] == TRUE){
-			$response_array = array('order_id' => $order_id, 'subscription_id' => $subscription_id);
-			$response = $CI->response->TransactionResponse(100, $response_array);
+			if($response['success'] == TRUE){
+				$CI->order_model->SetStatus($order_id, 1);
+				$response_array = array('order_id' => $order_id, 'subscription_id' => $subscription_id);
+				$response = $CI->response->TransactionResponse(100, $response_array);
+			} else {
+				// Make the subscription inactive
+				$CI->subscription_model->MakeInactive($subscription_id);
+				$CI->order_model->SetStatus($order_id, 0);
+				
+				$response_array = array('reason' => $response['reason']);
+				$response = $CI->response->TransactionResponse(2, $response_array);
+			}
 		} else {
-			// Make the subscription inactive
-			$CI->subscription_model->MakeInactive($subscription_id);
-			
-			$response_array = array('reason' => $response['reason']);
-			$response = $CI->response->TransactionResponse(2, $response_array);
+			$response = $CI->response->TransactionResponse(100);
 		}
 		
 		return $response;
@@ -199,15 +205,9 @@ class exact
 		return $response;
 	}
 	
-	function CancelRecur($client_id, $subscription)
-	{
-		$CI =& get_instance();
-		$CI->load->model('subscription_model');
-		$CI->subscription_model->MakeInactive($subscription->subscription_id);
-		$response_array = array('subscription_id' => $subscription->subscription_id);
-		$response = $CI->response->TransactionResponse(101, $response_array);
-		
-		return $response;
+	function CancelRecurring($client_id, $subscription)
+	{	
+		return TRUE;
 	}
 	
 	function Process($trxnProperties, $post_url, $order_id) 

@@ -328,36 +328,38 @@ class authnet
 		// Save the api_payment_reference
 		$CI->subscription_model->SaveApiPaymentReference($subscription_id, $payment_profile_id);
 		
-		// Create an order for today's payment
-		$CI->load->model('order_model');
-		$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $credit_card, $subscription_id);
 		
-		// Process today's payment
-		$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $profile_id, $payment_profile_id, $params);
 		
-		if($response['success'] == TRUE){
-			$response_array = array('order_id' => $order_id, 'subscription_id' => $subscription_id);
-			$response = $CI->response->TransactionResponse(100, $response_array);
-		} else {
-			// Make the subscription inactive
-			$CI->subscription_model->MakeInactive($subscription_id);
+		
+		// If a payment is to be made today, process it.
+		if(date('Y-m-d', $start_date) == date('Y-m-d')) {
 			
-			$response_array = array('reason' => $response['reason']);
-			$response = $CI->response->TransactionResponse(2, $response_array);
+			// Create an order for today's payment
+			$CI->load->model('order_model');
+			$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $credit_card, $subscription_id);
+			
+			$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $profile_id, $payment_profile_id, $params);
+			
+			if($response['success'] == TRUE){
+				$response_array = array('order_id' => $order_id, 'subscription_id' => $subscription_id);
+				$response = $CI->response->TransactionResponse(100, $response_array);
+			} else {
+				// Make the subscription inactive
+				$CI->subscription_model->MakeInactive($subscription_id);
+				
+				$response_array = array('reason' => $response['reason']);
+				$response = $CI->response->TransactionResponse(2, $response_array);
+			}
+		} else {
+			$response = $CI->response->TransactionResponse(100);
 		}
 		
 		return $response;
 	}
 	
-	function CancelRecur($client_id, $subscription)
-	{
-		$CI =& get_instance();
-		$CI->load->model('subscription_model');
-		$CI->subscription_model->MakeInactive($subscription->subscription_id);
-		$response_array = array('subscription_id' => $subscription->subscription_id);
-		$response = $CI->response->TransactionResponse(101, $response_array);
-		
-		return $response;
+	function CancelRecurring($client_id, $subscription)
+	{	
+		return TRUE;
 	}
 	
 	function CreateProfile($gateway, $subscription_id)
@@ -582,9 +584,13 @@ class authnet
 		if($response[0] == 1) {
 			$CI->load->model('order_authorization_model');
 			$CI->order_authorization_model->SaveAuthorization($order_id, $response[6], $response[4]);
+			$CI->order_model->SetStatus($order_id, 1);
 			
 			$response['success'] = TRUE;
 		} else {
+			
+			$CI->order_model->SetStatus($order_id, 0);
+			
 			$response['success'] = FALSE;
 			$response['reason'] = $response[3];
 		}

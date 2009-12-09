@@ -11,10 +11,11 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 	<type>NewGateway</type>
 	<client_id>17</client_id>
 	<enabled>1</enabled>
-	<mode>live</mode>
-	<gateway_type>exact</gateway_type>
-	<terminal_id>A00427-01</terminal_id>
-	<password>testus</password>
+	<mode>test</mode>
+	<gateway_type>paypal</gateway_type>
+	<user>davery_1260232299_biz_api1.gmail.com</user>
+	<pwd>1260232305</pwd>
+	<signature>AnbV3mizZPlwOaylLaGkUd3Lc3GiAenv2j4H1BszT0z0m0MrCgqb7Pb8</signature>
 	<accept_visa>1</accept_visa>
 	<accept_mc>1</accept_mc>
 	<accept_discover>1</accept_discover>

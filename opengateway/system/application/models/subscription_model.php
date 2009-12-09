@@ -32,7 +32,7 @@ class Subscription_model extends Model
 	* 
 	* @return int The new subscription ID
 	*/
-	function SaveSubscription($client_id, $gateway_id, $customer_id, $start_date, $end_date, $total_occurrences, $notification_url, $params)
+	function SaveSubscription($client_id, $gateway_id, $customer_id, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $params)
 	{
 		$timestamp = date('Y-m-d H:i:s');
 		$insert_data = array(
@@ -41,7 +41,8 @@ class Subscription_model extends Model
 							'customer_id' 		=> $customer_id,
 							'start_date' 		=> $start_date,
 							'end_date'			=> $end_date,
-							'number_occurences' => $total_occurrences,
+							'next_charge'		=> $next_charge_date,
+							'number_occurrences'=> $total_occurrences,
 							'notification_url'	=> stripslashes($notification_url),
 							'amount'			=> $params['amount'],
 							'timestamp'			=> $timestamp
@@ -127,7 +128,9 @@ class Subscription_model extends Model
 	*/
 	function GetSubscriptionDetails($client_id, $subscription_id)
 	{
-		$this->db->where('client_id', $client_id);
+		$this->db->join('client_gateways', 'client_gateways.client_gateway_id = subscriptions.gateway_id', 'inner');
+		$this->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
+		$this->db->where('subscriptions.client_id', $client_id);
 		$this->db->where('subscription_id', $subscription_id);
 		$query = $this->db->get('subscriptions');
 		if($query->num_rows() > 0) {
@@ -312,9 +315,20 @@ class Subscription_model extends Model
 		$CI->load->model('subscription_model');
 		$subscription = $CI->subscription_model->GetSubscriptionDetails($client_id, $params['recurring_id']);
 		
-		$this->MakeInactive($params['recurring_id']);
+		// Get the gateway info to load the proper library
+		$CI->load->model('gateway_model');
+		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $subscription->gateway_id);
 		
-		$response = $this->response->TransactionResponse(101,array());
+		$gateway_name = $subscription->name;
+		$this->load->library('payment/'.$gateway_name);
+		$cancelled = $this->$gateway_name->CancelRecurring($client_id, $subscription, $gateway);
+		
+		if($cancelled) {
+			$this->MakeInactive($params['recurring_id']);
+			$response = $this->response->TransactionResponse(101,array());
+		} else {
+			die($this->response->Error(5014));
+		}
 		
 		return $response;
 	}

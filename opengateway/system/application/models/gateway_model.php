@@ -142,9 +142,9 @@ class Gateway_model extends Model
 		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
 		
 		// Validate the Credit Card number
-		$valid_cc = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
+		$params['card_type'] = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
 		
-		if(!$valid_cc) {
+		if(!$params['card_type']) {
 			die($this->response->Error(5008));
 		}
 		
@@ -157,7 +157,7 @@ class Gateway_model extends Model
 		
 		// Create a new order
 		$CI->load->model('order_model');
-		$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $credit_card);
+		$order_id = $CI->order_model->CreateNewOrder($client_id, $params);
 		
 		// Get the customer details if a customer id was included
 		if(isset($params['customer_id'])) {
@@ -210,10 +210,12 @@ class Gateway_model extends Model
 		// Get the gateway info to load the proper library
 		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
 		
-		// Validate the Credit Card number
-		$valid_cc = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
+		$this->load->library('field_validation');
 		
-		if(!$valid_cc) {
+		// Validate the Credit Card number
+		$params['card_type'] = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
+		
+		if(!$params['card_type']) {
 			die($this->response->Error(5008));
 		}
 		
@@ -226,7 +228,7 @@ class Gateway_model extends Model
 		
 		// Validate the required fields
 		$this->load->library('field_validation');
-		$this->field_validation->ValidateRequiredFields('NewRecurring', $params);
+		$this->field_validation->ValidateRequiredFields('Recur', $params);
 		
 		// Get the customer details if a customer id was included
 		$CI->load->model('customer_model');
@@ -266,8 +268,12 @@ class Gateway_model extends Model
 				$start_date = date('Y-m-d', strtotime($recur['start_date']));
 			}
 		} else {
-			$start_date = date('Y-m-d', (time() + ($recur['interval * 86400'])));
+			$start_date = date('Y-m-d', (time() + ($recur['interval'] * 86400)));
 		}
+		
+		// Get the next payment date
+		$next_charge_date = date('Y-m-d', strtotime($start_date) + ($recur['interval'] * 86400));
+		
 		
 		// If an end date was passed, make sure it's valid
 		if(isset($recur['end_date'])) {
@@ -295,12 +301,12 @@ class Gateway_model extends Model
 		
 		// Save the subscription info
 		$CI->load->model('subscription_model');
-		$subscription_id = $CI->subscription_model->SaveSubscription($client_id, $params['gateway_id'], $customer['customer_id'], $start_date, $end_date, $total_occurrences, $notification_url, $params);
+		$subscription_id = $CI->subscription_model->SaveSubscription($client_id, $params['gateway_id'], $customer['customer_id'], $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $params);
 		
 		// Load the proper library
 		$gateway_name = $gateway['name'];
 		$this->load->library('payment/'.$gateway_name);
-		return $this->$gateway_name->Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $recur['interval'], $credit_card, $subscription_id);
+		return $this->$gateway_name->Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $recur['interval'], $credit_card, $subscription_id, $total_occurrences);
 	}
 	
 	/**

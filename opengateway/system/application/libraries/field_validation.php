@@ -109,9 +109,9 @@ class Field_validation
 			$patterns['dc'] = "/^([30|36|38]{2})([0-9]{12})$/";
 		}
 		
-		foreach($patterns as $pattern) {
-			if(preg_match($pattern, $card_number)) {
-				return TRUE;
+		foreach($patterns as $key => $value) {
+			if(preg_match($value, $card_number)) {
+				return $key;
 			}
 		}
 

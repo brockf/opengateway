@@ -295,4 +295,10 @@ class Order_model extends Model
 		return $data;
 	}
 	
+	function SetStatus($order_id, $status = 0)
+	{
+		$update_data['status'] = $status;
+		$this->db->where('order_id', $order_id);
+		$this->db->update('orders', $update_data);
+	}
 }
