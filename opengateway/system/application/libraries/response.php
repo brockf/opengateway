@@ -120,7 +120,7 @@ class Response
 						'5010' => 'Recurring details are required.',
 						'5011' => 'Invalid interval.',
 						'5012' => 'A valid description is required.',
-						'5013' => 'This transaction requires a billing address.  If no customer ID is supplied, first_name, last_name, address_1, city, state, postal_code, and country are required.',
+						'5013' => 'This transaction requires a billing address.  If no customer ID is supplied, first_name, last_name, address_1, city, state, postal_code, and country are required as part of the customer parameter.',
 						'5014' => 'Error cancelling subscription',
 						'6000' => 'A valid Charge ID is required.',
 						'6001' => 'A valid Customer ID is required.',
