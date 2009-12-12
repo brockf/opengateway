@@ -102,7 +102,7 @@ class Client_model extends Model
 		
 		// Create the new Client
 		$insert_data = array(
-							'client_type_id'	=> 2,
+							'client_type_id'	=> $params['client_type'],
 							'first_name' 		=> $params['first_name'],
 							'last_name'  		=> $params['last_name'],
 							'company'	 		=> $params['company'],
