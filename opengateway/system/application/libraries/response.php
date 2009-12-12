@@ -105,6 +105,8 @@ class Response
 						'2003' => 'Password must contain only letters and number; it must be between 7 and 20 characters; it must contain at least one uppercase letter, one lowercase letter, and one number.',
 						'2004' => 'Invalid client ID.',
 						'2005' => 'Error contacting payment gateway.',
+						'2006' => 'Only administrators can create new Service Provider accounts.',
+						'2007' => 'Invalid client_type.',
 						'3000' => 'Invalid gateway ID for this client.',
 						'3001' => 'Gateway ID is required.',
 						'4000' => 'Invalid customer ID.',

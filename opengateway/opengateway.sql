@@ -451,6 +451,7 @@ CREATE TABLE `client_types` (
 -- ----------------------------
 INSERT INTO `client_types` VALUES ('1', 'Service Provider');
 INSERT INTO `client_types` VALUES ('2', 'End User');
+INSERT INTO `client_types` VALUEs ('3', 'Administrator');
 
 -- ----------------------------
 -- Table structure for `clients`

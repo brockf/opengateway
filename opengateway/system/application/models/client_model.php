@@ -45,7 +45,7 @@ class Client_model extends Model
 		// Make sure this client is authorized to create a child client
 		if($client_id) {
 			$client = $this->GetClientDetails($client_id);
-			if($client->client_type_id != 1) {
+			if($client->client_type_id != 1 or $client->client_type_id != 3) {
 				die($this->response->Error(2000));
 			}
 		}
@@ -72,6 +72,20 @@ class Client_model extends Model
 		
 		if($exists) {
 			die($this->response->Error(2002));
+		}
+		
+		// let's see what type of client we are making
+		if (isset($params['client_type'])) {
+			if ($params['client_type'] == 1 and $client->client_type_id != 3) {
+				// only Administrators can make Service Providers
+				die($this->response->Error(2006));
+			}
+			elseif ($params['client_type'] < 1 or $params['client_type'] > 2) {
+				die($this->response->Error(2007));
+			}
+		}
+		else {
+			$params['client_type'] == 2;
 		}
 		
 		// Make sure the password meets the requirements
