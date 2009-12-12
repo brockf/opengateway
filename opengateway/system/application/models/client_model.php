@@ -432,7 +432,7 @@ class Client_model extends Model
 	}
 	
 	/**
-	* Check to see if a passord meets strength requirements.
+	* Check to see if a password meets strength requirements.
 	*
 	* Returns TRUE or FALSE if the password meets the requirements.
 	*
