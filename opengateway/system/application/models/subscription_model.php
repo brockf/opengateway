@@ -141,6 +141,67 @@ class Subscription_model extends Model
 	}
 	
 	/**
+	* Retrieve details for a specific subscription
+	*
+	* Returns an array of data for the requested subscription.
+	*
+	* @param int $client_id The client ID.
+	* @param int $params['recurring_id'];
+	* 
+	* @return mixed Array containing results
+	*/
+	
+	function GetRecurring ($client_id, $params)
+	{
+		// Validate the required fields
+		$this->load->library('field_validation');
+		$this->field_validation->ValidateRequiredFields('GetRecurring', $params);
+	
+		// Make sure they only get their own charges
+		$this->db->where('subscriptions.client_id', $client_id);
+		
+		// Check which search paramaters are set
+		$this->db->where('gateway_id', $params['gateway_id']);
+		
+		$this->db->join('customers', 'customers.customer_id = subscriptions.customer_id', 'left');
+		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
+		$query = $this->db->get('subscriptions');
+		
+		if ($query->num_rows() == 0) {
+			 die($this->response->Error(6004));
+		}
+		
+		$row = $query->result();
+		
+		$data['recurrings']['recurring'][$i]['id'] = $row->subscription_id;
+		$data['recurrings']['recurring'][$i]['create_date'] = $row->timestamp;
+		$data['recurrings']['recurring'][$i]['amount'] = $row->amount;
+		$data['recurrings']['recurring'][$i]['start_date'] = $row->start_date;
+		$data['recurrings']['recurring'][$i]['end_date'] = $row->end_date;
+		$data['recurrings']['recurring'][$i]['number_occurences'] = $row->number_occurrences;
+		$data['recurrings']['recurring'][$i]['notification_url'] = $row->notification_url;
+		$data['recurrings']['recurring'][$i]['status'] = ($row->active == '1') ? 'active' : 'cancelled';
+		
+		if($row->customer_id !== 0) {
+			$data['recurrings']['recurring'][$i]['customer']['id'] = $row->customer_id;
+			$data['recurrings']['recurring'][$i]['customer']['internal_id'] = $row->internal_id;
+			$data['recurrings']['recurring'][$i]['customer']['firstname'] = $row->first_name;
+			$data['recurrings']['recurring'][$i]['customer']['lastname'] = $row->last_name;
+			$data['recurrings']['recurring'][$i]['customer']['company'] = $row->company;
+			$data['recurrings']['recurring'][$i]['customer']['address_1'] = $row->address_1;
+			$data['recurrings']['recurring'][$i]['customer']['address_2'] = $row->address_2;
+			$data['recurrings']['recurring'][$i]['customer']['city'] = $row->city;
+			$data['recurrings']['recurring'][$i]['customer']['state'] = $row->state;
+			$data['recurrings']['recurring'][$i]['customer']['postal_code'] = $row->postal_code;
+			$data['recurrings']['recurring'][$i]['customer']['country'] = $row->iso2;
+			$data['recurrings']['recurring'][$i]['customer']['email'] = $row->email;
+			$data['recurrings']['recurring'][$i]['customer']['phone'] = $row->phone;
+		}
+		
+		return $data;
+	}
+	
+	/**
 	* Search subscriptions.
 	*
 	* Returns an array of results based on submitted search criteria.  All fields are optional.
@@ -157,7 +218,7 @@ class Subscription_model extends Model
 	* 
 	* @return mixed Array containing results
 	*/
-	function GetRecurring($client_id, $params)
+	function GetRecurrings ($client_id, $params)
 	{
 		// Make sure they only get their own charges
 		$this->db->where('subscriptions.client_id', $client_id);
@@ -194,10 +255,17 @@ class Subscription_model extends Model
 			$this->db->where('orders.active', $params['active']);
 		}
 		
+		if (isset($params['offset'])) {
+			$offset = $params['offset'];
+		}
+		else {
+			$offset = 0;
+		}
+		
 		if(isset($params['limit'])) {
-			$this->db->limit($params['limit']);
+			$this->db->limit($params['limit'], $offset);
 		} else {
-			$this->db->limit($this->config->item('query_result_default_limit'));
+			$this->db->limit($this->config->item('query_result_default_limit'), $offset);
 		}
 		
 		$this->db->join('customers', 'customers.customer_id = subscriptions.customer_id', 'left');
@@ -207,31 +275,29 @@ class Subscription_model extends Model
 			$data['results'] = $query->num_rows();
 			$i=0;
 			foreach($query->result() as $row) {
-				$data['recurrrings']['recurring'][$i]['create_date'] = $row->timestamp;
-				$data['recurrrings']['recurring'][$i]['amount'] = $row->amount;
-				$data['recurrrings']['recurring'][$i]['start_date'] = $row->start_date;
-				$data['recurrrings']['recurring'][$i]['end_date'] = $row->end_date;
-				$data['recurrrings']['recurring'][$i]['number_occurences'] = $row->number_occurrences;
-				$data['recurrrings']['recurring'][$i]['notification_url'] = $row->notification_url;
-				
-				if($row->subscription_id != 0) {
-					$data['recurrrings']['recurring'][$i]['recurring_id'] = $row->subscription_id;
-				}
+				$data['recurrings']['recurring'][$i]['id'] = $row->subscription_id;
+				$data['recurrings']['recurring'][$i]['create_date'] = $row->timestamp;
+				$data['recurrings']['recurring'][$i]['amount'] = $row->amount;
+				$data['recurrings']['recurring'][$i]['start_date'] = $row->start_date;
+				$data['recurrings']['recurring'][$i]['end_date'] = $row->end_date;
+				$data['recurrings']['recurring'][$i]['number_occurences'] = $row->number_occurrences;
+				$data['recurrings']['recurring'][$i]['notification_url'] = $row->notification_url;
+				$data['recurrings']['recurring'][$i]['status'] = ($row->active == '1') ? 'active' : 'cancelled';
 				
 				if($row->customer_id !== 0) {
-					$data['recurrrings']['recurring'][$i]['customer']['id'] = $row->customer_id;
-					$data['recurrrings']['recurring'][$i]['customer']['internal_id'] = $row->internal_id;
-					$data['recurrrings']['recurring'][$i]['customer']['firstname'] = $row->first_name;
-					$data['recurrrings']['recurring'][$i]['customer']['lastname'] = $row->last_name;
-					$data['recurrrings']['recurring'][$i]['customer']['company'] = $row->company;
-					$data['recurrrings']['recurring'][$i]['customer']['address_1'] = $row->address_1;
-					$data['recurrrings']['recurring'][$i]['customer']['address_2'] = $row->address_2;
-					$data['recurrrings']['recurring'][$i]['customer']['city'] = $row->city;
-					$data['recurrrings']['recurring'][$i]['customer']['state'] = $row->state;
-					$data['recurrrings']['recurring'][$i]['customer']['postal_code'] = $row->postal_code;
-					$data['recurrrings']['recurring'][$i]['customer']['country'] = $row->iso2;
-					$data['recurrrings']['recurring'][$i]['customer']['email'] = $row->email;
-					$data['recurrrings']['recurring'][$i]['customer']['phone'] = $row->phone;
+					$data['recurrings']['recurring'][$i]['customer']['id'] = $row->customer_id;
+					$data['recurrings']['recurring'][$i]['customer']['internal_id'] = $row->internal_id;
+					$data['recurrings']['recurring'][$i]['customer']['firstname'] = $row->first_name;
+					$data['recurrings']['recurring'][$i]['customer']['lastname'] = $row->last_name;
+					$data['recurrings']['recurring'][$i]['customer']['company'] = $row->company;
+					$data['recurrings']['recurring'][$i]['customer']['address_1'] = $row->address_1;
+					$data['recurrings']['recurring'][$i]['customer']['address_2'] = $row->address_2;
+					$data['recurrings']['recurring'][$i]['customer']['city'] = $row->city;
+					$data['recurrings']['recurring'][$i]['customer']['state'] = $row->state;
+					$data['recurrings']['recurring'][$i]['customer']['postal_code'] = $row->postal_code;
+					$data['recurrings']['recurring'][$i]['customer']['country'] = $row->iso2;
+					$data['recurrings']['recurring'][$i]['customer']['email'] = $row->email;
+					$data['recurrings']['recurring'][$i]['customer']['phone'] = $row->phone;
 				}
 				
 				$i++;
@@ -273,6 +339,16 @@ class Subscription_model extends Model
 		
 		if(isset($params['amount'])) {
 			$update_data['amount'] = $params['amount'];
+		}
+		
+		if(isset($params['next_charge_date'])) {
+			$this->load->library('field_validation');
+			if ($this->field_validation->ValidateDate($params['next_charge_date'])) {
+				$update_data['next_charge_date'] = $params['next_charge_date'];			
+			}
+			else {
+				die($this->response->Error(5007));
+			}
 		}
 		
 		if(isset($params['interval'])) {

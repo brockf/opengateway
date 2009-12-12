@@ -3312,7 +3312,7 @@ INSERT INTO `request_types` VALUES ('10', 'CancelRecurring', 'subscription_model
 INSERT INTO `request_types` VALUES ('11', 'GetCharges', 'order_model');
 INSERT INTO `request_types` VALUES ('12', 'GetCharge', 'order_model');
 INSERT INTO `request_types` VALUES ('13', 'GetLatestCharge', 'order_model');
-INSERT INTO `request_types` VALUES ('14', 'GetRecurring', 'subscription_model');
+INSERT INTO `request_types` VALUES ('14', 'GetRecurrings', 'subscription_model');
 INSERT INTO `request_types` VALUES ('15', 'UpdateRecurring', 'subscription_model');
 INSERT INTO `request_types` VALUES ('16', 'UpdateCustomer', 'customer_model');
 INSERT INTO `request_types` VALUES ('17', 'DeleteCustomer', 'customer_model');
@@ -3326,6 +3326,8 @@ INSERT INTO `request_types` VALUES ('24', 'MakeDefaultGateway', 'gateway_model')
 INSERT INTO `request_types` VALUES ('25', 'DeleteGateway', 'gateway_model');
 INSERT INTO `request_types` VALUES ('26', 'UpdateGateway', 'gateway_model');
 INSERT INTO `request_types` VALUES ('27', 'GetCustomer', 'customer_model');
+INSERT INTO `request_types` VALUES ('28', 'CancelRecurringByCustomer', 'subscription_model');
+INSERT INTO `request_types` VALUES ('29', 'GetRecurring', 'subscription_model');
 
 -- ----------------------------
 -- Table structure for `required_fields`
@@ -3378,6 +3380,8 @@ INSERT INTO `required_fields` VALUES ('43', '22', 'client_id');
 INSERT INTO `required_fields` VALUES ('44', '23', 'gateway_id');
 INSERT INTO `required_fields` VALUES ('45', '24', 'gateway_id');
 INSERT INTO `required_fields` VALUES ('46', '25', 'gateway_id');
+INSERT INTO `required_fields` VALUES ('47', '28', 'customer_id');
+INSERT INTO `required_fields` VALUES ('47', '29', 'recurring_id');
 
 -- ----------------------------
 -- Table structure for `subscriptions`

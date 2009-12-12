@@ -123,12 +123,18 @@ class Order_model extends Model
 			$this->db->where('orders.subscription_id <>', 0);
 		}
 		
-		if(isset($params['limit'])) {
-			$this->db->limit($params['limit']);
-		} else {
-			$this->db->limit($this->config->item('query_result_default_limit'));
+		if (isset($params['offset'])) {
+			$offset = $params['offset'];
+		}
+		else {
+			$offset = 0;
 		}
 		
+		if(isset($params['limit'])) {
+			$this->db->limit($params['limit'], $offset);
+		} else {
+			$this->db->limit($this->config->item('query_result_default_limit'), $offset);
+		}	
 		
 		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');

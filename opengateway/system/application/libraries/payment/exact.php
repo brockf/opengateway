@@ -1,4 +1,5 @@
 <?php
+
 class exact
 {
 	function Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card)
@@ -20,15 +21,15 @@ class exact
 		}
 			
 		$trxnProperties = array(
-		'ExactID'			=> $gateway['terminal_id'],	
-  		'Password'			=> $gateway['password'],
-		'Transaction_Type'  => '00',
-	 	'Card_Number' 		=> $credit_card['card_num'],
-		'Expiry_Date'		=> $credit_card['exp_month'] . substr($credit_card['exp_year'],-2,2),
-		'CVD_Presence_Ind' 	=> (empty($credit_card['cvv'])) ? '9' : '1',
-		'Customer_Ref' 		=> $order_id,
-		'DollarAmount' 		=> $params['amount']
-		  );
+					'ExactID'			=> $gateway['terminal_id'],	
+			  		'Password'			=> $gateway['password'],
+					'Transaction_Type'  => '00',
+				 	'Card_Number' 		=> $credit_card['card_num'],
+					'Expiry_Date'		=> $credit_card['exp_month'] . substr($credit_card['exp_year'],-2,2),
+					'CVD_Presence_Ind' 	=> (empty($credit_card['cvv'])) ? '9' : '1',
+					'Customer_Ref' 		=> $order_id,
+					'DollarAmount' 		=> $params['amount']
+		  		);
 		
 		if(isset($credit_card->cvv)) {
 			$trxnProperties['VerificationStr1'] = $credit_card['cvv'];
@@ -72,7 +73,7 @@ class exact
 		$response = $this->CreateProfile($client_id, $gateway, $customer, $credit_card, $subscription_id, $params, $order_id);
 		  
 		// Process today's payment
-		if(date('Y-m-d', $start_date) == date('Y-m-d')) {
+		if(date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
 			$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $response['transaction_tag'], $response['auth_num'], $params);
 		
 			if($response['success'] == TRUE){

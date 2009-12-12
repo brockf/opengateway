@@ -58,6 +58,9 @@ class Customer_model extends Model
 		$customer_id = $this->SaveNewCustomer($client_id, $params['first_name'], $params['last_name'], $params['company'], $params['internal_id'], $params['address_1'], $params['address_2'], $params['city'], $params['state'], $params['postal_code'], $country_id, $params['phone'], $params['email']);
 		
 		$response = array('customer_id' => $this->db->insert_id());
+		
+		$response = $this->response->TransactionResponse(200,$response);
+		
 		return $response;
 							
 	}
@@ -212,7 +215,7 @@ class Customer_model extends Model
 		
 		$this->db->update('customers', $update_data);
 		
-		$response = $this->response->TransactionResponse(103);
+		$response = $this->response->TransactionResponse(201);
 		
 		return $response;
 	}
@@ -239,7 +242,13 @@ class Customer_model extends Model
 		
 		$this->db->update('customers', array('active' => 0));
 		
-		$response = $this->response->TransactionResponse(104);
+		// cancel all active subscriptions
+		$this->db->where('client_id', $client_id);
+		$this->db->where('customer_id', $params['customer_id']);
+		
+		$this->db->update('subscriptions', array('active' => 0));
+		
+		$response = $this->response->TransactionResponse(202);
 		
 		return $response;
 	}
@@ -321,10 +330,17 @@ class Customer_model extends Model
 			$this->db->where('email', $params['email']);
 		}
 		
+		if (isset($params['offset'])) {
+			$offset = $params['offset'];
+		}
+		else {
+			$offset = 0;
+		}
+		
 		if(isset($params['limit'])) {
-			$this->db->limit($params['limit']);
+			$this->db->limit($params['limit'], $offset);
 		} else {
-			$this->db->limit($this->config->item('query_result_default_limit'));
+			$this->db->limit($this->config->item('query_result_default_limit'), $offset);
 		}
 		
 		if(isset($params['active_recurring'])) {
@@ -348,8 +364,8 @@ class Customer_model extends Model
 				
 				$data['customers']['customer'][$i]['id'] = $row->customer_id;
 				$data['customers']['customer'][$i]['internal_id'] = $row->internal_id;
-				$data['customers']['customer'][$i]['firstname'] = $row->first_name;
-				$data['customers']['customer'][$i]['lastname'] = $row->last_name;
+				$data['customers']['customer'][$i]['first_name'] = $row->first_name;
+				$data['customers']['customer'][$i]['last_name'] = $row->last_name;
 				$data['customers']['customer'][$i]['company'] = $row->company;
 				$data['customers']['customer'][$i]['address_1'] = $row->address_1;
 				$data['customers']['customer'][$i]['address_2'] = $row->address_2;
@@ -397,8 +413,8 @@ class Customer_model extends Model
 			
 			$data['customer']['id'] = $row->customer_id;
 			$data['customer']['internal_id'] = $row->internal_id;
-			$data['customer']['firstname'] = $row->first_name;
-			$data['customer']['lastname'] = $row->last_name;
+			$data['customer']['first_name'] = $row->first_name;
+			$data['customer']['last_name'] = $row->last_name;
 			$data['customer']['company'] = $row->company;
 			$data['customer']['address_1'] = $row->address_1;
 			$data['customer']['address_2'] = $row->address_2;

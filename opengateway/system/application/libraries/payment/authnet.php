@@ -1,4 +1,5 @@
 <?php
+
 class authnet
 {
 	function Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card)
@@ -328,11 +329,8 @@ class authnet
 		// Save the api_payment_reference
 		$CI->subscription_model->SaveApiPaymentReference($subscription_id, $payment_profile_id);
 		
-		
-		
-		
 		// If a payment is to be made today, process it.
-		if(date('Y-m-d', $start_date) == date('Y-m-d')) {
+		if(date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
 			
 			// Create an order for today's payment
 			$CI->load->model('order_model');

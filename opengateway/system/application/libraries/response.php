@@ -8,7 +8,7 @@ class Response
 		$CI =& get_instance();
 		
 		// Check to make sure an array was passed
-		if(is_array($array))
+		if (is_array($array))
 		{
 			// Loop through the array and add it to our response array
 			foreach($array as $key => $value)
@@ -54,16 +54,18 @@ class Response
 							'100' => 'Subscription created.',
 							'101' => 'Subscription cancelled.',
 							'102' => 'Subscription updated.',
-							'103' => 'Customer created.',
-							'104' => 'Customer updated.',
-							'104' => 'Customer deleted.',
-							'200' => 'Client updated.',
-							'201' => 'Client suspended.',
-							'202' => 'Client unsuspended,',
-							'203' => 'Client deleted.',
-							'204' => 'Default gateway set.',	
-							'205' => 'Gateway updated.',
-							'206' => 'Gateway deleted.'
+							'200' => 'Customer created.',
+							'201' => 'Customer updated.',
+							'202' => 'Customer deleted.',
+							'300' => 'Client created.',
+							'301' => 'Client updated.',
+							'302' => 'Client suspended.',
+							'303' => 'Client unsuspended,',
+							'304' => 'Client deleted.',
+							'400' => 'Gateway created.',
+							'401' => 'Gateway updated.',
+							'402' => 'Gateway deleted.',
+							'403' => 'Default gateway set.',	
 							);
 		
 				
@@ -125,7 +127,8 @@ class Response
 						'6000' => 'A valid Charge ID is required.',
 						'6001' => 'A valid Customer ID is required.',
 						'6002' => 'A valid Recurring ID is required',
-						'6003' => 'Nothing to update.'
+						'6003' => 'Nothing to update.',
+						'6004' => 'A valid Recurring ID is required.'
 						);
 		
 				

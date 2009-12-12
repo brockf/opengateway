@@ -81,7 +81,7 @@ class Client_model extends Model
 			die($this->response->Error(2003));
 		}
 		
-		//Generate an API ID and Secret Key
+		// Generate an API ID and Secret Key
 		$this->load->library('key');
 		$api_id = strtoupper($this->key->GenerateKey(20));
 		$secret_key = strtoupper($this->key->GenerateKey(40));
@@ -113,11 +113,10 @@ class Client_model extends Model
 						 'api_id' 		=> $api_id,
 						 'secret_key' 	=> $secret_key
 						 );
+						 
+		$response = $this->response->TransactionResponse(300,$response);
 		
-		return $response; 
-		
-	
-		
+		return $response; 		
 	}
 	
 	function UpdateAccount($client_id, $params)
@@ -251,7 +250,7 @@ class Client_model extends Model
 		$this->db->where('client_id', $params['client_id']);
 		$this->db->update('clients', $update_data);
 		
-		$response = $this->response->TransactionResponse(200,array());
+		$response = $this->response->TransactionResponse(301,array());
 		
 		return $response;
 	}
@@ -282,7 +281,7 @@ class Client_model extends Model
 		$this->db->where('client_id', $params['client_id']);
 		$this->db->update('clients', $update_data);
 		
-		$response = $this->response->TransactionResponse(201,array());
+		$response = $this->response->TransactionResponse(302,array());
 		
 		return $response;
 	}
@@ -312,7 +311,7 @@ class Client_model extends Model
 		$this->db->where('client_id', $params['client_id']);
 		$this->db->update('clients', $update_data);
 		
-		$response = $this->response->TransactionResponse(202,array());
+		$response = $this->response->TransactionResponse(303,array());
 		
 		return $response;
 	}
@@ -342,7 +341,7 @@ class Client_model extends Model
 		$this->db->where('client_id', $params['client_id']);
 		$this->db->update('clients', $update_data);
 		
-		$response = $this->response->TransactionResponse(203,array());
+		$response = $this->response->TransactionResponse(304,array());
 		
 		return $response;
 	}
@@ -350,7 +349,7 @@ class Client_model extends Model
 	/**
 	* Get the client details for a child client.
 	*
-	* Returns a array containg all the childs client's details.  
+	* Returns an array containg all the childs client's details.  
 	* If the child does not belong to the parent, an error is returned.
 	*
 	* @param int $parent_client_id The client ID of the Parent Client
@@ -378,7 +377,7 @@ class Client_model extends Model
 	/**
 	* Get the client details for a client.
 	*
-	* Returns a array containg all the client's details.  
+	* Returns an array containg all the client's details.  
 	*
 	* @param int $client_id The client ID
 	* 

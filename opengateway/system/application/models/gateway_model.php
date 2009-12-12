@@ -99,6 +99,8 @@ class Gateway_model extends Model
 		
 		$response = array('gateway_id' 	=> $new_gateway_id);
 		
+		$response = $this->response->TransactionResponse(400,array());
+		
 		return $response; 
 
 	}
@@ -262,13 +264,13 @@ class Gateway_model extends Model
 		
 		// Validate the start date to make sure it is in the future
 		if(isset($recur['start_date'])) {
-			if(strtotime($recur['start_date']) < time()) {
+			if(!$this->field_validation->ValidateDate($recur['start_date']) or strtotime($recur['start_date']) < time()) {
 				die($this->response->Error(5001));
 			} else {
 				$start_date = date('Y-m-d', strtotime($recur['start_date']));
 			}
 		} else {
-			$start_date = date('Y-m-d', (time() + ($recur['interval'] * 86400)));
+			$start_date = date('Y-m-d', (time()));
 		}
 		
 		// Get the next payment date
@@ -337,7 +339,7 @@ class Gateway_model extends Model
 		$this->db->where('client_id', $client_id);
 		$this->db->update('clients', $update_data);
 		
-		$response = $this->response->TransactionResponse(204,array());
+		$response = $this->response->TransactionResponse(403, array());
 		
 		return $response;
 		
@@ -396,7 +398,7 @@ class Gateway_model extends Model
 			die($this->response->Error(6003));
 		}
 		
-		$response = $this->response->TransactionResponse(205,array());
+		$response = $this->response->TransactionResponse(401,array());
 		
 		return $response;
 		
@@ -437,7 +439,7 @@ class Gateway_model extends Model
 		$this->db->where('client_gateway_id', $params['gateway_id']);
 		$this->db->delete('client_gateway_params');
 		
-		$response = $this->response->TransactionResponse(206,array());
+		$response = $this->response->TransactionResponse(402,array());
 		
 		return $response;
 	}
@@ -544,6 +546,7 @@ class Gateway_model extends Model
 			}
 		}
 	}
+	
 	/* Future Code - This may be used in the future.  Please code above this line.
 	
 	function Auth($client_id, $params, $xml)
