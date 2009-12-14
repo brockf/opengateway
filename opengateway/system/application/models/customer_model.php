@@ -268,6 +268,7 @@ class Customer_model extends Model
 	* @param string $params['country'] Customer's country. Optional.
 	* @param string $params['phone'] Customer's phone. Optional.
 	* @param string $params['email'] Customer's email. Optional.
+	* @param int $params['deleted'] Set to 1 for deleted customers.  Optional.
 	* 
 	* @return mixed Array containing the search results
 	*/
@@ -276,6 +277,13 @@ class Customer_model extends Model
 	{
 		// Make sure they only get their own customers
 		$this->db->where('customers.client_id', $client_id);
+		
+		if(isset($params['deleted']) and $params['deleted'] == '1') {
+			$this->db->where('active', '0');
+		}
+		else {
+			$this->db->where('active', '1');
+		}
 		
 		// Check which search paramaters are set
 		if(isset($params['first_name'])) {

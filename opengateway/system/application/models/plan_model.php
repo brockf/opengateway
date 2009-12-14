@@ -213,6 +213,7 @@ class Plan_model extends Model
 	* @param string $params['notification_url'] Notification URL filter. Optional.
 	* @param string $params['name'] Name filter.  Optional.
 	* @param int $params['free_trial'] Number of days of a free trial. Optional.
+	* @param int $params['deleted'] Set to 1 for deleted plans. Optional.
 	* @param int $params['offset'] Database query offset.  Optional.  Defaults to 0.
 	* @param int $params['limit'] Database query limit.  Optional.  Defaults to config value.
 	*
@@ -223,6 +224,13 @@ class Plan_model extends Model
 		if(isset($params['plan_type'])) {
 			$plan_type_id = $this->GetPlanTypeId($params['plan_type']);
 			$this->db->where('plans.plan_type_id', $plan_type_id);
+		}
+		
+		if(isset($params['deleted']) and $params['deleted'] == '1') {
+			$this->db->where('deleted', '1');
+		}
+		else {
+			$this->db->where('deleted', '0');
 		}
 		
 		if(isset($params['amount'])) {
@@ -258,7 +266,6 @@ class Plan_model extends Model
 		
 		$this->db->join('plan_types', 'plans.plan_type_id = plan_types.plan_type_id', 'inner');
 		$this->db->where('client_id', $client_id);
-		$this->db->where('deleted', 0);
 		$query = $this->db->get('plans');
 		$data = array();
 		if($query->num_rows() > 0) {
