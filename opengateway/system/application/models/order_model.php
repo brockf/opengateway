@@ -55,8 +55,7 @@ class Order_model extends Model
 							
 		$this->db->insert('orders', $insert_data);
 		
-		return $this->db->insert_id();
-		
+		return $this->db->insert_id();	
 	}
 	
 	/**
@@ -72,14 +71,14 @@ class Order_model extends Model
 	* @param string $params['customer_internal_id'] The customer's internal id associated with the order. Optional.
 	* @param int $params['subscription_id'] Returns only recurring orders that have this subscription ID. Optional.
 	* @param boolean $params['recurring_only'] Returns only orders that are part of a recurring subscription. Optional.
+	* @param int $params['offset'] Offsets the database query.
 	* @param int $params['limit'] Limits the number of results returned. Optional.
 	* 
-	* @return mixed Array containing results
+	* @return array|bool Charge results or FALSE upon failure
 	*/
 	
 	function GetCharges($client_id, $params)
 	{
-		
 		// Make sure they only get their own charges
 		$this->db->where('orders.client_id', $client_id);
 		
@@ -132,47 +131,45 @@ class Order_model extends Model
 		
 		if(isset($params['limit'])) {
 			$this->db->limit($params['limit'], $offset);
-		} else {
-			$this->db->limit($this->config->item('query_result_default_limit'), $offset);
-		}	
+		}
 		
 		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$query = $this->db->get('orders');
+		$data = array();
 		if($query->num_rows() > 0) {
-			$data['results'] = $query->num_rows();
 			$i=0;
 			foreach($query->result() as $row) {
-				$data['charges']['charge'][$i]['id'] = $row->order_id;
-				$data['charges']['charge'][$i]['gateway_id'] = $row->gateway_id;
-				$data['charges']['charge'][$i]['date'] = $row->timestamp;
-				$data['charges']['charge'][$i]['amount'] = $row->amount;
-				$data['charges']['charge'][$i]['card_last_four'] = $row->card_last_four;
+				$data[$i]['id'] = $row->order_id;
+				$data[$i]['gateway_id'] = $row->gateway_id;
+				$data[$i]['date'] = $row->timestamp;
+				$data[$i]['amount'] = $row->amount;
+				$data[$i]['card_last_four'] = $row->card_last_four;
 				
 				if($row->subscription_id != 0) {
-					$data['charges']['charge'][$i]['recurring_id'] = $row->subscription_id;
+					$data[$i]['recurring_id'] = $row->subscription_id;
 				}
 				
 				if($row->customer_id != 0) {
-					$data['charges']['charge'][$i]['customer']['id'] = $row->customer_id;
-					$data['charges']['charge'][$i]['customer']['internal_id'] = $row->internal_id;
-					$data['charges']['charge'][$i]['customer']['firstname'] = $row->first_name;
-					$data['charges']['charge'][$i]['customer']['lastname'] = $row->last_name;
-					$data['charges']['charge'][$i]['customer']['company'] = $row->company;
-					$data['charges']['charge'][$i]['customer']['address_1'] = $row->address_1;
-					$data['charges']['charge'][$i]['customer']['address_2'] = $row->address_2;
-					$data['charges']['charge'][$i]['customer']['city'] = $row->city;
-					$data['charges']['charge'][$i]['customer']['state'] = $row->state;
-					$data['charges']['charge'][$i]['customer']['country'] = $row->iso2;
-					$data['charges']['charge'][$i]['customer']['postal_code'] = $row->postal_code;
-					$data['charges']['charge'][$i]['customer']['email'] = $row->email;
-					$data['charges']['charge'][$i]['customer']['phone'] = $row->phone;
+					$data[$i]['customer']['id'] = $row->customer_id;
+					$data[$i]['customer']['internal_id'] = $row->internal_id;
+					$data[$i]['customer']['first_name'] = $row->first_name;
+					$data[$i]['customer']['last_name'] = $row->last_name;
+					$data[$i]['customer']['company'] = $row->company;
+					$data[$i]['customer']['address_1'] = $row->address_1;
+					$data[$i]['customer']['address_2'] = $row->address_2;
+					$data[$i]['customer']['city'] = $row->city;
+					$data[$i]['customer']['state'] = $row->state;
+					$data[$i]['customer']['country'] = $row->iso2;
+					$data[$i]['customer']['postal_code'] = $row->postal_code;
+					$data[$i]['customer']['email'] = $row->email;
+					$data[$i]['customer']['phone'] = $row->phone;
 				}
 				
 				$i++;
 			}
 		} else {
-			$data['results'] = 0;
+			return FALSE;
 		}
 		
 		return $data;
@@ -184,56 +181,50 @@ class Order_model extends Model
 	* Returns array of order details for a specific order_id.
 	*
 	* @param int $client_id The client ID.
-	* @param int $params['charge_id'] The order id to search for.
+	* @param int $charge_id The order id to search for.
 	* 
-	* @return mixed Details array
+	* @return array|bool Array with charge info, FALSE upon failure.
 	*/
 	
-	function GetCharge($client_id, $params)
+	function GetCharge($client_id, $charge_id)
 	{
-		// Get the charge ID
-		if(!isset($params['charge_id'])) {
-			die($this->response->Error(6000));
-		}
-		
 		$this->db->join('order_authorizations', 'order_authorizations.order_id = orders.order_id', 'inner');
 		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$this->db->where('orders.client_id', $client_id);
-		$this->db->where('orders.order_id', $params['charge_id']);
+		$this->db->where('orders.order_id', $charge_id);
 		$this->db->limit(1);
 		$query = $this->db->get('orders');
 		if($query->num_rows() > 0) {
 			$row = $query->row();
-			$data['results'] = 1;
-			$data['charge']['id'] = $row->order_id;
-			$data['charge']['gateway_id'] = $row->gateway_id;
-			$data['charge']['date'] = $row->timestamp;
-			$data['charge']['amount'] = $row->amount;
-			$data['charge']['card_last_four'] = $row->card_last_four;
+			$data['id'] = $row->order_id;
+			$data['gateway_id'] = $row->gateway_id;
+			$data['date'] = $row->timestamp;
+			$data['amount'] = $row->amount;
+			$data['card_last_four'] = $row->card_last_four;
 				
 			if($row->subscription_id != 0) {
-					$data['charge']['recurring_id'] = $row->subscription_id;
+					$data['recurring_id'] = $row->subscription_id;
 				}
 				
 			if($row->customer_id != 0) {
-				$data['charge']['customer']['id'] = $row->customer_id;
-				$data['charge']['customer']['internal_id'] = $row->internal_id;
-				$data['charge']['customer']['firstname'] = $row->first_name;
-				$data['charge']['customer']['lastname'] = $row->last_name;
-				$data['charge']['customer']['company'] = $row->company;
-				$data['charge']['customer']['address_1'] = $row->address_1;
-				$data['charge']['customer']['address_2'] = $row->address_2;
-				$data['charge']['customer']['city'] = $row->city;
-				$data['charge']['customer']['state'] = $row->state;
-				$data['charge']['customer']['postal_code'] = $row->postal_code;
-				$data['charge']['customer']['country'] = $row->iso2;
-				$data['charge']['customer']['email'] = $row->email;
-				$data['charge']['customer']['phone'] = $row->phone;
+				$data['customer']['id'] = $row->customer_id;
+				$data['customer']['internal_id'] = $row->internal_id;
+				$data['customer']['first_name'] = $row->first_name;
+				$data['customer']['last_name'] = $row->last_name;
+				$data['customer']['company'] = $row->company;
+				$data['customer']['address_1'] = $row->address_1;
+				$data['customer']['address_2'] = $row->address_2;
+				$data['customer']['city'] = $row->city;
+				$data['customer']['state'] = $row->state;
+				$data['customer']['postal_code'] = $row->postal_code;
+				$data['customer']['country'] = $row->iso2;
+				$data['customer']['email'] = $row->email;
+				$data['customer']['phone'] = $row->phone;
 			}
 				
 		} else {
-			$data['results'] = 0;
+			return FALSE;
 		}
 		
 		return $data;
@@ -245,66 +236,44 @@ class Order_model extends Model
 	* Returns array of order details for a specific order_id.
 	*
 	* @param int $client_id The client ID.
-	* @param int $params['customer_id'] The order id to search for.
+	* @param int $customer_id The customer ID.
 	* 
-	* @return mixed details array
+	* @return array|bool Array with charge details or FALSE upon failure
 	*/
 	
-	function GetLatestCharge($client_id, $params)
-	{
-		// Get the gateway type
-		if(!isset($params['customer_id'])) {
-			die($this->response->Error(6001));
-		}
-		
+	function GetLatestCharge($client_id, $customer_id)
+	{	
 		$this->db->join('order_authorizations', 'order_authorizations.order_id = orders.order_id', 'inner');
 		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$this->db->where('orders.client_id', $client_id);
-		$this->db->where('orders.customer_id', $params['customer_id']);
+		$this->db->where('orders.customer_id', $customer_id);
 		$this->db->order_by('timestamp', 'DESC');
 		$this->db->limit(1);
 		$query = $this->db->get('orders');
 		if($query->num_rows() > 0) {
 			$row = $query->row();
-			$data['results'] = 1;
-			$data['charge']['id'] = $row->order_id;
-			$data['charge']['gateway_id'] = $row->gateway_id;
-			$data['charge']['date'] = $row->timestamp;
-			$data['charge']['amount'] = $row->amount;
-			$data['charge']['card_last_four'] = $row->card_last_four;
-				
-			if($row->subscription_id != 0) {
-					$data['charge']['recurring_id'] = $row->subscription_id;
-				}
-				
-			if($row->customer_id != 0) {
-				$data['charge']['customer']['id'] = $row->customer_id;
-				$data['charge']['customer']['internal_id'] = $row->internal_id;
-				$data['charge']['customer']['firstname'] = $row->first_name;
-				$data['charge']['customer']['lastname'] = $row->last_name;
-				$data['charge']['customer']['company'] = $row->company;
-				$data['charge']['customer']['address_1'] = $row->address_1;
-				$data['charge']['customer']['address_2'] = $row->address_2;
-				$data['charge']['customer']['city'] = $row->city;
-				$data['charge']['customer']['state'] = $row->state;
-				$data['charge']['customer']['postal_code'] = $row->postal_code;
-				$data['charge']['customer']['country'] = $row->iso2;
-				$data['charge']['customer']['email'] = $row->email;
-				$data['charge']['customer']['phone'] = $row->phone;
-			}
-				
+			return $this->GetCharge($client_id, $row->order_id);	
 		} else {
-			$data['results'] = 0;
+			return FALSE;
 		}
-		
-		return $data;
 	}
+	
+	/**
+	* Set the status of an order to either 1 or 0
+	*
+	* @param int $order_id The Order ID
+	* @param int $status The status ID.  Default to 0.
+	*
+	* @return bool TRUE upon success.
+	*/
 	
 	function SetStatus($order_id, $status = 0)
 	{
 		$update_data['status'] = $status;
 		$this->db->where('order_id', $order_id);
 		$this->db->update('orders', $update_data);
+		
+		return TRUE;
 	}
 }

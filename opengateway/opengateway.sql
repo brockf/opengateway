@@ -3662,40 +3662,40 @@ CREATE TABLE `request_types` (
 -- ----------------------------
 -- Records of request_types
 -- ----------------------------
-INSERT INTO `request_types` VALUES ('1', 'NewClient', 'client_model');
-INSERT INTO `request_types` VALUES ('2', 'NewGateway', 'gateway_model');
-INSERT INTO `request_types` VALUES ('4', 'NewCustomer', 'customer_model');
+INSERT INTO `request_types` VALUES ('1', 'NewClient', '');
+INSERT INTO `request_types` VALUES ('2', 'NewGateway', '');
+INSERT INTO `request_types` VALUES ('4', 'NewCustomer', '');
 INSERT INTO `request_types` VALUES ('3', 'Charge', 'gateway_model');
 INSERT INTO `request_types` VALUES ('5', 'Capture', 'gateway_model');
 INSERT INTO `request_types` VALUES ('6', 'Auth', 'gateway_model');
 INSERT INTO `request_types` VALUES ('7', 'Credit', 'gateway_model');
 INSERT INTO `request_types` VALUES ('8', 'Void', 'gateway_model');
 INSERT INTO `request_types` VALUES ('9', 'Recur', 'gateway_model');
-INSERT INTO `request_types` VALUES ('10', 'CancelRecurring', 'subscription_model');
-INSERT INTO `request_types` VALUES ('11', 'GetCharges', 'order_model');
-INSERT INTO `request_types` VALUES ('12', 'GetCharge', 'order_model');
-INSERT INTO `request_types` VALUES ('13', 'GetLatestCharge', 'order_model');
-INSERT INTO `request_types` VALUES ('14', 'GetRecurrings', 'subscription_model');
-INSERT INTO `request_types` VALUES ('15', 'UpdateRecurring', 'subscription_model');
-INSERT INTO `request_types` VALUES ('16', 'UpdateCustomer', 'customer_model');
-INSERT INTO `request_types` VALUES ('17', 'DeleteCustomer', 'customer_model');
-INSERT INTO `request_types` VALUES ('18', 'GetCustomers', 'customer_model');
-INSERT INTO `request_types` VALUES ('19', 'UpdateClient', 'client_model');
-INSERT INTO `request_types` VALUES ('20', 'SuspendClient', 'client_model');
-INSERT INTO `request_types` VALUES ('21', 'UnsuspendClient', 'client_model');
-INSERT INTO `request_types` VALUES ('0', 'DeleteClient', 'client_model');
-INSERT INTO `request_types` VALUES ('23', 'UpdateAccount', 'client_model');
-INSERT INTO `request_types` VALUES ('24', 'MakeDefaultGateway', 'gateway_model');
-INSERT INTO `request_types` VALUES ('25', 'DeleteGateway', 'gateway_model');
-INSERT INTO `request_types` VALUES ('26', 'UpdateGateway', 'gateway_model');
-INSERT INTO `request_types` VALUES ('27', 'GetCustomer', 'customer_model');
+INSERT INTO `request_types` VALUES ('10', 'CancelRecurring', '');
+INSERT INTO `request_types` VALUES ('11', 'GetCharges', '');
+INSERT INTO `request_types` VALUES ('12', 'GetCharge', '');
+INSERT INTO `request_types` VALUES ('13', 'GetLatestCharge', '');
+INSERT INTO `request_types` VALUES ('14', 'GetRecurrings', '');
+INSERT INTO `request_types` VALUES ('15', 'UpdateRecurring', '');
+INSERT INTO `request_types` VALUES ('16', 'UpdateCustomer', '');
+INSERT INTO `request_types` VALUES ('17', 'DeleteCustomer', '');
+INSERT INTO `request_types` VALUES ('18', 'GetCustomers', '');
+INSERT INTO `request_types` VALUES ('19', 'UpdateClient', '');
+INSERT INTO `request_types` VALUES ('20', 'SuspendClient', '');
+INSERT INTO `request_types` VALUES ('21', 'UnsuspendClient', '');
+INSERT INTO `request_types` VALUES ('0', 'DeleteClient', '');
+INSERT INTO `request_types` VALUES ('23', 'UpdateAccount', '');
+INSERT INTO `request_types` VALUES ('24', 'MakeDefaultGateway', '');
+INSERT INTO `request_types` VALUES ('25', 'DeleteGateway', '');
+INSERT INTO `request_types` VALUES ('26', 'UpdateGateway', '');
+INSERT INTO `request_types` VALUES ('27', 'GetCustomer', '');
 INSERT INTO `request_types` VALUES ('28', 'CancelRecurringByCus', 'subscription_model');
-INSERT INTO `request_types` VALUES ('29', 'GetRecurring', 'subscription_model');
-INSERT INTO `request_types` VALUES ('30', 'NewPlan', 'plan_model');
-INSERT INTO `request_types` VALUES ('31', 'UpdatePlan', 'plan_model');
-INSERT INTO `request_types` VALUES ('32', 'DeletePlan', 'plan_model');
-INSERT INTO `request_types` VALUES ('33', 'GetPlan', 'plan_model');
-INSERT INTO `request_types` VALUES ('34', 'GetPlans', 'plan_model');
+INSERT INTO `request_types` VALUES ('29', 'GetRecurring', '');
+INSERT INTO `request_types` VALUES ('30', 'NewPlan', '');
+INSERT INTO `request_types` VALUES ('31', 'UpdatePlan', '');
+INSERT INTO `request_types` VALUES ('32', 'DeletePlan', '');
+INSERT INTO `request_types` VALUES ('33', 'GetPlan', '');
+INSERT INTO `request_types` VALUES ('34', 'GetPlans', '');
 
 -- ----------------------------
 -- Table structure for `required_fields`

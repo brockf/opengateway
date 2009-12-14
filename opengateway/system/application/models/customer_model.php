@@ -34,11 +34,10 @@ class Customer_model extends Model
 	* @param string $params['phone'] Client's phone. Optional.
 	* @param string $params['email'] Client's email. Optional.
 	* 
-	* @return mixed Array containing new customer_id
+	* @return int New Customer ID
 	*/
 	function NewCustomer($client_id, $params)
 	{
-		
 		// Make sure the country is in the proper format
 		$this->load->library('field_validation');
 		$country_id = $this->field_validation->ValidateCountry($params['country']);
@@ -55,14 +54,13 @@ class Customer_model extends Model
 			die($this->response->Error(1008));
 		}
 		
-		$customer_id = $this->SaveNewCustomer($client_id, $params['first_name'], $params['last_name'], $params['company'], $params['internal_id'], $params['address_1'], $params['address_2'], $params['city'], $params['state'], $params['postal_code'], $country_id, $params['phone'], $params['email']);
-		
-		$response = array('customer_id' => $this->db->insert_id());
-		
-		$response = $this->response->TransactionResponse(200,$response);
-		
-		return $response;
-							
+		if ($customer_id = $this->SaveNewCustomer($client_id, $params['first_name'], $params['last_name'], $params['company'], $params['internal_id'], $params['address_1'], $params['address_2'], $params['city'], $params['state'], $params['postal_code'], $country_id, $params['phone'], $params['email']))
+		{
+			return $customer_id;
+		}
+		else {
+			return FALSE;
+		}
 	}
 	
 	// Save new customer 
@@ -86,8 +84,7 @@ class Customer_model extends Model
 							);
 		$this->db->insert('customers', $insert_data);
 		
-		return $this->db->insert_id();
-							
+		return $this->db->insert_id();						
 	}
 	
 	/**
@@ -124,6 +121,7 @@ class Customer_model extends Model
 	*
 	* @param int $client_id The client ID of the gateway client.
 	* @param int $params['customer_id'] The Customer to update.
+	* @param string $params['internal_id'] Customer's internal_id.  Optional.
 	* @param string $params['first_name'] Customer's first name. Optional.
 	* @param string $params['last_name'] Customer's last name. Optional.
 	* @param string $params['company'] Customer's company. Optional.
@@ -141,9 +139,12 @@ class Customer_model extends Model
 	function UpdateCustomer($client_id, $params)
 	{
 		if(!isset($params['customer_id'])) {
-			die($this->response->Error(6001));
+			return FALSE;
 		}
 
+		if(isset($params['internal_id'])) {
+			$update_data['internal_id'] = $params['internal_id'];
+		}
 		
 		if(isset($params['first_name'])) {
 			$update_data['first_name'] = $params['first_name'];
@@ -189,7 +190,7 @@ class Customer_model extends Model
 			if(!$country_id) {
 				die($this->response->Error(1007));
 			}
-			$update_data['country'] = $params['country'];
+			$update_data['country'] = $country_id;
 		}
 		
 		if(isset($params['phone'])) {
@@ -213,11 +214,12 @@ class Customer_model extends Model
 		$this->db->where('client_id', $client_id);
 		$this->db->where('customer_id', $params['customer_id']);
 		
-		$this->db->update('customers', $update_data);
-		
-		$response = $this->response->TransactionResponse(201);
-		
-		return $response;
+		if ($this->db->update('customers', $update_data)) {
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
 	}
 	
 	/**
@@ -226,31 +228,25 @@ class Customer_model extends Model
 	* Marks a customer as deleted.  Does not actually delete the customer from the database, but only marks it as deleted.
 	*
 	* @param int $client_id The client ID
-	* @param int $params['customer_id'] The customer ID
+	* @param int $customer_id The customer ID
 	* 
-	* @return mixed Array containing all the customer details.
+	* @return bool TRUE upon success.
 	*/
-	function DeleteCustomer($client_id, $params)
-	{
-		if(!isset($params['customer_id'])) {
-			die($this->response->Error(6001));
-		}
-		
+	function DeleteCustomer($client_id, $customer_id)
+	{	
 		// Make sure they update their own customer
 		$this->db->where('client_id', $client_id);
-		$this->db->where('customer_id', $params['customer_id']);
+		$this->db->where('customer_id', $customer_id);
 		
 		$this->db->update('customers', array('active' => 0));
 		
 		// cancel all active subscriptions
 		$this->db->where('client_id', $client_id);
-		$this->db->where('customer_id', $params['customer_id']);
+		$this->db->where('customer_id', $customer_id);
 		
 		$this->db->update('subscriptions', array('active' => 0));
 		
-		$response = $this->response->TransactionResponse(202);
-		
-		return $response;
+		return TRUE;
 	}
 	
 	/**
@@ -260,7 +256,7 @@ class Customer_model extends Model
 	* All search parameters are optional.
 	*
 	* @param int $client_id The client ID of the gateway client.
-	* @param int $params['customer_id'] Customer ID. Optional
+	* @param string $params['internal_id'] Customer's internal ID. Optional.
 	* @param string $params['first_name'] Customer's first name. Optional.
 	* @param string $params['last_name'] Customer's last name. Optional.
 	* @param string $params['company'] Customer's company. Optional.
@@ -286,16 +282,16 @@ class Customer_model extends Model
 			$this->db->where('first_name', $params['first_name']);
 		}
 		
+		if(isset($params['internal_id'])) {
+			$this->db->where('internal_id', $params['internal_id']);
+		}
+		
 		if(isset($params['last_name'])) {
 			$this->db->where('last_name', $params['last_name']);
 		}
 		
 		if(isset($params['company'])) {
 			$this->db->where('company', $params['company']);
-		}
-		
-		if(isset($params['internal_id'])) {
-			$this->db->where('internal_id', $params['internal_id']);
 		}
 		
 		if(isset($params['address_1'])) {
@@ -339,8 +335,6 @@ class Customer_model extends Model
 		
 		if(isset($params['limit'])) {
 			$this->db->limit($params['limit'], $offset);
-		} else {
-			$this->db->limit($this->config->item('query_result_default_limit'), $offset);
 		}
 		
 		if(isset($params['active_recurring'])) {
@@ -353,42 +347,39 @@ class Customer_model extends Model
 			
 		}
 		
-		
 		$this->db->order_by('customers.customer_id', 'DESC');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$query = $this->db->get('customers');
+		$data = array();
 		if($query->num_rows() > 0) {
-			$data['results'] = $query->num_rows();
 			$i=0;
 			foreach($query->result() as $row) {
 				
-				$data['customers']['customer'][$i]['id'] = $row->customer_id;
-				$data['customers']['customer'][$i]['internal_id'] = $row->internal_id;
-				$data['customers']['customer'][$i]['first_name'] = $row->first_name;
-				$data['customers']['customer'][$i]['last_name'] = $row->last_name;
-				$data['customers']['customer'][$i]['company'] = $row->company;
-				$data['customers']['customer'][$i]['address_1'] = $row->address_1;
-				$data['customers']['customer'][$i]['address_2'] = $row->address_2;
-				$data['customers']['customer'][$i]['city'] = $row->city;
-				$data['customers']['customer'][$i]['state'] = $row->state;
-				$data['customers']['customer'][$i]['postal_code'] = $row->postal_code;
-				$data['customers']['customer'][$i]['country'] = $row->iso2;
-				$data['customers']['customer'][$i]['email'] = $row->email;
-				$data['customers']['customer'][$i]['phone'] = $row->phone;
+				$data[$i]['id'] = $row->customer_id;
+				$data[$i]['internal_id'] = $row->internal_id;
+				$data[$i]['first_name'] = $row->first_name;
+				$data[$i]['last_name'] = $row->last_name;
+				$data[$i]['company'] = $row->company;
+				$data[$i]['address_1'] = $row->address_1;
+				$data[$i]['address_2'] = $row->address_2;
+				$data[$i]['city'] = $row->city;
+				$data[$i]['state'] = $row->state;
+				$data[$i]['postal_code'] = $row->postal_code;
+				$data[$i]['country'] = $row->iso2;
+				$data[$i]['email'] = $row->email;
+				$data[$i]['phone'] = $row->phone;
 				
-				$CI =& get_instance();
-				$CI->load->model('subscription_model');
-				$plans = $CI->subscription_model->GetPlansByCustomer($row->customer_id);
+				$plans = $this->GetPlansByCustomer($row->customer_id);
 				
 				if($plans) {
 					$n=0;
 					foreach($plans as $plan) {
-						$data['customers']['customer'][$i]['plans']['plan'][$n]['plan_id'] = $plan->plan_id;
-						$data['customers']['customer'][$i]['plans']['plan'][$n]['plan_type'] = $plan->type;
-						$data['customers']['customer'][$i]['plans']['plan'][$n]['name'] = $plan->name;
-						$data['customers']['customer'][$i]['plans']['plan'][$n]['amount'] = $plan->amount;
-						$data['customers']['customer'][$i]['plans']['plan'][$n]['interval'] = $plan->interval;
-						$data['customers']['customer'][$i]['plans']['plan'][$n]['notification_url'] = $plan->notification_url;
+						$data[$i]['plans'][$n]['plan_id'] = $plan->plan_id;
+						$data[$i]['plans'][$n]['plan_type'] = $plan->type;
+						$data[$i]['plans'][$n]['name'] = $plan->name;
+						$data[$i]['plans'][$n]['amount'] = $plan->amount;
+						$data[$i]['plans'][$n]['interval'] = $plan->interval;
+						$data[$i]['plans'][$n]['notification_url'] = $plan->notification_url;
 						$n++;
 					}
 				}
@@ -396,7 +387,7 @@ class Customer_model extends Model
 				$i++;
 			}
 		} else {
-			$data['results'] = 0;
+			return FALSE;
 		}
 		
 		return $data;
@@ -408,59 +399,52 @@ class Customer_model extends Model
 	* Searches the database for customers belonging to the client and with a specific customer_id.
 	*
 	* @param int $client_id The client ID of the gateway client.
-	* @param int $params['customer_id'] Customer ID. Optional
+	* @param int $customer_id Customer ID.
 	* 
-	* @return mixed Array containing the search results
+	* @return array|bool Customer data or FALSE upon failure.
 	*/
 	
-	function GetCustomer($client_id, $params)
-	{
-		// Get the customer id
-		if(!isset($params['customer_id'])) {
-			die($this->response->Error(4000));
-		}
-		
+	function GetCustomer($client_id, $customer_id)
+	{	
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$this->db->where('customers.client_id', $client_id);
-		$this->db->where('customers.customer_id', $params['customer_id']);
+		$this->db->where('customers.customer_id', $customer_id);
 		$this->db->limit(1);
 		$query = $this->db->get('customers');
 		if($query->num_rows() > 0) {
 			$row = $query->row();
 			
-			$data['customer']['id'] = $row->customer_id;
-			$data['customer']['internal_id'] = $row->internal_id;
-			$data['customer']['first_name'] = $row->first_name;
-			$data['customer']['last_name'] = $row->last_name;
-			$data['customer']['company'] = $row->company;
-			$data['customer']['address_1'] = $row->address_1;
-			$data['customer']['address_2'] = $row->address_2;
-			$data['customer']['city'] = $row->city;
-			$data['customer']['state'] = $row->state;
-			$data['customer']['postal_code'] = $row->postal_code;
-			$data['customer']['country'] = $row->iso2;
-			$data['customer']['email'] = $row->email;
-			$data['customer']['phone'] = $row->phone;
+			$data['id'] = $row->customer_id;
+			$data['internal_id'] = $row->internal_id;
+			$data['first_name'] = $row->first_name;
+			$data['last_name'] = $row->last_name;
+			$data['company'] = $row->company;
+			$data['address_1'] = $row->address_1;
+			$data['address_2'] = $row->address_2;
+			$data['city'] = $row->city;
+			$data['state'] = $row->state;
+			$data['postal_code'] = $row->postal_code;
+			$data['country'] = $row->iso2;
+			$data['email'] = $row->email;
+			$data['phone'] = $row->phone;
 			
-			$CI =& get_instance();
-			$CI->load->model('subscription_model');
-			$plans = $CI->subscription_model->GetPlansByCustomer($row->customer_id);
+			$plans = $this->GetPlansByCustomer($row->customer_id);
 			
 			if($plans) {
 				$i=0;
 				foreach($plans as $plan) {
-					$data['customer']['plans']['plan'][$i]['plan_id'] = $plan->plan_id;
-					$data['customer']['plans']['plan'][$i]['plan_type'] = $plan->type;
-					$data['customer']['plans']['plan'][$i]['name'] = $plan->name;
-					$data['customer']['plans']['plan'][$i]['amount'] = $plan->amount;
-					$data['customer']['plans']['plan'][$i]['interval'] = $plan->interval;
-					$data['customer']['plans']['plan'][$i]['notification_url'] = $plan->notification_url;
+					$data['plans'][$i]['plan_id'] = $plan->plan_id;
+					$data['plans'][$i]['plan_type'] = $plan->type;
+					$data['plans'][$i]['name'] = $plan->name;
+					$data['plans'][$i]['amount'] = $plan->amount;
+					$data['plans'][$i]['interval'] = $plan->interval;
+					$data['plans'][$i]['notification_url'] = $plan->notification_url;
 					$i++;
 				}
 			}
 				
 		} else {
-			$data['results'] = 0;
+			return FALSE;
 		}
 		
 		return $data;

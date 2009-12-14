@@ -2,7 +2,7 @@
 /**
 * Gateway Model 
 *
-* Contains all the methods used to create client gateways, process credit card charges, and create recurring subscriptions.
+* Contains all the methods used to create and manage client gateways, process credit card charges, and create recurring subscriptions.
 *
 * @version 1.0
 * @author David Ryan
@@ -22,21 +22,21 @@ class Gateway_model extends Model
 	* Create a new gateway instance
 	*
 	* Creates a new gateway instance in the client_gateways table.  Inserts the different gateway paramaters into the 
-	* client_gateway_params table.  Returns the resulting gateway_id.
+	* client_gateway_params table.  These are not declared in this documentation as they can be anything.  Returns the resulting gateway_id.
 	*
 	* @param int $client_id	The Client ID
 	* @param string $params['gateway_type'] The type of gateway to be created (authnet, exact etc.)
-	* @param boolean $params['accept_mc'] Whether the gatewill will accept Mastercard
-	* @param boolean $params['accept_visa'] Whether the gatewill will accept Visa
-	* @param boolean $params['accept_amex'] Whether the gatewill will accept American Express
-	* @param boolean $params['accept_discover'] Whether the gatewill will accept Discover
-	* @param boolean $params['accept_dc'] Whether the gatewill will accept Diner's Club
-	* @param boolean $params['enabled'] Whether the gatewill is enabled or disabled
-	* @param string $params Authetication for the different gateway types
+	* @param int $params['accept_mc'] Whether the gateway will accept Mastercard
+	* @param int $params['accept_visa'] Whether the gateway will accept Visa
+	* @param int $params['accept_amex'] Whether the gateway will accept American Express
+	* @param int $params['accept_discover'] Whether the gateway will accept Discover
+	* @param int $params['accept_dc'] Whether the gateway will accept Diner's Club
+	* @param int $params['enabled'] Whether the gateway is enabled or disabled
 	* 
-	* @return mixed Array with new Gateway ID
+	* @return int New Gateway ID
 	*/
-	function NewGateway($client_id = FALSE, $params = FALSE)
+	
+	function NewGateway($client_id, $params)
 	{
 		
 		// Get the gateway type
@@ -68,7 +68,7 @@ class Gateway_model extends Model
 		
 		$new_gateway_id = $this->db->insert_id();
 		
-		//Add the params, but not the client id or gateway type
+		// Add the params, but not the client id or gateway type
 		unset($params['authentication']);
 		unset($params['client_id']);
 		unset($params['gateway_type']);
@@ -92,16 +92,10 @@ class Gateway_model extends Model
 		$client = $CI->client_model->GetClientDetails($client_id);
 		
 		if($client->default_gateway_id == 0) {
-			$update_data['default_gateway_id'] = $new_gateway_id;
-			$this->db->where('client_id', $client_id);
-			$this->db->update('clients', $update_data);
+			$this->MakeDefaultGateway($client_id, $new_gateway_id);
 		}
 		
-		$response = array('gateway_id' 	=> $new_gateway_id);
-		
-		$response = $this->response->TransactionResponse(400,array());
-		
-		return $response; 
+		return $new_gateway_id;
 
 	}
 	
@@ -172,8 +166,7 @@ class Gateway_model extends Model
 		// Load the proper library
 		$gateway_name = $gateway['name'];
 		$this->load->library('payment/'.$gateway_name);
-		return $this->$gateway_name->Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card);
-		
+		return $this->$gateway_name->Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card);		
 	}
 	
 	/**
@@ -340,32 +333,28 @@ class Gateway_model extends Model
 	* Sets a provided gateway_id as the default gateway for that client.
 	*
 	* @param int $client_id	The Client ID
-	* @param int $params['gateway_id'] The gateway_id to be set as default.
+	* @param int $gateway_id The gateway_id to be set as default.
 	* 
-	* @return string Result
+	* @return bool True on success, FALSE on failure
 	*/
-	function MakeDefaultGateway($client_id, $params)
-	{
-		// Validate the required fields
-		$this->load->library('field_validation');
-		$this->field_validation->ValidateRequiredFields('MakeDefaultGateway', $params);
-		
+	function MakeDefaultGateway($client_id, $gateway_id)
+	{		
 		// Make sure the gateway is actually theirs
-		$gateway = $this->GetGatewayDetails($client_id, $params['gateway_id']);
+		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
 		
 		if(!$gateway) {
 			die($this->response->Error(3000));
 		}
 		
-		$update_data['default_gateway_id'] = $params['gateway_id'];
-		
+		$update_data['default_gateway_id'] = $gateway_id;
+				
 		$this->db->where('client_id', $client_id);
-		$this->db->update('clients', $update_data);
-		
-		$response = $this->response->TransactionResponse(403, array());
-		
-		return $response;
-		
+		if ($this->db->update('clients', $update_data)) {
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
 	}
 	
 	/**
@@ -375,23 +364,18 @@ class Gateway_model extends Model
 	*
 	* @param int $client_id The client ID
 	* @param int $params['gateway_id'] The gateway ID to update
-	* @param boolean $params['accept_mc'] Whether the gatewill will accept Mastercard
-	* @param boolean $params['accept_visa'] Whether the gatewill will accept Visa
-	* @param boolean $params['accept_amex'] Whether the gatewill will accept American Express
-	* @param boolean $params['accept_discover'] Whether the gatewill will accept Discover
-	* @param boolean $params['accept_dc'] Whether the gatewill will accept Diner's Club
-	* @param boolean $params['enabled'] Whether the gatewill is enabled or disabled
-	* @param string $params Authetication for the different gateway types
+	* @param int $params['accept_mc'] Whether the gateway will accept Mastercard
+	* @param int $params['accept_visa'] Whether the gateway will accept Visa
+	* @param int $params['accept_amex'] Whether the gateway will accept American Express
+	* @param int $params['accept_discover'] Whether the gateway will accept Discover
+	* @param int $params['accept_dc'] Whether the gateway will accept Diner's Club
+	* @param int $params['enabled'] Whether the gateway is enabled or disabled
 	* 
-	* @return mixed Array containing all of the fields required for that gateway type
+	* @return bool TRUE on success, FALSE on fail.
 	*/
 	
 	function UpdateGateway($client_id, $params)
 	{
-		// Validate the required fields
-		$this->load->library('field_validation');
-		$this->field_validation->ValidateRequiredFields('MakeDefaultGateway', $params);
-		
 		// Make sure the gateway is actually theirs
 		$gateway = $this->GetGatewayDetails($client_id, $params['gateway_id']);
 		
@@ -402,7 +386,7 @@ class Gateway_model extends Model
 		// Get the gateway fields
 		$fields = $this->GetRequiredGatewayFields($gateway['name']);
 		
-		$i=0;
+		$i = 0;
 		foreach($fields as $required_value)
 		{
 			foreach($required_value as $key => $value)
@@ -421,11 +405,7 @@ class Gateway_model extends Model
 			die($this->response->Error(6003));
 		}
 		
-		$response = $this->response->TransactionResponse(401,array());
-		
-		return $response;
-		
-		
+		return TRUE;
 	}
 	
 	/**
@@ -435,19 +415,15 @@ class Gateway_model extends Model
 	* Does not actually deleted the gateway, but sets deleted to 1 in the client_gateways table.
 	*
 	* @param int $client_id	The Client ID
-	* @param int $params['gateway_id'] The gateway_id to be set as default.
+	* @param int $gateway_id The gateway_id to be set deleted.
 	* 
-	* @return string Result
+	* @return bool TRUE on success
 	*/
 	
-	function DeleteGateway($client_id, $params)
+	function DeleteGateway($client_id, $gateway_id)
 	{
-		// Validate the required fields
-		$this->load->library('field_validation');
-		$this->field_validation->ValidateRequiredFields('MakeDefaultGateway', $params);
-		
 		// Make sure the gateway is actually theirs
-		$gateway = $this->GetGatewayDetails($client_id, $params['gateway_id']);
+		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
 		
 		if(!$gateway) {
 			die($this->response->Error(3000));
@@ -462,13 +438,11 @@ class Gateway_model extends Model
 		$this->db->where('client_gateway_id', $params['gateway_id']);
 		$this->db->delete('client_gateway_params');
 		
-		$response = $this->response->TransactionResponse(402,array());
-		
-		return $response;
+		return TRUE;
 	}
 	
 	/**
-	* Get the Exertnal Api ID
+	* Get the External API ID
 	*
 	* Gets the External API ID from the external_apis table based on the gateway type ('authnet', 'exact' etc.)
 	*
@@ -500,8 +474,9 @@ class Gateway_model extends Model
 	* @param int $client_id	The Client ID
 	* @param int $gateway_id The gateway_id
 	* 
-	* @return mixed Array containg all gateway details
+	* @return array All gateway details
 	*/
+	
 	function GetGatewayDetails($client_id, $gateway_id = FALSE)
 	{
 		// If they have not passed a gateway ID, we will choose the first one created.
@@ -540,9 +515,7 @@ class Gateway_model extends Model
 			return $data;
 		} else {
 			die($this->response->Error(3000));
-		}	
-		
-		
+		}		
 	}
 	
 	/**
@@ -552,7 +525,7 @@ class Gateway_model extends Model
 	*
 	* @param string $gateway_type The name of the gateway ('authnet', 'exact', etc.)
 	* 
-	* @return mixed Array containing all of the fields required for that gateway type
+	* @return array|bool Returns an array containing all of the fields required for that gateway type or FALSE upon failure
 	*/
 	function GetRequiredGatewayFields($gateway_type = FALSE)
 	{

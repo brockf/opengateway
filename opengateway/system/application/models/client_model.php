@@ -36,11 +36,9 @@ class Client_model extends Model
 	* @param string $params['username'] Client's username
 	* @param string $params['password'] Client's password
 	* 
-	*
-	* 
-	* @return mixed Array containing new API ID and Secret Key
+	* @return array Containing new User ID, API ID and Secret Key
 	*/
-	function NewClient($client_id = FALSE, $params = FALSE)
+	function NewClient($client_id, $params)
 	{
 		// Make sure this client is authorized to create a child client
 		if($client_id) {
@@ -127,18 +125,9 @@ class Client_model extends Model
 						 'api_id' 		=> $api_id,
 						 'secret_key' 	=> $secret_key
 						 );
-						 
-		$response = $this->response->TransactionResponse(300,$response);
 		
 		return $response; 		
 	}
-	
-	function UpdateAccount($client_id, $params)
-	{
-		$params['client_id'] = $client_id;
-		return $this->UpdateClient($client_id, $params);
-	}
-	
 	
 	/**
 	* Update Client information.
@@ -146,6 +135,7 @@ class Client_model extends Model
 	* Updates client information.  All fields are optional
 	*
 	* @param int $client_id The client ID of the Parent Client
+	* @param int $params['client_id'] The ID of the client being updated
 	* @param string $params['first_name'] Client's first name
 	* @param string $params['last_name'] Client's last name
 	* @param string $params['company'] Client's company
@@ -160,9 +150,7 @@ class Client_model extends Model
 	* @param string $params['username'] Client's username
 	* @param string $params['password'] Client's password
 	* 
-	*
-	* 
-	* @return mixed Result
+	* @return bool TRUE upon success, FALSE upon failure
 	*/
 	function UpdateClient($client_id, $params)
 	{
@@ -262,13 +250,14 @@ class Client_model extends Model
 		}
 		
 		$this->db->where('client_id', $params['client_id']);
-		$this->db->update('clients', $update_data);
-		
-		$response = $this->response->TransactionResponse(301,array());
-		
-		return $response;
+		if ($this->db->update('clients', $update_data)) {
+			return TRUE;
+		}
+		else
+		{
+			return FALSE;
+		}
 	}
-	
 	
 	/**
 	* Mark a client as suspended
@@ -276,28 +265,26 @@ class Client_model extends Model
 	* Suspends a client.  When a client is suspended, they can no longer perform any API funcions
 	*
 	* @param int $client_id The client ID of the Parent Client
-	* @param int $params['client_id'] Client to be suspended
+	* @param int $suspended_client_id Client to be suspended
 
 	* 
-	* @return mixed Result
+	* @return bool TRUE upon success, FALSE upon permissions error
 	*/
-	function SuspendClient($client_id, $params)
+	function SuspendClient($client_id, $suspended_client_id)
 	{
-		$client = $this->GetChildClientDetails($client_id, $params['client_id']);
+		$client = $this->GetChildClientDetails($client_id, $suspended_client_id);
 		
 		// Make sure it's their client
 		if(!$client) {
-			die($this->response->Error(2004));
+			return FALSE;
 		}
 		
 		$update_data['suspended'] = 1;
 		
-		$this->db->where('client_id', $params['client_id']);
+		$this->db->where('client_id', $suspended_client_id);
 		$this->db->update('clients', $update_data);
 		
-		$response = $this->response->TransactionResponse(302,array());
-		
-		return $response;
+		return TRUE;
 	}
 	
 	/**
@@ -306,28 +293,26 @@ class Client_model extends Model
 	* Unsuspends a client.  Restores full functionality to a client.
 	*
 	* @param int $client_id The client ID of the Parent Client
-	* @param int $params['client_id'] Client to be suspended
+	* @param int $unsuspended_client_id Client to be suspended
 
 	* 
-	* @return mixed Result
+	* @return bool TRUE upon success, FALSE upon permissions error.
 	*/
-	function UnsuspendClient($client_id, $params)
+	function UnsuspendClient($client_id, $unsuspended_client_id)
 	{
-		$client = $this->GetChildClientDetails($client_id, $params['client_id']);
+		$client = $this->GetChildClientDetails($client_id, $unsuspended_client_id);
 		
 		// Make sure it's their client
 		if(!$client) {
-			die($this->response->Error(2004));
+			return FALSE;
 		}
 		
 		$update_data['suspended'] = 0;
 		
-		$this->db->where('client_id', $params['client_id']);
+		$this->db->where('client_id', $unsuspended_client_id);
 		$this->db->update('clients', $update_data);
 		
-		$response = $this->response->TransactionResponse(303,array());
-		
-		return $response;
+		return TRUE;
 	}
 	
 	/**
@@ -336,28 +321,26 @@ class Client_model extends Model
 	* Deletes a client.  Does not actually delete the client, but marks it as deleted in the clients table.
 	*
 	* @param int $client_id The client ID of the Parent Client
-	* @param int $params['client_id'] Client to be deleted
+	* @param int $deleted_client_id Client to be deleted
 
 	* 
-	* @return mixed Result
+	* @return bool TRUE upon success, FALSE upon failure.
 	*/
-	function DeleteClient($client_id, $params)
+	function DeleteClient($client_id, $deleted_client_id)
 	{
-		$client = $this->GetChildClientDetails($client_id, $params['client_id']);
+		$client = $this->GetChildClientDetails($client_id, $deleted_client_id);
 		
 		// Make sure it's their client
 		if(!$client) {
-			die($this->response->Error(2004));
+			return FALSE;
 		}
 		
 		$update_data['deleted'] = 1;
 		
-		$this->db->where('client_id', $params['client_id']);
+		$this->db->where('client_id', $deleted_client_id);
 		$this->db->update('clients', $update_data);
 		
-		$response = $this->response->TransactionResponse(304,array());
-		
-		return $response;
+		return TRUE;
 	}
 	
 	/**

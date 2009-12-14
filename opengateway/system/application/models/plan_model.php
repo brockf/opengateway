@@ -1,4 +1,15 @@
 <?php
+/**
+* Plan Model 
+*
+* Contains all the methods used to create and manage client plans.
+*
+* @version 1.0
+* @author David Ryan
+* @author Brock Ferguson
+* @package OpenGateway
+
+*/
 
 class Plan_model extends Model
 {
@@ -7,6 +18,19 @@ class Plan_model extends Model
 		parent::Model();
 	}
 	
+	/*
+	* Creates a new plan under the specified client
+	*
+	* @param int $client_id The Client ID
+	* @param string $params['plan_type'] The name of the plan type (e.g. "paid"). Optional.
+	* @param string $params['amount'] Charge amount. Optional.
+	* @param int $params['interval'] Interval (days). Optional.
+	* @param string $params['notification_url'] Notification URL. Optional.
+	* @param string $params['name'] Name.  Optional.
+	* @param int $params['free_trial'] Number of days of a free trial. Optional.
+	*
+	* @return int|bool Returns Plan ID on success or FALSE on failure
+	*/ 
 	function NewPlan($client_id, $params)
 	{
 		// Get the plan params
@@ -32,8 +56,7 @@ class Plan_model extends Model
 			} else {
 				die($this->response->Error(1004));
 			}
-		}
-		
+		}		
 		
 		if(isset($plan['interval'])) {
 			if(!is_numeric($plan['interval']) || $plan['interval'] < 1) {
@@ -66,14 +89,28 @@ class Plan_model extends Model
 		$insert_data['client_id'] = $client_id;
 		$insert_data['deleted'] = 0;
 							
-		$this->db->insert('plans', $insert_data);
-		
-		$response_array['plan_id'] = $this->db->insert_id(); 
-		$response = $this->response->TransactionResponse(500, $response_array);
-		
-		return $response;
+		if ($this->db->insert('plans', $insert_data)) {
+			return $this->db->insert_id();
+		}
+		else {
+			return FALSE;
+		}
 	}
 	
+	/*
+	* Updates a plan
+	*
+	* @param int $client_id The Client ID
+	* @param int $params['plan_id'] The ID of the plan being updated
+	* @param string $params['plan_type'] The name of the plan type (e.g. "paid"). Optional.
+	* @param string $params['amount'] Charge amount. Optional.
+	* @param int $params['interval'] Interval (days). Optional.
+	* @param string $params['notification_url'] Notification URL. Optional.
+	* @param string $params['name'] Name.  Optional.
+	* @param int $params['free_trial'] Number of days of a free trial. Optional.
+	*
+	* @return bool Returns TRUE on success or FALSE on failure
+	*/ 
 	function UpdatePlan($client_id, $params)
 	{
 		// Get the plan params
@@ -129,17 +166,27 @@ class Plan_model extends Model
 		}
 		
 		$this->db->where('plan_id', $plan_details->plan_id);
-		$this->db->update('plans', $update_data);
-		
-		$response = $this->response->TransactionResponse(501, array());
-		
-		return $response;
+		if ($this->db->update('plans', $update_data)) {
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
 	}
 	
-	function GetPlan($client_id, $params)
+	/*
+	* Get plan information by plan ID
+	*
+	* @param int $client_id The Client ID
+	* @param int $plan_id The Plan ID
+	*
+	* @return array Plan information
+	*
+	*/
+	function GetPlan($client_id, $plan_id)
 	{
 		// Get the plan details
-		$plan_details = $this->GetPlanDetails($client_id, $params['plan_id']);
+		$plan_details = $this->GetPlanDetails($client_id, $plan_id);
 		
 		$plan_type = $this->GetPlanType($plan_details->plan_type_id);
 		
@@ -150,15 +197,29 @@ class Plan_model extends Model
 		
 		foreach($plan_details as $key => $value)
 		{
-			$data['plan'][$key] = $value;
+			$data[$key] = $value;
 		}
 		
 		return $data;
 	}
 	
+	/*
+	* Gets a list of all active plans with optional filters
+	*
+	* @param int $client_id The Client ID
+	* @param string $params['plan_type'] The name of the plan type (e.g. "paid"). Optional.
+	* @param string $params['amount'] Amount filter. Optional.
+	* @param int $params['interval'] Interval (days) filter. Optional.
+	* @param string $params['notification_url'] Notification URL filter. Optional.
+	* @param string $params['name'] Name filter.  Optional.
+	* @param int $params['free_trial'] Number of days of a free trial. Optional.
+	* @param int $params['offset'] Database query offset.  Optional.  Defaults to 0.
+	* @param int $params['limit'] Database query limit.  Optional.  Defaults to config value.
+	*
+	* @return array|bool Returns an array of all plans matching query or FALSE if none.
+	*/	
 	function GetPlans($client_id, $params)
-	{
-		
+	{		
 		if(isset($params['plan_type'])) {
 			$plan_type_id = $this->GetPlanTypeId($params['plan_type']);
 			$this->db->where('plans.plan_type_id', $plan_type_id);
@@ -193,51 +254,63 @@ class Plan_model extends Model
 		
 		if(isset($params['limit'])) {
 			$this->db->limit($params['limit'], $offset);
-		} else {
-			$this->db->limit($this->config->item('query_result_default_limit'), $offset);
 		}
 		
 		$this->db->join('plan_types', 'plans.plan_type_id = plan_types.plan_type_id', 'inner');
 		$this->db->where('client_id', $client_id);
 		$this->db->where('deleted', 0);
 		$query = $this->db->get('plans');
+		$data = array();
 		if($query->num_rows() > 0) {
-			$data['results'] = $query->num_rows();
-			$i=0;
 			foreach($query->result() as $row)
 			{
-				$data['plans']['plan'][$i]['id'] = $row->plan_id;
-				$data['plans']['plan'][$i]['type'] = $row->type;
-				$data['plans']['plan'][$i]['name'] = $row->name;
-				$data['plans']['plan'][$i]['amount'] = $row->amount;
-				$data['plans']['plan'][$i]['interval'] = $row->interval;
-				$data['plans']['plan'][$i]['notification_url'] = $row->notification_url;
-				$data['plans']['plan'][$i]['free_trial'] = $row->free_trial;
-				$i++;
+				$data[] = array(
+								'id' => $row->plan_id,
+								'type' => $row->type,
+								'name' => $row->name,
+								'amount' => $row->amount,
+								'interval' => $row->interval,
+								'notification_url' => $row->notification_url,
+								'free_trial' => $row->free_trial
+								);
 			}
 			
 		} else {
-			$data['results'] = 0;
+			return FALSE;
 		}
 		
 		return $data;
 	}
 	
-	function DeletePlan($client_id, $params)
+	/*
+	* Marks a plan as deleted
+	*
+	* @param int $client_id The Client ID
+	* @param int $plan_id The ID of the plan
+	*
+	* @return bool TRUE upon success
+	*
+	*/	
+	function DeletePlan($client_id, $plan_id)
 	{
 		// Get the plan details
-		$plan_details = $this->GetPlanDetails($client_id, $params['plan_id']);
+		$plan_details = $this->GetPlanDetails($client_id, $plan_id);
 		
 		$update_data['deleted'] = 1;
 		$this->db->where('plan_id', $plan_details->plan_id);
 		$this->db->update('plans', $update_data);
 		
-		$response = $this->response->TransactionResponse(502, array());
-		
-		return $response;
-		
+		return TRUE;
 	}
 	
+	/**
+	* Verifies that the plan exists, is available to the client, and is active
+	*
+	* @param int $client_id The Client ID
+	* @param int $plan_id The Plan ID
+	*
+	* @return array Plan information
+	*/	
 	function GetPlanDetails($client_id, $plan_id)
 	{
 		$this->db->where('client_id', $client_id);
@@ -248,10 +321,16 @@ class Plan_model extends Model
 			return $query->row();
 		} else {
 			die($this->response->Error(7001));
-		}
-	
+		}	
 	}
 	
+	/**
+	* Gets the ID number for a plan type by plan type namme
+	*
+	* @param string $type The name of the plan type
+	*
+	* @return int The ID of the plan type
+	*/	
 	function GetPlanTypeId($type)
 	{
 		$this->db->where('type', $type);
@@ -265,6 +344,13 @@ class Plan_model extends Model
 		return $plan_type_id;
 	}
 	
+	/**
+	* Gets the plan type name by the plan type ID
+	*
+	* @param int $plan_type_id The ID of the plan type
+	*
+	* @return string The name of the plantype
+	*/	
 	function GetPlanType($plan_type_id)
 	{
 		$this->db->where('plan_type_id', $plan_type_id);

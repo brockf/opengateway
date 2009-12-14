@@ -9,6 +9,7 @@
 * @package OpenGateway
 
 */
+
 class Subscription_model extends Model
 {
 	function Subscription_model()
@@ -26,13 +27,16 @@ class Subscription_model extends Model
  	* @param int $customer_id The customer ID
 	* @param date $start_date The date the subscription should begin
 	* @param date $end_date The date the subscription should end
-	* @param int $total_occurrence The total number of charges for this subscription.
-	* @param string $notifcation_url The notification URL
-	* @param int $params['amount'] The amount to be charged
+	* @param date $next_charge_data The date that the subscription should next be charged
+	* @param int $total_occurrences The total number of charges for this subscription.
+	* @param string $notification_url The notification URL
+	* @param int $amount The amount to be charged
+	* @param int $plan_id A link to a plan.  Optional.
 	* 
 	* @return int The new subscription ID
 	*/
-	function SaveSubscription($client_id, $gateway_id, $customer_id, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id)
+	
+	function SaveSubscription($client_id, $gateway_id, $customer_id, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id = 0)
 	{
 		$timestamp = date('Y-m-d H:i:s');
 		$insert_data = array(
@@ -61,6 +65,8 @@ class Subscription_model extends Model
 	*
 	* @param int $subscription_id The subscription_id
 	* @param int $api_customer_reference The customer profile id
+	*
+	* @return bool TRUE upon success.
 	*/
 	function SaveApiCustomerReference($subscription_id, $api_customer_reference)
 	{
@@ -68,6 +74,8 @@ class Subscription_model extends Model
 		
 		$this->db->where('subscription_id', $subscription_id);
 		$this->db->update('subscriptions', $update_data);
+		
+		return TRUE;
 	}
 	
 	/**
@@ -77,6 +85,8 @@ class Subscription_model extends Model
 	*
 	* @param int $subscription_id The subscription_id
 	* @param int $api_payment_reference The customer payment id
+	*
+	* @return bool TRUE upon success.
 	*/
 	function SaveApiPaymentReference($subscription_id, $api_payment_reference)
 	{
@@ -84,6 +94,8 @@ class Subscription_model extends Model
 		
 		$this->db->where('subscription_id', $subscription_id);
 		$this->db->update('subscriptions', $update_data);
+		
+		return TRUE;
 	}
 	
 	/**
@@ -105,9 +117,11 @@ class Subscription_model extends Model
 	/**
 	* Make a subscription inactive
 	*
-	* Makes a subscription Inactive
+	* Makes a subscription inactive
 	*
 	* @param int $subscription_id The subscription_id
+	*
+	* @return bool TRUE upon success.
 	*/
 	function MakeInactive($subscription_id)
 	{
@@ -115,6 +129,8 @@ class Subscription_model extends Model
 		
 		$this->db->where('subscription_id', $subscription_id);
 		$this->db->update('subscriptions', $update_data);
+		
+		return TRUE;
 	}
 	
 	/**
@@ -125,7 +141,7 @@ class Subscription_model extends Model
 	* @param int $client_id The client ID 
 	* @param int $subscription_id The subscription_id
 	* 
-	* @return mixed Array Containing subscription details
+	* @return array Subscription details
 	*/
 	function GetSubscriptionDetails($client_id, $subscription_id)
 	{
@@ -149,24 +165,15 @@ class Subscription_model extends Model
 	* @param int $client_id The client ID.
 	* @param int $params['recurring_id'];
 	* 
-	* @return mixed Array containing results
+	* @return array|bool Details for a specific subscription or FALSE upon failure
 	*/
 	
-	function GetRecurring ($client_id, $params)
+	function GetRecurring ($client_id, $recurring_id)
 	{
-		// Validate the required fields
-		$this->load->library('field_validation');
-		$this->field_validation->ValidateRequiredFields('GetRecurring', $params);
-	
 		// Make sure they only get their own charges
 		$this->db->where('subscriptions.client_id', $client_id);
 		
-		// Check which search paramaters are set
-		if(isset($params['gateway_id'])) {
-			$this->db->where('gateway_id', $params['gateway_id']);
-		}
-		
-		$this->db->where('subscriptions.subscription_id', $params['recurring_id']);
+		$this->db->where('subscriptions.subscription_id', $recurring_id);
 		
 		$this->db->join('customers', 'customers.customer_id = subscriptions.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
@@ -175,43 +182,43 @@ class Subscription_model extends Model
 		$query = $this->db->get('subscriptions');
 		
 		if ($query->num_rows() == 0) {
-			 die($this->response->Error(6004));
+			 return FALSE;
 		}
 		
 		$row = $query->row();
 		
-		$data['recurring']['id'] = $row->subscription_id;
-		$data['recurring']['create_date'] = $row->timestamp;
-		$data['recurring']['amount'] = $row->amount;
-		$data['recurring']['start_date'] = $row->start_date;
-		$data['recurring']['end_date'] = $row->end_date;
-		$data['recurring']['number_occurences'] = $row->number_occurrences;
-		$data['recurring']['notification_url'] = $row->notification_url;
-		$data['recurring']['status'] = ($row->active == '1') ? 'active' : 'cancelled';
+		$data['id'] = $row->subscription_id;
+		$data['create_date'] = $row->timestamp;
+		$data['amount'] = $row->amount;
+		$data['start_date'] = $row->start_date;
+		$data['end_date'] = $row->end_date;
+		$data['number_occurences'] = $row->number_occurrences;
+		$data['notification_url'] = $row->notification_url;
+		$data['status'] = ($row->active == '1') ? 'active' : 'cancelled';
 		
 		if($row->customer_id !== 0) {
-			$data['recurring']['customer']['id'] = $row->customer_id;
-			$data['recurring']['customer']['internal_id'] = $row->internal_id;
-			$data['recurring']['customer']['firstname'] = $row->first_name;
-			$data['recurring']['customer']['lastname'] = $row->last_name;
-			$data['recurring']['customer']['company'] = $row->company;
-			$data['recurring']['customer']['address_1'] = $row->address_1;
-			$data['recurring']['customer']['address_2'] = $row->address_2;
-			$data['recurring']['customer']['city'] = $row->city;
-			$data['recurring']['customer']['state'] = $row->state;
-			$data['recurring']['customer']['postal_code'] = $row->postal_code;
-			$data['recurring']['customer']['country'] = $row->iso2;
-			$data['recurring']['customer']['email'] = $row->email;
-			$data['recurring']['customer']['phone'] = $row->phone;
+			$data['customer']['id'] = $row->customer_id;
+			$data['customer']['internal_id'] = $row->internal_id;
+			$data['customer']['firstname'] = $row->first_name;
+			$data['customer']['lastname'] = $row->last_name;
+			$data['customer']['company'] = $row->company;
+			$data['customer']['address_1'] = $row->address_1;
+			$data['customer']['address_2'] = $row->address_2;
+			$data['customer']['city'] = $row->city;
+			$data['customer']['state'] = $row->state;
+			$data['customer']['postal_code'] = $row->postal_code;
+			$data['customer']['country'] = $row->iso2;
+			$data['customer']['email'] = $row->email;
+			$data['customer']['phone'] = $row->phone;
 		}
 		
 		if($row->plan_id != 0) {
-			$data['recurring']['plan']['plan_id'] = $row->plan_id;
-			$data['recurring']['plan']['plan_type'] = $row->type;
-			$data['recurring']['plan']['name'] = $row->name;
-			$data['recurring']['plan']['amount'] = $row->amount;
-			$data['recurring']['plan']['interval'] = $row->interval;
-			$data['recurring']['plan']['notification_url'] = $row->notification_url;
+			$data['plan']['plan_id'] = $row->plan_id;
+			$data['plan']['plan_type'] = $row->type;
+			$data['plan']['name'] = $row->name;
+			$data['plan']['amount'] = $row->amount;
+			$data['plan']['interval'] = $row->interval;
+			$data['plan']['notification_url'] = $row->notification_url;
 		}
 		
 		return $data;
@@ -284,8 +291,6 @@ class Subscription_model extends Model
 		
 		if(isset($params['limit'])) {
 			$this->db->limit($params['limit'], $offset);
-		} else {
-			$this->db->limit($this->config->item('query_result_default_limit'), $offset);
 		}
 		
 		$this->db->join('customers', 'customers.customer_id = subscriptions.customer_id', 'left');
@@ -293,48 +298,48 @@ class Subscription_model extends Model
 		$this->db->join('plans', 'plans.plan_id = subscriptions.plan_id', 'left');
 		$this->db->join('plan_types', 'plan_types.plan_type_id = plans.plan_type_id', 'left');
 		$query = $this->db->get('subscriptions');
+		$data = array();
 		if($query->num_rows() > 0) {
-			$data['results'] = $query->num_rows();
 			$i=0;
 			foreach($query->result() as $row) {
-				$data['recurrings']['recurring'][$i]['id'] = $row->subscription_id;
-				$data['recurrings']['recurring'][$i]['create_date'] = $row->timestamp;
-				$data['recurrings']['recurring'][$i]['amount'] = $row->amount;
-				$data['recurrings']['recurring'][$i]['start_date'] = $row->start_date;
-				$data['recurrings']['recurring'][$i]['end_date'] = $row->end_date;
-				$data['recurrings']['recurring'][$i]['number_occurences'] = $row->number_occurrences;
-				$data['recurrings']['recurring'][$i]['notification_url'] = $row->notification_url;
-				$data['recurrings']['recurring'][$i]['status'] = ($row->active == '1') ? 'active' : 'cancelled';
+				$data[$i]['id'] = $row->subscription_id;
+				$data[$i]['create_date'] = $row->timestamp;
+				$data[$i]['amount'] = $row->amount;
+				$data[$i]['start_date'] = $row->start_date;
+				$data[$i]['end_date'] = $row->end_date;
+				$data[$i]['number_occurences'] = $row->number_occurrences;
+				$data[$i]['notification_url'] = $row->notification_url;
+				$data[$i]['status'] = ($row->active == '1') ? 'active' : 'cancelled';
 				
 				if($row->customer_id !== 0) {
-					$data['recurrings']['recurring'][$i]['customer']['id'] = $row->customer_id;
-					$data['recurrings']['recurring'][$i]['customer']['internal_id'] = $row->internal_id;
-					$data['recurrings']['recurring'][$i]['customer']['firstname'] = $row->first_name;
-					$data['recurrings']['recurring'][$i]['customer']['lastname'] = $row->last_name;
-					$data['recurrings']['recurring'][$i]['customer']['company'] = $row->company;
-					$data['recurrings']['recurring'][$i]['customer']['address_1'] = $row->address_1;
-					$data['recurrings']['recurring'][$i]['customer']['address_2'] = $row->address_2;
-					$data['recurrings']['recurring'][$i]['customer']['city'] = $row->city;
-					$data['recurrings']['recurring'][$i]['customer']['state'] = $row->state;
-					$data['recurrings']['recurring'][$i]['customer']['postal_code'] = $row->postal_code;
-					$data['recurrings']['recurring'][$i]['customer']['country'] = $row->iso2;
-					$data['recurrings']['recurring'][$i]['customer']['email'] = $row->email;
-					$data['recurrings']['recurring'][$i]['customer']['phone'] = $row->phone;
+					$data[$i]['customer']['id'] = $row->customer_id;
+					$data[$i]['customer']['internal_id'] = $row->internal_id;
+					$data[$i]['customer']['firstname'] = $row->first_name;
+					$data[$i]['customer']['lastname'] = $row->last_name;
+					$data[$i]['customer']['company'] = $row->company;
+					$data[$i]['customer']['address_1'] = $row->address_1;
+					$data[$i]['customer']['address_2'] = $row->address_2;
+					$data[$i]['customer']['city'] = $row->city;
+					$data[$i]['customer']['state'] = $row->state;
+					$data[$i]['customer']['postal_code'] = $row->postal_code;
+					$data[$i]['customer']['country'] = $row->iso2;
+					$data[$i]['customer']['email'] = $row->email;
+					$data[$i]['customer']['phone'] = $row->phone;
 				}
 				
 				if($row->plan_id != 0) {
-					$data['recurrings']['recurring'][$i]['plan']['plan_id'] = $row->plan_id;
-					$data['recurrings']['recurring'][$i]['plan']['plan_type'] = $row->type;
-					$data['recurrings']['recurring'][$i]['plan']['name'] = $row->name;
-					$data['recurrings']['recurring'][$i]['plan']['amount'] = $row->amount;
-					$data['recurrings']['recurring'][$i]['plan']['interval'] = $row->interval;
-					$data['recurrings']['recurring'][$i]['plan']['notification_url'] = $row->notification_url;
+					$data[$i]['plan']['plan_id'] = $row->plan_id;
+					$data[$i]['plan']['plan_type'] = $row->type;
+					$data[$i]['plan']['name'] = $row->name;
+					$data[$i]['plan']['amount'] = $row->amount;
+					$data[$i]['plan']['interval'] = $row->interval;
+					$data[$i]['plan']['notification_url'] = $row->notification_url;
 				}
 				
 				$i++;
 			}
 		} else {
-			$data['results'] = 0;
+			return FALSE;
 		}
 		
 		return $data;
@@ -351,36 +356,41 @@ class Subscription_model extends Model
 	* @param int $params['customer_id'] The new customer id. Optional.
 	* @param int $params['amount'] The new amount to charge. Optional
 	* @param int $params['interval'] The new number of days between charges. Optional.
+	* @param int $params['plan_id'] The new plan ID. Optional.
+	*
+	* @return bool TRUE upon success, FALSE upon failure
 	* 
 	*/
 	function UpdateRecurring($client_id, $params)
 	{
-		$CI =& get_instance();
-		
 		if(!isset($params['recurring_id'])) {
-			die($this->response->Error(6002));
+			return FALSE;
 		}
 
-		if(isset($params['recur']['notification_url'])) {
-			$update_data['notification_url'] = $params['recur']['notification_url'];
+		if(isset($params['notification_url'])) {
+			$update_data['notification_url'] = $params['notification_url'];
 		}
 		
 		if(isset($params['customer_id'])) {
 			$update_data['customer_id'] = $params['customer_id'];
-			$CI->load->model('customer_model');
-			$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
+			$this->load->model('customer_model');
+			$customer = $this->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
 		} else {
 			$customer = FALSE;
 		}
 		
-		if(isset($params['recur']['amount'])) {
-			$update_data['amount'] = $params['recur']['amount'];
+		if(isset($params['amount'])) {
+			$update_data['amount'] = $params['amount'];
 		}
 		
-		if(isset($params['recur']['next_charge_date'])) {
+		if(isset($params['plan_id'])) {
+			$update_data['amount'] = $params['plan_id'];
+		}
+		
+		if(isset($params['next_charge_date'])) {
 			$this->load->library('field_validation');
-			if ($this->field_validation->ValidateDate($params['recur']['next_charge_date'])) {
-				$update_data['next_charge_date'] = $params['recur']['next_charge_date'];			
+			if ($this->field_validation->ValidateDate($params['next_charge_date'])) {
+				$update_data['next_charge_date'] = $params['next_charge_date'];			
 			}
 			else {
 				die($this->response->Error(5007));
@@ -407,56 +417,53 @@ class Subscription_model extends Model
 		$this->db->update('subscriptions', $update_data);
 		
 		// Update the subscription with the gateway
-		$CI =& get_instance();
-		$CI->load->model('gateway_model');
-		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $subscription->gateway_id);
+		$this->load->model('gateway_model');
+		$gateway = $this->gateway_model->GetGatewayDetails($client_id, $subscription->gateway_id);
 		$gateway_type = $gateway['name'];
 		
-		$CI->load->library('payment/'.$gateway_type);
-		$update_success = $CI->$gateway_type->UpdateRecurring($client_id, $gateway, $subscription, $customer, $params);
+		$this->load->library('payment/'.$gateway_type);
+		$update_success = $this->$gateway_type->UpdateRecurring($client_id, $gateway, $subscription, $customer, $params);
 		
 		if(!$update_success) {
-			die($this->response->Error(6005));
+			return FALSE;
 		}
 		
-		$response = $this->response->TransactionResponse(102,array());
-		
-		return $response;
+		return TRUE;
 	}
 	
-	function CancelRecurring($client_id, $params)
-	{
-		if(!isset($params['recurring_id'])) {
-			die($this->response->Error(6002));
-		}
+	/*
+	* Cancels the recurring billing
+	*
+	* @param int $client_id The Client ID
+	* @param int $recurring_id The recurring charge ID
+	*
+	* @return bool TRUE upon success, FALSE upon fail
+	*
+	*/
 	
-		$CI =& get_instance();
-		
-		// Validate the required fields
-		$this->load->library('field_validation');
-		$this->field_validation->ValidateRequiredFields('CancelRecur', $params);
-
+	function CancelRecurring($client_id, $recurring_id)
+	{
 		// Get the subscription information
-		$CI->load->model('subscription_model');
-		$subscription = $CI->subscription_model->GetSubscriptionDetails($client_id, $params['recurring_id']);
+		$this->load->model('subscription_model');
+		$subscription = $this->subscription_model->GetSubscriptionDetails($client_id, $recurring_id);
 		
 		// Get the gateway info to load the proper library
-		$CI->load->model('gateway_model');
-		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $subscription->gateway_id);
+		$this->load->model('gateway_model');
+		$gateway = $this->gateway_model->GetGatewayDetails($client_id, $subscription->gateway_id);
 		
 		$gateway_name = $subscription->name;
 		$this->load->library('payment/'.$gateway_name);
 		$cancelled = $this->$gateway_name->CancelRecurring($client_id, $subscription, $gateway);
 		
 		if($cancelled) {
-			$this->MakeInactive($params['recurring_id']);
-			$response = $this->response->TransactionResponse(101,array());
+			$this->MakeInactive($recurring_id);
 		} else {
-			die($this->response->Error(5014));
+			return FALSE;
 		}
 		
-		return $response;
+		return TRUE;
 	}
+	
 	
 	function GetPlansByCustomer($customer_id)
 	{
