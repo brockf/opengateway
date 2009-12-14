@@ -221,13 +221,6 @@ class Gateway_model extends Model
 			die($this->response->Error(5008));
 		}
 		
-		// Validate the amount
-		$valid_amount = $this->field_validation->ValidateAmount($params['amount']);
-		
-		if(!$valid_amount) {
-			die($this->response->Error(5009));
-		}
-		
 		// Validate the required fields
 		$this->load->library('field_validation');
 		$this->field_validation->ValidateRequiredFields('Recur', $params);
@@ -257,10 +250,44 @@ class Gateway_model extends Model
 		
 		$recur = $params['recur'];
 		
-		if(!is_numeric($recur['interval'])) {
-			die($this->response->Error(5011));
+		if(isset($recur['plan_id'])) {
+			
+			$CI->load->model('plan_model');
+			$plan_details = $CI->plan_model->GetPlanDetails($client_id, $recur['plan_id']);
+			
+			$interval 			= $plan_details->interval;
+			$notification_url 	= $plan_details->notification_url;
+			$amount 			= $plan_details->amount;
+			$free_trial 		= $plan_details->free_trial;
+			
+			$plan_id = $plan_details->plan_id;
+			
+		} else {
+			
+			if(!is_numeric($recur['interval'])) {
+				die($this->response->Error(5011));
+			} else {
+				$interval = $recur['interval'];
+			}
+			
+			// Check for a notification URL
+			if(isset($recur['notification_url'])) {
+				$notification_url = $recur['notification_url'];
+			} else {
+				$notification_url = '';
+			}
+			
+			// Validate the amount
+			$amount = $params['amount'];
+			$valid_amount = $this->field_validation->ValidateAmount($amount);
+			
+			if(!$valid_amount) {
+				die($this->response->Error(5009));
+			}
+			
+			$plan_id = 0;
+			$free_trial = FALSE;
 		}
-		
 		
 		// Validate the start date to make sure it is in the future
 		if(isset($recur['start_date'])) {
@@ -273,9 +300,12 @@ class Gateway_model extends Model
 			$start_date = date('Y-m-d', (time()));
 		}
 		
-		// Get the next payment date
-		$next_charge_date = date('Y-m-d', strtotime($start_date) + ($recur['interval'] * 86400));
+		if($free_trial) {
+			$start_date = date('Y-m-d', strtotime($start_date) + ($free_trial * 86400));
+		}
 		
+		// Get the next payment date
+		$next_charge_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400));
 		
 		// If an end date was passed, make sure it's valid
 		if(isset($recur['end_date'])) {
@@ -291,24 +321,17 @@ class Gateway_model extends Model
 			$end_date = date('Y-m-d', strtotime($start_date) + ($this->config->item('max_recurring_days_from_today') * 86400));
 		}
 		
-		// Check for a notification URL
-		if(isset($recur['notification_url'])) {
-			$notification_url = $recur['notification_url'];
-		} else {
-			$notification_url = '';
-		}
-		
 		// Figure the total number of occurrences
-		$total_occurrences = round((strtotime($end_date) - strtotime($start_date)) / ($recur['interval'] * 86400), 0);
+		$total_occurrences = round((strtotime($end_date) - strtotime($start_date)) / ($interval * 86400), 0);
 		
 		// Save the subscription info
 		$CI->load->model('subscription_model');
-		$subscription_id = $CI->subscription_model->SaveSubscription($client_id, $params['gateway_id'], $customer['customer_id'], $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $params);
+		$subscription_id = $CI->subscription_model->SaveSubscription($client_id, $params['gateway_id'], $customer['customer_id'], $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id);
 		
 		// Load the proper library
 		$gateway_name = $gateway['name'];
 		$this->load->library('payment/'.$gateway_name);
-		return $this->$gateway_name->Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $recur['interval'], $credit_card, $subscription_id, $total_occurrences);
+		return $this->$gateway_name->Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences);
 	}
 	
 	/**

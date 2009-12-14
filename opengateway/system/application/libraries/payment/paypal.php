@@ -1,28 +1,6 @@
 <?php
 class Paypal
 {
-	public $post = array(
-		//'creditcardtype'	=> '', 		// Visa, MasterCard, Discover, Amex
-		//'acct'				=> '',		// Credit card number
-		//'expdate'			=> '',		// MMYYYY
-		'cvv2'				=> '123',		// 4 char max
-		//'firstname'			=> '',		// 25 char max
-		//'lastname'			=> '',		// 25 char max
-		//'street'			=> '',		// 100 char max
-		//'city'				=> '',		// 40 char max
-		//'state'				=> '',		// 40 char max
-		'countrycode'		=> 'US',	// 2 char max
-		//'zip'				=> '',		// 20 char max
-		'phonenum'			=> '',		// 20 char max
-		//'amt'				=> 0, 		// <= 10,000 USD, no currency symbol, required 2 decimal places, comma optional
-		'invnum'			=> '',		// Internal unique ID, helps prevent duplicate charges
-		'version'			=> '56.0',
-		'paymentaction'		=> 'sale'
-
-
-	);
-
-
 	 function Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card)
 	{
 		$CI =& get_instance();
@@ -58,6 +36,8 @@ class Paypal
 		}
 		
 		$post = array();
+		$post['version'] = '56.0';
+		$post['paymentaction'] = 'sale';
 		$post['method'] = 'DoDirectPayment';
 		$post['user'] = $gateway['user'];
 		$post['pwd'] = $gateway['pwd'];
@@ -68,18 +48,22 @@ class Paypal
 		$post['expdate'] = $credit_card['exp_month'].$credit_card['exp_year'];
 		$post['invnum'] = $order_id;
 		
+		if(isset($credit_card['cvv'])) {
+			$post['cvv2'] = $credit_card['cvv'];
+		}
+		
 		if(isset($params['customer_id'])) {
 			$post['firstname'] = $customer['first_name'];
 			$post['lastname'] = $customer['last_name'];
 			$post['street'] = $customer['address_1'].$customer['address_2'];
 			$post['city'] = $customer['city'];
-			$post['state'] = 'CO';
+			$post['state'] = $customer['state'];
 			$post['zip'] = $customer['postal_code'];
+			$post['countrycode'] = $customer['country'];
+			$post['phonenum'] = $customer['phone'];
 		}
 		
-		$post_data = array_merge($post, $this->post);
-		
-		$response = $this->Process($post_url, $post_data, $order_id);
+		$response = $this->Process($post_url, $post, $order_id);
 		
 		$response = $this->response_to_array($response);
 		
@@ -96,7 +80,7 @@ class Paypal
 			$CI->load->model('order_model');
 			$CI->order_model->SetStatus($order_id, 0);
 			
-			$response_array = array('reason' => $response['reason']);
+			$response_array = array('reason' => $response['L_LONGMESSAGE0']);
 			$response = $CI->response->TransactionResponse(2, $response_array);
 		}
 		
@@ -149,13 +133,8 @@ class Paypal
 	{		
 		$CI =& get_instance();
 		
-		// Paypal has a lot of required fields
-		if(!isset($params['description'])) {
-			die($CI->response->Error(5012));
-		}
-		
 		// Create a new paypal profile
-		$response = $this->CreateProfile($gateway, $customer, $params, $start_date, $subscription_id, $total_occurrences);
+		$response = $this->CreateProfile($client_id, $gateway, $customer, $params, $start_date, $subscription_id, $total_occurrences, $interval);
 		
 		if($response) {
 			$profile_id = $response['profile_id'];	
@@ -181,7 +160,7 @@ class Paypal
 		return $response;
 	}
 	
-	function CreateProfile($gateway, $customer, $params, $start_date, $subscription_id, $total_occurrences)
+	function CreateProfile($client_id, $gateway, $customer, $params, $start_date, $subscription_id, $total_occurrences, $interval)
 	{
 		$CI =& get_instance();
 		
@@ -226,11 +205,13 @@ class Paypal
 		$post['creditcardtype'] = $card_type;
 		$post['expdate'] = $params['credit_card']['exp_month'].$params['credit_card']['exp_year'];
 		$post['billingperiod'] = 'Day';
-		$post['billingfrequency'] = $params['recur']['interval'];
+		$post['billingfrequency'] = $interval;
 		$post['profilestartdate'] = date('c', strtotime($start_date));
-		$post['desc'] = $params['description'];
 		$post['totalbillingcycles'] = $total_occurrences;
-		//$post['invnum'] = $order_id;
+		
+		if(isset($params['credit_card']['cvv'])) {
+			$post['cvv2'] = $params['credit_card']['cvv'];
+		}
 		
 		if(isset($params['customer_id'])) {
 			$post['firstname'] = $customer['first_name'];
@@ -242,22 +223,22 @@ class Paypal
 			$post['email'] = $customer['email'];
 		} else {
 			$error = FALSE;
-			if(!isset($params['first_name'])) {
+			if(!isset($params['customer']['first_name'])) {
 				$error = TRUE;
 			}
-			if(!isset($params['last_name'])) {
+			if(!isset($params['customer']['last_name'])) {
 				$error = TRUE;
 			}
-			if(!isset($params['address_1'])) {
+			if(!isset($params['customer']['address_1'])) {
 				$error = TRUE;
 			}
-			if(!isset($params['city'])) {
+			if(!isset($params['customer']['city'])) {
 				$error = TRUE;
 			}
-			if(!isset($params['state'])) {
+			if(!isset($params['customer']['state'])) {
 				$error = TRUE;
 			}
-			if(!isset($params['postal_code'])) {
+			if(!isset($params['customer']['postal_code'])) {
 				$error = TRUE;
 			}
 			
@@ -266,24 +247,28 @@ class Paypal
 			}
 			
 			
-			$post['firstname'] = $params['first_name'];
-			$post['lastname'] = $params['last_name'];
-			$post['street'] = $params['address_1'];
+			$post['firstname'] = $params['customer']['first_name'];
+			$post['lastname'] = $params['customer']['last_name'];
+			$post['street'] = $params['customer']['address_1'];
 			
-			if(isset($params['address_1'])) {
-				$post['street'] .= $params['address_2'];
+			if(isset($params['customer']['address_1'])) {
+				$post['street'] .= ' '.$params['customer']['address_2'];
 			}
 			
-			$post['city'] = $params['city'];
-			$post['state'] = $params['state'];
-			$post['zip'] = $params['postal_code'];
+			$post['city'] = $params['customer']['city'];
+			$post['state'] = $params['customer']['state'];
+			$post['zip'] = $params['customer']['postal_code'];
 			
-			if(isset($params['email'])) {
-				$post['email'] .= $params['email'];
+			if(isset($params['customer']['email'])) {
+				$post['email'] .= $params['customer']['email'];
 			}
-			
-			
 		}
+		
+		// Get the company name
+		$CI->load->model('client_model');
+		$company = $CI->client_model->GetClientDetails($client_id)->company;
+		
+		$post['desc'] = $company.' Subscription';
 		
 		$post_response = $this->Process($post_url, $post);
 		
@@ -328,6 +313,68 @@ class Paypal
 		$post['signature'] = $gateway['signature'];
 		$post['profileid'] = $subscription->api_customer_reference;
 		$post['action'] = 'Cancel';
+		
+		$post_response = $this->Process($post_url, $post);
+		
+		$post_response = $this->response_to_array($post_response);
+		
+		if($post_response['ACK'] == 'Success') {
+			$response = TRUE;
+		} else {
+			$response = FALSE;
+		}
+		
+		return $response;
+	}
+	
+	function UpdateRecurring($client_id, $gateway, $subscription, $customer, $params)
+	{
+		$CI =& get_instance();
+		$CI->load->model('subscription_model');
+		
+		switch($gateway['mode'])
+		{
+			case 'live':
+				$post_url = $subscription->arb_live_url;
+			break;
+			case 'test':
+				$post_url = $subscription->arb_test_url;
+			break;
+			case 'dev':
+				$post_url = $subscription->arb_dev_url;
+			break;
+		}
+		
+		$post = array();
+		$post['version'] = '58.0';
+		$post['method'] = 'UpdateRecurringPaymentsProfile';
+		$post['user'] = $gateway['user'];
+		$post['pwd'] = $gateway['pwd'];
+		$post['signature'] = $gateway['signature'];
+		$post['profileid'] = $subscription->api_customer_reference;
+		
+		if(isset($params['amount'])) {
+			$post['amt'] = $params['amount'];
+		}
+		
+		if(isset($params['customer_id'])){
+			
+			$post['firstname'] = $customer['first_name'];
+			$post['lastname'] = $customer['last_name'];
+			$post['street'] = $customer['address_1'];
+			
+			if($customer['address_1'] != '') {
+				$post['street'] .= ' '.$customer['address_2'];
+			}
+			
+			$post['city'] = $customer['city'];
+			$post['state'] = $customer['state'];
+			$post['zip'] = $customer['postal_code'];
+		}
+		
+		if(isset($params['recur']['interval'])) {
+			$post['totalbillingcycles'] = round((strtotime($subscription->end_date) - strtotime($subscription->start_date)) / ($params['recur']['interval'] * 86400), 0);
+		}
 		
 		$post_response = $this->Process($post_url, $post);
 		

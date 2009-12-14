@@ -211,6 +211,11 @@ class exact
 		return TRUE;
 	}
 	
+	function UpdateRecurring()
+	{
+		return TRUE;
+	}
+	
 	function Process($trxnProperties, $post_url, $order_id) 
 	{
 		$trxn = array("Transaction"=>$trxnProperties);

@@ -8,8 +8,16 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>
 		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>
 	</authentication>
-	<type>GetCustomer</type>
-	<customer_id>140</customer_id>
+	<type>UpdatePlan</type>
+	<plan_id>9</plan_id>
+	<plan>
+		<type>free</type>
+		<amount>88.88</amount>
+		<interval>15</interval>
+		<notification_url>http://google.com/</notification_url>
+		<name>Updated Plan</name>
+		<free_trial>20</free_trial>
+	</plan>
 </request>';
 
 $postfields = 'request='.$post_string; 

@@ -8,12 +8,14 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>
 		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>
 	</authentication>
-	<type>UpdateRecur</type>
-	<recurring_id>107</recurring_id>
+	<type>UpdateRecurring</type>
+	<recurring_id>175</recurring_id>
 	<amount>10.99</amount>
-	<interval>10</interval>
-	<notification_url>http://notify.com/notify.php</notification_url>
-	<customer_id>5</customer_id>
+	<customer_id>2</customer_id>
+	<recur>
+		<interval>10</interval>
+		<notification_url>http://notify.com/notify.php</notification_url>
+	</recur>
 </request>';
 
 $postfields = 'request='.$post_string; 

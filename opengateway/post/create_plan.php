@@ -8,8 +8,15 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>
 		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>
 	</authentication>
-	<type>GetCustomer</type>
-	<customer_id>140</customer_id>
+	<type>NewPlan</type>
+	<plan>
+		<plan_type>paid</plan_type>
+		<amount>11.99</amount>
+		<interval>30</interval>
+		<notification_url>http://yahoo.com/</notification_url>
+		<name>Sample Plan</name>
+		<free_trial>60</free_trial>
+	</plan>
 </request>';
 
 $postfields = 'request='.$post_string; 

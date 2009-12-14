@@ -9,6 +9,7 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>
 	</authentication>
 	<type>GetCustomers</type>
+	<limit>500</limit>
 </request>';
 
 $postfields = 'request='.$post_string; 

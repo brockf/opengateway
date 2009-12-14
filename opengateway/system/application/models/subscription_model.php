@@ -32,19 +32,20 @@ class Subscription_model extends Model
 	* 
 	* @return int The new subscription ID
 	*/
-	function SaveSubscription($client_id, $gateway_id, $customer_id, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $params)
+	function SaveSubscription($client_id, $gateway_id, $customer_id, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id)
 	{
 		$timestamp = date('Y-m-d H:i:s');
 		$insert_data = array(
 							'client_id' 		=> $client_id,
 							'gateway_id' 		=> $gateway_id,
 							'customer_id' 		=> $customer_id,
+							'plan_id'			=> $plan_id,
 							'start_date' 		=> $start_date,
 							'end_date'			=> $end_date,
 							'next_charge'		=> $next_charge_date,
 							'number_occurrences'=> $total_occurrences,
 							'notification_url'	=> stripslashes($notification_url),
-							'amount'			=> $params['amount'],
+							'amount'			=> $amount,
 							'timestamp'			=> $timestamp
 			  				);  					  				
 			  				
@@ -161,41 +162,56 @@ class Subscription_model extends Model
 		$this->db->where('subscriptions.client_id', $client_id);
 		
 		// Check which search paramaters are set
-		$this->db->where('gateway_id', $params['gateway_id']);
+		if(isset($params['gateway_id'])) {
+			$this->db->where('gateway_id', $params['gateway_id']);
+		}
+		
+		$this->db->where('subscriptions.subscription_id', $params['recurring_id']);
 		
 		$this->db->join('customers', 'customers.customer_id = subscriptions.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
+		$this->db->join('plans', 'plans.plan_id = subscriptions.plan_id', 'left');
+		$this->db->join('plan_types', 'plan_types.plan_type_id = plans.plan_type_id', 'left');
 		$query = $this->db->get('subscriptions');
 		
 		if ($query->num_rows() == 0) {
 			 die($this->response->Error(6004));
 		}
 		
-		$row = $query->result();
+		$row = $query->row();
 		
-		$data['recurrings']['recurring'][$i]['id'] = $row->subscription_id;
-		$data['recurrings']['recurring'][$i]['create_date'] = $row->timestamp;
-		$data['recurrings']['recurring'][$i]['amount'] = $row->amount;
-		$data['recurrings']['recurring'][$i]['start_date'] = $row->start_date;
-		$data['recurrings']['recurring'][$i]['end_date'] = $row->end_date;
-		$data['recurrings']['recurring'][$i]['number_occurences'] = $row->number_occurrences;
-		$data['recurrings']['recurring'][$i]['notification_url'] = $row->notification_url;
-		$data['recurrings']['recurring'][$i]['status'] = ($row->active == '1') ? 'active' : 'cancelled';
+		$data['recurring']['id'] = $row->subscription_id;
+		$data['recurring']['create_date'] = $row->timestamp;
+		$data['recurring']['amount'] = $row->amount;
+		$data['recurring']['start_date'] = $row->start_date;
+		$data['recurring']['end_date'] = $row->end_date;
+		$data['recurring']['number_occurences'] = $row->number_occurrences;
+		$data['recurring']['notification_url'] = $row->notification_url;
+		$data['recurring']['status'] = ($row->active == '1') ? 'active' : 'cancelled';
 		
 		if($row->customer_id !== 0) {
-			$data['recurrings']['recurring'][$i]['customer']['id'] = $row->customer_id;
-			$data['recurrings']['recurring'][$i]['customer']['internal_id'] = $row->internal_id;
-			$data['recurrings']['recurring'][$i]['customer']['firstname'] = $row->first_name;
-			$data['recurrings']['recurring'][$i]['customer']['lastname'] = $row->last_name;
-			$data['recurrings']['recurring'][$i]['customer']['company'] = $row->company;
-			$data['recurrings']['recurring'][$i]['customer']['address_1'] = $row->address_1;
-			$data['recurrings']['recurring'][$i]['customer']['address_2'] = $row->address_2;
-			$data['recurrings']['recurring'][$i]['customer']['city'] = $row->city;
-			$data['recurrings']['recurring'][$i]['customer']['state'] = $row->state;
-			$data['recurrings']['recurring'][$i]['customer']['postal_code'] = $row->postal_code;
-			$data['recurrings']['recurring'][$i]['customer']['country'] = $row->iso2;
-			$data['recurrings']['recurring'][$i]['customer']['email'] = $row->email;
-			$data['recurrings']['recurring'][$i]['customer']['phone'] = $row->phone;
+			$data['recurring']['customer']['id'] = $row->customer_id;
+			$data['recurring']['customer']['internal_id'] = $row->internal_id;
+			$data['recurring']['customer']['firstname'] = $row->first_name;
+			$data['recurring']['customer']['lastname'] = $row->last_name;
+			$data['recurring']['customer']['company'] = $row->company;
+			$data['recurring']['customer']['address_1'] = $row->address_1;
+			$data['recurring']['customer']['address_2'] = $row->address_2;
+			$data['recurring']['customer']['city'] = $row->city;
+			$data['recurring']['customer']['state'] = $row->state;
+			$data['recurring']['customer']['postal_code'] = $row->postal_code;
+			$data['recurring']['customer']['country'] = $row->iso2;
+			$data['recurring']['customer']['email'] = $row->email;
+			$data['recurring']['customer']['phone'] = $row->phone;
+		}
+		
+		if($row->plan_id != 0) {
+			$data['recurring']['plan']['plan_id'] = $row->plan_id;
+			$data['recurring']['plan']['plan_type'] = $row->type;
+			$data['recurring']['plan']['name'] = $row->name;
+			$data['recurring']['plan']['amount'] = $row->amount;
+			$data['recurring']['plan']['interval'] = $row->interval;
+			$data['recurring']['plan']['notification_url'] = $row->notification_url;
 		}
 		
 		return $data;
@@ -240,7 +256,7 @@ class Subscription_model extends Model
 		}
 		
 		if(isset($params['customer_id'])) {
-			$this->db->where('orders.customer_id', $params['customer_id']);
+			$this->db->where('subscriptions.customer_id', $params['customer_id']);
 		}
 		
 		if(isset($params['customer_internal_id'])) {
@@ -252,7 +268,11 @@ class Subscription_model extends Model
 		}
 		
 		if(isset($params['active'])) {
-			$this->db->where('orders.active', $params['active']);
+			$this->db->where('subscriptions.active', $params['active']);
+		}
+		
+		if(isset($params['plan_id'])) {
+			$this->db->where('subscriptions.plan_id', $params['plan_id']);
 		}
 		
 		if (isset($params['offset'])) {
@@ -270,6 +290,8 @@ class Subscription_model extends Model
 		
 		$this->db->join('customers', 'customers.customer_id = subscriptions.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
+		$this->db->join('plans', 'plans.plan_id = subscriptions.plan_id', 'left');
+		$this->db->join('plan_types', 'plan_types.plan_type_id = plans.plan_type_id', 'left');
 		$query = $this->db->get('subscriptions');
 		if($query->num_rows() > 0) {
 			$data['results'] = $query->num_rows();
@@ -300,6 +322,15 @@ class Subscription_model extends Model
 					$data['recurrings']['recurring'][$i]['customer']['phone'] = $row->phone;
 				}
 				
+				if($row->plan_id != 0) {
+					$data['recurrings']['recurring'][$i]['plan']['plan_id'] = $row->plan_id;
+					$data['recurrings']['recurring'][$i]['plan']['plan_type'] = $row->type;
+					$data['recurrings']['recurring'][$i]['plan']['name'] = $row->name;
+					$data['recurrings']['recurring'][$i]['plan']['amount'] = $row->amount;
+					$data['recurrings']['recurring'][$i]['plan']['interval'] = $row->interval;
+					$data['recurrings']['recurring'][$i]['plan']['notification_url'] = $row->notification_url;
+				}
+				
 				$i++;
 			}
 		} else {
@@ -324,40 +355,45 @@ class Subscription_model extends Model
 	*/
 	function UpdateRecurring($client_id, $params)
 	{
+		$CI =& get_instance();
+		
 		if(!isset($params['recurring_id'])) {
 			die($this->response->Error(6002));
 		}
 
-		
-		if(isset($params['notification_url'])) {
-			$update_data['notification_url'] = $params['notification_url'];
+		if(isset($params['recur']['notification_url'])) {
+			$update_data['notification_url'] = $params['recur']['notification_url'];
 		}
 		
 		if(isset($params['customer_id'])) {
 			$update_data['customer_id'] = $params['customer_id'];
+			$CI->load->model('customer_model');
+			$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
+		} else {
+			$customer = FALSE;
 		}
 		
-		if(isset($params['amount'])) {
-			$update_data['amount'] = $params['amount'];
+		if(isset($params['recur']['amount'])) {
+			$update_data['amount'] = $params['recur']['amount'];
 		}
 		
-		if(isset($params['next_charge_date'])) {
+		if(isset($params['recur']['next_charge_date'])) {
 			$this->load->library('field_validation');
-			if ($this->field_validation->ValidateDate($params['next_charge_date'])) {
-				$update_data['next_charge_date'] = $params['next_charge_date'];			
+			if ($this->field_validation->ValidateDate($params['recur']['next_charge_date'])) {
+				$update_data['next_charge_date'] = $params['recur']['next_charge_date'];			
 			}
 			else {
 				die($this->response->Error(5007));
 			}
 		}
 		
-		if(isset($params['interval'])) {
+		if(isset($params['recur']['interval'])) {
 			// Get the subcription details
 			$subscription = $this->GetSubscriptionDetails($client_id, $params['recurring_id']);
 			$start_date = $subscription->start_date;
 			$end_date = $subscription->end_date;
 			// Figure the total number of occurrences
-			$update_data['number_occurrences'] = round((strtotime($end_date) - strtotime($start_date)) / ($params['interval'] * 86400), 0);
+			$update_data['number_occurrences'] = round((strtotime($end_date) - strtotime($start_date)) / ($params['recur']['interval'] * 86400), 0);
 		}
 		
 		if(!isset($update_data)) {
@@ -369,6 +405,19 @@ class Subscription_model extends Model
 		$this->db->where('subscription_id', $params['recurring_id']);
 		
 		$this->db->update('subscriptions', $update_data);
+		
+		// Update the subscription with the gateway
+		$CI =& get_instance();
+		$CI->load->model('gateway_model');
+		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $subscription->gateway_id);
+		$gateway_type = $gateway['name'];
+		
+		$CI->load->library('payment/'.$gateway_type);
+		$update_success = $CI->$gateway_type->UpdateRecurring($client_id, $gateway, $subscription, $customer, $params);
+		
+		if(!$update_success) {
+			die($this->response->Error(6005));
+		}
 		
 		$response = $this->response->TransactionResponse(102,array());
 		
@@ -407,5 +456,19 @@ class Subscription_model extends Model
 		}
 		
 		return $response;
+	}
+	
+	function GetPlansByCustomer($customer_id)
+	{
+		$this->db->join('plans', 'plans.plan_id = subscriptions.plan_id', 'inner');
+		$this->db->join('plan_types', 'plan_types.plan_type_id = plans.plan_type_id', 'inner');
+		$this->db->where('customer_id', $customer_id);
+		$this->db->where('subscriptions.plan_id <>', 0);
+		$query = $this->db->get('subscriptions');
+		if($query->num_rows() > 0) {
+			return $query->result();
+		} else {
+			return FALSE;
+		}
 	}
 }

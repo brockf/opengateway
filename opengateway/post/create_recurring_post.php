@@ -11,14 +11,16 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 	<type>Recur</type>
 	<gateway_id>29</gateway_id>
 	<amount>24.99</amount>
-	<description>Monthly Supply</description>
-	<first_name>Moses</first_name>
-	<last_name>Malone</last_name>
-	<address_1>123 Main Street</address_1>
-	<address_2>Apt. 1</address_2>
-	<city>Denver</city>
-	<state>CO</state>
-	<postal_code></postal_code>
+	<customer>
+		<first_name>Moses</first_name>
+		<last_name>Malone</last_name>
+		<address_1>123 Main Street</address_1>
+		<address_2>Apt. 1</address_2>
+		<city>Denver</city>
+		<state>CO</state>
+		<postal_code>80220</postal_code>
+		<country>US</country>
+	</customer>
 	<credit_card>
 		<name>Moses Malone</name>
 		<card_num>4024007155715823</card_num>
@@ -27,9 +29,8 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 		<cvv>123</cvv>
 	</credit_card>
 	<recur>
-		<interval>30</interval>
-		<start_date>2009-12-10</start_date>
-		<notification_url>http://localhost/notify.php</notification_url>
+		<plan_id>11</plan_id>
+		<start_date>2009-12-20</start_date>
 	</recur>
 </request>';
 

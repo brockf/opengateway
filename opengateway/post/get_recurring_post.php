@@ -9,7 +9,7 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>
 	</authentication>
 	<type>GetRecurring</type>
-	<gateway_id>3</gateway_id>
+	<recurring_id>184</recurring_id>
 </request>';
 
 $postfields = 'request='.$post_string; 

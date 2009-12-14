@@ -376,6 +376,23 @@ class Customer_model extends Model
 				$data['customers']['customer'][$i]['email'] = $row->email;
 				$data['customers']['customer'][$i]['phone'] = $row->phone;
 				
+				$CI =& get_instance();
+				$CI->load->model('subscription_model');
+				$plans = $CI->subscription_model->GetPlansByCustomer($row->customer_id);
+				
+				if($plans) {
+					$n=0;
+					foreach($plans as $plan) {
+						$data['customers']['customer'][$i]['plans']['plan'][$n]['plan_id'] = $plan->plan_id;
+						$data['customers']['customer'][$i]['plans']['plan'][$n]['plan_type'] = $plan->type;
+						$data['customers']['customer'][$i]['plans']['plan'][$n]['name'] = $plan->name;
+						$data['customers']['customer'][$i]['plans']['plan'][$n]['amount'] = $plan->amount;
+						$data['customers']['customer'][$i]['plans']['plan'][$n]['interval'] = $plan->interval;
+						$data['customers']['customer'][$i]['plans']['plan'][$n]['notification_url'] = $plan->notification_url;
+						$n++;
+					}
+				}
+				
 				$i++;
 			}
 		} else {
@@ -424,6 +441,23 @@ class Customer_model extends Model
 			$data['customer']['country'] = $row->iso2;
 			$data['customer']['email'] = $row->email;
 			$data['customer']['phone'] = $row->phone;
+			
+			$CI =& get_instance();
+			$CI->load->model('subscription_model');
+			$plans = $CI->subscription_model->GetPlansByCustomer($row->customer_id);
+			
+			if($plans) {
+				$i=0;
+				foreach($plans as $plan) {
+					$data['customer']['plans']['plan'][$i]['plan_id'] = $plan->plan_id;
+					$data['customer']['plans']['plan'][$i]['plan_type'] = $plan->type;
+					$data['customer']['plans']['plan'][$i]['name'] = $plan->name;
+					$data['customer']['plans']['plan'][$i]['amount'] = $plan->amount;
+					$data['customer']['plans']['plan'][$i]['interval'] = $plan->interval;
+					$data['customer']['plans']['plan'][$i]['notification_url'] = $plan->notification_url;
+					$i++;
+				}
+			}
 				
 		} else {
 			$data['results'] = 0;

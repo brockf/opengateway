@@ -66,6 +66,9 @@ class Response
 							'401' => 'Gateway updated.',
 							'402' => 'Gateway deleted.',
 							'403' => 'Default gateway set.',	
+							'500' => 'Plan created.',
+							'501' => 'Plan updated.',
+							'502' => 'Plan deleted.'
 							);
 		
 				
@@ -130,7 +133,11 @@ class Response
 						'6001' => 'A valid Customer ID is required.',
 						'6002' => 'A valid Recurring ID is required',
 						'6003' => 'Nothing to update.',
-						'6004' => 'A valid Recurring ID is required.'
+						'6004' => 'A valid Recurring ID is required.',
+						'6005' => 'Error updating Recurring details.',
+						'7000' => 'Invalid plan type.',
+						'7001' => 'Invalid Plan ID.',
+						'7002' => 'Invalid Free Trial amount.'
 						);
 		
 				

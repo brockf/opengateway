@@ -558,7 +558,10 @@ class authnet
 		
 	}
 	
-	
+	function UpdateRecurring()
+	{
+		return TRUE;
+	}
 	
 	function Process($order_id, $post_url, $post_string)
 	{
