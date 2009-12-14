@@ -70,8 +70,7 @@ class Gateway extends Controller {
 		
 		// handle errors that didn't just kill the code
 		if ($response == FALSE) {
-			echo $this->response->Error('1009');
-			die();
+			die($this->response->Error('1009'));
 		}
 		
 		// Make sure a proper format was passed
@@ -245,7 +244,7 @@ class Gateway extends Controller {
 	
 		$this->load->model('subscription_model');
 		if (!$recurring = $this->subscription_model->GetRecurring($client_id, $params['recurring_id'])) {
-			return $this->response->Error(6002);
+			 die($this->response->Error(6002));
 		} else {
 			$data = array();
 			$data['recurring'] = $recurring;
@@ -282,11 +281,11 @@ class Gateway extends Controller {
 	function UpdateRecurring($client_id, $params)
 	{
 		if (isset($params['plan_id'])) {
-			return $this->response->Error();
+			 die($this->response->Error(6006));
 		}
 		
 		if(!isset($params['recurring_id'])) {
-			return $this->response->Error(6002);
+			 die($this->response->Error(6002));
 		}
 	
 		$this->load->model('subscription_model');
@@ -296,14 +295,14 @@ class Gateway extends Controller {
 			return $response;
 		}
 		else {
-			return $this->response->Error(6005);
+			die($this->response->Error(6005));
 		}
 	}
 	
 	function CancelRecurring($client_id, $params)
 	{
 		if (!isset($params['recurring_id'])) {
-			return $this->response->Error(6002);
+			die($this->response->Error(6002));
 		}
 		
 		$this->load->model('subscription_model');
@@ -312,7 +311,7 @@ class Gateway extends Controller {
 			return $this->response->TransactionResponse(101,array());
 		}
 		else {
-			return $this->response->Error(5014);
+			die($this->response->Error(5014));
 		}
 	}
 	
@@ -333,7 +332,7 @@ class Gateway extends Controller {
 	function UpdateCustomer($client_id, $params)
 	{
 		if(!isset($params['customer_id'])) {
-			return $this->response->Error(6001);
+			die($this->response->Error(6001));
 		}
 		
 		$this->load->model('customer_model');
@@ -399,7 +398,7 @@ class Gateway extends Controller {
 	{
 		// Get the customer id
 		if(!isset($params['customer_id'])) {
-			return $this->response->Error(4000);
+			die($this->response->Error(4000));
 		}
 		
 		$this->load->model('customer_model');
@@ -452,7 +451,7 @@ class Gateway extends Controller {
 	{
 		// Get the charge ID
 		if(!isset($params['charge_id'])) {
-			return $this->response->Error(6000);
+			die($this->response->Error(6000));
 		}
 		
 		$this->load->model('order_model');
@@ -529,7 +528,7 @@ class Gateway extends Controller {
 			return $this->response->TransactionResponse(302,array());
 		}
 		else {
-			return $this->response->Error(2004);
+			die($this->response->Error(2004));
 		}
 	}
 	
@@ -541,7 +540,7 @@ class Gateway extends Controller {
 			return $this->response->TransactionResponse(303,array());
 		}
 		else {
-			return $this->response->Error(2004);
+			die($this->response->Error(2004));
 		}
 	}
 	
@@ -553,7 +552,7 @@ class Gateway extends Controller {
 			return $this->response->TransactionResponse(304,array());
 		}
 		else {
-			return $this->response->Error(2004);
+			die($this->response->Error(2004));
 		}
 	}
 }
