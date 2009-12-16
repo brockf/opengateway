@@ -573,6 +573,11 @@ class Gateway extends Controller {
 			die($this->response->Error(8000));
 		}
 		
+		// throw an error if the email body had HTML and caused weird XML parsing into an array
+		if (is_array($params['email_body'])) {
+			die($this->response->Error(8002));
+		}
+		
 		$this->load->model('email_model');
 		$email_id = $this->email_model->SaveEmail($client_id, $trigger_id, $params);
 		
@@ -601,6 +606,11 @@ class Gateway extends Controller {
 			}
 		} else {
 			$trigger_id = FALSE;
+		}
+		
+		// throw an error if the email body had HTML and caused weird XML parsing into an array
+		if (is_array($params['email_body'])) {
+			die($this->response->Error(8002));
 		}
 		
 		$this->load->model('email_model');

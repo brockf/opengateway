@@ -36,12 +36,7 @@ class Email_model extends Model
 		$insert_data['from_name'] = $params['from_name'];
 		$insert_data['from_email'] = $params['from_email'];
 		$insert_data['active'] = 1;
-		
-		if(is_array($params['email_body'])) {
-			die($this->response->Error(8002));
-		} else {
-			$insert_data['email_body'] = $params['email_body'];
-		}
+		$insert_data['email_body'] = $params['email_body'];
 		
 		if(isset($params['plan'])) {
 			$insert_data['plan_id'] = $params['plan'];
@@ -82,11 +77,7 @@ class Email_model extends Model
 		}
 	
 		if(isset($params['email_body'])) {
-			if(is_array($params['email_body'])) {
-				die($this->response->Error(8002));
-			} else {
-				$update_data['email_body'] = $params['email_body'];
-			}
+			$update_data['email_body'] = $params['email_body'];
 		}
 		
 		if(isset($params['from_name'])) {
