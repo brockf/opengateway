@@ -10,13 +10,13 @@ class Gateway extends Controller {
 	function index()
 	{
 		// grab the request
-		$request = $this->input->post('request');
-		
+		$request = trim(file_get_contents('php://input'));
+
 		// Log the request
 		$this->log_model->LogRequest($request);
 		
 		// find out if the request is valid XML
-		$xml = simplexml_load_string($request);
+		$xml = @simplexml_load_string($request);
 		
 		// if it is not valid XML...
 		if(!$xml) {
@@ -43,6 +43,7 @@ class Gateway extends Controller {
 		
 		// Get the request type
 		if(!isset($params['type'])) {
+					
 			die($this->response->Error(1002));
 		}
 		$request_type = $params['type'];
@@ -61,16 +62,18 @@ class Gateway extends Controller {
 		// Load the correct model and method
 		// Is this method part of this API controller?
 		if (method_exists($this,$request_type)) {
-			$response = $this->$request_type();
+			
+			$response = $this->$request_type($client_id, $params);
 		}
 		else {
+			
 			$this->load->model($request_type_model);
 			$response = $this->$request_type_model->$request_type($client_id, $params);
 		}
 		
 		// handle errors that didn't just kill the code
 		if ($response == FALSE) {
-			die($this->response->Error('1009'));
+			die($this->response->Error(1009));
 		}
 		
 		// Make sure a proper format was passed
@@ -554,6 +557,69 @@ class Gateway extends Controller {
 		else {
 			die($this->response->Error(2004));
 		}
+	}
+	
+	function NewEmail($client_id, $params)
+	{
+		// Validate the required fields
+		$this->load->library('field_validation');
+		$this->field_validation->ValidateRequiredFields('NewEmail', $params);
+		
+		// Get the email trigger id
+		$this->load->model('email_model');
+		$trigger_id = $this->email_model->GetTriggerId($params['trigger']);
+		
+		if(!$trigger_id) {
+			die($this->response->Error(8000));
+		}
+		
+		$this->load->model('email_model');
+		$email_id = $this->email_model->SaveEmail($client_id, $trigger_id, $params);
+		
+		$response_array = array('email_id' => $email_id);
+		return $this->response->TransactionResponse(600, $response_array);
+	}
+	
+	function UpdateEmail($client_id, $params)
+	{
+		// Get the email id
+		if(!isset($params['email_id'])) {
+			die($this->response->Error(8001));
+		}
+		
+		// Validate the required fields
+		$this->load->library('field_validation');
+		$this->field_validation->ValidateRequiredFields('NewEmail', $params);
+		
+		// Get the email trigger id
+		if(isset($params['trigger'])) {
+			$this->load->model('email_model');
+			$trigger_id = $this->email_model->GetTriggerId($params['trigger']);
+			
+			if(!$trigger_id) {
+				die($this->response->Error(8000));
+			}
+		} else {
+			$trigger_id = FALSE;
+		}
+		
+		$this->load->model('email_model');
+		$email_id = $this->email_model->UpdateEmail($client_id, $params['email_id'], $params, $trigger_id);
+		
+		return $this->response->TransactionResponse(601, array());
+	}
+	
+	function DeleteEmail($client_id, $params)
+	{
+		// Get the email id
+		if(!isset($params['email_id'])) {
+			die($this->response->Error(8001));
+		}
+		
+		$this->load->model('email_model');
+		$this->email_model->DeleteEmail($client_id, $params['email_id']);
+		
+		return $this->response->TransactionResponse(602, array());
 	}
 }
 

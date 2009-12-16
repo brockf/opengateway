@@ -15,7 +15,11 @@ class Request_type_model extends Model
 			$query = $this->db->get('request_types');
 			if($query->num_rows() > 0) {
 				$row = $query->row();
-				return $row->model;
+				if($row->model == '') {
+					return TRUE;
+				} else {
+					return $row->model;
+				}
 			}else {
 				return FALSE;
 			}

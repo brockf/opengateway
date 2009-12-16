@@ -68,7 +68,10 @@ class Response
 							'403' => 'Default gateway set.',	
 							'500' => 'Plan created.',
 							'501' => 'Plan updated.',
-							'502' => 'Plan deleted.'
+							'502' => 'Plan deleted.',
+							'600' => 'Email created.',
+							'601' => 'Email updated.',
+							'602' => 'Email deleted.'
 							);
 		
 				
@@ -139,7 +142,10 @@ class Response
 						'6006' => 'A valid Plan ID is required.',
 						'7000' => 'Invalid plan type.',
 						'7001' => 'Invalid Plan ID.',
-						'7002' => 'Invalid Free Trial amount.'
+						'7002' => 'Invalid Free Trial amount.',
+						'8000' => 'Invalid Email Trigger.',
+						'8001' => 'A valid Email ID is required.',
+						'8002' => 'Email body must be encoded.'
 						);
 		
 				
