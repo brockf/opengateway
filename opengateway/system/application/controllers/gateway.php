@@ -171,6 +171,25 @@ class Gateway extends Controller {
 		}
 	}
 	
+	function ChangeRecurringPlan($client_id,$params) {
+		$this->load->model('plan_model');
+		
+		if (!isset($params['plan_id'])) {
+			die($this->response->Error(6006));
+		}
+		elseif (!isset($params['recurring_id'])) {
+			die($this->response->Error(6002));
+		}
+		
+		if ($this->plan_model->ChangeRecurringPlan($client_id,$params['recurring_id'],$params['plan_id'])) 
+		{
+			return $this->response->TransactionResponse(103, array());
+		}
+		else {
+			return FALSE;
+		}
+	}
+	
 	function NewGateway($client_id, $params)
 	{
 		$this->load->model('gateway_model');

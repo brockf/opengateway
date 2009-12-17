@@ -348,6 +348,32 @@ class Subscription_model extends Model
 	}
 	
 	/**
+	* Updates a subscription based on moving it to a new plan
+	*
+	* Upgrades or downgrades a subscription to a new plan
+	*
+	* @param int $client_id The Client ID
+	* @param int $recurring_id The ID of the recurring charge
+	* @param int $new_plan_id The ID of the new plan
+	*
+	* @return bool TRUE upon success, FALSE upon failure
+	*
+	*/
+	function ChangeRecurringPlan ($client_id, $recurring_id, $new_plan_id) {
+		$plan_details = $this->plan_model->GetPlanDetails($client_id, $new_plan_id);
+		
+		$update = array(
+					'plan_id' => $plan_details->plan_id,
+					'amount' => $plan_details->amount,
+					'interval' => $plan_details->interval,
+					'notification_url' => $plan_details->notification_url,
+					'recurring_id' => $recurring_id
+					);
+					
+		return $this->UpdateRecurring($client_id, $update);
+	}
+	
+	/**
 	* Update an existing subscription.
 	*
 	* Updates an existing subscription with new parameters.
@@ -386,13 +412,13 @@ class Subscription_model extends Model
 		}
 		
 		if(isset($params['plan_id'])) {
-			$update_data['amount'] = $params['plan_id'];
+			$update_data['plan_id'] = $params['plan_id'];
 		}
 		
 		if(isset($params['next_charge_date'])) {
 			$this->load->library('field_validation');
 			if ($this->field_validation->ValidateDate($params['next_charge_date'])) {
-				$update_data['next_charge_date'] = $params['next_charge_date'];			
+				$update_data['next_charge'] = $params['next_charge_date'];			
 			}
 			else {
 				die($this->response->Error(5007));

@@ -54,6 +54,7 @@ class Response
 							'100' => 'Subscription created.',
 							'101' => 'Subscription cancelled.',
 							'102' => 'Subscription updated.',
+							'103' => 'Subscription plan updated.  Changes will appear upon next charge.',
 							'200' => 'Customer created.',
 							'201' => 'Customer updated.',
 							'202' => 'Customer deleted.',

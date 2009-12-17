@@ -4157,6 +4157,7 @@ INSERT INTO `request_types` VALUES ('37', 'DeleteEmail', '');
 INSERT INTO `request_types` VALUES ('38', 'GetEmail', '');
 INSERT INTO `request_types` VALUES ('39', 'GetEmailVariables', '');
 INSERT INTO `request_types` VALUES ('40', 'GetEmails', '');
+INSERT INTO `request_types` VALUES ('41', 'ChangeRecurringPlan', '');
 
 -- ----------------------------
 -- Table structure for `required_fields`

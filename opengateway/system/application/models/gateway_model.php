@@ -215,8 +215,6 @@ class Gateway_model extends Model
 			$gateway_id = FALSE;
 		}
 		
-		$CI =& get_instance();
-		
 		// Get the credit card object
 		$credit_card = $params['credit_card'];
 		
@@ -237,7 +235,7 @@ class Gateway_model extends Model
 		$this->field_validation->ValidateRequiredFields('Recur', $params);
 		
 		// Get the customer details if a customer id was included
-		$CI->load->model('customer_model');
+		$this->load->model('customer_model');
 		
 		if(isset($params['customer_id'])) {
 			$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
@@ -245,7 +243,7 @@ class Gateway_model extends Model
 		elseif (isset($params['customer']) and is_array($params['customer'])) {
 			// look for embedded customer information
 			$customer = $params['customer'];
-			$customer['customer_id'] = $CI->customer_model->NewCustomer($client_id, $customer);
+			$customer['customer_id'] = $this->customer_model->NewCustomer($client_id, $customer);
 			$created_customer = true;
 		}
 		else {
@@ -256,7 +254,7 @@ class Gateway_model extends Model
 				$name = explode(' ', $credit_card['name']);
 				$customer['first_name'] = $name[0];
 				$customer['last_name'] = $name[1];
-				$customer['customer_id'] = $CI->customer_model->SaveNewCustomer($client_id, $name[0], $name[1]);
+				$customer['customer_id'] = $this->customer_model->SaveNewCustomer($client_id, $name[0], $name[1]);
 			}
 		}
 		
@@ -268,9 +266,7 @@ class Gateway_model extends Model
 		$recur = $params['recur'];
 		
 		if(isset($recur['plan_id'])) {
-			
-			$CI->load->model('plan_model');
-			$plan_details = $CI->plan_model->GetPlanDetails($client_id, $recur['plan_id']);
+			$plan_details = $this->plan_model->GetPlanDetails($client_id, $recur['plan_id']);
 			
 			$interval 			= $plan_details->interval;
 			$notification_url 	= $plan_details->notification_url;
