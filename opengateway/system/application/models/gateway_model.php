@@ -170,7 +170,7 @@ class Gateway_model extends Model
 		
 		// If it was successful, send an email
 		if($response['response_code'] == 1) {
-			$this->email->TriggerTrip(1, $client_id, FALSE, $customer, FALSE, FALSE);
+			$this->email->TriggerTrip('charge', $client_id, $response['charge_id']);
 		}
 		
 		return $response;

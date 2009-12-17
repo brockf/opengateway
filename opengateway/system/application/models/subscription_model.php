@@ -151,7 +151,7 @@ class Subscription_model extends Model
 		$this->db->where('subscription_id', $subscription_id);
 		$query = $this->db->get('subscriptions');
 		if($query->num_rows() > 0) {
-			return $query->row();
+			return $query->row_array();
 		} else {
 			die($this->response->Error(5000));
 		}
@@ -192,15 +192,16 @@ class Subscription_model extends Model
 		$data['amount'] = $row->amount;
 		$data['start_date'] = $row->start_date;
 		$data['end_date'] = $row->end_date;
-		$data['number_occurences'] = $row->number_occurrences;
+		$data['next_charge_date'] = $row->next_charge;
+		$data['number_occurrences'] = $row->number_occurrences;
 		$data['notification_url'] = $row->notification_url;
 		$data['status'] = ($row->active == '1') ? 'active' : 'cancelled';
 		
 		if($row->customer_id !== 0) {
 			$data['customer']['id'] = $row->customer_id;
 			$data['customer']['internal_id'] = $row->internal_id;
-			$data['customer']['firstname'] = $row->first_name;
-			$data['customer']['lastname'] = $row->last_name;
+			$data['customer']['first_name'] = $row->first_name;
+			$data['customer']['last_name'] = $row->last_name;
 			$data['customer']['company'] = $row->company;
 			$data['customer']['address_1'] = $row->address_1;
 			$data['customer']['address_2'] = $row->address_2;
@@ -213,7 +214,7 @@ class Subscription_model extends Model
 		}
 		
 		if($row->plan_id != 0) {
-			$data['plan']['plan_id'] = $row->plan_id;
+			$data['plan']['id'] = $row->plan_id;
 			$data['plan']['plan_type'] = $row->type;
 			$data['plan']['name'] = $row->name;
 			$data['plan']['amount'] = $row->amount;
@@ -307,15 +308,16 @@ class Subscription_model extends Model
 				$data[$i]['amount'] = $row->amount;
 				$data[$i]['start_date'] = $row->start_date;
 				$data[$i]['end_date'] = $row->end_date;
-				$data[$i]['number_occurences'] = $row->number_occurrences;
+				$data[$i]['next_charge_date'] = $row->next_charge;
+				$data[$i]['number_occurrences'] = $row->number_occurrences;
 				$data[$i]['notification_url'] = $row->notification_url;
 				$data[$i]['status'] = ($row->active == '1') ? 'active' : 'cancelled';
 				
 				if($row->customer_id !== 0) {
 					$data[$i]['customer']['id'] = $row->customer_id;
 					$data[$i]['customer']['internal_id'] = $row->internal_id;
-					$data[$i]['customer']['firstname'] = $row->first_name;
-					$data[$i]['customer']['lastname'] = $row->last_name;
+					$data[$i]['customer']['first_name'] = $row->first_name;
+					$data[$i]['customer']['last_name'] = $row->last_name;
 					$data[$i]['customer']['company'] = $row->company;
 					$data[$i]['customer']['address_1'] = $row->address_1;
 					$data[$i]['customer']['address_2'] = $row->address_2;
@@ -400,8 +402,8 @@ class Subscription_model extends Model
 		if(isset($params['recur']['interval'])) {
 			// Get the subcription details
 			$subscription = $this->GetSubscriptionDetails($client_id, $params['recurring_id']);
-			$start_date = $subscription->start_date;
-			$end_date = $subscription->end_date;
+			$start_date = $subscription['start_date'];
+			$end_date = $subscription['end_date'];
 			// Figure the total number of occurrences
 			$update_data['number_occurrences'] = round((strtotime($end_date) - strtotime($start_date)) / ($params['recur']['interval'] * 86400), 0);
 		}
@@ -449,9 +451,9 @@ class Subscription_model extends Model
 		
 		// Get the gateway info to load the proper library
 		$this->load->model('gateway_model');
-		$gateway = $this->gateway_model->GetGatewayDetails($client_id, $subscription->gateway_id);
+		$gateway = $this->gateway_model->GetGatewayDetails($client_id, $subscription['gateway_id']);
 		
-		$gateway_name = $subscription->name;
+		$gateway_name = $subscription['name'];
 		$this->load->library('payment/'.$gateway_name);
 		$cancelled = $this->$gateway_name->CancelRecurring($client_id, $subscription, $gateway);
 		

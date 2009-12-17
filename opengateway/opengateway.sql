@@ -224,13 +224,14 @@ CREATE TABLE `client_emails` (
   `client_email_id` int(11) NOT NULL AUTO_INCREMENT,
   `client_id` int(11) NOT NULL,
   `trigger_id` int(11) NOT NULL,
-  `plan_id` int(11) NOT NULL,
+  `plan_id` varchar(4) NOT NULL,
   `email_subject` varchar(255) NOT NULL,
   `email_body` text NOT NULL,
   `from_name` varchar(50) NOT NULL,
   `from_email` varchar(255) NOT NULL,
   `is_html` tinyint(1) NOT NULL,
-  `bcc_client` tinyint(1) NOT NULL,
+  `to_address` varchar(255) NOT NULL,
+  `bcc_address` varchar(255) NOT NULL,
   `active` tinyint(1) NOT NULL,
   PRIMARY KEY (`client_email_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=73 DEFAULT CHARSET=latin1;
@@ -238,78 +239,6 @@ CREATE TABLE `client_emails` (
 -- ----------------------------
 -- Records of client_emails
 -- ----------------------------
-INSERT INTO `client_emails` VALUES ('1', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email. [[AMOUNT]]', 'David Ryan', 'daveryan187@yahoo.com', '1', '0', '1');
-INSERT INTO `client_emails` VALUES ('2', '17', '1', '-1', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('3', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('4', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('5', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('6', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '1', '0', '1');
-INSERT INTO `client_emails` VALUES ('7', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('8', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('9', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('10', '17', '9', '1', 'Your card has been charged again.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '1', '0', '0');
-INSERT INTO `client_emails` VALUES ('11', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('12', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('13', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('14', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('15', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('16', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('17', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('18', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('19', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('20', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('21', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('22', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('23', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('24', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('25', '17', '1', '0', 'Your card has been charged.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('26', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('27', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('28', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('29', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('30', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('31', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('32', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('33', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('34', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('35', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('36', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('37', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('38', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('39', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('40', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('41', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('42', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('43', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('44', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('45', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('46', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('47', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('48', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('49', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('50', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('51', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('52', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('53', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('54', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('55', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('56', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('57', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('58', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('59', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('60', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('61', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('62', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('63', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('64', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('65', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('66', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('67', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('68', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('69', '17', '1', '0', 'Your card has been charged.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('70', '17', '1', '0', 'Your card has been charged.', '<a><strong>Test it yo!</strong></a>', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('71', '17', '1', '0', 'Your card has been charged.', '<a><strong>Test it yo!</strong></a>', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
-INSERT INTO `client_emails` VALUES ('72', '17', '1', '0', 'Your card has been charged.', '<a><strong>Test it yo!</strong></a>', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
 
 -- ----------------------------
 -- Table structure for `client_gateway_params`
@@ -1048,14 +977,15 @@ CREATE TABLE `email_triggers` (
 -- Records of email_triggers
 -- ----------------------------
 INSERT INTO `email_triggers` VALUES ('1', 'charge', 'Charge', 'Basic charge.', 'a:17:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:9:\"charge_id\";i:3;s:14:\"card_last_four\";i:4;s:11:\"customer_id\";i:5;s:20:\"customer_internal_id\";i:6;s:19:\"customer_first_name\";i:7;s:18:\"customer_last_name\";i:8;s:16:\"customer_company\";i:9;s:18:\"customer_address_1\";i:10;s:18:\"customer_address_2\";i:11;s:13:\"customer_city\";i:12;s:14:\"customer_state\";i:13;s:20:\"customer_postal_code\";i:14;s:16:\"customer_country\";i:15;s:14:\"customer_phone\";i:16;s:14:\"customer_email\";}', '1');
-INSERT INTO `email_triggers` VALUES ('2', 'recurring_charge', 'Recurring Charge', 'Only for charges linked to a subscription', 'a:21:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:9:\"charge_id\";i:4;s:14:\"card_last_four\";i:5;s:16:\"next_charge_date\";i:6;s:7:\"plan_id\";i:7;s:9:\"plan_name\";i:8;s:11:\"customer_id\";i:9;s:20:\"customer_internal_id\";i:10;s:19:\"customer_first_name\";i:11;s:18:\"customer_last_name\";i:12;s:16:\"customer_company\";i:13;s:18:\"customer_address_1\";i:14;s:18:\"customer_address_2\";i:15;s:13:\"customer_city\";i:16;s:14:\"customer_state\";i:17;s:20:\"customer_postal_code\";i:18;s:16:\"customer_country\";i:19;s:14:\"customer_phone\";i:20;s:14:\"customer_email\";}', '1');
-INSERT INTO `email_triggers` VALUES ('3', 'recurring_expire', 'Recurring Expiration', 'Subscription ends gracefully at expiration date with max_occurrences/end_date limitation', 'a:23:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:9:\"charge_id\";i:4;s:14:\"card_last_four\";i:5;s:10:\"start_date\";i:6;s:8:\"end_date\";i:7;s:16:\"next_charge_date\";i:8;s:7:\"plan_id\";i:9;s:9:\"plan_name\";i:10;s:11:\"customer_id\";i:11;s:20:\"customer_internal_id\";i:12;s:19:\"customer_first_name\";i:13;s:18:\"customer_last_name\";i:14;s:16:\"customer_company\";i:15;s:18:\"customer_address_1\";i:16;s:18:\"customer_address_2\";i:17;s:13:\"customer_city\";i:18;s:14:\"customer_state\";i:19;s:20:\"customer_postal_code\";i:20;s:16:\"customer_country\";i:21;s:14:\"customer_phone\";i:22;s:14:\"customer_email\";}', '1');
-INSERT INTO `email_triggers` VALUES ('4', 'recurring_cancel', 'Recurring Cancellation', 'Subscription ends with an explicit CancelRecurring call.  Not a graceful expiration.', 'a:18:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:7:\"plan_id\";i:4;s:9:\"plan_name\";i:5;s:11:\"customer_id\";i:6;s:20:\"customer_internal_id\";i:7;s:19:\"customer_first_name\";i:8;s:18:\"customer_last_name\";i:9;s:16:\"customer_company\";i:10;s:18:\"customer_address_1\";i:11;s:18:\"customer_address_2\";i:12;s:13:\"customer_city\";i:13;s:14:\"customer_state\";i:14;s:20:\"customer_postal_code\";i:15;s:16:\"customer_country\";i:16;s:14:\"customer_phone\";i:17;s:14:\"customer_email\";}', '1');
-INSERT INTO `email_triggers` VALUES ('5', 'recurring_expiring_in_week', 'Recurring to Expire in a Week', 'Subscription will expire in one week.', 'a:19:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:11:\"expiry_date\";i:4;s:7:\"plan_id\";i:5;s:9:\"plan_name\";i:6;s:11:\"customer_id\";i:7;s:20:\"customer_internal_id\";i:8;s:19:\"customer_first_name\";i:9;s:18:\"customer_last_name\";i:10;s:16:\"customer_company\";i:11;s:18:\"customer_address_1\";i:12;s:18:\"customer_address_2\";i:13;s:13:\"customer_city\";i:14;s:14:\"customer_state\";i:15;s:20:\"customer_postal_code\";i:16;s:16:\"customer_country\";i:17;s:14:\"customer_phone\";i:18;s:14:\"customer_email\";}', '1');
-INSERT INTO `email_triggers` VALUES ('6', 'recurring_expiring_in_month', 'Recurring to Expire in a Month', 'Subscription will expire in one month.', 'a:19:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:11:\"expiry_date\";i:4;s:7:\"plan_id\";i:5;s:9:\"plan_name\";i:6;s:11:\"customer_id\";i:7;s:20:\"customer_internal_id\";i:8;s:19:\"customer_first_name\";i:9;s:18:\"customer_last_name\";i:10;s:16:\"customer_company\";i:11;s:18:\"customer_address_1\";i:12;s:18:\"customer_address_2\";i:13;s:13:\"customer_city\";i:14;s:14:\"customer_state\";i:15;s:20:\"customer_postal_code\";i:16;s:16:\"customer_country\";i:17;s:14:\"customer_phone\";i:18;s:14:\"customer_email\";}', '1');
-INSERT INTO `email_triggers` VALUES ('7', 'recurring_autorecur_in_week', 'Recurring to Autocharge in a Week', 'Subscription will Autocharge in one week.', 'a:19:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:16:\"next_charge_date\";i:4;s:7:\"plan_id\";i:5;s:9:\"plan_name\";i:6;s:11:\"customer_id\";i:7;s:20:\"customer_internal_id\";i:8;s:19:\"customer_first_name\";i:9;s:18:\"customer_last_name\";i:10;s:16:\"customer_company\";i:11;s:18:\"customer_address_1\";i:12;s:18:\"customer_address_2\";i:13;s:13:\"customer_city\";i:14;s:14:\"customer_state\";i:15;s:20:\"customer_postal_code\";i:16;s:16:\"customer_country\";i:17;s:14:\"customer_phone\";i:18;s:14:\"customer_email\";}', '1');
-INSERT INTO `email_triggers` VALUES ('8', 'recurring_autorecur_in_month', 'Recurring to Autocharge in a Month', 'Subscription will Autocharge in one month.', 'a:19:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:16:\"next_charge_date\";i:4;s:7:\"plan_id\";i:5;s:9:\"plan_name\";i:6;s:11:\"customer_id\";i:7;s:20:\"customer_internal_id\";i:8;s:19:\"customer_first_name\";i:9;s:18:\"customer_last_name\";i:10;s:16:\"customer_company\";i:11;s:18:\"customer_address_1\";i:12;s:18:\"customer_address_2\";i:13;s:13:\"customer_city\";i:14;s:14:\"customer_state\";i:15;s:20:\"customer_postal_code\";i:16;s:16:\"customer_country\";i:17;s:14:\"customer_phone\";i:18;s:14:\"customer_email\";}', '1');
-INSERT INTO `email_triggers` VALUES ('9', 'new_customer', 'New Customer', 'When a new customer is created either through NewCustomer or embedded < customer> information in a Charge/Recur call', 'a:13:{i:0;s:11:\"customer_id\";i:1;s:20:\"customer_internal_id\";i:2;s:19:\"customer_first_name\";i:3;s:18:\"customer_last_name\";i:4;s:16:\"customer_company\";i:5;s:18:\"customer_address_1\";i:6;s:18:\"customer_address_2\";i:7;s:13:\"customer_city\";i:8;s:14:\"customer_state\";i:9;s:20:\"customer_postal_code\";i:10;s:16:\"customer_country\";i:11;s:14:\"customer_phone\";i:12;s:14:\"customer_email\";}', '1');
+INSERT INTO `email_triggers` VALUES ('2', 'recurring_charge', 'Recurring Charge', 'A recurring payment charge.', 'a:21:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:9:\"charge_id\";i:4;s:14:\"card_last_four\";i:5;s:16:\"next_charge_date\";i:6;s:7:\"plan_id\";i:7;s:9:\"plan_name\";i:8;s:11:\"customer_id\";i:9;s:20:\"customer_internal_id\";i:10;s:19:\"customer_first_name\";i:11;s:18:\"customer_last_name\";i:12;s:16:\"customer_company\";i:13;s:18:\"customer_address_1\";i:14;s:18:\"customer_address_2\";i:15;s:13:\"customer_city\";i:16;s:14:\"customer_state\";i:17;s:20:\"customer_postal_code\";i:18;s:16:\"customer_country\";i:19;s:14:\"customer_phone\";i:20;s:14:\"customer_email\";}', '1');
+INSERT INTO `email_triggers` VALUES ('3', 'recurring_expire', 'Recurring Expiration', 'Subscription ends gracefully at expiration date by reaching its end date/maximum re-occurrences.', 'a:23:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:9:\"charge_id\";i:4;s:14:\"card_last_four\";i:5;s:10:\"start_date\";i:6;s:8:\"end_date\";i:7;s:16:\"next_charge_date\";i:8;s:7:\"plan_id\";i:9;s:9:\"plan_name\";i:10;s:11:\"customer_id\";i:11;s:20:\"customer_internal_id\";i:12;s:19:\"customer_first_name\";i:13;s:18:\"customer_last_name\";i:14;s:16:\"customer_company\";i:15;s:18:\"customer_address_1\";i:16;s:18:\"customer_address_2\";i:17;s:13:\"customer_city\";i:18;s:14:\"customer_state\";i:19;s:20:\"customer_postal_code\";i:20;s:16:\"customer_country\";i:21;s:14:\"customer_phone\";i:22;s:14:\"customer_email\";}', '1');
+INSERT INTO `email_triggers` VALUES ('4', 'recurring_cancel', 'Recurring Cancellation', 'Subscription is cancelled by a user/client request (e.g. a CancelRecurring call was issued).', 'a:18:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:7:\"plan_id\";i:4;s:9:\"plan_name\";i:5;s:11:\"customer_id\";i:6;s:20:\"customer_internal_id\";i:7;s:19:\"customer_first_name\";i:8;s:18:\"customer_last_name\";i:9;s:16:\"customer_company\";i:10;s:18:\"customer_address_1\";i:11;s:18:\"customer_address_2\";i:12;s:13:\"customer_city\";i:13;s:14:\"customer_state\";i:14;s:20:\"customer_postal_code\";i:15;s:16:\"customer_country\";i:16;s:14:\"customer_phone\";i:17;s:14:\"customer_email\";}', '1');
+INSERT INTO `email_triggers` VALUES ('5', 'recurring_fail', 'Recurring Fail', 'Subscription fails due to non-payment.', 'a:18:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:7:\"plan_id\";i:4;s:9:\"plan_name\";i:5;s:11:\"customer_id\";i:6;s:20:\"customer_internal_id\";i:7;s:19:\"customer_first_name\";i:8;s:18:\"customer_last_name\";i:9;s:16:\"customer_company\";i:10;s:18:\"customer_address_1\";i:11;s:18:\"customer_address_2\";i:12;s:13:\"customer_city\";i:13;s:14:\"customer_state\";i:14;s:20:\"customer_postal_code\";i:15;s:16:\"customer_country\";i:16;s:14:\"customer_phone\";i:17;s:14:\"customer_email\";}', '1');
+INSERT INTO `email_triggers` VALUES ('6', 'recurring_expiring_in_week', 'Recurring to Expire in a Week', 'Subscription will expire in one week.', 'a:19:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:11:\"expiry_date\";i:4;s:7:\"plan_id\";i:5;s:9:\"plan_name\";i:6;s:11:\"customer_id\";i:7;s:20:\"customer_internal_id\";i:8;s:19:\"customer_first_name\";i:9;s:18:\"customer_last_name\";i:10;s:16:\"customer_company\";i:11;s:18:\"customer_address_1\";i:12;s:18:\"customer_address_2\";i:13;s:13:\"customer_city\";i:14;s:14:\"customer_state\";i:15;s:20:\"customer_postal_code\";i:16;s:16:\"customer_country\";i:17;s:14:\"customer_phone\";i:18;s:14:\"customer_email\";}', '1');
+INSERT INTO `email_triggers` VALUES ('7', 'recurring_expiring_in_month', 'Recurring to Expire in a Month', 'Subscription will expire in one month.', 'a:19:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:11:\"expiry_date\";i:4;s:7:\"plan_id\";i:5;s:9:\"plan_name\";i:6;s:11:\"customer_id\";i:7;s:20:\"customer_internal_id\";i:8;s:19:\"customer_first_name\";i:9;s:18:\"customer_last_name\";i:10;s:16:\"customer_company\";i:11;s:18:\"customer_address_1\";i:12;s:18:\"customer_address_2\";i:13;s:13:\"customer_city\";i:14;s:14:\"customer_state\";i:15;s:20:\"customer_postal_code\";i:16;s:16:\"customer_country\";i:17;s:14:\"customer_phone\";i:18;s:14:\"customer_email\";}', '1');
+INSERT INTO `email_triggers` VALUES ('8', 'recurring_autorecur_in_week', 'Recurring to Autocharge in a Week', 'Subscription will Autocharge in one week.', 'a:19:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:16:\"next_charge_date\";i:4;s:7:\"plan_id\";i:5;s:9:\"plan_name\";i:6;s:11:\"customer_id\";i:7;s:20:\"customer_internal_id\";i:8;s:19:\"customer_first_name\";i:9;s:18:\"customer_last_name\";i:10;s:16:\"customer_company\";i:11;s:18:\"customer_address_1\";i:12;s:18:\"customer_address_2\";i:13;s:13:\"customer_city\";i:14;s:14:\"customer_state\";i:15;s:20:\"customer_postal_code\";i:16;s:16:\"customer_country\";i:17;s:14:\"customer_phone\";i:18;s:14:\"customer_email\";}', '1');
+INSERT INTO `email_triggers` VALUES ('9', 'recurring_autorecur_in_month', 'Recurring to Autocharge in a Month', 'Subscription will Autocharge in one month.', 'a:19:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:16:\"next_charge_date\";i:4;s:7:\"plan_id\";i:5;s:9:\"plan_name\";i:6;s:11:\"customer_id\";i:7;s:20:\"customer_internal_id\";i:8;s:19:\"customer_first_name\";i:9;s:18:\"customer_last_name\";i:10;s:16:\"customer_company\";i:11;s:18:\"customer_address_1\";i:12;s:18:\"customer_address_2\";i:13;s:13:\"customer_city\";i:14;s:14:\"customer_state\";i:15;s:20:\"customer_postal_code\";i:16;s:16:\"customer_country\";i:17;s:14:\"customer_phone\";i:18;s:14:\"customer_email\";}', '1');
+INSERT INTO `email_triggers` VALUES ('10', 'new_customer', 'New Customer', 'A new customer has been created in the system.', 'a:13:{i:0;s:11:\"customer_id\";i:1;s:20:\"customer_internal_id\";i:2;s:19:\"customer_first_name\";i:3;s:18:\"customer_last_name\";i:4;s:16:\"customer_company\";i:5;s:18:\"customer_address_1\";i:6;s:18:\"customer_address_2\";i:7;s:13:\"customer_city\";i:8;s:14:\"customer_state\";i:9;s:20:\"customer_postal_code\";i:10;s:16:\"customer_country\";i:11;s:14:\"customer_phone\";i:12;s:14:\"customer_email\";}', '1');
 
 -- ----------------------------
 -- Table structure for `exact_log`
@@ -4224,7 +4154,8 @@ INSERT INTO `request_types` VALUES ('34', 'GetPlans', '');
 INSERT INTO `request_types` VALUES ('35', 'NewEmail', '');
 INSERT INTO `request_types` VALUES ('36', 'UpdateEmail', '');
 INSERT INTO `request_types` VALUES ('37', 'DeleteEmail', '');
-INSERT INTO `request_types` VALUES ('38', 'GetEmailVariables', '');
+INSERT INTO `request_types` VALUES ('38', 'GetEmail', '');
+INSERT INTO `request_types` VALUES ('39', 'GetEmailVariables', '');
 
 -- ----------------------------
 -- Table structure for `required_fields`

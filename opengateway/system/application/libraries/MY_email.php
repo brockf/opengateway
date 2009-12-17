@@ -103,6 +103,10 @@ class MY_Email extends CI_Email {
     	// load validation
     	$CI->load->library('field_validation');
     	
+    	// just in case, we'll grab the email of the client
+    	$CI->load->model('client_model');
+    	$client_email = $CI->client_model->GetClientDetails($client_id)->email;
+    	
 		foreach ($emails as $email) {
 			// who is this going to?
 			$to_address = false;
@@ -121,12 +125,30 @@ class MY_Email extends CI_Email {
 				
 				// replace all possible variables
 				while (list($name,$value) = each($variables)) {
-					$subject = str_replace('[[' . $name . ']]',$value,$subject);
-					$body = str_replace('[[' . $body . ']]',$value,$body);
+					$subject = str_ireplace('[[' . $name . ']]',$value,$subject);
+					$body = str_ireplace('[[' . $body . ']]',$value,$body);
 				}
 				
 				// send the email
-				$this->load->library('email');
+				$this->from($from_email, $from_name);
+				$this->to($to_address);
+				if (!empty($email['bcc_address'])) {
+					if ($email['bcc_address'] == 'client') {
+						$this->bcc($client_email);
+					}
+					elseif ($CI->field_validation->ValidateEmailAddress($email['bcc_address'])) {
+						$this->bcc($email['bcc_address']);
+					}
+				}
+				
+				$this->subject($subject);
+				$this->message($body);
+				
+				// is this HTML?
+				$config['mailtype'] = ($email['is_html'] == '1') ? 'html' : 'text';
+				$config['wordwrap'] = ($email['is_html'] == '1') ? FALSE : TRUE;
+				
+				$this->send();
 			}		
     	}
     }

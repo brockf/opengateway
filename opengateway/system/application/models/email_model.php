@@ -41,19 +41,26 @@ class Email_model extends Model
 		if(isset($params['plan'])) {
 			$insert_data['plan_id'] = $params['plan'];
 		} else {
-			$insert_data['plan_id'] = -1;
+			$insert_data['plan_id'] = '';
 		}
 		
-		if(isset($params['is_html'])) {
+		if(isset($params['is_html']) and $params['is_html'] == '1') {
 			$insert_data['is_html'] = $params['is_html'];
 		} else {
 			$insert_data['is_html'] = 0;
 		}
 		
-		if(isset($params['bcc_client'])) {
-			$insert_data['bcc_client'] = $params['bcc_client'];
+		if(isset($params['to_address'])) {
+			$insert_data['to_address'] = $params['to_address'];
+		}
+		else {
+			$insert_data['to_address'] == 'customer';
+		}
+		
+		if(isset($params['bcc_address'])) {
+			$insert_data['bcc_address'] = $params['bcc_address'];
 		} else {
-			$insert_data['is_html'] = 0;
+			$insert_data['bcc_address'] = '';
 		}
 		
 		$this->db->insert('client_emails', $insert_data);
@@ -92,8 +99,12 @@ class Email_model extends Model
 			$update_data['is_html'] = $params['is_html'];
 		}
 		
-		if(isset($params['bcc_client'])) {
-			$update_data['bcc_client'] = $params['bcc_client'];
+		if(isset($params['to_address'])) {
+			$update_data['to_address'] = $params['to_address'];
+		}
+		
+		if(isset($params['bcc_address'])) {
+			$update_data['bcc_address'] = $params['bcc_address'];
 		}
 		
 		$this->db->where('client_email_id', $email_id);
@@ -130,15 +141,49 @@ class Email_model extends Model
 		}
 	}
 	
-	function GetEmail($client_id, $trigger_type_id)
+	function GetEmail($client_id, $email_id)
+	{
+		$this->db->join('email_triggers', 'email_triggers.email_trigger_id = client_emails.trigger_id', 'inner');
+		$this->db->where('client_id', $client_id);
+		$this->db->where('client_email_id', $email_id);
+		
+		$this->db->limit(1);
+		$query = $this->db->get('client_emails');
+		if($query->num_rows() > 0) {
+			return $query->row_array();
+		} else {
+			return FALSE;
+		}
+	}
+	
+	function GetEmailsByTrigger($client_id, $trigger_type_id, $plan_id = false)
 	{
 		$this->db->join('email_triggers', 'email_triggers.email_trigger_id = client_emails.trigger_id', 'inner');
 		$this->db->where('client_id', $client_id);
 		$this->db->where('trigger_id', $trigger_type_id);
-		$this->db->limit(1);
+		$this->db->where('active','1');
+		
+		if ($plan_id != false) {
+			// plan ID can be -1 for No plans
+			// 				   0 for All plans
+			//              or X referring to a specific plan ID X
+			
+			// must match this specific plan and all plans
+			$this->db->where('(`plan_id` = \'' . $plan_id . '\' or `plan_id` = \'0\' or `plan_id` = \'\')',NULL,FALSE);
+		}
+		else {
+			// must match no plans or an empty plan_id
+			$this->db->where('(`plan_id` = \'-1\' or `plan_id` = \'\')',NULL,FALSE);
+		}
+		
 		$query = $this->db->get('client_emails');
+		
 		if($query->num_rows() > 0) {
-			return $query->row();
+			$emails = array();
+			foreach ($query->result_array() as $row) {
+				$emails[] = $row;
+			}
+			return $emails;
 		} else {
 			return FALSE;
 		}

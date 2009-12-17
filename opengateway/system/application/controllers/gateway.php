@@ -632,6 +632,24 @@ class Gateway extends Controller {
 		return $this->response->TransactionResponse(602, array());
 	}
 	
+	function GetEmail($client_id, $params)
+	{
+		if(!$params['email_id']) {
+			die($this->response->Error(8000));
+		}
+		
+		$this->load->model('email_model');
+		
+		if ($response = $this->email_model->GetEmail($client_id,$params['email_id'])) {
+			$data['email'] = $response;
+			return $data;
+		}
+		else {
+			return FALSE;
+		}	
+	}
+
+	
 	function GetEmailVariables($client_id, $params)
 	{
 		// Get the email trigger id
@@ -655,8 +673,6 @@ class Gateway extends Controller {
 		else {
 			return FALSE;
 		}
-		
-		
 	}
 }
 

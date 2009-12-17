@@ -382,7 +382,7 @@ class Customer_model extends Model
 				if($plans) {
 					$n=0;
 					foreach($plans as $plan) {
-						$data[$i]['plans'][$n]['plan_id'] = $plan->plan_id;
+						$data[$i]['plans'][$n]['id'] = $plan->plan_id;
 						$data[$i]['plans'][$n]['plan_type'] = $plan->type;
 						$data[$i]['plans'][$n]['name'] = $plan->name;
 						$data[$i]['plans'][$n]['amount'] = $plan->amount;

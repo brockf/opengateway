@@ -50,7 +50,7 @@ class exact
 		if($trxnResult->EXact_Resp_Code == '00'){
 			$CI->load->model('order_authorization_model');
 			$CI->order_authorization_model->SaveAuthorization($order_id, $trxnResult->Transaction_Tag);
-			$response_array = array('order_id' => $order_id);
+			$response_array = array('charge_id' => $order_id);
 			$response = $CI->response->TransactionResponse(1, $response_array);
 		} else {
 			$response_array = array('reason' => $trxnResult->EXact_Message);
@@ -78,7 +78,7 @@ class exact
 		
 			if($response['success'] == TRUE){
 				$CI->order_model->SetStatus($order_id, 1);
-				$response_array = array('order_id' => $order_id, 'subscription_id' => $subscription_id);
+				$response_array = array('charge_id' => $order_id, 'subscription_id' => $subscription_id);
 				$response = $CI->response->TransactionResponse(100, $response_array);
 			} else {
 				// Make the subscription inactive

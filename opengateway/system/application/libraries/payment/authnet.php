@@ -59,7 +59,7 @@ class authnet
 		$CI =& get_instance();
 		
 		if($response['success']){
-			$response_array = array('order_id' => $order_id);
+			$response_array = array('charge_id' => $order_id);
 			$response = $CI->response->TransactionResponse(1, $response_array);
 		} else {
 			$response_array = array('reason' => $response['reason']);
@@ -125,7 +125,7 @@ class authnet
 		$CI =& get_instance();
 		
 		if($response['success']){
-			$response_array = array('order_id' => $order_id);
+			$response_array = array('charge_id' => $order_id);
 			$response = $CI->response->TransactionResponse(1, $response_array);
 		} else {
 			$response_array = array('reason' => $response['reason']);
@@ -179,7 +179,7 @@ class authnet
 		$response = $this->Process($order_id, $post_url, $post_string);
 		
 		if($response['success']){
-			$response_array = array('order_id' => $order_id);
+			$response_array = array('charge_id' => $order_id);
 			$response = $CI->response->TransactionResponse(1, $response_array);
 		} else {
 			$response_array = array('reason' => $response['reason']);
@@ -237,7 +237,7 @@ class authnet
 		$response = $this->Process($order_id, $post_url, $post_string);
 		
 		if($response['success']){
-			$response_array = array('order_id' => $order_id);
+			$response_array = array('charge_id' => $order_id);
 			$response = $CI->response->TransactionResponse(1, $response_array);
 		} else {
 			$response_array = array('reason' => $response['reason']);
@@ -292,7 +292,7 @@ class authnet
 		$response = $this->Process($order_id, $post_url, $post_string);
 		
 		if($response['success']){
-			$response_array = array('order_id' => $order_id);
+			$response_array = array('charge_id' => $order_id);
 			$response = $CI->response->TransactionResponse(1, $response_array);
 		} else {
 			$response_array = array('reason' => $response['reason']);
@@ -339,7 +339,7 @@ class authnet
 			$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $profile_id, $payment_profile_id, $params);
 			
 			if($response['success'] == TRUE){
-				$response_array = array('order_id' => $order_id, 'subscription_id' => $subscription_id);
+				$response_array = array('charge_id' => $order_id, 'subscription_id' => $subscription_id);
 				$response = $CI->response->TransactionResponse(100, $response_array);
 			} else {
 				// Make the subscription inactive

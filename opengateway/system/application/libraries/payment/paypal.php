@@ -74,7 +74,7 @@ class Paypal
 			}
 			$CI->order_model->SetStatus($order_id, 1);
 			
-			$response_array = array('order_id' => $order_id);
+			$response_array = array('charge_id' => $order_id);
 			$response = $CI->response->TransactionResponse(1, $response_array);
 		} else {
 			$CI->load->model('order_model');
