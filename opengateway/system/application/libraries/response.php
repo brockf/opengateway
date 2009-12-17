@@ -144,6 +144,7 @@ class Response
 						'7000' => 'Invalid plan type.',
 						'7001' => 'Invalid Plan ID.',
 						'7002' => 'Invalid Free Trial amount.',
+						'7003' => 'Invalid occurrences amount.',
 						'8000' => 'Invalid Email Trigger.',
 						'8001' => 'A valid Email ID is required.',
 						'8002' => 'Email body must be encoded.'

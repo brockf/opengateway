@@ -27,6 +27,7 @@ class Plan_model extends Model
 	* @param int $params['interval'] Interval (days). Optional.
 	* @param string $params['notification_url'] Notification URL. Optional.
 	* @param string $params['name'] Name.  Optional.
+	* @param int $params['occurrences'].  Number of occurrences. Optional.
 	* @param int $params['free_trial'] Number of days of a free trial. Optional.
 	*
 	* @return int|bool Returns Plan ID on success or FALSE on failure
@@ -77,13 +78,25 @@ class Plan_model extends Model
 			die($this->response->Error(1004));
 		}
 		
+		if(isset($plan['occurrences'])) {
+			if (!is_numeric($plan['occurrences'])) {
+				die($this->response->Error(7003));
+			}
+			else {
+				$insert_data['occurrences'] = $plan['occurrences'];
+			}
+		}
+		else {
+			$insert_data['occurrences'] = '0';
+		}
+		
 		if(isset($plan['free_trial'])) {
 			if(!is_numeric($plan['free_trial']) || $plan['free_trial'] < 0) {
 				die($this->response->Error(7002));
 			}	
 			$insert_data['free_trial'] = $plan['free_trial'];
 		} else {
-			die($this->response->Error(1004));
+			$insert_data['free_trial'] = '0';
 		}
 		
 		$insert_data['client_id'] = $client_id;
@@ -107,6 +120,7 @@ class Plan_model extends Model
 	* @param int $params['interval'] Interval (days). Optional.
 	* @param string $params['notification_url'] Notification URL. Optional.
 	* @param string $params['name'] Name.  Optional.
+	* @param int $params['occurrences'].  Number of occurrences. Optional.
 	* @param int $params['free_trial'] Number of days of a free trial. Optional.
 	*
 	* @return bool Returns TRUE on success or FALSE on failure
@@ -152,6 +166,15 @@ class Plan_model extends Model
 		
 		if(isset($plan['name'])) {	
 			$update_data['name'] = $plan['name'];
+		}
+		
+		if(isset($plan['occurrences'])) {
+			if (!is_numeric($plan['occurrences'])) {
+				die($this->response->Error(7003));
+			}
+			else {
+				$update_data['occurrences'] = $plan['occurrences'];
+			}
 		}
 		
 		if(isset($plan['free_trial'])) {

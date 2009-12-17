@@ -274,7 +274,11 @@ class Gateway_model extends Model
 			$free_trial 		= $plan_details->free_trial;
 			
 			$plan_id = $plan_details->plan_id;
-			
+		
+			// if there are specified occurrences, we should create an end-date that works with it
+			if ($plan_details->occurrences != 0) {
+				$recur['end_date'] = date('Y-m-d',now() + ($plan_details->occurrences*86400));
+			}	
 		} else {
 			
 			if(!is_numeric($recur['interval'])) {

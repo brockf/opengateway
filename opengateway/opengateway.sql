@@ -1829,6 +1829,7 @@ CREATE TABLE `plans` (
   `amount` decimal(10,2) NOT NULL,
   `interval` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
+  `occurrences` int(11) NOT NULL,
   `free_trial` int(11) NOT NULL,
   `notification_url` varchar(255) NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
@@ -1837,20 +1838,6 @@ CREATE TABLE `plans` (
 
 -- ----------------------------
 -- Records of plans
--- ----------------------------
-INSERT INTO `plans` VALUES ('1', '17', '2', '100.00', '30', 'Sample Plan', '60', 'http://yahoo.com/', '0');
-INSERT INTO `plans` VALUES ('2', '17', '2', '100.00', '30', 'Sample Plan', '60', 'http://yahoo.com/', '0');
-INSERT INTO `plans` VALUES ('3', '17', '2', '100.00', '30', 'Sample Plan', '60', 'http://yahoo.com/', '0');
-INSERT INTO `plans` VALUES ('4', '17', '2', '100.00', '30', 'Sample Plan', '60', 'http://yahoo.com/', '0');
-INSERT INTO `plans` VALUES ('5', '17', '2', '100.00', '30', 'Sample Plan', '60', 'http://yahoo.com/', '0');
-INSERT INTO `plans` VALUES ('6', '17', '2', '100.00', '30', 'Sample Plan', '60', 'http://yahoo.com/', '0');
-INSERT INTO `plans` VALUES ('7', '17', '2', '100.00', '30', 'Sample Plan', '60', 'http://yahoo.com/', '0');
-INSERT INTO `plans` VALUES ('8', '17', '2', '100.00', '30', 'Sample Plan', '60', 'http://yahoo.com/', '0');
-INSERT INTO `plans` VALUES ('9', '17', '2', '88.88', '15', 'Updated Plan', '20', 'http://google.com/', '1');
-INSERT INTO `plans` VALUES ('10', '17', '2', '11.99', '30', 'Sample Plan', '60', 'http://yahoo.com/', '0');
-INSERT INTO `plans` VALUES ('11', '17', '2', '11.99', '1', 'Sample Plan', '60', 'http://yahoo.com/', '0');
-INSERT INTO `plans` VALUES ('12', '17', '2', '0.00', '30', 'Sample Plan', '60', 'http://yahoo.com/', '0');
-INSERT INTO `plans` VALUES ('13', '17', '1', '11.99', '30', 'Sample Plan', '60', 'http://yahoo.com/', '0');
 
 -- ----------------------------
 -- Table structure for `recurring_payments`
