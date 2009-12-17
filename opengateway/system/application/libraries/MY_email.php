@@ -55,14 +55,7 @@ class MY_Email extends CI_Email {
 	    	$plan_id = false;
 	    }
 	    
-	    // check to see if this triggers any emails for the client
-    	$emails = $CI->email_model->GetEmailsByTrigger($client_id, $trigger_type_id, $plan_id);
-    	
-    	if(!$emails) {
-    		return FALSE;
-    	}
-    	
-    	// build array of all possible variables, if they exist
+	    // build array of all possible variables, if they exist
     	$variables = array();
     	
     	if (isset($charge) and is_array($charge)) {
@@ -100,12 +93,34 @@ class MY_Email extends CI_Email {
     		$variables['customer_phone'] = $customer['phone'];
     	}
     	
-    	// load validation
-    	$CI->load->library('field_validation');
-    	
+    	    	
     	// just in case, we'll grab the email of the client
     	$CI->load->model('client_model');
-    	$client_email = $CI->client_model->GetClientDetails($client_id)->email;
+    	$client = $CI->client_model->GetClientDetails($client_id);
+    	$client_email = $client->email;
+    	$secret_key = $client->secret_key; // for notification security
+    	
+    	// notification_url needs triggering too, if it exists
+	    if (isset($plan) and is_array($plan)) {
+	    	if (!empty($plan['notification_url'])) {
+	    		$CI->load->library('notifications');
+	    		
+	    		// build var array
+	    		$array = array_merge(array('action' => $trigger_type, 'client_id' => $client_id ,'secret_key' => $secret_key),$variables);
+	    		
+	    		$CI->notifications->QueueNotification($plan['notification_url'],$array);
+	    	}
+	    }
+    	
+	    // check to see if this triggers any emails for the client
+    	$emails = $CI->email_model->GetEmailsByTrigger($client_id, $trigger_type_id, $plan_id);
+    	
+    	if(!$emails) {
+    		return FALSE;
+    	}	
+    	
+    	// load validation
+    	$CI->load->library('field_validation');
     	
 		foreach ($emails as $email) {
 			// who is this going to?

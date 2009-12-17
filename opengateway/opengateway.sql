@@ -4159,6 +4159,13 @@ INSERT INTO `request_types` VALUES ('39', 'GetEmailVariables', '');
 INSERT INTO `request_types` VALUES ('40', 'GetEmails', '');
 INSERT INTO `request_types` VALUES ('41', 'ChangeRecurringPlan', '');
 
+CREATE TABLE `notifications` (
+  `notification_id` int(11) NOT NULL AUTO_INCREMENT,
+  `url` varchar(250) NOT NULL,
+  `variables` text,
+  PRIMARY KEY (`notification_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
 -- ----------------------------
 -- Table structure for `required_fields`
 -- ----------------------------
