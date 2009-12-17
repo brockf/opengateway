@@ -79,6 +79,7 @@ class MY_Email extends CI_Email {
     	}
     	
     	if (isset($customer) and is_array($customer)) {
+    		$variables['customer_id'] = $customer['id'];
     		$variables['customer_first_name'] = $customer['first_name'];
     		$variables['customer_last_name'] = $customer['last_name'];
     		$variables['customer_internal_id'] = $customer['internal_id'];
@@ -106,8 +107,25 @@ class MY_Email extends CI_Email {
 	    		$CI->load->library('notifications');
 	    		
 	    		// build var array
-	    		$array = array_merge(array('action' => $trigger_type, 'client_id' => $client_id ,'secret_key' => $secret_key),$variables);
+	    		$array = array(
+	    					'action' => $trigger_type,
+	    					'client_id' => $client_id,
+	    					'secret_key' => $secret_key
+	    				);
 	    		
+	    		if (isset($variables['plan_id']) {
+	    			$array['plan_id'] = $variables['plan_id'];
+	    		}
+	    		if (isset($variables['customer_id']) {
+	    			$array['customer_id'] = $variables['customer_id'];
+	    		}
+	    		if (isset($variables['charge_id']) {
+	    			$array['charge_id'] = $variables['charge_id'];
+	    		}
+	    		if (isset($variables['recurring_id']) {
+	    			$array['recurring_id'] = $variables['recurring_id'];
+	    		}
+	    			
 	    		$CI->notifications->QueueNotification($plan['notification_url'],$array);
 	    	}
 	    }
