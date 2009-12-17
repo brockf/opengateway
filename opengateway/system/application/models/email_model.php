@@ -133,7 +133,7 @@ class Email_model extends Model
 		if($query->num_rows() > 0) {
 			$vars = unserialize($query->row()->available_variables);
 			foreach($vars as $var) {
-				$result['variables']['variable'][] = $var;
+				$result[] = $var;
 			}
 			return $result;
 		} else {

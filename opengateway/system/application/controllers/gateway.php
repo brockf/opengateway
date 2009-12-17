@@ -692,8 +692,10 @@ class Gateway extends Controller {
 		$this->load->model('email_model');
 		
 		if ($response = $this->email_model->GetEmailVariables($trigger_id)) {
-			
-			return $response;
+			foreach ($response as $array) {
+				$return['variables']['variable'] = $array;
+			}
+			return $return;
 		}
 		else {
 			return FALSE;
