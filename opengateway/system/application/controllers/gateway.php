@@ -594,7 +594,7 @@ class Gateway extends Controller {
 		
 		// Validate the required fields
 		$this->load->library('field_validation');
-		$this->field_validation->ValidateRequiredFields('NewEmail', $params);
+		$this->field_validation->ValidateRequiredFields('UpdateEmail', $params);
 		
 		// Get the email trigger id
 		if(isset($params['trigger'])) {
@@ -609,7 +609,7 @@ class Gateway extends Controller {
 		}
 		
 		// throw an error if the email body had HTML and caused weird XML parsing into an array
-		if (is_array($params['email_body'])) {
+		if(is_array($params['email_body'])) {
 			die($this->response->Error(8002));
 		}
 		
@@ -630,6 +630,33 @@ class Gateway extends Controller {
 		$this->email_model->DeleteEmail($client_id, $params['email_id']);
 		
 		return $this->response->TransactionResponse(602, array());
+	}
+	
+	function GetEmailVariables($client_id, $params)
+	{
+		// Get the email trigger id
+		if(isset($params['trigger'])) {
+			$this->load->model('email_model');
+			$trigger_id = $this->email_model->GetTriggerId($params['trigger']);
+		} else {
+			$trigger_id = FALSE;
+		}
+		
+		if(!$trigger_id) {
+			die($this->response->Error(8000));
+		}
+		
+		$this->load->model('email_model');
+		
+		if ($response = $this->email_model->GetEmailVariables($trigger_id)) {
+			
+			return $response;
+		}
+		else {
+			return FALSE;
+		}
+		
+		
 	}
 }
 

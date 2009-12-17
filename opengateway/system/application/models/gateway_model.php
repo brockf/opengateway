@@ -166,7 +166,14 @@ class Gateway_model extends Model
 		// Load the proper library
 		$gateway_name = $gateway['name'];
 		$this->load->library('payment/'.$gateway_name);
-		return $this->$gateway_name->Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card);		
+		$response = $this->$gateway_name->Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card);	
+		
+		// If it was successful, send an email
+		if($response['response_code'] == 1) {
+			$this->email->TriggerTrip(1, $client_id, FALSE, $customer, FALSE, FALSE);
+		}
+		
+		return $response;
 	}
 	
 	/**

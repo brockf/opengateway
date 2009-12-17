@@ -114,4 +114,33 @@ class Email_model extends Model
 		$this->db->update('client_emails', $update_data);
 	}
 	
+	function GetEmailVariables($trigger_id)
+	{
+		$this->db->select('available_variables');
+		$this->db->where('email_trigger_id', $trigger_id);
+		$query = $this->db->get('email_triggers');
+		if($query->num_rows() > 0) {
+			$vars = unserialize($query->row()->available_variables);
+			foreach($vars as $var) {
+				$result['variables']['variable'][] = $var;
+			}
+			return $result;
+		} else {
+			return FALSE;
+		}
+	}
+	
+	function GetEmail($client_id, $trigger_type_id)
+	{
+		$this->db->join('email_triggers', 'email_triggers.email_trigger_id = client_emails.trigger_id', 'inner');
+		$this->db->where('client_id', $client_id);
+		$this->db->where('trigger_id', $trigger_type_id);
+		$this->db->limit(1);
+		$query = $this->db->get('client_emails');
+		if($query->num_rows() > 0) {
+			return $query->row();
+		} else {
+			return FALSE;
+		}
+	}
 }
