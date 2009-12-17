@@ -84,7 +84,11 @@ class Customer_model extends Model
 							);
 		$this->db->insert('customers', $insert_data);
 		
-		return $this->db->insert_id();						
+		$customer_id = $this->db->insert_id();
+		
+		$this->email->TriggerTrip('new_customer', $client_id, false, false, $customer_id);
+		
+		return $customer_id;						
 	}
 	
 	/**

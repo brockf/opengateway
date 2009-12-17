@@ -230,7 +230,7 @@ CREATE TABLE `client_emails` (
   `from_name` varchar(50) NOT NULL,
   `from_email` varchar(255) NOT NULL,
   `is_html` tinyint(1) NOT NULL,
-  `to_address` varchar(255) NOT NULL,
+  `to_address` varchar(255) NOT 
   `bcc_address` varchar(255) NOT NULL,
   `active` tinyint(1) NOT NULL,
   PRIMARY KEY (`client_email_id`)
@@ -4156,6 +4156,7 @@ INSERT INTO `request_types` VALUES ('36', 'UpdateEmail', '');
 INSERT INTO `request_types` VALUES ('37', 'DeleteEmail', '');
 INSERT INTO `request_types` VALUES ('38', 'GetEmail', '');
 INSERT INTO `request_types` VALUES ('39', 'GetEmailVariables', '');
+INSERT INTO `request_types` VALUES ('40', 'GetEmails', '');
 
 -- ----------------------------
 -- Table structure for `required_fields`

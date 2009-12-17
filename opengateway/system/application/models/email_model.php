@@ -144,16 +144,96 @@ class Email_model extends Model
 	function GetEmail($client_id, $email_id)
 	{
 		$this->db->join('email_triggers', 'email_triggers.email_trigger_id = client_emails.trigger_id', 'inner');
+		$this->db->join('plans', 'client_emails.plan_id = plans.plan_id', 'left');
 		$this->db->where('client_id', $client_id);
 		$this->db->where('client_email_id', $email_id);
 		
 		$this->db->limit(1);
 		$query = $this->db->get('client_emails');
 		if($query->num_rows() > 0) {
-			return $query->row_array();
+			$row = $query->row_array();
+			
+			$array = array(
+							'id' => $row['client_email_id'],
+							'trigger' => $row['system_name'],
+							'email_subject' => $row['email_subject'],
+							'email_body' => $row['email_body'],
+							'from_name' => $row['from_name'],
+							'from_email' => $row['from_email'],
+							'is_html' => $row['is_html'],
+							'to_address' => $row['to_address'],
+							'bcc_address' => $row['bcc_address'],
+							'plan_id' => $row['plan_id'],
+							);
+							
+			if (isset($row['plan_name'])) {
+				$array['plan_name'] = $row['name'];
+			}
+							
+			return $array;
 		} else {
 			return FALSE;
 		}
+	}
+	
+	function GetEmails($client_id, $params)
+	{		
+		if(isset($params['deleted']) and $params['deleted'] == '1') {
+			$this->db->where('active', '0');
+		}
+		else {
+			$this->db->where('active', '1');
+		}
+		
+		if(isset($params['trigger'])) {
+			$trigger_id = (!is_numeric($params['trigger'])) ? $this->GetTriggerId($params['trigger']) : $params['trigger'];
+			$this->db->where('trigger', $trigger_id);
+		}
+		
+		if (isset($params['offset'])) {
+			$offset = $params['offset'];
+		}
+		else {
+			$offset = 0;
+		}
+		
+		if(isset($params['limit'])) {
+			$this->db->limit($params['limit'], $offset);
+		}
+		
+		$this->db->join('email_triggers', 'email_triggers.email_trigger_id = client_emails.trigger_id', 'inner');
+		$this->db->join('plans', 'client_emails.plan_id = plans.plan_id', 'left');
+		$this->db->where('client_id', $client_id);
+		$query = $this->db->get('client_emails');
+		$data = array();
+		if($query->num_rows() > 0) {
+			foreach($query->result_array() as $row)
+			{
+				$array = array(
+								'id' => $row['client_email_id'],
+								'trigger' => $row['system_name'],
+								'email_subject' => $row['email_subject'],
+								'email_body' => $row['email_body'],
+								'from_name' => $row['from_name'],
+								'from_email' => $row['from_email'],
+								'is_html' => $row['is_html'],
+								'to_address' => $row['to_address'],
+								'bcc_address' => $row['bcc_address'],
+								'plan_id' => $row['plan_id'],
+								);
+								
+				if (isset($row['plan_name'])) {
+					$array['plan_name'] = $row['name'];
+				}
+								
+				$data[] = $array;
+			}
+			
+		} else {
+			return FALSE;
+		}
+		
+		return $data;
 	}
 	
 	function GetEmailsByTrigger($client_id, $trigger_type_id, $plan_id = false)

@@ -331,7 +331,11 @@ class Gateway_model extends Model
 		// Load the proper library
 		$gateway_name = $gateway['name'];
 		$this->load->library('payment/'.$gateway_name);
-		return $this->$gateway_name->Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences);
+		$response = $this->$gateway_name->Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences);
+		
+		if ($response['response_code'] == '1') {
+			$this->email->TriggerTrip('new_recurring', $client_id, $response['charge_id'], $response['subscription_id']);
+		}
 	}
 	
 	/**

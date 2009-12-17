@@ -648,7 +648,32 @@ class Gateway extends Controller {
 			return FALSE;
 		}	
 	}
-
+	
+	function GetEmails($client_id, $params)
+	{
+		$this->load->model('email_model');
+		
+		if (!isset($params['limit']) or $params['limit'] > $this->config->item('query_result_default_limit')) {
+			$params['limit'] = $this->db->limit($this->config->item('query_result_default_limit'));
+		}
+		
+		$data = array();
+		if ($emails = $this->email_model->GetEmails($client_id, $params)) {
+			unset($params['limit']);
+			$data['results'] = count($emails);
+			$data['total_results'] = count($this->email_model->GetEmails($client_id, $params));
+			
+			while (list(,$email) = each($emails)) {
+				$data['emails']['email'][] = $email;
+			}
+		}
+		else {
+			$data['results'] = 0;
+			$data['total_results'] = 0;
+		}
+		
+		return $data;
+	}
 	
 	function GetEmailVariables($client_id, $params)
 	{
