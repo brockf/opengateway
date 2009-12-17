@@ -159,7 +159,14 @@ class Gateway_model extends Model
 		if(isset($params['customer_id'])) {
 			$CI->load->model('customer_model');
 			$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
-		} else {
+		}
+		elseif (isset($params['customer']) and is_array($params['customer'])) {
+			// look for embedded customer information
+			$customer = $params['customer'];
+			$customer['customer_id'] = $CI->customer_model->NewCustomer($client_id, $customer);
+			$created_customer
+		}
+		else {
 			$customer = array();
 		}
 		
@@ -167,6 +174,10 @@ class Gateway_model extends Model
 		$gateway_name = $gateway['name'];
 		$this->load->library('payment/'.$gateway_name);
 		$response = $this->$gateway_name->Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card);	
+		
+		if ($created_customer) {
+			$response['customer_id'] = $customer['customer_id'];
+		}
 		
 		// If it was successful, send an email
 		if($response['response_code'] == 1) {
@@ -230,7 +241,14 @@ class Gateway_model extends Model
 		
 		if(isset($params['customer_id'])) {
 			$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
-		} else {
+		}
+		elseif (isset($params['customer']) and is_array($params['customer'])) {
+			// look for embedded customer information
+			$customer = $params['customer'];
+			$customer['customer_id'] = $CI->customer_model->NewCustomer($client_id, $customer);
+			$created_customer = true;
+		}
+		else {
 			// If a customer ID was not passed we need to make sure that a cardholder name was
 			if(!isset($credit_card['name'])) {
 				die($this->response->Error(5004));
@@ -239,7 +257,6 @@ class Gateway_model extends Model
 				$customer['first_name'] = $name[0];
 				$customer['last_name'] = $name[1];
 				$customer['customer_id'] = $CI->customer_model->SaveNewCustomer($client_id, $name[0], $name[1]);
-				
 			}
 		}
 		
@@ -333,9 +350,15 @@ class Gateway_model extends Model
 		$this->load->library('payment/'.$gateway_name);
 		$response = $this->$gateway_name->Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences);
 		
+		if ($created_customer) {
+			$response['customer_id'] = $customer['customer_id'];
+		}
+		
 		if ($response['response_code'] == '1') {
 			$this->email->TriggerTrip('new_recurring', $client_id, $response['charge_id'], $response['subscription_id']);
 		}
+		
+		return $response;
 	}
 	
 	/**
