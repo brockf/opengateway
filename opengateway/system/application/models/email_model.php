@@ -27,6 +27,15 @@ class Email_model extends Model
 		}
 	}
 	
+	function GetTriggers() {
+		$query = $this->db->get('email_triggers');
+		foreach ($query->result_array() as $row) {
+			$return[] = $row;
+		}
+		
+		return $return;
+	}
+	
 	function SaveEmail($client_id, $trigger_id, $params)
 	{
 		$insert_data['client_id'] = $client_id;
