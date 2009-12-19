@@ -67,7 +67,7 @@ class exact
 		
 		// Create an order for today's payment
 		$CI->load->model('order_model');
-		$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $credit_card, $subscription_id);
+		$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $subscription_id);
 		
 		// Create the recurring seed
 		$response = $this->CreateProfile($client_id, $gateway, $customer, $credit_card, $subscription_id, $params, $order_id);
@@ -89,7 +89,7 @@ class exact
 				$response = $CI->response->TransactionResponse(2, $response_array);
 			}
 		} else {
-			$response = $CI->response->TransactionResponse(100);
+			$response = $CI->response->TransactionResponse(100, array('subscription_id' => $subscription_id));
 		}
 		
 		return $response;

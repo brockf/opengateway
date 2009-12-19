@@ -1,6 +1,6 @@
 <?php
 
-$url = "http://localhost/gateway/";
+$url = "http://platform.opengateway.net/api/";
 
 $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 <request>
@@ -8,15 +8,10 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>
 		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>
 	</authentication>
-	<type>GetPlans</type>
-	<plan_type>free</plan_type>
-	<amount>11.99</amount>
-	<limit>100</limit>
-	<offset>0</offset>
-	
+	<type>GetPlans</type>	
 </request>';
 
-$postfields = 'request='.$post_string; 
+$postfields = $post_string; 
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); 

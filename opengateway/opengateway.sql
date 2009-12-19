@@ -4223,6 +4223,7 @@ CREATE TABLE `subscriptions` (
   `customer_id` int(11) NOT NULL,
   `plan_id` int(11) NOT NULL DEFAULT '0',
   `notification_url` varchar(255) DEFAULT NULL,
+  `interval` int(11) NOT NULL,
   `start_date` date NOT NULL,
   `end_date` date NOT NULL,
   `next_charge` date NOT NULL,

@@ -33,7 +33,6 @@ class Order_model extends Model
 	*/
 	function CreateNewOrder($client_id, $params, $subscription_id = 0)
 	{
-		
 		$timestamp = date('Y-m-d H:i:s');
 		$insert_data = array(
 							'client_id' 	  => $client_id,

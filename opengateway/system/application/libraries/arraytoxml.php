@@ -91,4 +91,3 @@ class ArrayToXML
         return (is_array($array) && 0 !== count(array_diff_key($array, array_keys(array_keys($array)))));
     }
 }
-?> 

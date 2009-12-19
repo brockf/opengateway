@@ -1,6 +1,6 @@
 <?php
 
-$url = "http://localhost/gateway/";
+$url = "http://platform.opengateway.net/api/";
 
 $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 <request>
@@ -9,7 +9,7 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>
 	</authentication>
 	<type>Charge</type>
-	<gateway_id>29</gateway_id>
+	<gateway_id>28</gateway_id>
 	<customer>
 		<first_name>Joe</first_name>
 		<last_name>Customer</last_name>

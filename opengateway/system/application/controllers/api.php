@@ -66,7 +66,6 @@ class API extends Controller {
 			$response = $this->$request_type($client_id, $params);
 		}
 		else {
-			
 			$this->load->model($request_type_model);
 			$response = $this->$request_type_model->$request_type($client_id, $params);
 		}
@@ -107,7 +106,7 @@ class API extends Controller {
 		$this->load->model('plan_model');
 		
 		if (!isset($params['limit']) or $params['limit'] > $this->config->item('query_result_default_limit')) {
-			$params['limit'] = $this->db->limit($this->config->item('query_result_default_limit'));
+			$params['limit'] = $this->config->item('query_result_default_limit');
 		}
 		
 		$data = array();
@@ -279,7 +278,7 @@ class API extends Controller {
 		$this->load->model('subscription_model');
 		
 		if (!isset($params['limit']) or $params['limit'] > $this->config->item('query_result_default_limit')) {
-			$params['limit'] = $this->db->limit($this->config->item('query_result_default_limit'));
+			$params['limit'] = $this->config->item('query_result_default_limit');
 		}
 		
 		$data = array();
@@ -344,7 +343,7 @@ class API extends Controller {
 		if ($customer_id = $this->customer_model->NewCustomer($client_id, $params)) {
 			$response = array('customer_id' => $customer_id);
 		
-			$response = $this->response->TransactionResponse(200, $response);
+			return $response = $this->response->TransactionResponse(200, $response);
 		}
 		else {
 			return FALSE;
@@ -386,11 +385,11 @@ class API extends Controller {
 	function GetCustomers($client_id, $params)
 	{
 		$this->load->model('customer_model');
-		
+	
 		if (!isset($params['limit']) or $params['limit'] > $this->config->item('query_result_default_limit')) {
-			$params['limit'] = $this->db->limit($this->config->item('query_result_default_limit'));
+			$params['limit'] = $this->config->item('query_result_default_limit');
 		}
-		
+	
 		$data = array();
 		if ($customers = $this->customer_model->GetCustomers($client_id, $params)) {
 			unset($params['limit']);
@@ -399,10 +398,15 @@ class API extends Controller {
 			
 			while (list(,$customer) = each($customers)) {
 				// sort through plans, first
-				$customer_plans = $customer['plans'];
-				unset($customer['plans']);
-				while (list(, $plan) = each($customer_plans)) {
-					$customer['plans']['plan'][] = $plan;
+				if (isset($customer['plans']) and is_array($customer['plans'])) {
+					$customer_plans = $customer['plans'];
+					unset($customer['plans']);
+					while (list(,$plan) = each($customer_plans)) {
+						$customer['plans']['plan'][] = $plan;
+					}
+				}
+				else {
+					unset($customer['plans']);
 				}
 				
 				$data['customers']['customer'][] = $customer;
@@ -448,7 +452,7 @@ class API extends Controller {
 		$this->load->model('order_model');
 		
 		if (!isset($params['limit']) or $params['limit'] > $this->config->item('query_result_default_limit')) {
-			$params['limit'] = $this->db->limit($this->config->item('query_result_default_limit'));
+			$params['limit'] = $this->config->item('query_result_default_limit');
 		}
 		
 		$data = array();
@@ -673,7 +677,7 @@ class API extends Controller {
 		$this->load->model('email_model');
 		
 		if (!isset($params['limit']) or $params['limit'] > $this->config->item('query_result_default_limit')) {
-			$params['limit'] = $this->db->limit($this->config->item('query_result_default_limit'));
+			$params['limit'] = $this->config->item('query_result_default_limit');
 		}
 		
 		$data = array();

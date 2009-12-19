@@ -37,21 +37,34 @@ class Customer_model extends Model
 	* @return int New Customer ID
 	*/
 	function NewCustomer($client_id, $params)
-	{
+	{	
+		if (!isset($params['email'])) $params['email'] = '';
+		if (!isset($params['company'])) $params['company'] = '';
+		if (!isset($params['internal_id'])) $params['internal_id'] = '';
+		if (!isset($params['address_1'])) $params['address_1'] = '';
+		if (!isset($params['address_2'])) $params['address_2'] = '';
+		if (!isset($params['city'])) $params['city'] = '';
+		if (!isset($params['state'])) $params['state'] = '';
+		if (!isset($params['postal_code'])) $params['postal_code'] = '';
+		if (!isset($params['phone'])) $params['phone'] = '';
+		
 		// Make sure the country is in the proper format
 		$this->load->library('field_validation');
-		$country_id = $this->field_validation->ValidateCountry($params['country']);
-		
-		if(!$country_id) {
-			die($this->response->Error(1007));
+		if (!empty($params['country'])) {
+			$country_id = $this->field_validation->ValidateCountry($params['country']);
+			
+			if(!$country_id) {
+				die($this->response->Error(1007));
+			}
 		}
 		
 		// Make sure the email address is valid
-		$this->load->library('field_validation');
-		$valid_email = $this->field_validation->ValidateEmailAddress($params['email']);
+		if ($params['email']) {
+			$valid_email = $this->field_validation->ValidateEmailAddress($params['email']);
 		
-		if(!$valid_email) {
-			die($this->response->Error(1008));
+			if(!$valid_email) {
+				die($this->response->Error(1008));
+			}
 		}
 		
 		if ($customer_id = $this->SaveNewCustomer($client_id, $params['first_name'], $params['last_name'], $params['company'], $params['internal_id'], $params['address_1'], $params['address_2'], $params['city'], $params['state'], $params['postal_code'], $country_id, $params['phone'], $params['email']))
@@ -86,7 +99,7 @@ class Customer_model extends Model
 		
 		$customer_id = $this->db->insert_id();
 		
-		$this->email->TriggerTrip('new_customer', $client_id, false, false, $customer_id);
+		TriggerTrip('new_customer', $client_id, false, false, $customer_id);
 		
 		return $customer_id;						
 	}
@@ -381,17 +394,18 @@ class Customer_model extends Model
 				$data[$i]['email'] = $row->email;
 				$data[$i]['phone'] = $row->phone;
 				
-				$plans = $this->GetPlansByCustomer($row->customer_id);
+				$plans = $this->GetPlansByCustomer($client_id, $row->customer_id);
 				
 				if($plans) {
 					$n=0;
 					foreach($plans as $plan) {
-						$data[$i]['plans'][$n]['id'] = $plan->plan_id;
-						$data[$i]['plans'][$n]['plan_type'] = $plan->type;
-						$data[$i]['plans'][$n]['name'] = $plan->name;
-						$data[$i]['plans'][$n]['amount'] = $plan->amount;
-						$data[$i]['plans'][$n]['interval'] = $plan->interval;
-						$data[$i]['plans'][$n]['notification_url'] = $plan->notification_url;
+						$data[$i]['plans'][$n]['id'] = $plan['id'];
+						$data[$i]['plans'][$n]['type'] = $plan['type'];
+						$data[$i]['plans'][$n]['name'] = $plan['name'];
+						$data[$i]['plans'][$n]['amount'] = $plan['amount'];
+						$data[$i]['plans'][$n]['interval'] = $plan['interval'];
+						$data[$i]['plans'][$n]['notification_url'] = $plan['notification_url'];
+						$data[$i]['plans'][$i]['status'] = $plan['active'];
 						$n++;
 					}
 				}
@@ -440,17 +454,18 @@ class Customer_model extends Model
 			$data['email'] = $row->email;
 			$data['phone'] = $row->phone;
 			
-			$plans = $this->GetPlansByCustomer($row->customer_id);
+			$plans = $this->GetPlansByCustomer($client_id, $row->customer_id);
 			
 			if($plans) {
 				$i=0;
 				foreach($plans as $plan) {
-					$data['plans'][$i]['plan_id'] = $plan->plan_id;
-					$data['plans'][$i]['plan_type'] = $plan->type;
-					$data['plans'][$i]['name'] = $plan->name;
-					$data['plans'][$i]['amount'] = $plan->amount;
-					$data['plans'][$i]['interval'] = $plan->interval;
-					$data['plans'][$i]['notification_url'] = $plan->notification_url;
+					$data['plans'][$i]['id'] = $plan['id'];
+					$data['plans'][$i]['type'] = $plan['type'];
+					$data['plans'][$i]['name'] = $plan['name'];
+					$data['plans'][$i]['amount'] = $plan['amount'];
+					$data['plans'][$i]['interval'] = $plan['interval'];
+					$data['plans'][$i]['notification_url'] = $plan['notification_url'];
+					$data['plans'][$i]['status'] = $plan['active'];
 					$i++;
 				}
 			}
@@ -462,4 +477,49 @@ class Customer_model extends Model
 		return $data;
 	}
 	
+	/**
+	* Get plans by customer ID
+	*
+	* Gets all plans associated with the customer
+	*
+	* @param int $client_id The Client ID
+	* @param int $customer_id The ID of the Customer
+	*
+	* @return array All the plans, including status
+	*/
+	function GetPlansByCustomer ($client_id, $customer_id) {
+		$CI =& get_instance();
+		$CI->load->model('subscription_model');
+		$params = array(
+						'customer_id' => $customer_id
+						);
+		$recurrings = $CI->subscription_model->GetRecurrings($client_id, $params);
+		
+		$plans = array();
+		
+		if (is_array($recurrings)) {
+			while (list(,$recurring) = each($recurrings)) {
+				if (!empty($recurring['plan']['id'])) {
+					$plans[] = array(
+									'id' => $recurring['plan']['id'],
+									'type' => $recurring['plan']['type'],
+									'name' => $recurring['plan']['name'],
+									'amount' => $recurring['plan']['amount'],
+									'interval' => $recurring['plan']['interval'],
+									'notification_url' => $recurring['plan']['notification_url'],
+									'active' => $recurring['status']
+								);
+				}
+			}
+		}
+		else {
+			return false;
+		}
+	
+		if (empty($plans)) {
+			return false;
+		}
+		
+		return $plans;
+	}
 }

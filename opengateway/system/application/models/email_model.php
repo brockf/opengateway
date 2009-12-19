@@ -250,7 +250,7 @@ class Email_model extends Model
 		$this->db->join('email_triggers', 'email_triggers.email_trigger_id = client_emails.trigger_id', 'inner');
 		$this->db->where('client_id', $client_id);
 		$this->db->where('trigger_id', $trigger_type_id);
-		$this->db->where('active','1');
+		$this->db->where('client_emails.active','1');
 		
 		if ($plan_id != false) {
 			// plan ID can be -1 for No plans

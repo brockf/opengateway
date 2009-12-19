@@ -334,7 +334,7 @@ class authnet
 			
 			// Create an order for today's payment
 			$CI->load->model('order_model');
-			$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $credit_card, $subscription_id);
+			$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $subscription_id);
 			
 			$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $profile_id, $payment_profile_id, $params);
 			
@@ -349,7 +349,7 @@ class authnet
 				$response = $CI->response->TransactionResponse(2, $response_array);
 			}
 		} else {
-			$response = $CI->response->TransactionResponse(100);
+			$response = $CI->response->TransactionResponse(100, array('subscription_id' => $subscription_id));
 		}
 		
 		return $response;

@@ -38,7 +38,6 @@ class Gateway_model extends Model
 	
 	function NewGateway($client_id, $params)
 	{
-		
 		// Get the gateway type
 		if(!isset($params['gateway_type'])) {
 			die($this->response->Error(1005));
@@ -161,10 +160,11 @@ class Gateway_model extends Model
 			$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
 		}
 		elseif (isset($params['customer']) and is_array($params['customer'])) {
+			$CI->load->model('customer_model');
 			// look for embedded customer information
 			$customer = $params['customer'];
 			$customer['customer_id'] = $CI->customer_model->NewCustomer($client_id, $customer);
-			$created_customer
+			$created_customer = true;
 		}
 		else {
 			$customer = array();
@@ -175,7 +175,10 @@ class Gateway_model extends Model
 		$this->load->library('payment/'.$gateway_name);
 		$response = $this->$gateway_name->Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card);	
 		
-		if ($created_customer) {
+		if ($created_customer and $response['response_code'] != 1) {
+			$CI->customer_model->DeleteCustomer($client_id, $customer['customer_id']);
+		}
+		elseif ($created_customer) {
 			$response['customer_id'] = $customer['customer_id'];
 		}
 		
@@ -208,7 +211,9 @@ class Gateway_model extends Model
 	*/
 	
 	function Recur($client_id, $params)
-	{
+	{		
+		$CI =& get_instance();
+		
 		if(isset($params['gateway_id'])) {
 			$gateway_id = $params['gateway_id'];
 		} else {
@@ -236,14 +241,13 @@ class Gateway_model extends Model
 		
 		// Get the customer details if a customer id was included
 		$this->load->model('customer_model');
-		
 		if(isset($params['customer_id'])) {
 			$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
 		}
 		elseif (isset($params['customer']) and is_array($params['customer'])) {
 			// look for embedded customer information
 			$customer = $params['customer'];
-			$customer['customer_id'] = $this->customer_model->NewCustomer($client_id, $customer);
+			$customer['customer_id'] = $CI->customer_model->NewCustomer($client_id, $customer);
 			$created_customer = true;
 		}
 		else {
@@ -266,7 +270,8 @@ class Gateway_model extends Model
 		$recur = $params['recur'];
 		
 		if(isset($recur['plan_id'])) {
-			$plan_details = $this->plan_model->GetPlanDetails($client_id, $recur['plan_id']);
+			$CI->load->model('plan_model');
+			$plan_details = $CI->plan_model->GetPlanDetails($client_id, $recur['plan_id']);
 			
 			$interval 			= $plan_details->interval;
 			$notification_url 	= $plan_details->notification_url;
@@ -277,7 +282,7 @@ class Gateway_model extends Model
 		
 			// if there are specified occurrences, we should create an end-date that works with it
 			if ($plan_details->occurrences != 0) {
-				$recur['end_date'] = date('Y-m-d',now() + ($plan_details->occurrences*86400));
+				$recur['end_date'] = date('Y-m-d',time() + ($plan_details->occurrences*86400));
 			}	
 		} else {
 			
@@ -328,7 +333,7 @@ class Gateway_model extends Model
 		if(isset($recur['end_date'])) {
 			if(strtotime($recur['end_date']) < time()) {
 				die($this->response->Error(5002));
-			} elseif(strtotime($recur->end_date) < strtotime($start_date)) {
+			} elseif(strtotime($recur['end_date']) < strtotime($start_date)) {
 				die($this->response->Error(5003));
 			} else {
 				$end_date = date('Y-m-d', strtotime($recur['end_date']));
@@ -343,14 +348,17 @@ class Gateway_model extends Model
 		
 		// Save the subscription info
 		$CI->load->model('subscription_model');
-		$subscription_id = $CI->subscription_model->SaveSubscription($client_id, $params['gateway_id'], $customer['customer_id'], $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id);
+		$subscription_id = $CI->subscription_model->SaveSubscription($client_id, $params['gateway_id'], $customer['customer_id'], $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id);
 		
 		// Load the proper library
 		$gateway_name = $gateway['name'];
 		$this->load->library('payment/'.$gateway_name);
 		$response = $this->$gateway_name->Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences);
 		
-		if ($created_customer) {
+		if ($created_customer and $response['response_code'] != 1) {
+			$CI->customer_model->DeleteCustomer($client_id, $customer['customer_id']);
+		}
+		elseif ($created_customer) {
 			$response['customer_id'] = $customer['customer_id'];
 		}
 		

@@ -25,7 +25,7 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
     
     if ($customer_id) {
     	$CI->load->model('customer_model');
-    	$customer = $CI->customer_model->GetCustomerDetails($client_id, $customer_id);
+    	$customer = $CI->customer_model->GetCustomer($client_id, $customer_id);
     }
     
     // dynamically get customer information for charge-related trips to save on SQL queries
@@ -44,7 +44,7 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
     	}
     }
     
-    if (!$plan_id) {
+    if (!isset($plan_id)) {
     	$plan_id = false;
     }
     

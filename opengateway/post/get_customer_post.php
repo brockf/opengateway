@@ -1,6 +1,6 @@
 <?php
 
-$url = "http://localhost/gateway/";
+$url = "http://platform.opengateway.net/";
 
 $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 <request>
@@ -12,13 +12,14 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 	<customer_id>140</customer_id>
 </request>';
 
-$postfields = 'request='.$post_string; 
+$postfields = $post_string; 
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); 
 curl_setopt($ch, CURLOPT_URL,$url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields); 
 
 
