@@ -2,7 +2,7 @@
 
 class MY_Email extends CI_Email {
 
-    function My_Email()
+    function MY_Email()
     {
         parent::CI_Email();
     }
@@ -113,16 +113,16 @@ class MY_Email extends CI_Email {
 	    					'secret_key' => $secret_key
 	    				);
 	    		
-	    		if (isset($variables['plan_id']) {
+	    		if (isset($variables['plan_id'])) {
 	    			$array['plan_id'] = $variables['plan_id'];
 	    		}
-	    		if (isset($variables['customer_id']) {
+	    		if (isset($variables['customer_id'])) {
 	    			$array['customer_id'] = $variables['customer_id'];
 	    		}
-	    		if (isset($variables['charge_id']) {
+	    		if (isset($variables['charge_id'])) {
 	    			$array['charge_id'] = $variables['charge_id'];
 	    		}
-	    		if (isset($variables['recurring_id']) {
+	    		if (isset($variables['recurring_id'])) {
 	    			$array['recurring_id'] = $variables['recurring_id'];
 	    		}
 	    			
