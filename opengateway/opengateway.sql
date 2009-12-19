@@ -230,7 +230,7 @@ CREATE TABLE `client_emails` (
   `from_name` varchar(50) NOT NULL,
   `from_email` varchar(255) NOT NULL,
   `is_html` tinyint(1) NOT NULL,
-  `to_address` varchar(255) NOT 
+  `to_address` varchar(255) NOT NULL,
   `bcc_address` varchar(255) NOT NULL,
   `active` tinyint(1) NOT NULL,
   PRIMARY KEY (`client_email_id`)
