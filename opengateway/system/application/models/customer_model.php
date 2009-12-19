@@ -405,7 +405,7 @@ class Customer_model extends Model
 						$data[$i]['plans'][$n]['amount'] = $plan['amount'];
 						$data[$i]['plans'][$n]['interval'] = $plan['interval'];
 						$data[$i]['plans'][$n]['notification_url'] = $plan['notification_url'];
-						$data[$i]['plans'][$i]['status'] = $plan['active'];
+						$data[$i]['plans'][$n]['status'] = $plan['active'];
 						$n++;
 					}
 				}
