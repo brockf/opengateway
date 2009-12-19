@@ -184,7 +184,7 @@ class Gateway_model extends Model
 		
 		// If it was successful, send an email
 		if($response['response_code'] == 1) {
-			$this->email->TriggerTrip('charge', $client_id, $response['charge_id']);
+			TriggerTrip('charge', $client_id, $response['charge_id']);
 		}
 		
 		return $response;
@@ -363,7 +363,7 @@ class Gateway_model extends Model
 		}
 		
 		if ($response['response_code'] == '1') {
-			$this->email->TriggerTrip('new_recurring', $client_id, $response['charge_id'], $response['subscription_id']);
+			TriggerTrip('new_recurring', $client_id, $response['charge_id'], $response['subscription_id']);
 		}
 		
 		return $response;
