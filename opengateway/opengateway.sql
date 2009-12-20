@@ -4211,6 +4211,8 @@ INSERT INTO `required_fields` VALUES ('50', '35', 'email_subject');
 INSERT INTO `required_fields` VALUES ('51', '35', 'email_body');
 INSERT INTO `required_fields` VALUES ('53', '35', 'from_name');
 INSERT INTO `required_fields` VALUES ('54', '35', 'from_email');
+INSERT INTO `required_fields` VALUES ('55', '4', 'first_name');
+INSERT INTO `required_fields` VALUES ('55', '4', 'last_name');
 
 -- ----------------------------
 -- Table structure for `subscriptions`

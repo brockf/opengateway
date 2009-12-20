@@ -10,16 +10,7 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 	</authentication>
 	<type>Charge</type>
 	<gateway_id>28</gateway_id>
-	<customer>
-		<first_name>Joe</first_name>
-		<last_name>Customer</last_name>
-		<address_1>1345 Quebec Street</address_1>
-		<address_2>Apt 1</address_2>
-		<city>Denver</city>
-		<state>CO</state>
-		<postal_code>80220</postal_code>
-		<country>US</country>
-	</customer>
+	<customer_id>123456789</customer_id>
 	<credit_card>
 		<card_num>4916634239086979</card_num>
 		<exp_month>10</exp_month>

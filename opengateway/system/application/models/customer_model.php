@@ -38,6 +38,10 @@ class Customer_model extends Model
 	*/
 	function NewCustomer($client_id, $params)
 	{	
+		// Validate the required fields
+		$this->load->library('field_validation');
+		$this->field_validation->ValidateRequiredFields('NewCustomer', $params);
+
 		if (!isset($params['email'])) $params['email'] = '';
 		if (!isset($params['company'])) $params['company'] = '';
 		if (!isset($params['internal_id'])) $params['internal_id'] = '';
@@ -453,6 +457,7 @@ class Customer_model extends Model
 			$data['country'] = $row->iso2;
 			$data['email'] = $row->email;
 			$data['phone'] = $row->phone;
+			$data['status'] = ($row->active == 1) ? 'active' : 'deleted';
 			
 			$plans = $this->GetPlansByCustomer($client_id, $row->customer_id);
 			
