@@ -397,6 +397,7 @@ class Customer_model extends Model
 				$data[$i]['country'] = $row->iso2;
 				$data[$i]['email'] = $row->email;
 				$data[$i]['phone'] = $row->phone;
+				$data[$i]['status'] = ($row->active == 1) ? 'active' : 'deleted';
 				
 				$plans = $this->GetPlansByCustomer($client_id, $row->customer_id);
 				

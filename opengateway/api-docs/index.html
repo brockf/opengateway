@@ -64,6 +64,10 @@
 				<li>When that customer attempts to access a subscribers-only area of your website, <a href="customers.html">check to see
 				if that customer has an active subscription to that plan</a>.</li>
 			</ul>
+			<h2>Security &amp; PCI Compliance</h2>
+			<p>The billing engine handles all billing with complete PCI Compliance.  It relies on the native recurring billing
+			systems of each integrated payment gateway.  All credit card information is simply relayed to the payment gateway and
+			is not stored internally.  All payment gateway login information is encrypted and stored securely.</p>
 			<h2>Documentation Legend</h2>
 			<p>All request parameters will be highlighted like this: <span class="request">request_parameter</span>.</p>
 			<p>All response variables will be highlighted like this: <span class="response">response_variable</span>.</p>
@@ -82,11 +86,13 @@
 	&lt;limit&gt;50&lt;/limit&gt;
 &lt;/request&gt;</pre>
 			<h2>Request Format</h2>
-			<p>Requests must be made in XML format and sent via an HTTP POST call to the OpenGateway platform server.  If you are
-			using <a href="https://www.opengateway.net">OpenGateway.net</a>, API request should be POST'ed to:</p>
-			<pre class="code">http://platform.opengateway.net/api</pre>
+			<p>Requests must be made in XML format and sent via an HTTP POST call to the OpenGateway platform server.  A secure (https://)
+			connection is required for requests that contain Credit Card information.  If you are
+			using <a href="http://www.opengateway.net">OpenGateway.net</a>, API request should be POST'ed to:</p>
+			<pre class="request">https://platform.opengateway.net/api // Requests containing CC Info
+http://platform.opengateway.net/api // All other requests</pre>
 			<p>If you were issued an API ID using another Service Provider or operating an OpenGateway Enterprise server, you should post your
-			request to their API access URL.</p>
+			request to their specified API access URL.</p>
 			<p>Each request must be accompanied by an <span class="request">authentication</span> node with an <span class="request">api_id</span>
 			and <span class="request">secret_key</span> as well as a <span class="request">type</span> value which specifies the API
 			method to be called (e.g. "NewCustomer", "Charge", or "GetPlan").  All other request parameters vary depending on the API method.</p>
@@ -105,16 +111,6 @@ $poststring = '&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 	&lt;/authentication&gt;
 	&lt;type&gt;Charge&lt;/type&gt;
 	&lt;gateway_id&gt;594082&lt;/gateway_id&gt;
-	&lt;customer&gt;
-		&lt;first_name&gt;Joe&lt;/first_name&gt;
-		&lt;last_name&gt;Customer&lt;/last_name&gt;
-		&lt;address_1&gt;1345 Ontario Street&lt;/address_1&gt;
-		&lt;address_2&gt;Apt 1&lt;/address_2&gt;
-		&lt;city&gt;Toronto&lt;/city&gt;
-		&lt;state&gt;ON&lt;/state&gt;
-		&lt;postal_code&gt;A1B2C3&lt;/postal_code&gt;
-		&lt;country&gt;CA&lt;/country&gt;
-	&lt;/customer&gt;
 	&lt;credit_card&gt;
 		&lt;card_num&gt;0000123412341234&lt;/card_num&gt;
 		&lt;exp_month&gt;12&lt;/exp_month&gt;
