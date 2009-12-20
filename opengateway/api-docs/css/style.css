@@ -182,3 +182,9 @@ table.data tbody td {
 	padding: 5px;
 	font-size: 9pt;
 }
+
+table.data td.yes {
+	background-color: #e3fadc;
+	text-align: center;
+	color: #222;
+}
