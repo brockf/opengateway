@@ -34,7 +34,7 @@ h1 {
 #page_head {
 	background-color: #d8eafd;
 	border-bottom: 3px solid #aed1fa;
-	color: #222;
+	color: #000;
 	padding-top: 35px;
 	padding-bottom: 15px;
 }
@@ -46,7 +46,7 @@ h1 {
 	width: 768px;
 	font-family: georgia, times new roman, serif;
 	font-weight: normal;
-	font-size: 22pt;
+	font-size: 28pt;
 }
 
 #wrapper {
