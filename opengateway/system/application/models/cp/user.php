@@ -13,9 +13,10 @@ class User extends Model {
     }
     
     function Login ($username, $password) {
-		$this->db->select('*');
 		$this->db->where('username',$username);
 		$this->db->where('password',md5($password));
+		$this->db->where('suspended','0');
+		$this->db->where('deleted','0');
 		$query = $this->db->get('clients');
 		
 		if ($query->num_rows() > 0) {
@@ -25,10 +26,10 @@ class User extends Model {
 			return false;
 		}
     	
-    	$this->session->set_userdata('client_id',$client['id']);
+    	$this->session->set_userdata('client_id',$client['client_id']);
     	$this->session->set_userdata('login_time',now());
 		
-		$this->SetActive($user['id']); 
+		$this->SetActive($client['client_id']); 
 		
 		return true;
     }
@@ -62,10 +63,6 @@ class User extends Model {
     }
     
     function Get ($parameter = false) {
-    	if (!is_array($this->active_user)) {
-    		return false;
-    	}
-    	
     	if ($parameter) {
     		return $this->active_user->$parameter;
     	}

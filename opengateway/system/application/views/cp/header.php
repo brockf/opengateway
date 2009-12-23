@@ -11,5 +11,5 @@
 <body>
 	<?=get_notices();?>
 	<div id="header">
-		
+		<?=$this->user->Get('username');?>
 	</div>

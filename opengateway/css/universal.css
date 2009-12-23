@@ -37,3 +37,9 @@ h1, h2, h3, h4, h5, h6, form { margin: 0; font-weight: normal; }
 	background-color: #52ad40;
 	color: #fff;
 }
+
+#header {
+	background-color: #222;
+	padding: 30px 15px 30px 15px;
+	border-bottom: 8px solid #dedede;
+}

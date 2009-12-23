@@ -16,7 +16,7 @@ class Dashboard extends Controller {
 			return $this->show_dashboard();
 		}
 		else {
-			redirect('dashboard/login');
+			redirect('/dashboard/login');
 			return true;
 		}
 	}
