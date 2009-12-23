@@ -251,7 +251,7 @@ $config['sess_time_to_update'] 	= 300;
 |
 */
 $config['cookie_prefix']	= "";
-$config['cookie_domain']	= "";
+$config['cookie_domain']	= "platform.opengateway.net";
 $config['cookie_path']		= "/";
 
 /*
