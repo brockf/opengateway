@@ -7,7 +7,7 @@ class Dashboard extends Controller {
 		parent::Controller();
 		
 		// perform control-panel specific loads
-		CPLoader();	
+		CPLoader();
 	}
 	
 	function index()

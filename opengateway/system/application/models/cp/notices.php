@@ -1,32 +1,28 @@
 <?php
 
 class Notices extends Model {
-	var $CI;
-
     function Notices() {
         parent::Model();
-        
-        $this->CI =& get_instance();
     }
     
-    function SetError($message) {
+    function SetError($message) {    	
     	$errors = $this->GetErrors(false);
     	
     	$errors[] = $message;
     	
     	$errors = serialize($errors);
     	
-    	$this->CI->session->set_flashdata('errors', $errors);
+    	$this->session->set_userdata(array('errors' => $errors));
     	
     	return true;
     }
 
 	function GetErrors ($clear = true) {
-		$errors = $this->CI->session->flashdata('errors');
+		$errors = $this->session->userdata('errors');
 		
 		if (!empty($errors) and is_array(unserialize($errors))) {
 			if ($clear == true) {
-				$this->CI->session->set_flashdata('errors','');
+				$this->session->set_userdata(array('errors' => ''));
 			}
 			return unserialize($errors);
 		}
@@ -42,17 +38,17 @@ class Notices extends Model {
     	
     	$notices = serialize($notices);
     	
-    	$this->CI->session->set_flashdata('notices', $notices);
+    	$this->session->set_userdata(array('notices' => $notices));
     	
     	return true;
     }
 
 	function GetNotices ($clear = true) {
-		$notices = $this->CI->session->flashdata('notices');
+		$notices = $this->session->userdata('notices');
 		
 		if (!empty($notices) and is_array(unserialize($notices))) {
 			if ($clear == true) {
-				$this->CI->session->set_flashdata('notices','');
+				$this->session->set_userdata(array('notices' => ''));
 			}
 			return unserialize($notices);
 		}

@@ -10,10 +10,12 @@ function get_notices () {
 	while (list(,$error) = each($errors)) {
 		$return .= '<div class="error">' . $error . '</div>';
 	}
+	reset($errors);
 	
 	while (list(,$notice) = each($notices)) {
 		$return .= '<div class="notice">' . $notice . '</div>';
 	}
+	reset($notices);
 	
 	if (!empty($return)) {
 		$return = '<div id="notices">' . $return . '</div>';
