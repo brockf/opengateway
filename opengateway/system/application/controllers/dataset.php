@@ -1,5 +1,14 @@
 <?php
+/**
+* Dataset Controller 
+*
+* Handles miscellaneous dataset features
+*
+* @version 1.0
+* @author Brock Ferguson
+* @package OpenGateway
 
+*/
 class Dataset extends Controller {
 
 	function Transactions()
@@ -7,6 +16,13 @@ class Dataset extends Controller {
 		parent::Controller();
 	}
 	
+	/**
+	* Prep Filters
+	*
+	* Handles AJAX posts of dataset filters and returns an encoded array
+	*
+	* @return string Encoded string.
+	*/
 	function prep_filters()
 	{	
 		$serialize = array();

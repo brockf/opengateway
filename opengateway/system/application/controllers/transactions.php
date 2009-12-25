@@ -1,5 +1,14 @@
 <?php
+/**
+* Transactions Controller 
+*
+* Manage transactions, create new transactions
+*
+* @version 1.0
+* @author Brock Ferguson
+* @package OpenGateway
 
+*/
 class Transactions extends Controller {
 
 	function Transactions()

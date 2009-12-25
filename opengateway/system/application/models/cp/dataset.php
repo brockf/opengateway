@@ -1,5 +1,18 @@
 <?php
+/**
+* Dataset Model 
+*
+* Creates dataset tables for the control panel, including jQuery-powered filtering
+*
+* Table data should be sorted through manually in the view by accessing the public $data array.
+* Use TableHead and TableClose to output the surrounding HTML.
+* Requires jQuery and appropriate CSS.
+*
+* @version 1.0
+* @author Brock Ferguson
+* @package OpenGateway
 
+*/
 class Dataset extends Model {
 	var $columns;
 	var $base_url;
@@ -7,6 +20,7 @@ class Dataset extends Model {
 	var $filter_values;
 	var $rows_per_page;
 	var $offset;
+	var $data;
 
     function Dataset() {
         parent::Model();
@@ -14,6 +28,18 @@ class Dataset extends Model {
         $this->rows_per_page = 50;
     }
     
+    /**
+    * Initialize Dataset
+    *
+    * Initializes the dataset with data configuration, column specs
+    *
+    * @param string $data_model The model to load which contains the GetData method
+    * @param string $data_function The method in the model to call, should return an associative array
+    * @param array $columns Array with each column as an array of settings within it.  Requires "name", "width".  Optional: "sort_column", "type", "filter_name", "field_start_date" and "field_end_date" (for date type), and "options" (for select type).
+    * @param string $base_url The URL to use for pagination base.  Optional.
+    *
+    * @return bool True upon successfull initialization
+    */
     function Initialize ($data_model, $data_function, $columns, $base_url = false) {
     	$CI =& get_instance();
     	
@@ -34,10 +60,10 @@ class Dataset extends Model {
 	    				);
 	    			
 	    	// error checking			
-	    	if ($column['type'] == 'date' and (!isset($column['field_start_date']) or !isset($column['field_end_date']))) {
+	    	if (isset($column['type']) and $column['type'] == 'date' and (!isset($column['field_start_date']) or !isset($column['field_end_date']))) {
 	    		die(show_error('Unable to create a "date" filter without field_start_date and field_end_date.'));
 	    	}
-	    	elseif ($column['type'] == 'select' and !isset($column['options'])) {
+	    	elseif (isset($column['type']) and $column['type'] == 'select' and !isset($column['options'])) {
 	    		die(show_error('Unable to create a "select" filter without options.'));
 	    	}
 	    	
@@ -139,9 +165,18 @@ class Dataset extends Model {
 		$config['num_links'] = '10';
 		
 		$CI->load->library('pagination');
-		$CI->pagination->initialize($config); 
+		$CI->pagination->initialize($config);
+		
+		return true; 
     }
     
+    /**
+    * Output Table Head
+    *
+    * Returns the header of the table, including pagination/buttons bar, and form beginning
+    *
+    * @return string HTML output
+    */
     function TableHead () {
     	$CI =& get_instance();
     	
@@ -212,6 +247,13 @@ class Dataset extends Model {
     	return $output;
     }
     
+    /**
+    * Output Table Close
+    *
+    * Returns the HTML for the table closure, including bottom pagination div and form ending
+    *
+    * @return string HTML output
+    */
     function TableClose () {
     	$CI =& get_instance();
     	

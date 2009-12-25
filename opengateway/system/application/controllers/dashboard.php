@@ -1,5 +1,14 @@
 <?php
+/**
+* Dashboard Controller 
+*
+* Login to the dashboard, get an overview of the account
+*
+* @version 1.0
+* @author Brock Ferguson
+* @package OpenGateway
 
+*/
 class Dashboard extends Controller {
 
 	function Dashboard()
@@ -20,11 +29,21 @@ class Dashboard extends Controller {
 			return true;
 		}
 	}
-	
+
+	/**
+	* Show login screen
+	*/
 	function login() {
 		$this->load->view('cp/login');
 	}
 	
+	/**
+	* Do Login
+	*
+	* Take a login post and process it
+	* 
+	* @return bool After redirect to dashboard or login screen, returns TRUE or FALSE
+	*/
 	function do_login() {
 		if ($this->user->Login($this->input->post('username'),$this->input->post('password'))) {
 			$this->notices->SetNotice($this->lang->line('notice_login_ok'));

@@ -1,17 +1,17 @@
 <?php
 /**
-* Customers Controller 
+* Settings Controller 
 *
-* Manage customers
+* Manage emails, gateway, API key
 *
 * @version 1.0
 * @author Brock Ferguson
 * @package OpenGateway
 
 */
-class Customers extends Controller {
+class Settings extends Controller {
 
-	function Customers()
+	function Settings()
 	{
 		parent::Controller();
 		
@@ -19,14 +19,18 @@ class Customers extends Controller {
 		CPLoader();
 	}
 	
+	function index() {
+	
+	}
+	
 	/**
-	* Manage customers
+	* Manage emails
 	*
-	* Lists all active customers, with optional filters
+	* Lists active emails for managing
 	*/
-	function index()
+	function emails()
 	{	
-		$this->navigation->PageTitle('Customers');
+		$this->navigation->PageTitle('Manage Emails');
 		
 		$this->load->model('cp/dataset','dataset');
 		
@@ -36,27 +40,30 @@ class Customers extends Controller {
 							'sort_column' => 'id',
 							'type' => 'id',
 							'width' => '10%',
-							'filter' => 'customer_id'),
+							'filter' => 'id'),
 						array(
-							'name' => 'First Name',
-							'sort_column' => 'customers.first_name',
-							'type' => 'text',
-							'width' => '25%',
-							'filter' => 'first_name'),
-						array(
-							'name' => 'Last Name',
-							'sort_column' => 'customers.last_name',
-							'type' => 'text',
-							'width' => '25%',
-							'filter' => 'last_name'),
-						array(
-							'name' => 'Email Address',
-							'sort_column' => 'email',
+							'name' => 'Trigger',
+							'sort_column' => 'emails.trigger',
 							'type' => 'text',
 							'width' => '20%',
-							'filter' => 'email')
+							'filter' => 'trigger'),
+						array(
+							'name' => 'To:',
+							'width' => '15%',
+							'sort_column' => 'emails.to_address',
+							'filter' => 'to_address',
+							'type' => 'text'),
+						array(
+							'name' => 'Email Subject',
+							'sort_column' => 'emails.email_subject',
+							'type' => 'text',
+							'width' => '25%',
+							'filter' => 'email_subject'),
+						array(
+							'name' => 'Format',
+							'width' => '15%')
 					);
-					
+		
 		// handle recurring plans if they exist
 		$this->load->model('plan_model');
 		$plans = $this->plan_model->GetPlans($this->user->Get('client_id'),array());
@@ -69,10 +76,10 @@ class Customers extends Controller {
 			}
 			
 			$columns[] = array(
-							'name' => 'Active Plans',
+							'name' => 'Plan Link',
 							'type' => 'select',
 							'options' => $options,
-							'filter' => 'plan_id',
+							'filter' => 'emails.plan_id',
 							'width' => '20%'
 							);
 		}
@@ -83,8 +90,8 @@ class Customers extends Controller {
 				);
 		}
 		
-		$this->dataset->Initialize('customer_model','GetCustomers',$columns);
+		$this->dataset->Initialize('email_model','GetEmails',$columns);
 		
-		$this->load->view('cp/customers.php');
+		$this->load->view('cp/emails.php', array('plans' => $options));
 	}
 }

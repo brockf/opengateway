@@ -1,5 +1,5 @@
 <?=$this->load->view('cp/header');?>
-<h1>Latest transactions</h1>
+<h1>Manage emails</h1>
 <?=$this->dataset->TableHead();?>
 <?
 if (!empty($this->dataset->data)) {
@@ -7,11 +7,11 @@ if (!empty($this->dataset->data)) {
 	?>
 		<tr>
 			<td><?=$row['id'];?></td>
-			<td class="<?=$row['status'];?>">&nbsp;</td>
-			<td><?=$row['date'];?></td>
-			<td><?=$row['amount'];?></td>
-			<td><? if (isset($row['customer'])) { ?><?=$row['customer']['last_name'];?>, <?=$row['customer']['first_name'];?><? } ?></td>
-			<td>****<?=$row['card_last_four'];?></td>
+			<td><?=$row['trigger'];?></td>
+			<td><?=$row['to_address'];?></td>
+			<td><?=$row['email_subject'];?> days</td>
+			<td><?=$row['format'];?> days</td>
+			<td><? if (isset($options[$row['plan_id']])) { ?><?=$options[$row['plan_id']];?><? } ?></td>
 		</tr>
 	<?
 	}

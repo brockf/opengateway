@@ -9,6 +9,7 @@
 * @package OpenGateway
 
 */
+
 class Email_model extends Model
 {
 	function Email_model()
@@ -188,15 +189,27 @@ class Email_model extends Model
 	function GetEmails($client_id, $params)
 	{		
 		if(isset($params['deleted']) and $params['deleted'] == '1') {
-			$this->db->where('active', '0');
+			$this->db->where('client_emails.active', '0');
 		}
 		else {
-			$this->db->where('active', '1');
+			$this->db->where('client_emails.active', '1');
 		}
 		
 		if(isset($params['trigger'])) {
 			$trigger_id = (!is_numeric($params['trigger'])) ? $this->GetTriggerId($params['trigger']) : $params['trigger'];
 			$this->db->where('trigger', $trigger_id);
+		}
+		
+		if(isset($params['id'])) {
+			$this->db->where('client_emails.email_id', $params['id']);
+		}
+		
+		if(isset($params['to_address'])) {
+			$this->db->where('client_emails.to_address', $params['to_address']);
+		}
+		
+		if(isset($params['email_subject'])) {
+			$this->db->where('client_emails.email_subject', $params['email_subject']);
 		}
 		
 		if (isset($params['offset'])) {
@@ -212,7 +225,7 @@ class Email_model extends Model
 		
 		$this->db->join('email_triggers', 'email_triggers.email_trigger_id = client_emails.trigger_id', 'inner');
 		$this->db->join('plans', 'client_emails.plan_id = plans.plan_id', 'left');
-		$this->db->where('client_id', $client_id);
+		$this->db->where('client_emails.client_id', $client_id);
 		$query = $this->db->get('client_emails');
 		$data = array();
 		if($query->num_rows() > 0) {

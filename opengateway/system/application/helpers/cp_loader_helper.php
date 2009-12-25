@@ -10,6 +10,7 @@ function CPLoader () {
 	$CI->load->model('cp/notices','notices');
 	$CI->load->helper('get_notices');
 	$CI->load->model('cp/navigation','navigation');
+	$CI->load->helper('dataset_link');
 	
 	// Build Navigation
 	$CI->navigation->Add('dashboard','Dashboard');
