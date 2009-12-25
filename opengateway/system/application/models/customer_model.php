@@ -289,6 +289,7 @@ class Customer_model extends Model
 	* @param string $params['country'] Customer's country. Optional.
 	* @param string $params['phone'] Customer's phone. Optional.
 	* @param string $params['email'] Customer's email. Optional.
+	* @param int $params['plan_id'] Filter by active plan. Optional.
 	* @param int $params['deleted'] Set to 1 for deleted customers.  Optional.
 	* 
 	* @return mixed Array containing the search results
@@ -366,22 +367,24 @@ class Customer_model extends Model
 			$this->db->limit($params['limit'], $offset);
 		}
 		
-		// make a join in one of two conditions
-		if (isset($params['plan_id']) or isset($params['active_recurring'])) {
-			$this->db->join('subscriptions', 'customers.customer_id = subscriptions.customer_id', 'inner');
-			if(isset($params['active_recurring'])) {
-				if($params['active_recurring'] == 1) {
-					$this->db->where('subscriptions.active', 1);
-				} elseif($params['active_recurring'] === 0) {
-					$this->db->where('subscriptions.active', 0);
-				}
-				
+		$this->db->join('subscriptions', 'customers.customer_id = subscriptions.customer_id', 'inner');
+	
+		if(isset($params['active_recurring'])) {
+			if($params['active_recurring'] == 1) {
+				$this->db->where('subscriptions.active', 1);
+			} elseif($params['active_recurring'] === 0) {
+				$this->db->where('subscriptions.active', 0);
 			}
 			
-			if(isset($params['plan_id'])) {
-				$this->db->where('subscriptions.plan_id',$params['plan_id']);
-			}
 		}
+		
+		if(isset($params['plan_id'])) {
+			$this->db->where('subscriptions.plan_id',$params['plan_id']);
+		}
+		
+		$this->db->select('customers.*');
+		$this->db->select('countries.iso2');
+		$this->db->select('subscriptions.plan_id');
 		
 		$this->db->order_by('customers.customer_id', 'DESC');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
@@ -406,19 +409,20 @@ class Customer_model extends Model
 				$data[$i]['phone'] = $row->phone;
 				$data[$i]['status'] = ($row->active == 1) ? 'active' : 'deleted';
 				
-				$plans = $this->GetPlansByCustomer($client_id, $row->customer_id);
-				
-				if($plans) {
-					$n=0;
-					foreach($plans as $plan) {
-						$data[$i]['plans'][$n]['id'] = $plan['id'];
-						$data[$i]['plans'][$n]['type'] = $plan['type'];
-						$data[$i]['plans'][$n]['name'] = $plan['name'];
-						$data[$i]['plans'][$n]['amount'] = $plan['amount'];
-						$data[$i]['plans'][$n]['interval'] = $plan['interval'];
-						$data[$i]['plans'][$n]['notification_url'] = $plan['notification_url'];
-						$data[$i]['plans'][$n]['status'] = $plan['active'];
-						$n++;
+				if (isset($row->plan_id) and !empty($row->plan_id)) {	
+					$plans = $this->GetPlansByCustomer($client_id, $row->customer_id);
+					if($plans) {
+						$n=0;
+						foreach($plans as $plan) {
+							$data[$i]['plans'][$n]['id'] = $plan['id'];
+							$data[$i]['plans'][$n]['type'] = $plan['type'];
+							$data[$i]['plans'][$n]['name'] = $plan['name'];
+							$data[$i]['plans'][$n]['amount'] = $plan['amount'];
+							$data[$i]['plans'][$n]['interval'] = $plan['interval'];
+							$data[$i]['plans'][$n]['notification_url'] = $plan['notification_url'];
+							$data[$i]['plans'][$n]['status'] = $plan['active'];
+							$n++;
+						}
 					}
 				}
 				

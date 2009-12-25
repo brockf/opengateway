@@ -159,6 +159,8 @@ class Order_model extends Model
 		
 		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
+		$this->db->order_by('orders.order_id','DESC');
+		
 		$query = $this->db->get('orders');
 		
 		$data = array();
