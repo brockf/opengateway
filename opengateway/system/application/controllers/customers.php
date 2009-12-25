@@ -22,7 +22,7 @@ class Customers extends Controller {
 							'sort_column' => 'id',
 							'type' => 'id',
 							'width' => '10%',
-							'filter' => 'id'),
+							'filter' => 'customer_id'),
 						array(
 							'name' => 'First Name',
 							'sort_column' => 'customers.first_name',
