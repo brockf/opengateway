@@ -2,15 +2,26 @@
 
 class Dataset extends Controller {
 
-	function Dataset()
+	function Transactions()
 	{
 		parent::Controller();
-		
-		// perform control-panel specific loads
-		CPLoader();
 	}
 	
-	function index()
+	function prep_filters()
 	{	
-		return $this->manage();	
+		$serialize = array();
+	
+		$values = explode('&',$this->input->post('filters'));
+		foreach ($values as $value) {
+			list($name,$value) = explode('=',$value);
+			
+			if (!empty($value) and $value != 'filter+results') {
+				$serialize[$name] = $value;
+			}	
+		}
+		
+		$this->load->library('asciihex');
+	
+		echo $this->asciihex->AsciiToHex(base64_encode(serialize($serialize)));
 	}
+}

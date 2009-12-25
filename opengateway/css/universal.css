@@ -153,7 +153,8 @@ a:hover {
 }
 
 #loggedin {
-	color: #00f0ff;
+	color: #fff;
+	font-weight: bold;
 	margin-left: 8px;
 	margin-top: 5px;
 }
@@ -197,7 +198,7 @@ ul#account_menu li a:hover {
 	width: 22%;
 }
 
-h1 {
+#content h1 {
 	border-bottom: 3px solid #f0f0f1;
 	padding-bottom: 5px;
 	margin-bottom: 5px;
@@ -269,8 +270,98 @@ h1 {
 	font-size: 9pt;
 	color: #777;
 	padding-left: 30px;
+	padding-bottom: 30px;
 }
 
 #footer a {
 	color: #777;
+}
+
+table.dataset {
+	width: 100%;
+}
+
+table.dataset td {
+	padding: 6px;
+}
+
+table.dataset thead td{
+	background-color: #00858d;
+	border-bottom: 1px solid #006369;
+	border-top: 1px solid #006369;
+	color: #fff;
+	font-weight: bold;
+	text-transform: uppercase;
+	font-size: 9pt;
+}
+
+table.dataset tbody td {
+	border-bottom: 1px solid #dedede;
+}
+
+table.dataset tbody tr.odd td {
+	background-color: #f0f0f0;
+}
+
+table.dataset tbody td.ok {
+	background-image: url(../images/ok.png);
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+table.dataset tbody td.failed {
+	background-image: url(../images/failed.png);
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+div.pagination {
+	padding: 6px;
+	text-align: center;
+	position: relative;
+	height: 20px;
+}
+
+div.pagination a {
+	text-decoration: none;
+	padding: 3px;
+}
+
+div.pagination b {
+	background-color: #333;
+	color: #fff;
+	padding: 3px;
+}
+
+table.dataset input {
+	width: 100%;
+}
+
+table.dataset input.date_start {
+	width: 45%;
+	margin-right: 2%;
+}
+
+table.dataset input.date_end {
+	width: 45%;
+}
+
+div.apply_filters {
+	position: absolute;
+	right: 0px;
+	top: 5px;
+}
+
+div.dataset_export {
+	position: absolute;
+	top: 5px;
+	left: 0px;
+}
+
+div.hidden {
+	display: none;
+}
+
+.emptyfilter {
+	color: #999;
 }

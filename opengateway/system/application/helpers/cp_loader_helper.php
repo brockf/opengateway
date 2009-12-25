@@ -9,4 +9,19 @@ function CPLoader () {
 	$CI->lang->load('control_panel');
 	$CI->load->model('cp/notices','notices');
 	$CI->load->helper('get_notices');
+	$CI->load->model('cp/navigation','navigation');
+	
+	// Build Navigation
+	$CI->navigation->Add('dashboard','Dashboard');
+	$CI->navigation->Add('transactions','Transactions');
+	$CI->navigation->Add('customers','Customers');
+	$CI->navigation->Add('plans','Recurring Plans');
+	$CI->navigation->Add('clients','Clients');
+	$CI->navigation->Add('settings','Settings');
+	$CI->navigation->Add('settings/emails','Emails','settings');
+	$CI->navigation->Add('settings/gateways','Gateways','settings');
+	$CI->navigation->Add('settings/api','API Key','settings');
+	
+	// Set default page title
+	$CI->navigation->PageTitle('Control Panel');
 }

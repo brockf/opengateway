@@ -300,10 +300,10 @@ class Customer_model extends Model
 		$this->db->where('customers.client_id', $client_id);
 		
 		if(isset($params['deleted']) and $params['deleted'] == '1') {
-			$this->db->where('active', '0');
+			$this->db->where('customers.active', '0');
 		}
 		else {
-			$this->db->where('active', '1');
+			$this->db->where('customers.active', '1');
 		}
 		
 		// Check which search paramaters are set
@@ -366,14 +366,21 @@ class Customer_model extends Model
 			$this->db->limit($params['limit'], $offset);
 		}
 		
-		if(isset($params['active_recurring'])) {
+		// make a join in one of two conditions
+		if (isset($params['plan_id']) or isset($params['active_recurring'])) {
 			$this->db->join('subscriptions', 'customers.customer_id = subscriptions.customer_id', 'inner');
-			if($params['active_recurring'] == 1) {
-				$this->db->where('subscriptions.active', 1);
-			} elseif($params['active_recurring'] === 0) {
-				$this->db->where('subscriptions.active', 0);
+			if(isset($params['active_recurring'])) {
+				if($params['active_recurring'] == 1) {
+					$this->db->where('subscriptions.active', 1);
+				} elseif($params['active_recurring'] === 0) {
+					$this->db->where('subscriptions.active', 0);
+				}
+				
 			}
 			
+			if(isset($params['plan_id'])) {
+				$this->db->where('subscriptions.plan_id',$params['plan_id']);
+			}
 		}
 		
 		$this->db->order_by('customers.customer_id', 'DESC');

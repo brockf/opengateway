@@ -5,5 +5,7 @@
 	<div id="footer">
 		Powered by <a href="http://www.opengateway.net">OpenGateway</a>.  Copyright &copy; 2009-2010, Electric Function, Inc.
 	</div>
+<div class="hidden" id="base_url"><?=base_url();?></div>
+<div class="hidden" id="current_url"><?=current_url();?></div>
 </body>
 </html>

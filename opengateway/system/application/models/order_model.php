@@ -68,6 +68,10 @@ class Order_model extends Model
 	* @param date $params['end_date'] Only orders before or on this date will be returned. Optional.
 	* @param int $params['customer_id'] The customer id associated with the order. Optional.
 	* @param string $params['customer_internal_id'] The customer's internal id associated with the order. Optional.
+	* @param int $params['id'] The charge ID.  Optional.
+	* @param string $params['amount'] The amount of the charge.  Optional.
+	* @param string $params['customer_last_name'] The last name of the customer.  Optional.
+	* @param int $params['status'] Set to ok/failed to filter results.  Optional.
 	* @param int $params['subscription_id'] Returns only recurring orders that have this subscription ID. Optional.
 	* @param boolean $params['recurring_only'] Returns only orders that are part of a recurring subscription. Optional.
 	* @param int $params['offset'] Offsets the database query.
@@ -113,12 +117,33 @@ class Order_model extends Model
 			$this->db->where('orders.customer_id', $params['customer_id']);
 		}
 		
+		if(isset($params['amount'])) {
+			$this->db->where('orders.amount', $params['amount']);
+		}
+		
+		if(isset($params['id'])) {
+			$this->db->where('orders.order_id', $params['id']);
+		}
+		
+		if(isset($params['customer_id'])) {
+			$this->db->where('orders.customer_id', $params['customer_id']);
+		}
+		
+		if(isset($params['customer_last_name'])) {
+			$this->db->like('customers.last_name',$params['customer_last_name']);
+		}
+		
 		if(isset($params['customer_internal_id'])) {
 			$this->db->where('customers.internal_id', $params['customer_internal_id']);
 		}
 		
 		if(isset($params['recurring_only']) && $params['recurring_only'] == 1) {
 			$this->db->where('orders.subscription_id <>', 0);
+		}
+		
+		if (isset($params['status'])) {
+			$status = ($params['status'] == 'ok') ? '1' : '0';
+			$this->db->where('orders.status',$status);
 		}
 		
 		if (isset($params['offset'])) {
@@ -135,6 +160,7 @@ class Order_model extends Model
 		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$query = $this->db->get('orders');
+		
 		$data = array();
 		if($query->num_rows() > 0) {
 			$i=0;
@@ -144,6 +170,7 @@ class Order_model extends Model
 				$data[$i]['date'] = $row->timestamp;
 				$data[$i]['amount'] = $row->amount;
 				$data[$i]['card_last_four'] = $row->card_last_four;
+				$data[$i]['status'] = ($row->status == '1') ? 'ok' : 'failed';
 				
 				if($row->subscription_id != 0) {
 					$data[$i]['recurring_id'] = $row->subscription_id;
@@ -201,6 +228,7 @@ class Order_model extends Model
 			$data['date'] = $row->timestamp;
 			$data['amount'] = $row->amount;
 			$data['card_last_four'] = $row->card_last_four;
+			$data['status'] = ($row->status == 1) ? 'ok' : 'failed';
 				
 			if($row->subscription_id != 0) {
 					$data['recurring_id'] = $row->subscription_id;

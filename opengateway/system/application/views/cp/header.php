@@ -2,9 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>Control Panel</title>
+	<title><?=$this->navigation->PageTitle();?></title>
 	<link href="<?=base_url();?>css/universal.css" rel="stylesheet" type="text/css" media="screen" />
+	<link href="<?=base_url();?>css/datepicker.css" rel="stylesheet" type="text/css" media="screen" />
 	<script type="text/javascript" src="<?=base_url();?>js/jquery-1.3.2.js"></script>
+	<script type="text/javascript" src="<?=base_url();?>js/date.js"></script>
+	<script type="text/javascript" src="<?=base_url();?>js/datePicker.js"></script>
 	<script type="text/javascript" src="<?=base_url();?>js/universal.js"></script>
 </head>
 <body>
@@ -12,20 +15,7 @@
 	<div id="header">
 		<div id="logo">&nbsp;</div>
 		<ul id="topnav">
-			<li><a href="<?=site_url('dashboard');?>">Dashboard</a></li>
-			<li class="active"><a href="<?=site_url('transactions');?>">Transactions</a></li>
-			<li><a href="<?=site_url('Customers');?>">Customers</a></li>
-			<li><a href="<?=site_url('plans');?>">Recurring Plans</a></li>
-			<li><a href="<?=site_url('clients');?>">Clients</a></li>
-			<li class="parent">
-				<a href="<?=site_url('settings');?>">Settings</a>
-				<ul class="children">
-					<li><a href="<?=site_url('settings/emails');?>">Emails</a></li>
-					<li><a href="<?=site_url('settings/gateways');?>">Gateways</a></li>
-					<li><a href="<?=site_url('settings/api');?>">API Keys</a></li>
-				</ul>
-				<div style="clear:both"></div>
-			</li>
+			<?=$this->navigation->Output();?>
 		</ul>
 		<div id="account">
 			<div id="loggedin"><?=$this->user->Get('first_name')?> <?=$this->user->Get('last_name')?></div>
