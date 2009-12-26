@@ -95,6 +95,9 @@ class Settings extends Controller {
 		// add actions
 		$this->dataset->Action('Delete','settings/delete_emails');
 		
+		// sidebar
+		$this->navigation->SidebarButton('New Email','settings/new_email');
+		
 		$this->load->view('cp/emails.php', array('plans' => $options));
 	}
 	
@@ -118,6 +121,8 @@ class Settings extends Controller {
 		foreach ($emails as $email) {
 			$this->email_model->DeleteEmail($this->user->Get('client_id'),$email);
 		}
+		
+		$this->notices->SetNotice($this->lang->line('emails_deleted'));
 		
 		redirect($return_url);
 		return true;

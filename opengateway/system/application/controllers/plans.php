@@ -91,6 +91,8 @@ class Plans extends Controller {
 			$this->plan_model->DeletePlan($this->user->Get('client_id'),$plan);
 		}
 		
+		$this->notices->SetNotice($this->lang->line('plans_deleted'));
+		
 		redirect($return_url);
 		return true;
 	}

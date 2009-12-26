@@ -193,12 +193,6 @@ ul#account_menu li a:hover {
 	margin-left: 20px;
 }
 
-#sidebar {
-	float: right;
-	padding: 1.5%;
-	width: 22%;
-}
-
 #content h1 {
 	border-bottom: 3px solid #f0f0f1;
 	padding-bottom: 5px;
@@ -277,6 +271,8 @@ ul#account_menu li a:hover {
 #footer a {
 	color: #777;
 }
+
+/* datasets */
 
 table.dataset {
 	width: 100%;
@@ -369,4 +365,25 @@ div.hidden {
 
 .emptyfilter {
 	color: #999;
+}
+
+/* sidebar stylings */
+
+#sidebar {
+	float: right;
+	padding: 1.5%;
+	padding-top: 0px;
+	width: 22%;
+}
+
+p.button a {
+	display: block;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	border-left: 3px solid #333;
+	padding: 8px;
+	font-size: 12pt;
+	text-decoration: none;
+	color: #00b5c0;
+	font-weight: bold;
 }

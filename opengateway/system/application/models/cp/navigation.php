@@ -4,6 +4,8 @@ class Navigation extends Model {
 	var $elements;
 	var $children;
 	var $pagetitle;
+	var $sidebar_buttons;
+	var $sidebar_notes;
 
     function Navigation() {
         parent::Model();
@@ -69,6 +71,39 @@ class Navigation extends Model {
     	else {
     		$this->pagetitle = $set . ' | Control Panel';
     	}
+    }
+    
+    function SidebarButton ($text, $link, $class = 'button', $external = false) {
+    	$this->sidebar_buttons[] = array(
+    								'text' => $text,
+    								'link' => ($external == false) ? site_url($link) : $link,
+    								'class' => $class
+    								);
+    }
+    
+    function SidebarNote ($text, $class = 'note') {
+    	$this->sidebar_notes[] = array(
+    								'text' => $text,
+    								'class' => $class
+    								);
+    }
+    
+    function GetSidebar () {
+    	$return = '';
+    	
+    	if (is_array($this->sidebar_buttons)) {
+	    	foreach ($this->sidebar_buttons as $button) {
+	    		$return .= '<p class="button"><a class="' . $button['class'] . '" href="' . $button['link'] . '">' . $button['text'] . '</a></p>';
+	    	}
+	    }
+    	
+    	if (is_array($this->sidebar_notes)) {
+	    	foreach ($this->sidebar_notes as $note) {
+	    		$return .= '<p class="' . $note['class'] . '">' . $note['text'] . '</p>';
+	    	}
+	    }	
+    	
+    	return $return;
     }
     
     function ArrayToClass ($array) {

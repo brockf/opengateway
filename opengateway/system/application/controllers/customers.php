@@ -112,6 +112,8 @@ class Customers extends Controller {
 			$this->customer_model->DeleteCustomer($this->user->Get('client_id'),$customer);
 		}
 		
+		$this->notices->SetNotice($this->lang->line('customers_deleted'));
+		
 		redirect($return_url);
 		return true;
 	}

@@ -125,13 +125,15 @@ $(document).ready(function() {
 	$('input.action_button').click(function () {
 		var serialized_items = $('#dataset_form input.action_items').serialize();
 		
-		var link = $(this).attr('rel');
-		var return_link = $('#current_url').html();
-		
-		$.post($('#base_url').html()+'dataset/prep_actions', { items: serialized_items, return_url: return_link },
-		  function(data){
-		    window.location.href = link+'/'+data;
-		  });
+		if (serialized_items != '') {	
+			var link = $(this).attr('rel');
+			var return_link = $('#current_url').html();
+			
+			$.post($('#base_url').html()+'dataset/prep_actions', { items: serialized_items, return_url: return_link },
+			  function(data){
+			    window.location.href = link+'/'+data;
+			  });
+		}
 		return false;
 	});
 });

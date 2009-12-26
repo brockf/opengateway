@@ -29,7 +29,7 @@
 	</div>
 	<div id="wrapper">
 		<div id="sidebar">
-			testst
+			<?=$this->navigation->GetSidebar();?>
 		</div>
 		<div id="content">
 			<div id="box-top-right"></div>
