@@ -6,6 +6,7 @@ if (!empty($this->dataset->data)) {
 	foreach ($this->dataset->data as $row) {
 	?>
 		<tr>
+			<td><input type="checkbox" name="check_<?=$row['id'];?>" value="1" class="action_items" /></td>
 			<td><?=$row['id'];?></td>
 			<td><?=$row['trigger'];?></td>
 			<td><?=$row['to_address'];?></td>
@@ -18,7 +19,7 @@ if (!empty($this->dataset->data)) {
 }
 else {
 ?>
-<tr><td colspan="6">Empty data set.</td></tr>
+<tr><td colspan="7">Empty data set.</td></tr>
 <?
 }	
 ?>

@@ -21,6 +21,7 @@ class Dataset extends Model {
 	var $rows_per_page;
 	var $offset;
 	var $data;
+	var $actions;
 
     function Dataset() {
         parent::Model();
@@ -109,9 +110,10 @@ class Dataset extends Model {
     	if ($CI->uri->segment(5) == 'export') {
     		$xml_params = '';
 			while (list($name,$value) = each($params)) {
-				if ($name != 'limit' and $name !='offset') {
+				// commented out - do we want to keep offset/limit?
+				//if ($name != 'limit' and $name !='offset') {
 					$xml_params .= "<$name>$value</$name>";
-				}
+				//}
 			}
 			reset($params);
     	
@@ -171,6 +173,25 @@ class Dataset extends Model {
     }
     
     /**
+    * Add Action
+    *
+    * Adds an action button the dataset
+    * When clicked, it creates an ASCII'd, base64_encoded, serialized array of all ID's in the checkboxes of the dataset
+    *
+    * @param string $name The name of the action for the button
+    * @param string $link The link (e.g. /customers/delete) to pass the variable to (e.g. /customers/delete/39f32432849340923849234)
+    * @return bool True upon success
+    */
+    function Action ($name, $link) {
+    	$this->actions[] = array(
+    							'name' => $name,
+    							'link' => $link
+    						);
+    						
+    	return true;
+    }
+    
+    /**
     * Output Table Head
     *
     * Returns the header of the table, including pagination/buttons bar, and form beginning
@@ -186,16 +207,33 @@ class Dataset extends Model {
     				<div class="pagination">';
     	$output .= $CI->pagination->create_links();
     	
+    	$actions = '';
+    	$i = 1;
+    	// build action buttons
+    	if (!empty($this->actions)) {
+    		$actions .= 'With selected: ';
+    		while (list(,$action) = each($this->actions)) {
+    			$actions .= '<input type="button" class="action_button" rel="' . site_url($action['link']) . '" name="action_' . $i . '" value="' . $action['name'] . '" />';
+    			$i++;
+    		}
+    	}
+    	
     	if ($this->filters == true) {
-    		$output .= '<div class="dataset_export"><input id="dataset_export_button" type="button" name="" value="Export" /></div><div class="apply_filters"><input type="submit" name="" value="Filter Dataset" />&nbsp;&nbsp;<input id="reset_filters" type="reset" name="" value="Clear Filters" /></div>';
+    		$output .= '<div class="dataset_actions">' . $actions . '</div><div class="apply_filters"><input type="submit" name="" value="Filter Dataset" />&nbsp;&nbsp;<input id="reset_filters" type="reset" name="" value="Clear Filters" />&nbsp;&nbsp;<input id="dataset_export_button" type="button" name="" value="Export" /></div>';
     	}
     	
     	$output .= '</div>
     				<table class="dataset" cellpadding="0" cellspacing="0">
     				<thead><tr>';
+    				
+    	// add empty header cell if we have checkboxes
+    	if (!empty($this->actions)) {
+    		$output .= '<td style="width:5%">&nbsp;</td>';
+    	}
     	
-    	while (list(,$column) = each($this->columns)) {
-    		$output .= '<td style="width:' . $column['width'] . '">' . $column['name'] . '</td>';
+    	// add column headers
+    	while (list($key,$column) = each($this->columns)) {
+   			$output .= '<td style="width:' . $column['width'] . '">' . $column['name'] . '</td>';
     	}
     	reset($this->columns);
     	
@@ -203,6 +241,11 @@ class Dataset extends Model {
     	
     	if ($this->filters == true) {
     		$output .= '<tr class="filters">';
+    		
+    		// add check_all/uncheck_all checkbox
+	    	if (!empty($this->actions)) {
+	    		$output .= '<td style="width:5%"><input type="checkbox" name="check_all" id="check_all" value="check_all" /></td>';
+	    	}
     		
     		while (list(,$column) = each($this->columns)) {
 				if ($column['filters'] == true) {

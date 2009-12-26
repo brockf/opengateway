@@ -5,7 +5,8 @@
 if (!empty($this->dataset->data)) {
 	foreach ($this->dataset->data as $row) {
 	?>
-		<tr>
+		<tr rel="<?=$row['id'];?>">
+			<td><input type="checkbox" name="check_<?=$row['id'];?>" value="1" class="action_items" /></td>
 			<td><?=$row['id'];?></td>
 			<td><?=$row['first_name'];?></td>
 			<td><?=$row['last_name'];?></td>
@@ -25,7 +26,7 @@ if (isset($row['plans'])) {
 }
 else {
 ?>
-<tr><td colspan="5">Empty data set.</td></tr>
+<tr><td colspan="6">Empty data set.</td></tr>
 <?
 }	
 ?>

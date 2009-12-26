@@ -21,13 +21,7 @@ class Dashboard extends Controller {
 	
 	function index()
 	{		
-		if ($this->user->LoggedIn()) {
-			return $this->show_dashboard();
-		}
-		else {
-			redirect('/dashboard/login');
-			return true;
-		}
+		$this->load->view('cp/dashboard');
 	}
 
 	/**
@@ -55,9 +49,5 @@ class Dashboard extends Controller {
 			redirect('/dashboard/login');
 			return false;
 		}
-	}
-	
-	function show_dashboard() {
-		$this->load->view('cp/dashboard');
 	}
 }

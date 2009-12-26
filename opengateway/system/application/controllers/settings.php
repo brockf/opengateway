@@ -92,6 +92,34 @@ class Settings extends Controller {
 		
 		$this->dataset->Initialize('email_model','GetEmails',$columns);
 		
+		// add actions
+		$this->dataset->Action('Delete','settings/delete_emails');
+		
 		$this->load->view('cp/emails.php', array('plans' => $options));
+	}
+	
+	/**
+	* Delete Emails
+	*
+	* Delete emails as passed from the dataset
+	*
+	* @param string Hex'd, base64_encoded, serialized array of email ID's
+	* @param string Return URL for Dataset
+	*
+	* @return bool Redirects to dataset
+	*/
+	function delete ($emails, $return_url) {
+		$this->load->model('email_model');
+		$this->load->library('asciihex');
+		
+		$emails = unserialize(base64_decode($this->asciihex->HexToAscii($emails)));
+		$return_url = base64_decode($this->asciihex->HexToAscii($return_url));
+		
+		foreach ($emails as $email) {
+			$this->email_model->DeleteEmail($this->user->Get('client_id'),$email);
+		}
+		
+		redirect($return_url);
+		return true;
 	}
 }

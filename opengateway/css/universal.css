@@ -34,6 +34,7 @@ a:hover {
 	top: 5px;
 	margin-left: -150px;
 	width: 300px;
+	z-index: 1;
 }
 
 #notices div.error {
@@ -315,6 +316,10 @@ table.dataset tbody td.failed {
 	background-repeat: no-repeat;
 }
 
+table.dataset tbody tr.selected td {
+	background-color: #f3fcca;
+}
+
 div.pagination {
 	padding: 6px;
 	text-align: center;
@@ -352,7 +357,7 @@ div.apply_filters {
 	top: 5px;
 }
 
-div.dataset_export {
+div.dataset_actions {
 	position: absolute;
 	top: 5px;
 	left: 0px;

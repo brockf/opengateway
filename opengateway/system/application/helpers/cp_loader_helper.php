@@ -12,6 +12,13 @@ function CPLoader () {
 	$CI->load->model('cp/navigation','navigation');
 	$CI->load->helper('dataset_link');
 	
+	// confirm login
+	if (!$CI->user->LoggedIn() and ($CI->router->fetch_class() != 'dashboard' and $CI->router->fetch_method() != 'login'))
+	{
+		redirect('/dashboard/login');
+		die();
+	}
+	
 	// Build Navigation
 	$CI->navigation->Add('dashboard','Dashboard');
 	$CI->navigation->Add('transactions','Transactions');

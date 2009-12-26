@@ -7,9 +7,52 @@ $(document).ready(function() {
 		$(this).children('ul.children').slideUp(100);
 	});
 	
-	// tables
+	// table row colours
 	
 	$('table.dataset tr:even').addClass('odd');
+	
+	// handle row clicks/checkbox clicks
+	$('table.dataset tbody tr').click(function(event) {
+		if (event.target.type !== 'checkbox') {
+			$(this).find('input.action_items').each(function () {
+				if ($(this).is(':checked')) {
+					$(this).parent().parent().removeClass('selected');
+					$(this).attr('checked',false);
+					return false;
+				}
+				else {
+					$(this).parent().parent().addClass('selected');
+					$(this).attr('checked','checked');
+					return false;
+				}
+			});
+		}
+		else {
+			$(this).find('input.action_items').each(function () {
+				if ($(this).is(':checked')) {
+					$(this).parent().parent().addClass('selected');
+				}
+				else {
+					$(this).parent().parent().removeClass('selected');
+				}
+			});
+		}
+	});
+	
+	$('table.dataset #check_all').click(function() {
+		if ($(this).is(':checked')) {
+			$('input.action_items').each(function () {
+				$(this).parent().parent().addClass('selected');
+				$(this).attr('checked','checked');
+			});
+		}
+		else {
+			$('input.action_items').each(function () {
+				$(this).parent().parent().removeClass('selected');
+				$(this).attr('checked',false);
+			});
+		}
+	});
 	
 	// filters
 	
@@ -45,6 +88,7 @@ $(document).ready(function() {
 				$('#dataset_form input.date_end').dpSetStartDate(d.addDays(1).asString());
 			}
 		}
+		
 	);
 	$('#dataset_form input.date_end').bind(
 		'dpClosed',
@@ -59,7 +103,7 @@ $(document).ready(function() {
 	);
 	
 	$('#dataset_form').submit(function () {
-		var serialized_filters = $('tr.filters input, tr.filters select').serialize();
+		var serialized_filters = $('#dataset_form tr.filters input.text, tr.filters select').serialize();
 		
 		$.post($('#base_url').html()+'dataset/prep_filters', { filters: serialized_filters },
 		  function(data){
@@ -69,11 +113,24 @@ $(document).ready(function() {
 	});
 	
 	$('#dataset_export_button').click(function () {
-		var serialized_filters = $('tr.filters input, tr.filters select').serialize();
+		var serialized_filters = $('#dataset_form tr.filters input.text, tr.filters select').serialize();
 		
 		$.post($('#base_url').html()+'dataset/prep_filters', { filters: serialized_filters },
 		  function(data){
 		    window.location.href = $('#base_url').html()+$('#class').html()+'/'+$('#method').html()+'/'+data+'/'+$('#page').html()+'/export';
+		  });
+		return false;
+	});
+	
+	$('input.action_button').click(function () {
+		var serialized_items = $('#dataset_form input.action_items').serialize();
+		
+		var link = $(this).attr('rel');
+		var return_link = $('#current_url').html();
+		
+		$.post($('#base_url').html()+'dataset/prep_actions', { items: serialized_items, return_url: return_link },
+		  function(data){
+		    window.location.href = link+'/'+data;
 		  });
 		return false;
 	});

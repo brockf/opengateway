@@ -41,7 +41,7 @@ class Customers extends Controller {
 							'name' => 'First Name',
 							'sort_column' => 'customers.first_name',
 							'type' => 'text',
-							'width' => '25%',
+							'width' => '20%',
 							'filter' => 'first_name'),
 						array(
 							'name' => 'Last Name',
@@ -85,6 +85,34 @@ class Customers extends Controller {
 		
 		$this->dataset->Initialize('customer_model','GetCustomers',$columns);
 		
+		// add actions
+		$this->dataset->Action('Delete','customers/delete');
+		
 		$this->load->view('cp/customers.php');
+	}
+	
+	/**
+	* Delete Customers
+	*
+	* Delete customers as passed from the dataset
+	*
+	* @param string Hex'd, base64_encoded, serialized array of customer ID's
+	* @param string Return URL for Dataset
+	*
+	* @return bool Redirects to dataset
+	*/
+	function delete ($customers, $return_url) {
+		$this->load->model('customer_model');
+		$this->load->library('asciihex');
+		
+		$customers = unserialize(base64_decode($this->asciihex->HexToAscii($customers)));
+		$return_url = base64_decode($this->asciihex->HexToAscii($return_url));
+		
+		foreach ($customers as $customer) {
+			$this->customer_model->DeleteCustomer($this->user->Get('client_id'),$customer);
+		}
+		
+		redirect($return_url);
+		return true;
 	}
 }

@@ -36,7 +36,7 @@ class Plans extends Controller {
 							'name' => 'Name',
 							'sort_column' => 'plans.name',
 							'type' => 'text',
-							'width' => '20%',
+							'width' => '15%',
 							'filter' => 'first_name'),
 						array(
 							'name' => 'Fee',
@@ -64,6 +64,34 @@ class Plans extends Controller {
 		
 		$this->dataset->Initialize('plan_model','GetPlans',$columns);
 		
+		// add actions
+		$this->dataset->Action('Delete','plans/delete');
+		
 		$this->load->view('cp/plans.php');
+	}
+	
+	/**
+	* Delete Plans
+	*
+	* Delete plans as passed from the dataset
+	*
+	* @param string Hex'd, base64_encoded, serialized array of plan ID's
+	* @param string Return URL for Dataset
+	*
+	* @return bool Redirects to dataset
+	*/
+	function delete ($plans, $return_url) {
+		$this->load->model('plan_model');
+		$this->load->library('asciihex');
+		
+		$plans = unserialize(base64_decode($this->asciihex->HexToAscii($plans)));
+		$return_url = base64_decode($this->asciihex->HexToAscii($return_url));
+		
+		foreach ($plans as $plan) {
+			$this->plan_model->DeletePlan($this->user->Get('client_id'),$plan);
+		}
+		
+		redirect($return_url);
+		return true;
 	}
 }
