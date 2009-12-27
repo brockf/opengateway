@@ -111,7 +111,7 @@ class Settings extends Controller {
 	*
 	* @return bool Redirects to dataset
 	*/
-	function delete ($emails, $return_url) {
+	function delete_emails ($emails, $return_url) {
 		$this->load->model('email_model');
 		$this->load->library('asciihex');
 		
@@ -125,6 +125,111 @@ class Settings extends Controller {
 		$this->notices->SetNotice($this->lang->line('emails_deleted'));
 		
 		redirect($return_url);
+		return true;
+	}
+	
+	/**
+	* New Email
+	*
+	* Create a new email
+	*
+	* @return true Passes to view
+	*/
+	function new_email ()
+	{
+		$this->navigation->PageTitle('New Email');
+		
+		$this->load->model('email_model');
+		$this->load->model('plan_model');
+		
+		$triggers = $this->email_model->GetTriggers();
+		$plans = $this->plan_model->GetPlans($this->user->Get('client_id'));
+		
+		$data = array(
+					'triggers' => $triggers,
+					'plans' => $plans,
+					'form_title' => 'Create New Email',
+					'form_action' => 'settings/do_new_email'
+					);
+				
+		$this->load->view('cp/email_form.php',$data);
+	}
+	
+	/**
+	* Handle New Email Post
+	*/
+	function do_new_email () {
+		echo 'test';
+		
+		if ($this->input->post('email_body') == '') {
+			$this->notices->SetError('Email Body is a required field.');
+			$error = true;
+		}
+		elseif ($this->input->post('email_subject') == '') {
+			$this->notices->SetError('Email Subject is a required field.');
+			$error = true;
+		}
+		elseif ($this->input->post('from_name') == '') {
+			$this->notices->SetError('From Name is a required field.');
+			$error = true;
+		}
+		elseif ($this->input->post('from_email') == '') {
+			$this->notices->SetError('From Email is a required field.');
+			$error = true;
+		}
+		
+		if ($error) {
+			redirect('settings/new_email');
+			return false;
+		}
+		
+		$params = array(
+						'email_subject' => $this->input->post('email_subject',true),
+						'email_body' => $this->input->post('email_body',true),
+						'from_name' => $this->input->post('from_name',true),
+						'from_email' => $this->input->post('from_email',true),
+						'plan' => $this->input->post('plan',true),
+						'is_html' => $this->input->post('is_html',true),
+						'to_address' => ($this->input->post('to_address') == 'email') ? $this->input->post('to_address_email') : 'customer',
+						'bcc_address' => ($this->input->post('bcc_address') == 'client' or $this->input->post('bcc_address') == '') ? $this->input->post('bcc_address',true) : $this->input->post('bcc_address_email')
+					);
+		
+		$this->load->model('email_model');
+		
+		$email_id = $this->email_model->SaveEmail($this->user->Get('client_id'),$this->input->post('trigger',TRUE), $params);
+		
+		$this->notices->SetNotice($this->lang->line('email_added'));
+		
+		redirect('settings/emails');
+		
+		return true;
+	}
+	
+	/**
+	* Show Available Variables
+	*
+	* Show the available variables for a trigger
+	*
+	* @param int $trigger_id The ID of the trigger
+	*
+	* @return string An unordered HTML list of available variables
+	*/
+	function show_variables ($trigger_id) {
+		$this->load->model('email_model');
+		
+		$variables = $this->email_model->GetEmailVariables($trigger_id);
+		
+		$return = '<p><b>Available Variables for this Trigger Type</b>.  Note: Not all values are available
+				   for each event.  For example, "[[CUSTOMER_ADDRESS_1]]" cannot be replaced if the customer
+				   does not have an address registered in the system.</p>
+				   <p><i>Usage Example: [[AMOUNT]] will be replaced by a value like "34.95" in the email.</i></p><ul>';
+		foreach ($variables as $variable) {
+			$return .= '<li>[[' . strtoupper($variable) . ']]</li>';
+		}
+		
+		$return .= '</ul><div style="clear:both"></div>';
+		
+		echo $return;
 		return true;
 	}
 }

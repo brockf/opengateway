@@ -1,5 +1,5 @@
 <?=$this->load->view('cp/header');?>
-<h1>Manage emails</h1>
+<h1>Manage Emails</h1>
 <?=$this->dataset->TableHead();?>
 <?
 if (!empty($this->dataset->data)) {
@@ -10,8 +10,8 @@ if (!empty($this->dataset->data)) {
 			<td><?=$row['id'];?></td>
 			<td><?=$row['trigger'];?></td>
 			<td><?=$row['to_address'];?></td>
-			<td><?=$row['email_subject'];?> days</td>
-			<td><?=$row['format'];?> days</td>
+			<td><?=$row['email_subject'];?></td>
+			<td><? if ($row['is_html'] == 0) { ?>plaintext<? } else { ?>HTML<? } ?></td>
 			<td><? if (isset($options[$row['plan_id']])) { ?><?=$options[$row['plan_id']];?><? } ?></td>
 		</tr>
 	<?

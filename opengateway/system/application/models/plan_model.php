@@ -238,11 +238,11 @@ class Plan_model extends Model
 	* @param int $params['free_trial'] Number of days of a free trial. Optional.
 	* @param int $params['deleted'] Set to 1 for deleted plans. Optional.
 	* @param int $params['offset'] Database query offset.  Optional.  Defaults to 0.
-	* @param int $params['limit'] Database query limit.  Optional.  Defaults to config value.
+	* @param int $params['limit'] Database query limit.  Optional.'
 	*
 	* @return array|bool Returns an array of all plans matching query or FALSE if none.
 	*/	
-	function GetPlans($client_id, $params)
+	function GetPlans($client_id, $params = array())
 	{		
 		if(isset($params['plan_type'])) {
 			$plan_type_id = $this->GetPlanTypeId($params['plan_type']);

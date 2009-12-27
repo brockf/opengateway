@@ -9,9 +9,10 @@
 	<script type="text/javascript" src="<?=base_url();?>js/date.js"></script>
 	<script type="text/javascript" src="<?=base_url();?>js/datePicker.js"></script>
 	<script type="text/javascript" src="<?=base_url();?>js/universal.js"></script>
+	<? if (isset($head_files)) { ?><?=$head_files;?><? } ?>
 </head>
 <body>
-	<?=get_notices();?>
+	<div id="notices"><?=get_notices();?></div>
 	<div id="header">
 		<div id="logo">&nbsp;</div>
 		<ul id="topnav">

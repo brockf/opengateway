@@ -13,7 +13,7 @@ function CPLoader () {
 	$CI->load->helper('dataset_link');
 	
 	// confirm login
-	if (!$CI->user->LoggedIn() and ($CI->router->fetch_class() != 'dashboard' and $CI->router->fetch_method() != 'login'))
+	if (!$CI->user->LoggedIn() and $CI->router->fetch_method() != 'login' and $CI->router->fetch_method() != 'do_login')
 	{
 		redirect('/dashboard/login');
 		die();

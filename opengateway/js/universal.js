@@ -1,6 +1,11 @@
 $(document).ready(function() {
+	// notices
 	$('#notices div').animate({opacity: 1.0},2000).fadeOut('slow');
+	$(window).scroll(function() {
+	  $('#notices div').animate({top:$(window).scrollTop()+5+"px" },{queue: false, duration: 0});
+	});
 	
+	// menu
 	$('#topnav li.parent').hover(function () {
 		$(this).children('ul.children').slideDown(100);
 	}, function () {
@@ -136,4 +141,70 @@ $(document).ready(function() {
 		}
 		return false;
 	});
+	
+	// universal forms
+	
+	// fill in "blank" entry text for emails
+	$('form.form input.email').each(function() {
+		if ($(this).val() == '') {
+			$(this).val('email@example.com');
+			$(this).addClass('emptyfield');
+		}
+		
+		$('form.form input.emptyfield').focus(function () {
+			if ($(this).val() == 'email@example.com') {
+				$(this).val('');
+				$(this).removeClass('emptyfield');
+			}
+		});
+	});
+	
+	$('form.form').submit(function() {
+		var field_names = '';
+		$('.required').each(function() {
+			if ($(this).val() == '') {
+				field_label = $('label[for="'+$(this).attr('id')+'"]').text();
+				// adds the label contents to the list of required fields
+				field_names = field_names +'"'+field_label + '", ';
+			}
+		});
+		
+		if (field_names != '') {
+			field_names = rtrim(field_names,', '); // trim commas
+			form_error('Required fields are empty: '+field_names+'.');
+			return false;
+		}
+		
+		$('.email').each(function() {
+			if ($(this).val() != '' && !isValidEmail($(this).val())) {
+				field_label = $('label[for="'+$(this).attr('id')+'"]').text();
+				form_error('"'+field_label + '" must be a valid email address.');
+				return false;
+			}
+		});
+	});
+	
 });
+
+// form functions
+
+function form_error(message) {
+	$('#notices').append('<div class="error">'+message+'</div>');
+	$('#notices div').each(function () {
+		$(this).animate({top:$(window).scrollTop()+5+"px" },{queue: false, duration: 0});
+		$(this).animate({opacity: 1.0},4000).fadeOut('slow');
+	});
+	
+	$(window).scroll(function() {
+	  $('#notices div').animate({top:$(window).scrollTop()+5+"px" },{queue: false, duration: 0});
+	});
+}
+
+function rtrim ( str, charlist ) {
+    charlist = !charlist ? ' \\s\u00A0' : (charlist+'').replace(/([\[\]\(\)\.\?\/\*\{\}\+\$\^\:])/g, '\\$1');
+    var re = new RegExp('[' + charlist + ']+$', 'g');    return (str+'').replace(re, '');
+}
+
+function isValidEmail(str) {
+   return (str.indexOf(".") > 2) && (str.indexOf("@") > 0);
+}

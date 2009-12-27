@@ -17,9 +17,5 @@ function get_notices () {
 	}
 	reset($notices);
 	
-	if (!empty($return)) {
-		$return = '<div id="notices">' . $return . '</div>';
-	}
-	
 	return $return;
 }

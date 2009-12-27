@@ -1,10 +1,28 @@
 <?php
+/**
+* Notices Model 
+*
+* Set and retrieve the notices and errors that appear at the top of the control panel
+*
+* @version 1.0
+* @author Brock Ferguson
+* @package OpenGateway
 
+*/
 class Notices extends Model {
     function Notices() {
         parent::Model();
     }
     
+    /**
+    * Set Error
+    *
+    * Sets an error for later retrieval in the view
+    *
+    * @param string $message The message for the error
+    *
+    * @return boolean TRUE upon success
+    */
     function SetError($message) {    	
     	$errors = $this->GetErrors(false);
     	
@@ -17,6 +35,15 @@ class Notices extends Model {
     	return true;
     }
 
+	/**
+    * Get Errors
+    *
+    * Gets all errors that have been set
+    *
+    * @param boolean $clear Set to FALSE to retain all elements after they've been retrieved.  Default: true.
+    *
+    * @return array All errors
+    */
 	function GetErrors ($clear = true) {
 		$errors = $this->session->userdata('errors');
 		
@@ -31,7 +58,16 @@ class Notices extends Model {
 		}
 	}
 	
-	function SetNotice($message) {
+	/**
+    * Set Notice
+    *
+    * Sets a notice for later retrieval in the view
+    *
+    * @param string $message The message for the notice
+    *
+    * @return boolean TRUE upon success
+    */
+   	function SetNotice($message) {
     	$notices = $this->GetNotices(false);
     	
     	$notices[] = $message;
@@ -43,6 +79,15 @@ class Notices extends Model {
     	return true;
     }
 
+	/**
+    * Get Notices
+    *
+    * Gets all notices that have been set
+    *
+    * @param boolean $clear Set to FALSE to retain all elements after they've been retrieved.  Default: true.
+    *
+    * @return array All notices
+    */
 	function GetNotices ($clear = true) {
 		$notices = $this->session->userdata('notices');
 		
