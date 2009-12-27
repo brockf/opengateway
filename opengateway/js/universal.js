@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	// notices
-	$('#notices div').animate({opacity: 1.0},2000).fadeOut('slow');
+	$('#notices div').animate({opacity: 1.0},4000).fadeOut('slow');
 	$(window).scroll(function() {
 	  $('#notices div').animate({top:$(window).scrollTop()+5+"px" },{queue: false, duration: 0});
 	});
@@ -184,6 +184,7 @@ $(document).ready(function() {
 			if ($(this).val() != '' && !isValidEmail($(this).val())) {
 				field_label = $('label[for="'+$(this).attr('id')+'"]').text();
 				form_error('"'+field_label + '" must be a valid email address.');
+				errors_in_form = true;
 				return false;
 			}
 		});

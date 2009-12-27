@@ -56,12 +56,12 @@ if (!isset($form)) {
 	<legend>Send To</legend>
 	<ul class="form">
 		<li>
-			<label for="to_address">Send to</label>
+			<label for="to_address_email">Send to</label>
 			<input <? if ($form['to_address'] == 'customer') { ?>checked="checked" <? } ?>type="radio" class="required" id="to_address" name="to_address" value="customer" />&nbsp;Customer&nbsp;&nbsp;&nbsp;
 			<input <? if ($form['to_address'] != 'customer') { ?>checked="checked" <? } ?>type="radio" class="required" id="to_address" name="to_address" value="email" />&nbsp;<input type="text" class="text email" id="to_address_email" name="to_address_email" <? if ($form['to_address'] != 'customer' and $form['to_address'] != '') { ?> value="<?=$form['to_address'];?>" <? } ?> />
 		</li>
 		<li>
-			<label for="bcc_address">BCC</label>
+			<label for="bcc_address_email">BCC</label>
 			<input <? if ($form['bcc_address'] == '') { ?>checked="checked" <? } ?>type="radio" id="bcc_address" name="bcc_address" value="" />&nbsp;None&nbsp;&nbsp;&nbsp;
 			<input <? if ($form['bcc_address'] == 'client') { ?>checked="checked" <? } ?>type="radio" id="bcc_address" name="bcc_address" value="client" />&nbsp;My account email&nbsp;&nbsp;&nbsp;
 			<input <? if ($form['bcc_address'] != 'client' and $form['bcc_address'] != '') { ?>checked="checked" <? } ?>type="radio" id="bcc_address" name="bcc_address" value="email" />&nbsp;<input type="text" class="text email" id="bcc_address_email" name="bcc_address_email" <? if ($form['bcc_address'] != 'client' and $form['bcc_address'] != '') { ?> value="<?=$form['bcc_address'];?>" <? } ?> />
