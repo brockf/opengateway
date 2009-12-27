@@ -146,7 +146,7 @@ class API extends Controller {
 	{
 		$this->load->model('plan_model');
 		
-		if ($this->plan_model->UpdatePlan($client_id, $params)) {
+		if ($this->plan_model->UpdatePlan($client_id, $params['plan_id'], $params)) {
 			return $this->response->TransactionResponse(501, array());		
 		}
 		else {

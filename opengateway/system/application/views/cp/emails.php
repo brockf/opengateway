@@ -12,7 +12,8 @@ if (!empty($this->dataset->data)) {
 			<td><?=$row['to_address'];?></td>
 			<td><?=$row['email_subject'];?></td>
 			<td><? if ($row['is_html'] == 0) { ?>plaintext<? } else { ?>HTML<? } ?></td>
-			<td><? if (isset($options[$row['plan_id']])) { ?><?=$options[$row['plan_id']];?><? } ?></td>
+			<td><? if (isset($plans[$row['plan']])) { ?><?=$plans[$row['plan']];?><? } ?></td>
+			<td class="options"><a href="<?=site_url('settings/edit_email/' . $row['id']);?>">edit</a></td>
 		</tr>
 	<?
 	}

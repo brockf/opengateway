@@ -39,7 +39,7 @@ class Settings extends Controller {
 							'name' => 'ID #',
 							'sort_column' => 'id',
 							'type' => 'id',
-							'width' => '10%',
+							'width' => '5%',
 							'filter' => 'id'),
 						array(
 							'name' => 'Trigger',
@@ -61,7 +61,7 @@ class Settings extends Controller {
 							'filter' => 'email_subject'),
 						array(
 							'name' => 'Format',
-							'width' => '15%')
+							'width' => '5%')
 					);
 		
 		// handle recurring plans if they exist
@@ -71,6 +71,8 @@ class Settings extends Controller {
 		if ($plans) {
 			// build $options
 			$options = array();
+			$options['-1'] = 'No plans.';
+			$options['0'] = 'All plans.';
 			while (list(,$plan) = each($plans)) {
 				$options[$plan['id']] = $plan['name'];
 			}
@@ -80,15 +82,20 @@ class Settings extends Controller {
 							'type' => 'select',
 							'options' => $options,
 							'filter' => 'emails.plan_id',
-							'width' => '20%'
+							'width' => '14%'
 							);
 		}
 		else {
 			$columns[] = array(
 				'name' => 'Plan Link',
-				'width' => '20%'
+				'width' => '14%'
 				);
 		}
+		
+		$columns[] = array(
+						'name' => '',
+						'width' => '6%'
+				);
 		
 		$this->dataset->Initialize('email_model','GetEmails',$columns);
 		
@@ -149,18 +156,16 @@ class Settings extends Controller {
 					'triggers' => $triggers,
 					'plans' => $plans,
 					'form_title' => 'Create New Email',
-					'form_action' => 'settings/do_new_email'
+					'form_action' => 'settings/post_email/new'
 					);
 				
 		$this->load->view('cp/email_form.php',$data);
 	}
 	
 	/**
-	* Handle New Email Post
+	* Handle New/Edit Email Post
 	*/
-	function do_new_email () {
-		echo 'test';
-		
+	function post_email ($action, $id = false) {		
 		if ($this->input->post('email_body') == '') {
 			$this->notices->SetError('Email Body is a required field.');
 			$error = true;
@@ -178,9 +183,14 @@ class Settings extends Controller {
 			$error = true;
 		}
 		
-		if ($error) {
-			redirect('settings/new_email');
-			return false;
+		if (isset($error)) {
+			if ($action == 'new') {
+				redirect('settings/new_email');
+				return false;
+			}
+			else {
+				redirect('settings/edit_email/' . $id);
+			}	
 		}
 		
 		$params = array(
@@ -196,13 +206,50 @@ class Settings extends Controller {
 		
 		$this->load->model('email_model');
 		
-		$email_id = $this->email_model->SaveEmail($this->user->Get('client_id'),$this->input->post('trigger',TRUE), $params);
-		
-		$this->notices->SetNotice($this->lang->line('email_added'));
+		if ($action == 'new') {
+			$email_id = $this->email_model->SaveEmail($this->user->Get('client_id'),$this->input->post('trigger',TRUE), $params);
+			$this->notices->SetNotice($this->lang->line('email_added'));
+		}
+		else {
+			$this->email_model->UpdateEmail($this->user->Get('client_id'),$id, $params, $this->input->post('trigger',TRUE));
+			$this->notices->SetNotice($this->lang->line('email_updated'));
+		}
 		
 		redirect('settings/emails');
 		
 		return true;
+	}
+	
+	/**
+	* Edit Email
+	*
+	* Show the email form, preloaded with variables
+	*
+	* @param int $id the ID of the email
+	*
+	* @return string The email form view
+	*/
+	function edit_email($id) {
+		$this->navigation->PageTitle('Edit Email');
+		
+		$this->load->model('email_model');
+		$this->load->model('plan_model');
+		
+		$triggers = $this->email_model->GetTriggers();
+		$plans = $this->plan_model->GetPlans($this->user->Get('client_id'));
+		
+		// preload form variables
+		$email = $this->email_model->GetEmail($this->user->Get('client_id'),$id);
+		
+		$data = array(
+					'triggers' => $triggers,
+					'plans' => $plans,
+					'form' => $email,
+					'form_title' => 'Edit Email',
+					'form_action' => 'settings/post_email/edit/' . $email['id']
+					);
+				
+		$this->load->view('cp/email_form.php',$data);
 	}
 	
 	/**

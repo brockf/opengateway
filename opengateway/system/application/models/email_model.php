@@ -155,10 +155,16 @@ class Email_model extends Model
 	{
 		$this->db->join('email_triggers', 'email_triggers.email_trigger_id = client_emails.trigger_id', 'inner');
 		$this->db->join('plans', 'client_emails.plan_id = plans.plan_id', 'left');
-		$this->db->where('client_id', $client_id);
+		$this->db->where('client_emails.client_id', $client_id);
 		$this->db->where('client_email_id', $email_id);
 		
 		$this->db->limit(1);
+
+		$this->db->select('client_emails.*');
+		$this->db->select('email_triggers.*');
+		$this->db->select('`plans`.`plan_id` AS `true_plan_id`',true);
+		$this->db->select('plans.name');
+		
 		$query = $this->db->get('client_emails');
 		if($query->num_rows() > 0) {
 			$row = $query->row_array();
@@ -173,7 +179,7 @@ class Email_model extends Model
 							'is_html' => $row['is_html'],
 							'to_address' => $row['to_address'],
 							'bcc_address' => $row['bcc_address'],
-							'plan_id' => $row['plan_id'],
+							'plan' => $row['plan_id'],
 							);
 							
 			if (isset($row['plan_name'])) {
@@ -225,6 +231,12 @@ class Email_model extends Model
 		
 		$this->db->join('email_triggers', 'email_triggers.email_trigger_id = client_emails.trigger_id', 'inner');
 		$this->db->join('plans', 'client_emails.plan_id = plans.plan_id', 'left');
+		
+		$this->db->select('client_emails.*');
+		$this->db->select('email_triggers.*');
+		$this->db->select('`plans`.`plan_id` AS `true_plan_id`',true);
+		$this->db->select('plans.name');
+		
 		$this->db->where('client_emails.client_id', $client_id);
 		$query = $this->db->get('client_emails');
 		$data = array();
@@ -241,7 +253,7 @@ class Email_model extends Model
 								'is_html' => $row['is_html'],
 								'to_address' => $row['to_address'],
 								'bcc_address' => $row['bcc_address'],
-								'plan_id' => $row['plan_id'],
+								'plan' => $row['plan_id'],
 								);
 								
 				if (isset($row['plan_name'])) {

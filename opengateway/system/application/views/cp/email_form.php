@@ -4,8 +4,15 @@
 
 if (!isset($form)) {
 	$form = array(
+				'trigger' => '',
 				'to_address' => 'customer',
-				'bcc_address' => ''
+				'bcc_address' => '',
+				'email_subject' => '',
+				'email_body' => '',
+				'from_name' => '',
+				'from_email' => '',
+				'plan' => '',
+				'is_html' => '0'
 			);
 
 } ?>
@@ -20,9 +27,9 @@ if (!isset($form)) {
 		<li>
 			<label for="trigger">Trigger</label>
 			<select id="trigger" class="required" name="trigger">
-				<option value=""></option>
+				<option <? if ($form['trigger'] == '') { ?> selected="selected" <? } ?> value=""></option>
 				<? foreach ($triggers as $trigger) { ?>
-				<option value="<?=$trigger['email_trigger_id'];?>"><?=$trigger['human_name'];?></option>
+				<option <? if ($form['trigger'] == $trigger['system_name']) {?> selected="selected" <? } ?> value="<?=$trigger['email_trigger_id'];?>"><?=$trigger['human_name'];?></option>
 				<? } ?>
 			</select>
 		</li>
@@ -32,11 +39,11 @@ if (!isset($form)) {
 		<li>
 			<label for="plan">Plan Link</label>
 			<select id="plan" name="plan">
-				<option value="">Any plan or no plan at all</option>
-				<option value="-1">No plans</option>
-				<option value="0">All plans</option>
+				<option <? if ($form['plan'] == '') { ?> selected="selected" <? } ?> value="">Any plan or no plan at all</option>
+				<option <? if ($form['plan'] == '-1') { ?> selected="selected" <? } ?>  value="-1">No plans</option>
+				<option <? if ($form['plan'] == '0') { ?> selected="selected" <? } ?>  value="0">All plans</option>
 				<? foreach ($plans as $plan) { ?>
-				<option value="<?=$plan['id'];?>">Plan: <?=$plan['name'];?></option>
+				<option  <? if ($form['plan'] == $plan['id']) { ?> selected="selected" <? } ?> value="<?=$plan['id'];?>">Plan: <?=$plan['name'];?></option>
 				<? } ?>
 			</select>
 		</li>
@@ -51,13 +58,13 @@ if (!isset($form)) {
 		<li>
 			<label for="to_address">Send to</label>
 			<input <? if ($form['to_address'] == 'customer') { ?>checked="checked" <? } ?>type="radio" class="required" id="to_address" name="to_address" value="customer" />&nbsp;Customer&nbsp;&nbsp;&nbsp;
-			<input <? if ($form['to_address'] != 'customer') { ?>checked="checked" <? } ?>type="radio" class="required" id="to_address" name="to_address" value="email" />&nbsp;<input type="text" class="text email" id="to_address_email" name="to_address_email" />
+			<input <? if ($form['to_address'] != 'customer') { ?>checked="checked" <? } ?>type="radio" class="required" id="to_address" name="to_address" value="email" />&nbsp;<input type="text" class="text email" id="to_address_email" name="to_address_email" <? if ($form['to_address'] != 'customer' and $form['to_address'] != '') { ?> value="<?=$form['to_address'];?>" <? } ?> />
 		</li>
 		<li>
 			<label for="bcc_address">BCC</label>
 			<input <? if ($form['bcc_address'] == '') { ?>checked="checked" <? } ?>type="radio" id="bcc_address" name="bcc_address" value="" />&nbsp;None&nbsp;&nbsp;&nbsp;
 			<input <? if ($form['bcc_address'] == 'client') { ?>checked="checked" <? } ?>type="radio" id="bcc_address" name="bcc_address" value="client" />&nbsp;My account email&nbsp;&nbsp;&nbsp;
-			<input <? if ($form['bcc_address'] != 'client' and $form['bcc_address'] == '') { ?>checked="checked" <? } ?>type="radio" id="bcc_address" name="bcc_address" value="email" />&nbsp;<input type="text" class="text email" id="bcc_address_email" name="bcc_address_email" />
+			<input <? if ($form['bcc_address'] != 'client' and $form['bcc_address'] != '') { ?>checked="checked" <? } ?>type="radio" id="bcc_address" name="bcc_address" value="email" />&nbsp;<input type="text" class="text email" id="bcc_address_email" name="bcc_address_email" <? if ($form['bcc_address'] != 'client' and $form['bcc_address'] != '') { ?> value="<?=$form['bcc_address'];?>" <? } ?> />
 		</li>
 	</ul>
 </fieldset>
@@ -66,11 +73,11 @@ if (!isset($form)) {
 	<ul class="form">
 		<li>
 			<label for="from_name">From Name</label>
-			<input type="text" class="text required" id="from_name" name="from_name" />
+			<input type="text" class="text required" id="from_name" name="from_name" value="<?=$form['from_name'];?>" />
 		</li>
 		<li>
 			<label for="from_email">From Address</label>
-			<input type="text" class="text required email" id="from_email" name="from_email" />
+			<input type="text" class="text required email" id="from_email" name="from_email" value="<?=$form['from_email'];?>" />
 		</li>
 	</ul>
 </fieldset>
@@ -81,14 +88,14 @@ if (!isset($form)) {
 			<label for="email_subject" class="full">Email Subject</label>
 		</li>
 		<li>
-			<input type="text" class="text full required" id="email_subject" name="email_subject" />
+			<input type="text" class="text full required" id="email_subject" name="email_subject" value="<?=$form['email_subject'];?>" />
 		</li>
 		<li>
 			<label for="email_body" class="full">Email Body</label> <a href="#" id="make_html">use HTML format</a>
-			<input type="hidden" name="is_html" id="is_html" value="0" autocomplete="off" />
+			<input type="hidden" name="is_html" id="is_html" value="<?=$form['is_html'];?>" autocomplete="off" />
 		</li>
 		<li>
-			<textarea class="full required" id="email_body" name="email_body"></textarea>
+			<textarea class="full required" id="email_body" name="email_body"><?=$form['email_body'];?></textarea>
 		</li>
 		<li>
 			<div id="email_variables">
@@ -97,6 +104,7 @@ if (!isset($form)) {
 	</ul>
 </fieldset>
 <div class="submit">
-	<input type="submit" name="go_email" value="Create new email" />
+	<input type="submit" name="go_email" value="<?=ucfirst($form_title);?>" />
 </div>
+</form>
 <?=$this->load->view('cp/footer');?>

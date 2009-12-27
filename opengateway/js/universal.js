@@ -160,12 +160,16 @@ $(document).ready(function() {
 	});
 	
 	$('form.form').submit(function() {
+		var errors_in_form = false;
+		
+		// check for empty required fields
 		var field_names = '';
 		$('.required').each(function() {
 			if ($(this).val() == '') {
 				field_label = $('label[for="'+$(this).attr('id')+'"]').text();
 				// adds the label contents to the list of required fields
 				field_names = field_names +'"'+field_label + '", ';
+				errors_in_form = true;
 			}
 		});
 		
@@ -175,6 +179,7 @@ $(document).ready(function() {
 			return false;
 		}
 		
+		// validate emails
 		$('.email').each(function() {
 			if ($(this).val() != '' && !isValidEmail($(this).val())) {
 				field_label = $('label[for="'+$(this).attr('id')+'"]').text();
@@ -182,6 +187,19 @@ $(document).ready(function() {
 				return false;
 			}
 		});
+		
+		// validate input.number fields
+		$('input.number').each(function() {
+			if ($(this).val() != '' && !isNumeric($(this).val())) {
+				field_label = $('label[for="'+$(this).attr('id')+'"]').text();
+				form_error('"'+field_label + '" must be in valid numeric format.');
+				errors_in_form = true;
+			}
+		});
+		
+		if (errors_in_form == true) {
+			return false;
+		}
 	});
 	
 });
@@ -207,4 +225,20 @@ function rtrim ( str, charlist ) {
 
 function isValidEmail(str) {
    return (str.indexOf(".") > 2) && (str.indexOf("@") > 0);
+}	
+
+function isNumeric(sText) {
+   var ValidChars = "0123456789.";
+   var IsNumber=true;
+   var Char;
+ 
+   for (i = 0; i < sText.length && IsNumber == true; i++) 
+   { 
+      Char = sText.charAt(i); 
+      if (ValidChars.indexOf(Char) == -1) 
+      {
+         IsNumber = false;
+      }
+   }
+   return IsNumber;
 }

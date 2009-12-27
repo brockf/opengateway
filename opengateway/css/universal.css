@@ -347,6 +347,10 @@ table.dataset input.date_end {
 	width: 45%;
 }
 
+table.dataset td.options {
+	text-align: center;
+}
+
 div.apply_filters {
 	position: absolute;
 	right: 0px;
@@ -386,6 +390,11 @@ p.button a {
 	text-decoration: none;
 	color: #00b5c0;
 	font-weight: bold;
+}
+
+#sidebar {
+	color: #333;
+	font-size: 9pt;
 }
 
 /* forms */
@@ -429,10 +438,14 @@ form.form label.full {
 
 form.form div.help {
 	margin-left: 150px;
-	width: 400px;
+	width: 100%;
 	color: #666;
 	font-style:italic;
 	font-size: 9pt;
+}
+
+form.form div.help ul {
+	list-style-type: square;
 }
 
 form.form input.text {
@@ -461,6 +474,10 @@ form.form ul.panel li {
 	clear: none;
 	display: inline;
 	padding: 0px;
+}
+
+form.form input.number {
+	width: 40px;
 }
 
 .emptyfield {

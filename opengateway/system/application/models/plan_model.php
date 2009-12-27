@@ -35,18 +35,18 @@ class Plan_model extends Model
 	function NewPlan($client_id, $params)
 	{
 		// Get the plan params
-		$plan = $params['plan'];
+		$plan = $params;
 		
 		$this->load->library('field_validation');
 		
-		if(isset($plan['plan_type'])) {
-			$plan_type_id = $this->GetPlanTypeId($plan['plan_type']);
+		if(isset($plan['type'])) {
+			$plan_type_id = $this->GetPlanTypeId($plan['type']);
 			$insert_data['plan_type_id'] = $plan_type_id;
 		} else {
 			die($this->response->Error(1004));
 		}
 		
-		if($plan['plan_type'] == 'free') {
+		if($plan['type'] == 'free') {
 			$insert_data['amount'] = 0;
 		} else {
 			if(isset($plan['amount'])) {
@@ -63,7 +63,7 @@ class Plan_model extends Model
 			if(!is_numeric($plan['interval']) || $plan['interval'] < 1) {
 				die($this->response->Error(5011));
 			}	
-			$insert_data['interval'] = $plan['interval'];
+			$insert_data['`interval`'] = $plan['interval'];
 		} else {
 			die($this->response->Error(1004));
 		}
@@ -125,22 +125,22 @@ class Plan_model extends Model
 	*
 	* @return bool Returns TRUE on success or FALSE on failure
 	*/ 
-	function UpdatePlan($client_id, $params)
+	function UpdatePlan($client_id, $plan_id, $params)
 	{
 		// Get the plan params
-		$plan = $params['plan'];
+		$plan = $params;
 		
 		// Get the plan details
-		$plan_details = $this->GetPlanDetails($client_id, $params['plan_id']);
+		$plan_details = $this->GetPlanDetails($client_id, $plan_id);
 		
 		$this->load->library('field_validation');
 		
-		if(isset($plan['plan_type'])) {
-			$plan_type_id = $this->GetPlanTypeId($plan['plan_type']);
+		if(isset($plan['type'])) {
+			$plan_type_id = $this->GetPlanTypeId($plan['type']);
 			$update_data['plan_type_id'] = $plan_type_id;
 		}
 		
-		if($plan['plan_type'] == 'free') {
+		if($plan['type'] == 'free') {
 			$update_data['amount'] = 0;
 		} else {
 			if(isset($plan['amount'])) {
@@ -157,7 +157,7 @@ class Plan_model extends Model
 			if(!is_numeric($plan['interval']) || $plan['interval'] < 1) {
 				die($this->response->Error(5011));
 			}	
-			$update_data['interval'] = $plan['interval'];
+			$update_data['`interval`'] = $plan['interval'];
 		}
 		
 		if(isset($plan['notification_url'])) {	
@@ -220,7 +220,12 @@ class Plan_model extends Model
 		
 		foreach($plan_details as $key => $value)
 		{
-			$data[$key] = $value;
+			if ($key == 'plan_id') {
+				$data['id'] = $value;
+			}
+			else {	
+				$data[$key] = $value;
+			}
 		}
 		
 		return $data;
@@ -291,13 +296,14 @@ class Plan_model extends Model
 			$this->db->limit($params['limit'], $offset);
 		}
 		
-		$this->db->select('*');
+		$this->db->select('plans.*');
+		$this->db->select('plan_types.*');
 		$this->db->select('count(subscriptions.subscription_id) as `num_customers`',false);
 		$this->db->join('subscriptions','subscriptions.plan_id = plans.plan_id','left');
 		$this->db->join('plan_types', 'plans.plan_type_id = plan_types.plan_type_id', 'inner');
 		$this->db->group_by('plans.plan_id');
 		
-		$this->db->where('subscriptions.client_id', $client_id);
+		$this->db->where('plans.client_id', $client_id);
 		$query = $this->db->get('plans');
 		$data = array();
 		if($query->num_rows() > 0) {
