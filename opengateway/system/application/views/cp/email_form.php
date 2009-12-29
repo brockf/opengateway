@@ -91,7 +91,7 @@ if (!isset($form)) {
 			<input type="text" class="text full required" id="email_subject" name="email_subject" value="<?=$form['email_subject'];?>" />
 		</li>
 		<li>
-			<label for="email_body" class="full">Email Body</label> <a href="#" id="make_html">use HTML format</a>
+			<label for="email_body" class="full">Email Body</label><? if ($form['is_html'] == '0') { ?> <a href="#" id="make_html">use HTML format</a><? } ?>
 			<input type="hidden" name="is_html" id="is_html" value="<?=$form['is_html'];?>" autocomplete="off" />
 		</li>
 		<li>
