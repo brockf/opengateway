@@ -310,7 +310,7 @@ class API extends Controller {
 		}
 	
 		$this->load->model('subscription_model');
-		if ($this->gateway_model->UpdateRecurring($client_id, $params)) {
+		if ($this->subscription_model->UpdateRecurring($client_id, $params)) {
 			$response = $this->response->TransactionResponse(102,array());
 			
 			return $response;
@@ -328,7 +328,7 @@ class API extends Controller {
 		
 		$this->load->model('subscription_model');
 		
-		if ($this->gateway_model->CancelRecurring($client_id, $params['recurring_id'])) {
+		if ($this->subscription_model->CancelRecurring($client_id, $params['recurring_id'])) {
 			return $this->response->TransactionResponse(101,array());
 		}
 		else {

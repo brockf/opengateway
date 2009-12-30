@@ -332,6 +332,7 @@ $config['proxy_ips'] = '';
 */
 $config['max_recurring_days_from_today'] = 365;
 $config['query_result_default_limit'] = 100;
+$config['recurring_charge_failures_allowed'] = 4;
 $config['support_url'] = 'http://www.opengateway.net/support/';
 
 /* End of file config.php */

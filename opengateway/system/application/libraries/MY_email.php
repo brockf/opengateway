@@ -7,7 +7,7 @@ class MY_Email extends CI_Email {
         parent::CI_Email();
     }
     
-    function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscription_id = false, $customer_id = false)
+    function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscription_id = false, $customer_id = false, $plan_id = false)
     {
     	$CI =& get_instance();
     	$CI->load->model('email_model');
@@ -45,9 +45,11 @@ class MY_Email extends CI_Email {
 	    
 	    // dynamically get plan-related info for recurring-related stuff
 	    if ($subscription_id) {
-	    	if (is_array($subscription['plan'])) {
-	    		$plan = $subscription['plan'];
-	    		$plan_id = $plan['id'];
+	    	if(isset($subscription['plan'])) {
+		    	if (is_array($subscription['plan'])) {
+		    		$plan = $subscription['plan'];
+		    		$plan_id = $plan['id'];
+		    	}
 	    	}
 	    }
 	    
@@ -71,6 +73,7 @@ class MY_Email extends CI_Email {
     		$variables['end_date'] = $subscription['end_date'];
     		$variables['expiry_date'] = $subscription['end_date'];
     		$variables['next_charge_date'] = $subscription['next_charge_date'];
+    		$variables['amount'] = $subscription['amount'];
     		
     		if (isset($plan) and is_array($plan)) {
     			$variables['plan_id'] = $plan['id'];
@@ -141,6 +144,8 @@ class MY_Email extends CI_Email {
     	$CI->load->library('field_validation');
     	
 		foreach ($emails as $email) {
+			
+			
 			// who is this going to?
 			$to_address = false;
 			if ($email['to_address'] == 'customer' and isset($customer['email']) and !empty($customer['email']) and $CI->field_validation->ValidateEmailAddress($customer['email'])) {
@@ -150,7 +155,9 @@ class MY_Email extends CI_Email {
 				$to_address = $email['to_address'];
 			}
 			
-			if ($to_address) {	
+			
+			
+			if ($to_address) {
 				$subject = $email['email_subject'];
 				$body = $email['email_body'];
 				$from_name = $email['from_name'];
@@ -159,8 +166,14 @@ class MY_Email extends CI_Email {
 				// replace all possible variables
 				while (list($name,$value) = each($variables)) {
 					$subject = str_ireplace('[[' . $name . ']]',$value,$subject);
-					$body = str_ireplace('[[' . $body . ']]',$value,$body);
+					$body = str_ireplace('[[' . $name . ']]',$value,$body);
 				}
+				
+				// is this HTML?
+				$config['mailtype'] = ($email['is_html'] == '1') ? 'html' : 'text';
+				$config['wordwrap'] = ($email['is_html'] == '1') ? FALSE : TRUE;
+				
+				$this->initialize($config);
 				
 				// send the email
 				$this->from($from_email, $from_name);
@@ -177,11 +190,12 @@ class MY_Email extends CI_Email {
 				$this->subject($subject);
 				$this->message($body);
 				
-				// is this HTML?
-				$config['mailtype'] = ($email['is_html'] == '1') ? 'html' : 'text';
-				$config['wordwrap'] = ($email['is_html'] == '1') ? FALSE : TRUE;
+				if($this->send()) {
+					return TRUE;
+				} else {
+					return FALSE;
+				}
 				
-				$this->send();
 			}		
     	}
     }

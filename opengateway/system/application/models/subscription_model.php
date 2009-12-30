@@ -45,7 +45,7 @@ class Subscription_model extends Model
 							'customer_id' 		=> $customer_id,
 							'plan_id'			=> $plan_id,
 							'notification_url'	=> stripslashes($notification_url),
-							'`interval`' 			=> $interval,
+							'interval' 			=> $interval,
 							'start_date' 		=> $start_date,
 							'end_date'			=> $end_date,
 							'next_charge'		=> $next_charge_date,
@@ -127,6 +127,24 @@ class Subscription_model extends Model
 	function MakeInactive($subscription_id)
 	{
 		$update_data = array('active' => 0);
+		
+		$this->db->where('subscription_id', $subscription_id);
+		$this->db->update('subscriptions', $update_data);
+		
+		return TRUE;
+	}
+	
+	/**
+	* Add a failure to a subscription
+	*
+	*
+	* @param int $subscription_id The subscription_id
+	*
+	* @return bool TRUE upon success.
+	*/
+	function AddFailure($subscription_id, $failures = 0)
+	{
+		$update_data = array('number_charge_failures' => $failures);
 		
 		$this->db->where('subscription_id', $subscription_id);
 		$this->db->update('subscriptions', $update_data);
@@ -420,8 +438,9 @@ class Subscription_model extends Model
 		
 		if(isset($params['customer_id'])) {
 			$update_data['customer_id'] = $params['customer_id'];
-			$this->load->model('customer_model');
-			$customer = $this->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
+			$CI =& get_instance();
+			$CI->load->model('customer_model');
+			$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
 		} else {
 			$customer = FALSE;
 		}
@@ -444,9 +463,11 @@ class Subscription_model extends Model
 			}
 		}
 		
+		$subscription = $this->GetSubscriptionDetails($client_id, $params['recurring_id']);
+		//print_r($subscription);
 		if(isset($params['recur']['interval'])) {
 			// Get the subcription details
-			$subscription = $this->GetSubscriptionDetails($client_id, $params['recurring_id']);
+			
 			$start_date = $subscription['start_date'];
 			$end_date = $subscription['end_date'];
 			// Figure the total number of occurrences
@@ -464,8 +485,9 @@ class Subscription_model extends Model
 		$this->db->update('subscriptions', $update_data);
 		
 		// Update the subscription with the gateway
-		$this->load->model('gateway_model');
-		$gateway = $this->gateway_model->GetGatewayDetails($client_id, $subscription->gateway_id);
+		$CI =& get_instance();
+		$CI->load->model('gateway_model');
+		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $subscription['gateway_id']);
 		$gateway_type = $gateway['name'];
 		
 		$this->load->library('payment/'.$gateway_type);
@@ -495,8 +517,9 @@ class Subscription_model extends Model
 		$subscription = $this->subscription_model->GetSubscriptionDetails($client_id, $recurring_id);
 		
 		// Get the gateway info to load the proper library
-		$this->load->model('gateway_model');
-		$gateway = $this->gateway_model->GetGatewayDetails($client_id, $subscription['gateway_id']);
+		$CI =& get_instance();
+		$CI->load->model('gateway_model');
+		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $subscription['gateway_id']);
 		
 		$gateway_name = $subscription['name'];
 		$this->load->library('payment/'.$gateway_name);
@@ -521,6 +544,114 @@ class Subscription_model extends Model
 		$query = $this->db->get('subscriptions');
 		if($query->num_rows() > 0) {
 			return $query->result();
+		} else {
+			return FALSE;
+		}
+	}
+	
+	function GetAllSubscriptionsByChargeDate($date = FALSE)
+	{
+		if(!$date) {
+			$date = date('Y-m-d');
+		}
+		
+		$this->db->join('client_gateways', 'subscriptions.gateway_id = client_gateways.client_gateway_id', 'inner');
+		$this->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
+		$this->db->where('next_charge', $date);
+		$this->db->where('active', 1);
+		$query = $this->db->get('subscriptions');
+		
+		if($query->num_rows > 0) {
+			return $query->result_array();
+		} else {
+			return FALSE;
+		}
+		
+	}
+	
+	function GetNextChargeDate($subscription_id, $from_date = FALSE)
+	{
+		if(!$from_date) {
+			$from_date = date('Y-m-d');
+		}
+		
+		$this->db->where('subscription_id', $subscription_id);
+		$query = $this->db->get('subscriptions');
+		if($query->num_rows() > 0) {
+			$row = $query->row();
+			print_r($row);
+			$next_charge = strtotime($from_date) + ($row->interval * 86400);
+			return date('Y-m-d', $next_charge);
+		}
+		
+		return FALSE;
+		
+	}
+	
+	function SetChargeDates($subscription_id, $last_charge, $next_charge)
+	{
+		$update_data = array('last_charge' => $last_charge, 'next_charge' => $next_charge);
+		
+		$this->db->where('subscription_id', $subscription_id);
+		$this->db->update('subscriptions', $update_data);
+	}
+	
+/**
+	* Get Details of the last order for a customer.
+	*
+	* Returns array of order details for a specific order_id.
+	*
+	* @param int $client_id The client ID.
+	* @param int $customer_id The customer ID.
+	* 
+	* @return array|bool Array with charge details or FALSE upon failure
+	*/
+	
+	function GetChargesByDate($date, $client_id = FALSE)
+	{	
+		
+		if($client_id) {
+			$this->db->where('orders.client_id', $client_id);
+		}
+		
+		$this->db->join('customers', 'customers.customer_id = subscriptions.customer_id', 'left');
+		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
+		$this->db->where('subscriptions.active', 1);
+		$this->db->where('next_charge', date('Y-m-d', $date));
+		$query = $this->db->get('subscriptions');
+		if($query->num_rows() > 0) {
+			return $query->result_array();
+		} else {
+			return FALSE;
+		}
+	}
+
+
+/**
+	* Get Details of the last order for a customer.
+	*
+	* Returns array of order details for a specific order_id.
+	*
+	* @param int $client_id The client ID.
+	* @param int $customer_id The customer ID.
+	* 
+	* @return array|bool Array with charge details or FALSE upon failure
+	*/
+	
+	function GetChargesByExpiryDate($date, $client_id = FALSE)
+	{	
+		
+		if($client_id) {
+			$this->db->where('orders.client_id', $client_id);
+		}
+		
+		$this->db->join('customers', 'customers.customer_id = subscriptions.customer_id', 'left');
+		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
+		$this->db->where('subscriptions.active', 1);
+		$this->db->where('end_date', date('Y-m-d', $date));
+		$query = $this->db->get('subscriptions');
+		if($query->num_rows() > 0) {
+			return $query->result_array();
 		} else {
 			return FALSE;
 		}

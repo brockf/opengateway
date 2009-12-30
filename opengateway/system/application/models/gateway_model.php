@@ -190,6 +190,8 @@ class Gateway_model extends Model
 		return $response;
 	}
 	
+	
+	
 	/**
 	* Create a new recurring subscription.
 	*
@@ -368,6 +370,54 @@ class Gateway_model extends Model
 		
 		return $response;
 	}
+	
+	function ChargeRecurring($client_id, $params)
+	{
+		$CI =& get_instance();
+		
+		$gateway_id = $params['gateway_id'];
+		
+		// Get the gateway info to load the proper library
+		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
+		
+		// Create a new order
+		$CI->load->model('order_model');
+		$order_id = $CI->order_model->CreateNewOrder($client_id, $params);
+		
+		// Load the proper library
+		$gateway_name = $gateway['name'];
+		$this->load->library('payment/'.$gateway_name);
+		$response = $this->$gateway_name->ChargeRecurring($client_id, $gateway, $params);	
+
+		$this->load->model('subscription_model');
+		if($response['success'] == TRUE) {
+			// Save the last_charge and next_charge
+			$last_charge = date('Y-m-d');
+			$next_charge = $this->subscription_model->GetNextChargeDate($params['subscription_id']);
+			
+			$this->subscription_model->SetChargeDates($params['subscription_id'], $last_charge, $next_charge);
+			
+			$CI->load->library('notification');
+			$CI->notify->QueueNotification();
+			
+			$this->email->TriggerTrip('recurring_charge', $client_id, $response['charge_id']);
+		} else {
+			// Check the number of failures allowed
+			$num_allowed = $this->config->item('recurring_charge_failures_allowed');
+			$failures = $params['number_charge_failures'];
+			
+			$failures++;
+			$this->subscription_model->AddFailure($params['subscription_id'], $failures);
+			
+			if($failures >= $num_allowed) {	
+				$this->subscription_model->MakeInactive($params['subscription_id']);
+			}
+
+		}
+		
+		return $response;
+	}
+	
 	
 	/**
 	* Set a default gateway.

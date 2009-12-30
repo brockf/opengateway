@@ -295,13 +295,13 @@ class Paypal
 		switch($gateway['mode'])
 		{
 			case 'live':
-				$post_url = $subscription->arb_live_url;
+				$post_url = $subscription['arb_live_url'];
 			break;
 			case 'test':
-				$post_url = $subscription->arb_test_url;
+				$post_url = $subscription['arb_test_url'];
 			break;
 			case 'dev':
-				$post_url = $subscription->arb_dev_url;
+				$post_url = $subscription['arb_dev_url'];
 			break;
 		}
 		
@@ -311,7 +311,7 @@ class Paypal
 		$post['user'] = $gateway['user'];
 		$post['pwd'] = $gateway['pwd'];
 		$post['signature'] = $gateway['signature'];
-		$post['profileid'] = $subscription->api_customer_reference;
+		$post['profileid'] = $subscription['api_customer_reference'];
 		$post['action'] = 'Cancel';
 		
 		$post_response = $this->Process($post_url, $post);
@@ -335,13 +335,13 @@ class Paypal
 		switch($gateway['mode'])
 		{
 			case 'live':
-				$post_url = $subscription->arb_live_url;
+				$post_url = $subscription['arb_live_url'];
 			break;
 			case 'test':
-				$post_url = $subscription->arb_test_url;
+				$post_url = $subscription['arb_test_url'];
 			break;
 			case 'dev':
-				$post_url = $subscription->arb_dev_url;
+				$post_url = $subscription['arb_dev_url'];
 			break;
 		}
 		
@@ -351,7 +351,7 @@ class Paypal
 		$post['user'] = $gateway['user'];
 		$post['pwd'] = $gateway['pwd'];
 		$post['signature'] = $gateway['signature'];
-		$post['profileid'] = $subscription->api_customer_reference;
+		$post['profileid'] = $subscription['api_customer_reference'];
 		
 		if(isset($params['amount'])) {
 			$post['amt'] = $params['amount'];
@@ -373,7 +373,7 @@ class Paypal
 		}
 		
 		if(isset($params['recur']['interval'])) {
-			$post['totalbillingcycles'] = round((strtotime($subscription->end_date) - strtotime($subscription->start_date)) / ($params['recur']['interval'] * 86400), 0);
+			$post['totalbillingcycles'] = round((strtotime($subscription['end_date']) - strtotime($subscription['start_date'])) / ($params['recur']['interval'] * 86400), 0);
 		}
 		
 		$post_response = $this->Process($post_url, $post);
@@ -387,6 +387,69 @@ class Paypal
 		}
 		
 		return $response;
+	}
+	
+	function ChargeRecurring($client_id, $gateway, $params)
+	{
+		$details = $this->GetProfileDetails($client_id, $gateway, $params);
+		if(!$details) {
+			return FALSE;
+		}
+		$last_payment = date('Y-m-d',strtotime($details['LASTPAYMENTDATE']));
+		$today = date('Y-m-d');
+		$failed_payments = $details['FAILEDPAYMENTCOUNT'];
+		
+		if($last_payment == $today && $failed_payments < 1) {
+			
+			$response['success'] = TRUE;
+		} else {
+			$response['success'] = FALSE;
+			$response['reason'] = "The charge has failed.";
+		}
+		
+		return $response;
+		
+	}
+	
+	function GetProfileDetails($client_id, $gateway, $params)
+	{
+		$CI =& get_instance();
+		$CI->load->model('subscription_model');
+		
+		switch($gateway['mode'])
+		{
+			case 'live':
+				$post_url = $params['arb_live_url'];
+			break;
+			case 'test':
+				$post_url = $params['arb_test_url'];
+			break;
+			case 'dev':
+				$post_url = $params['arb_dev_url'];
+			break;
+			default:
+				$post_url = $params['arb_dev_url'];
+			break;
+		}
+		
+		$post = array();
+		$post['version'] = '60';
+		$post['method'] = 'GetRecurringPaymentsProfileDetails';
+		$post['user'] = $gateway['user'];
+		$post['pwd'] = $gateway['pwd'];
+		$post['signature'] = $gateway['signature'];
+		$post['profileid'] = $params['api_customer_reference'];
+		
+		$post_response = $this->Process($post_url, $post);
+		
+		if($post_response['ACK'] == 'Success') {
+			$response = $this->response_to_array($post_response);
+		} else {
+			$response = FALSE;
+		}
+		
+		return $response;
+		
 	}
 	
 	private function response_to_array($string)

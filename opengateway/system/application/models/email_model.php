@@ -64,7 +64,7 @@ class Email_model extends Model
 			$insert_data['to_address'] = $params['to_address'];
 		}
 		else {
-			$insert_data['to_address'] == 'customer';
+			$insert_data['to_address'] = 'customer';
 		}
 		
 		if(isset($params['bcc_address'])) {

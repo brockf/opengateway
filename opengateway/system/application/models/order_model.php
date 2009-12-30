@@ -38,11 +38,14 @@ class Order_model extends Model
 							'client_id' 	  => $client_id,
 							'gateway_id' 	  => $params['gateway_id'],
 							'subscription_id' => $subscription_id,
-							'card_last_four'  => substr($params['credit_card']['card_num'],-4,4),
 							'amount'		  => $params['amount'],
 							'timestamp'		  => $timestamp
 							);	
 		
+		if(isset($params['card_last_four'])) {
+			$insert_data['card_last_four']  = substr($params['credit_card']['card_num'],-4,4);
+		}					
+							
 		if(isset($params['customer_ip_address'])) {
 			$insert_data['customer_ip_address'] = $params['customer_ip_address'];
 		}
@@ -287,6 +290,8 @@ class Order_model extends Model
 			return FALSE;
 		}
 	}
+	
+
 	
 	/**
 	* Set the status of an order to either 1 or 0
