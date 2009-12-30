@@ -1,6 +1,6 @@
 <?php
 
-$url = "http://localhost/gateway/";
+$url = "http://localhost/index.php/api/";
 
 $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 <request>

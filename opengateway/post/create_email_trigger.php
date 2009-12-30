@@ -1,6 +1,6 @@
 <?php
 
-$url = "http://localhost/gateway/";
+$url = "http://localhost/index.php/api/";
 
 $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 <request>
@@ -9,7 +9,7 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>
 	</authentication>
 	<type>NewEmail</type>
-	<trigger>charge</trigger>
+	<trigger>recurring_cancel</trigger>
 	<plan>0</plan>
 	<email_subject>Your card has been charged.</email_subject>
 	<email_body>'.htmlentities('<a><strong>Test it yo!</strong></a>').'</email_body>

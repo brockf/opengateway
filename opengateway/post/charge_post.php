@@ -1,6 +1,6 @@
 <?php
 
-$url = "http://platform.opengateway.net/api/";
+$url = "http://localhost/api/";
 
 $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 <request>
@@ -10,7 +10,7 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 	</authentication>
 	<type>Charge</type>
 	<gateway_id>28</gateway_id>
-	<customer_id>123456789</customer_id>
+	<customer_id>2</customer_id>
 	<credit_card>
 		<card_num>4916634239086979</card_num>
 		<exp_month>10</exp_month>
@@ -23,7 +23,6 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 </request>';
 
 $postfields = $post_string; 
-
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); 
 curl_setopt($ch, CURLOPT_URL,$url);
