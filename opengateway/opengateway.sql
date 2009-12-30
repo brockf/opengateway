@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50136
 File Encoding         : 65001
 
-Date: 2009-12-16 21:56:54
+Date: 2009-12-29 16:59:54
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -224,21 +224,102 @@ CREATE TABLE `client_emails` (
   `client_email_id` int(11) NOT NULL AUTO_INCREMENT,
   `client_id` int(11) NOT NULL,
   `trigger_id` int(11) NOT NULL,
-  `plan_id` varchar(4) NOT NULL,
+  `plan_id` int(11) NOT NULL,
+  `to_address` varchar(11) NOT NULL,
+  `bcc_address` varchar(255) DEFAULT NULL,
   `email_subject` varchar(255) NOT NULL,
   `email_body` text NOT NULL,
   `from_name` varchar(50) NOT NULL,
   `from_email` varchar(255) NOT NULL,
   `is_html` tinyint(1) NOT NULL,
-  `to_address` varchar(255) NOT NULL,
-  `bcc_address` varchar(255) NOT NULL,
+  `bcc_client` tinyint(1) NOT NULL,
   `active` tinyint(1) NOT NULL,
   PRIMARY KEY (`client_email_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=73 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=81 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of client_emails
 -- ----------------------------
+INSERT INTO `client_emails` VALUES ('1', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email. [[AMOUNT]]', 'David Ryan', 'daveryan187@yahoo.com', '1', '0', '1');
+INSERT INTO `client_emails` VALUES ('2', '17', '1', '-1', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('3', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('4', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('5', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('6', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '1', '0', '1');
+INSERT INTO `client_emails` VALUES ('7', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('8', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('9', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('10', '17', '9', '1', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '1', '0', '0');
+INSERT INTO `client_emails` VALUES ('11', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('12', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('13', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('14', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('15', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('16', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('17', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('18', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('19', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('20', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('21', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('22', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('23', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('24', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('25', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', 'This is the body of my email.', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('26', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('27', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('28', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('29', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('30', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('31', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('32', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('33', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('34', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('35', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('36', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('37', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('38', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('39', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('40', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('41', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('42', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('43', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('44', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('45', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('46', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('47', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('48', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('49', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('50', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('51', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('52', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('53', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('54', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('55', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('56', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('57', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('58', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('59', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('60', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('61', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('62', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('63', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('64', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('65', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('66', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('67', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('68', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('69', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('70', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '<a><strong>Test it yo!</strong></a>', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('71', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '<a><strong>Test it yo!</strong></a>', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('72', '17', '1', '0', '', null, '[[CUSTOMER_FIRST_NAME]], You have important news.', '<a><strong>Test it yo!</strong></a>', 'David Ryan', 'daveryan187@yahoo.com', '0', '0', '1');
+INSERT INTO `client_emails` VALUES ('73', '17', '7', '0', 'customer', '', '[[CUSTOMER_FIRST_NAME]], You have important news.', '<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\r\n<html>\r\n<head>\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\">\r\n<title>Insert title here</title>\r\n</head>\r\n<body>\r\n[[amount]]\r\n</body>\r\n</html>', 'David Ryan', 'daveryan187@yahoo.com', '1', '0', '1');
+INSERT INTO `client_emails` VALUES ('74', '17', '8', '0', 'customer', '', '[[CUSTOMER_FIRST_NAME]], You have important news.', '<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\r\n<html>\r\n<head>\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\">\r\n<title>Insert title here</title>\r\n</head>\r\n<body>\r\n[[amount]]\r\n</body>\r\n</html>', 'David Ryan', 'daveryan187@yahoo.com', '1', '0', '1');
+INSERT INTO `client_emails` VALUES ('75', '17', '7', '0', 'customer', '', '[[CUSTOMER_FIRST_NAME]], You have important news.', '<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\r\n<html>\r\n<head>\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\">\r\n<title>Insert title here</title>\r\n</head>\r\n<body>\r\n[[amount]]\r\n</body>\r\n</html>', 'David Ryan', 'daveryan187@yahoo.com', '1', '0', '1');
+INSERT INTO `client_emails` VALUES ('76', '17', '8', '0', 'customer', '', '[[CUSTOMER_FIRST_NAME]], You have important news.', '<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\r\n<html>\r\n<head>\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\">\r\n<title>Insert title here</title>\r\n</head>\r\n<body>\r\n[[amount]]\r\n</body>\r\n</html>', 'David Ryan', 'daveryan187@yahoo.com', '1', '0', '1');
+INSERT INTO `client_emails` VALUES ('77', '17', '2', '0', 'customer', '', '[[CUSTOMER_FIRST_NAME]], You have important news.', '<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\r\n<html>\r\n<head>\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\">\r\n<title>Insert title here</title>\r\n</head>\r\n<body>\r\n[[amount]]\r\n</body>\r\n</html>', 'David Ryan', 'daveryan187@yahoo.com', '1', '0', '1');
+INSERT INTO `client_emails` VALUES ('78', '17', '4', '0', 'customer', '', '[[CUSTOMER_FIRST_NAME]], You have important news.', '<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\r\n<html>\r\n<head>\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\">\r\n<title>Insert title here</title>\r\n</head>\r\n<body>\r\n[[amount]]\r\n</body>\r\n</html>', 'David Ryan', 'daveryan187@yahoo.com', '1', '0', '1');
+INSERT INTO `client_emails` VALUES ('79', '17', '4', '0', 'customer', '', '[[CUSTOMER_FIRST_NAME]], You have important news.', '<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\r\n<html>\r\n<head>\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\">\r\n<title>Insert title here</title>\r\n</head>\r\n<body>\r\n[[amount]]\r\n</body>\r\n</html>', 'David Ryan', 'daveryan187@yahoo.com', '1', '0', '1');
+INSERT INTO `client_emails` VALUES ('80', '17', '4', '0', 'customer', '', '[[CUSTOMER_FIRST_NAME]], You have important news.', '<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\r\n<html>\r\n<head>\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\">\r\n<title>Insert title here</title>\r\n</head>\r\n<body>\r\n[[amount]]\r\n</body>\r\n</html>', 'David Ryan', 'daveryan187@yahoo.com', '1', '0', '1');
 
 -- ----------------------------
 -- Table structure for `client_gateway_params`
@@ -818,146 +899,146 @@ CREATE TABLE `customers` (
 -- ----------------------------
 -- Records of customers
 -- ----------------------------
-INSERT INTO `customers` VALUES ('1', '17', 'David', 'Ryan', 'ABC Inc.', '12343434', '123 Main St', 'APT 1', 'Denver', 'CO', '80220', '0', '', '', '1');
+INSERT INTO `customers` VALUES ('1', '17', 'David', 'Ryan', 'ABC Inc.', '12343434', '123 Main St', 'APT 1', 'Denver', 'CO', '80220', '0', '', 'daveryan187@yahoo.com', '1');
 INSERT INTO `customers` VALUES ('2', '17', 'David', 'Ryan', 'ABC Inc.', '12343434', '123 Main St', 'APT 1', 'Denver', 'CO', '80220', '0', '3033319812', 'daveryan187@yahoo.com', '1');
-INSERT INTO `customers` VALUES ('3', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('4', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('5', '17', 'Johnny', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '0');
-INSERT INTO `customers` VALUES ('6', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('7', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('8', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('9', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('10', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('11', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('12', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('13', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('14', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('15', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('16', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('17', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('18', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('19', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('20', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('21', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('22', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('23', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('24', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('25', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('26', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('27', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('28', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('29', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('30', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('31', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('32', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('33', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('34', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('35', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('36', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('37', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('38', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('39', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('40', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('41', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('42', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('43', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('44', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('45', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('46', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('47', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('48', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('49', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('50', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('51', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('52', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('53', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('54', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('55', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('56', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('57', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('58', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('59', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('60', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('61', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('62', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('63', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('64', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('65', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('66', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('67', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('68', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('69', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('70', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('71', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('72', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('73', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('74', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('75', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('76', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('77', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('78', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('79', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('80', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('81', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('82', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('83', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('84', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('85', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('86', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('87', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('88', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('89', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('90', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('91', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('92', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('93', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('94', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('95', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('96', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('97', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('98', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('99', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
+INSERT INTO `customers` VALUES ('3', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('4', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('5', '17', 'Johnny', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '0');
+INSERT INTO `customers` VALUES ('6', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('7', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('8', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('9', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('10', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('11', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('12', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('13', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('14', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('15', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('16', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('17', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('18', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('19', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('20', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('21', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('22', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('23', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('24', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('25', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('26', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('27', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('28', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('29', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('30', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('31', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('32', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('33', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('34', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('35', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('36', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('37', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('38', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('39', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('40', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('41', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('42', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('43', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('44', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('45', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('46', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('47', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('48', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('49', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('50', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('51', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('52', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('53', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('54', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('55', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('56', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('57', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('58', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('59', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('60', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('61', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('62', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('63', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('64', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('65', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('66', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('67', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('68', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('69', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('70', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('71', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('72', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('73', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('74', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('75', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('76', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('77', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('78', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('79', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('80', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('81', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('82', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('83', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('84', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('85', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('86', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('87', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('88', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('89', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('90', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('91', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('92', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('93', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('94', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('95', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('96', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('97', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('98', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('99', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
 INSERT INTO `customers` VALUES ('100', '17', 'David', 'Ryan', 'ABC Inc.', '12343434', '123 Main St', 'APT 1', 'Denver', 'CO', '80220', '528', '3033319812', 'daveryan187@yahoo.com', '1');
 INSERT INTO `customers` VALUES ('101', '17', 'David', 'Ryan', 'ABC Inc.', '12343434', '123 Main St', 'APT 1', 'Denver', 'CO', '80220', '1', '3033319812', 'daveryan187@yahoo.com', '1');
 INSERT INTO `customers` VALUES ('102', '17', 'David', 'Ryan', 'ABC Inc.', '12343434', '123 Main St', 'APT 1', 'Denver', 'CO', '80220', '1', '3033319812', 'daveryan187@yahoo.com', '1');
 INSERT INTO `customers` VALUES ('103', '17', 'David', 'Ryan', 'ABC Inc.', '12343434', '123 Main St', 'APT 1', 'Denver', 'CO', '80220', '1', '3033319812', 'daveryan187@yahoo.com', '1');
-INSERT INTO `customers` VALUES ('104', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('105', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('106', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('107', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('108', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('109', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('110', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('111', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('112', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('113', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('114', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('115', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('116', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('117', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('118', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('119', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('120', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('121', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('122', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('123', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('124', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('125', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('126', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('127', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('128', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('129', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('130', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('131', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('132', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('133', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('134', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('135', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('136', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('137', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('138', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('139', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
-INSERT INTO `customers` VALUES ('140', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', '', '1');
+INSERT INTO `customers` VALUES ('104', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('105', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('106', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('107', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('108', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('109', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('110', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('111', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('112', '17', 'David', 'Ryan', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('113', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('114', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('115', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('116', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('117', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('118', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('119', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('120', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('121', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('122', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('123', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('124', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('125', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('126', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('127', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('128', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('129', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('130', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('131', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('132', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('133', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('134', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('135', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('136', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('137', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('138', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('139', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
+INSERT INTO `customers` VALUES ('140', '17', 'Moses', 'Malone', '', '', '', '', '', '', '', '0', '', 'daveryan187@yahoo.com', '1');
 
 -- ----------------------------
 -- Table structure for `email_triggers`
@@ -977,15 +1058,14 @@ CREATE TABLE `email_triggers` (
 -- Records of email_triggers
 -- ----------------------------
 INSERT INTO `email_triggers` VALUES ('1', 'charge', 'Charge', 'Basic charge.', 'a:17:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:9:\"charge_id\";i:3;s:14:\"card_last_four\";i:4;s:11:\"customer_id\";i:5;s:20:\"customer_internal_id\";i:6;s:19:\"customer_first_name\";i:7;s:18:\"customer_last_name\";i:8;s:16:\"customer_company\";i:9;s:18:\"customer_address_1\";i:10;s:18:\"customer_address_2\";i:11;s:13:\"customer_city\";i:12;s:14:\"customer_state\";i:13;s:20:\"customer_postal_code\";i:14;s:16:\"customer_country\";i:15;s:14:\"customer_phone\";i:16;s:14:\"customer_email\";}', '1');
-INSERT INTO `email_triggers` VALUES ('2', 'recurring_charge', 'Recurring Charge', 'A recurring payment charge.', 'a:21:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:9:\"charge_id\";i:4;s:14:\"card_last_four\";i:5;s:16:\"next_charge_date\";i:6;s:7:\"plan_id\";i:7;s:9:\"plan_name\";i:8;s:11:\"customer_id\";i:9;s:20:\"customer_internal_id\";i:10;s:19:\"customer_first_name\";i:11;s:18:\"customer_last_name\";i:12;s:16:\"customer_company\";i:13;s:18:\"customer_address_1\";i:14;s:18:\"customer_address_2\";i:15;s:13:\"customer_city\";i:16;s:14:\"customer_state\";i:17;s:20:\"customer_postal_code\";i:18;s:16:\"customer_country\";i:19;s:14:\"customer_phone\";i:20;s:14:\"customer_email\";}', '1');
-INSERT INTO `email_triggers` VALUES ('3', 'recurring_cancel', 'Recurring Cancellation', 'Subscription is cancelled by a user/client request (e.g. a CancelRecurring call was issued).', 'a:18:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:7:\"plan_id\";i:4;s:9:\"plan_name\";i:5;s:11:\"customer_id\";i:6;s:20:\"customer_internal_id\";i:7;s:19:\"customer_first_name\";i:8;s:18:\"customer_last_name\";i:9;s:16:\"customer_company\";i:10;s:18:\"customer_address_1\";i:11;s:18:\"customer_address_2\";i:12;s:13:\"customer_city\";i:13;s:14:\"customer_state\";i:14;s:20:\"customer_postal_code\";i:15;s:16:\"customer_country\";i:16;s:14:\"customer_phone\";i:17;s:14:\"customer_email\";}', '1');
-INSERT INTO `email_triggers` VALUES ('4', 'recurring_fail', 'Recurring Fail', 'Subscription fails due to non-payment.', 'a:18:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:7:\"plan_id\";i:4;s:9:\"plan_name\";i:5;s:11:\"customer_id\";i:6;s:20:\"customer_internal_id\";i:7;s:19:\"customer_first_name\";i:8;s:18:\"customer_last_name\";i:9;s:16:\"customer_company\";i:10;s:18:\"customer_address_1\";i:11;s:18:\"customer_address_2\";i:12;s:13:\"customer_city\";i:13;s:14:\"customer_state\";i:14;s:20:\"customer_postal_code\";i:15;s:16:\"customer_country\";i:16;s:14:\"customer_phone\";i:17;s:14:\"customer_email\";}', '1');
-INSERT INTO `email_triggers` VALUES ('5', 'recurring_expiring_in_week', 'Plan to Expire in a Week', 'A plan subscription will expire in one week.', 'a:19:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:11:\"expiry_date\";i:4;s:7:\"plan_id\";i:5;s:9:\"plan_name\";i:6;s:11:\"customer_id\";i:7;s:20:\"customer_internal_id\";i:8;s:19:\"customer_first_name\";i:9;s:18:\"customer_last_name\";i:10;s:16:\"customer_company\";i:11;s:18:\"customer_address_1\";i:12;s:18:\"customer_address_2\";i:13;s:13:\"customer_city\";i:14;s:14:\"customer_state\";i:15;s:20:\"customer_postal_code\";i:16;s:16:\"customer_country\";i:17;s:14:\"customer_phone\";i:18;s:14:\"customer_email\";}', '1');
-INSERT INTO `email_triggers` VALUES ('6', 'recurring_expiring_in_month', 'Plan to Expire in a Month', 'A plan subscription will expire in one month.', 'a:19:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:11:\"expiry_date\";i:4;s:7:\"plan_id\";i:5;s:9:\"plan_name\";i:6;s:11:\"customer_id\";i:7;s:20:\"customer_internal_id\";i:8;s:19:\"customer_first_name\";i:9;s:18:\"customer_last_name\";i:10;s:16:\"customer_company\";i:11;s:18:\"customer_address_1\";i:12;s:18:\"customer_address_2\";i:13;s:13:\"customer_city\";i:14;s:14:\"customer_state\";i:15;s:20:\"customer_postal_code\";i:16;s:16:\"customer_country\";i:17;s:14:\"customer_phone\";i:18;s:14:\"customer_email\";}', '1');
-INSERT INTO `email_triggers` VALUES ('7', 'recurring_expired', 'Plan Expired', 'Plan has expired.', 'a:19:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:11:\"expiry_date\";i:4;s:7:\"plan_id\";i:5;s:9:\"plan_name\";i:6;s:11:\"customer_id\";i:7;s:20:\"customer_internal_id\";i:8;s:19:\"customer_first_name\";i:9;s:18:\"customer_last_name\";i:10;s:16:\"customer_company\";i:11;s:18:\"customer_address_1\";i:12;s:18:\"customer_address_2\";i:13;s:13:\"customer_city\";i:14;s:14:\"customer_state\";i:15;s:20:\"customer_postal_code\";i:16;s:16:\"customer_country\";i:17;s:14:\"customer_phone\";i:18;s:14:\"customer_email\";}', '1');
-INSERT INTO `email_triggers` VALUES ('8', 'recurring_autorecur_in_week', 'Recurring to Autocharge in a Week', 'Subscription will Autocharge in one week.', 'a:19:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:16:\"next_charge_date\";i:4;s:7:\"plan_id\";i:5;s:9:\"plan_name\";i:6;s:11:\"customer_id\";i:7;s:20:\"customer_internal_id\";i:8;s:19:\"customer_first_name\";i:9;s:18:\"customer_last_name\";i:10;s:16:\"customer_company\";i:11;s:18:\"customer_address_1\";i:12;s:18:\"customer_address_2\";i:13;s:13:\"customer_city\";i:14;s:14:\"customer_state\";i:15;s:20:\"customer_postal_code\";i:16;s:16:\"customer_country\";i:17;s:14:\"customer_phone\";i:18;s:14:\"customer_email\";}', '1');
-INSERT INTO `email_triggers` VALUES ('9', 'recurring_autorecur_in_month', 'Recurring to Autocharge in a Month', 'Subscription will Autocharge in one month.', 'a:19:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:16:\"next_charge_date\";i:4;s:7:\"plan_id\";i:5;s:9:\"plan_name\";i:6;s:11:\"customer_id\";i:7;s:20:\"customer_internal_id\";i:8;s:19:\"customer_first_name\";i:9;s:18:\"customer_last_name\";i:10;s:16:\"customer_company\";i:11;s:18:\"customer_address_1\";i:12;s:18:\"customer_address_2\";i:13;s:13:\"customer_city\";i:14;s:14:\"customer_state\";i:15;s:20:\"customer_postal_code\";i:16;s:16:\"customer_country\";i:17;s:14:\"customer_phone\";i:18;s:14:\"customer_email\";}', '1');
-INSERT INTO `email_triggers` VALUES ('10', 'new_customer', 'New Customer', 'A new customer has been created in the system.', 'a:13:{i:0;s:11:\"customer_id\";i:1;s:20:\"customer_internal_id\";i:2;s:19:\"customer_first_name\";i:3;s:18:\"customer_last_name\";i:4;s:16:\"customer_company\";i:5;s:18:\"customer_address_1\";i:6;s:18:\"customer_address_2\";i:7;s:13:\"customer_city\";i:8;s:14:\"customer_state\";i:9;s:20:\"customer_postal_code\";i:10;s:16:\"customer_country\";i:11;s:14:\"customer_phone\";i:12;s:14:\"customer_email\";}', '1');
+INSERT INTO `email_triggers` VALUES ('2', 'recurring_charge', 'Recurring Charge', 'Only for charges linked to a subscription', 'a:21:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:9:\"charge_id\";i:4;s:14:\"card_last_four\";i:5;s:16:\"next_charge_date\";i:6;s:7:\"plan_id\";i:7;s:9:\"plan_name\";i:8;s:11:\"customer_id\";i:9;s:20:\"customer_internal_id\";i:10;s:19:\"customer_first_name\";i:11;s:18:\"customer_last_name\";i:12;s:16:\"customer_company\";i:13;s:18:\"customer_address_1\";i:14;s:18:\"customer_address_2\";i:15;s:13:\"customer_city\";i:16;s:14:\"customer_state\";i:17;s:20:\"customer_postal_code\";i:18;s:16:\"customer_country\";i:19;s:14:\"customer_phone\";i:20;s:14:\"customer_email\";}', '1');
+INSERT INTO `email_triggers` VALUES ('3', 'recurring_expire', 'Recurring Expiration', 'Subscription ends gracefully at expiration date with max_occurrences/end_date limitation', 'a:23:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:9:\"charge_id\";i:4;s:14:\"card_last_four\";i:5;s:10:\"start_date\";i:6;s:8:\"end_date\";i:7;s:16:\"next_charge_date\";i:8;s:7:\"plan_id\";i:9;s:9:\"plan_name\";i:10;s:11:\"customer_id\";i:11;s:20:\"customer_internal_id\";i:12;s:19:\"customer_first_name\";i:13;s:18:\"customer_last_name\";i:14;s:16:\"customer_company\";i:15;s:18:\"customer_address_1\";i:16;s:18:\"customer_address_2\";i:17;s:13:\"customer_city\";i:18;s:14:\"customer_state\";i:19;s:20:\"customer_postal_code\";i:20;s:16:\"customer_country\";i:21;s:14:\"customer_phone\";i:22;s:14:\"customer_email\";}', '1');
+INSERT INTO `email_triggers` VALUES ('4', 'recurring_cancel', 'Recurring Cancellation', 'Subscription ends with an explicit CancelRecurring call.  Not a graceful expiration.', 'a:18:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:7:\"plan_id\";i:4;s:9:\"plan_name\";i:5;s:11:\"customer_id\";i:6;s:20:\"customer_internal_id\";i:7;s:19:\"customer_first_name\";i:8;s:18:\"customer_last_name\";i:9;s:16:\"customer_company\";i:10;s:18:\"customer_address_1\";i:11;s:18:\"customer_address_2\";i:12;s:13:\"customer_city\";i:13;s:14:\"customer_state\";i:14;s:20:\"customer_postal_code\";i:15;s:16:\"customer_country\";i:16;s:14:\"customer_phone\";i:17;s:14:\"customer_email\";}', '1');
+INSERT INTO `email_triggers` VALUES ('5', 'recurring_expiring_in_week', 'Recurring to Expire in a Week', 'Subscription will expire in one week.', 'a:19:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:11:\"expiry_date\";i:4;s:7:\"plan_id\";i:5;s:9:\"plan_name\";i:6;s:11:\"customer_id\";i:7;s:20:\"customer_internal_id\";i:8;s:19:\"customer_first_name\";i:9;s:18:\"customer_last_name\";i:10;s:16:\"customer_company\";i:11;s:18:\"customer_address_1\";i:12;s:18:\"customer_address_2\";i:13;s:13:\"customer_city\";i:14;s:14:\"customer_state\";i:15;s:20:\"customer_postal_code\";i:16;s:16:\"customer_country\";i:17;s:14:\"customer_phone\";i:18;s:14:\"customer_email\";}', '1');
+INSERT INTO `email_triggers` VALUES ('6', 'recurring_expiring_in_month', 'Recurring to Expire in a Month', 'Subscription will expire in one month.', 'a:19:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:11:\"expiry_date\";i:4;s:7:\"plan_id\";i:5;s:9:\"plan_name\";i:6;s:11:\"customer_id\";i:7;s:20:\"customer_internal_id\";i:8;s:19:\"customer_first_name\";i:9;s:18:\"customer_last_name\";i:10;s:16:\"customer_company\";i:11;s:18:\"customer_address_1\";i:12;s:18:\"customer_address_2\";i:13;s:13:\"customer_city\";i:14;s:14:\"customer_state\";i:15;s:20:\"customer_postal_code\";i:16;s:16:\"customer_country\";i:17;s:14:\"customer_phone\";i:18;s:14:\"customer_email\";}', '1');
+INSERT INTO `email_triggers` VALUES ('7', 'recurring_autorecur_in_week', 'Recurring to Autocharge in a Week', 'Subscription will Autocharge in one week.', 'a:19:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:16:\"next_charge_date\";i:4;s:7:\"plan_id\";i:5;s:9:\"plan_name\";i:6;s:11:\"customer_id\";i:7;s:20:\"customer_internal_id\";i:8;s:19:\"customer_first_name\";i:9;s:18:\"customer_last_name\";i:10;s:16:\"customer_company\";i:11;s:18:\"customer_address_1\";i:12;s:18:\"customer_address_2\";i:13;s:13:\"customer_city\";i:14;s:14:\"customer_state\";i:15;s:20:\"customer_postal_code\";i:16;s:16:\"customer_country\";i:17;s:14:\"customer_phone\";i:18;s:14:\"customer_email\";}', '1');
+INSERT INTO `email_triggers` VALUES ('8', 'recurring_autorecur_in_month', 'Recurring to Autocharge in a Month', 'Subscription will Autocharge in one month.', 'a:19:{i:0;s:6:\"amount\";i:1;s:4:\"date\";i:2;s:12:\"recurring_id\";i:3;s:16:\"next_charge_date\";i:4;s:7:\"plan_id\";i:5;s:9:\"plan_name\";i:6;s:11:\"customer_id\";i:7;s:20:\"customer_internal_id\";i:8;s:19:\"customer_first_name\";i:9;s:18:\"customer_last_name\";i:10;s:16:\"customer_company\";i:11;s:18:\"customer_address_1\";i:12;s:18:\"customer_address_2\";i:13;s:13:\"customer_city\";i:14;s:14:\"customer_state\";i:15;s:20:\"customer_postal_code\";i:16;s:16:\"customer_country\";i:17;s:14:\"customer_phone\";i:18;s:14:\"customer_email\";}', '1');
+INSERT INTO `email_triggers` VALUES ('9', 'new_customer', 'New Customer', 'When a new customer is created either through NewCustomer or embedded < customer> information in a Charge/Recur call', 'a:13:{i:0;s:11:\"customer_id\";i:1;s:20:\"customer_internal_id\";i:2;s:19:\"customer_first_name\";i:3;s:18:\"customer_last_name\";i:4;s:16:\"customer_company\";i:5;s:18:\"customer_address_1\";i:6;s:18:\"customer_address_2\";i:7;s:13:\"customer_city\";i:8;s:14:\"customer_state\";i:9;s:20:\"customer_postal_code\";i:10;s:16:\"customer_country\";i:11;s:14:\"customer_phone\";i:12;s:14:\"customer_email\";}', '1');
 
 -- ----------------------------
 -- Table structure for `exact_log`
@@ -1179,7 +1259,7 @@ CREATE TABLE `order_authorizations` (
   `tran_id` varchar(255) NOT NULL,
   `authorization_code` varchar(20) NOT NULL,
   PRIMARY KEY (`order_authorization_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=128 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=129 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of order_authorizations
@@ -1311,6 +1391,7 @@ INSERT INTO `order_authorizations` VALUES ('124', '465', '24K39914W4513574A', ''
 INSERT INTO `order_authorizations` VALUES ('125', '466', '9B8336068E390742M', '');
 INSERT INTO `order_authorizations` VALUES ('126', '467', '6LV348778S611324E', '');
 INSERT INTO `order_authorizations` VALUES ('127', '468', '7YL56788V1609172M', '');
+INSERT INTO `order_authorizations` VALUES ('128', '469', '47X40528AG9665901', '');
 
 -- ----------------------------
 -- Table structure for `orders`
@@ -1328,7 +1409,7 @@ CREATE TABLE `orders` (
   `status` tinyint(1) NOT NULL DEFAULT '0',
   `timestamp` datetime NOT NULL,
   PRIMARY KEY (`order_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=469 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=623 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of orders
@@ -1801,6 +1882,160 @@ INSERT INTO `orders` VALUES ('465', '17', '29', '0', '0', '6979', '10001.00', '1
 INSERT INTO `orders` VALUES ('466', '17', '29', '0', '0', '6979', '10001.00', '127.0.0.1', '1', '2009-12-17 03:54:12');
 INSERT INTO `orders` VALUES ('467', '17', '29', '0', '0', '6979', '10001.00', '127.0.0.1', '1', '2009-12-17 03:54:28');
 INSERT INTO `orders` VALUES ('468', '17', '29', '0', '0', '6979', '10001.00', '127.0.0.1', '1', '2009-12-17 03:54:46');
+INSERT INTO `orders` VALUES ('469', '17', '29', '0', '0', '6979', '10001.00', '127.0.0.1', '1', '2009-12-23 00:48:46');
+INSERT INTO `orders` VALUES ('470', '17', '28', '123456789', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:02:26');
+INSERT INTO `orders` VALUES ('471', '17', '28', '123456789', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:02:40');
+INSERT INTO `orders` VALUES ('472', '17', '28', '123456789', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:04:02');
+INSERT INTO `orders` VALUES ('473', '17', '28', '123456789', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:04:26');
+INSERT INTO `orders` VALUES ('474', '17', '28', '123456789', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:07:12');
+INSERT INTO `orders` VALUES ('475', '17', '28', '123456789', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:08:04');
+INSERT INTO `orders` VALUES ('476', '17', '28', '123456789', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:11:32');
+INSERT INTO `orders` VALUES ('477', '17', '28', '123456789', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:26:40');
+INSERT INTO `orders` VALUES ('478', '17', '28', '123456789', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:27:33');
+INSERT INTO `orders` VALUES ('479', '17', '28', '123456789', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:27:35');
+INSERT INTO `orders` VALUES ('480', '17', '28', '123456789', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:27:47');
+INSERT INTO `orders` VALUES ('481', '17', '28', '123456789', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:27:48');
+INSERT INTO `orders` VALUES ('482', '17', '28', '123456789', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:27:59');
+INSERT INTO `orders` VALUES ('483', '17', '28', '123456789', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:28:00');
+INSERT INTO `orders` VALUES ('484', '17', '28', '123456789', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:28:01');
+INSERT INTO `orders` VALUES ('485', '17', '28', '123456789', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:28:02');
+INSERT INTO `orders` VALUES ('486', '17', '28', '123456789', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:28:19');
+INSERT INTO `orders` VALUES ('487', '17', '28', '123456789', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:28:21');
+INSERT INTO `orders` VALUES ('488', '17', '28', '123456789', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:28:48');
+INSERT INTO `orders` VALUES ('489', '17', '28', '123456789', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:29:15');
+INSERT INTO `orders` VALUES ('490', '17', '28', '123456789', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:29:16');
+INSERT INTO `orders` VALUES ('491', '17', '28', '123456789', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:31:01');
+INSERT INTO `orders` VALUES ('492', '17', '28', '2', '0', '6979', '10001.00', '127.0.0.1', '0', '2009-12-23 20:31:13');
+INSERT INTO `orders` VALUES ('493', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-23 21:51:32');
+INSERT INTO `orders` VALUES ('494', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-23 21:51:33');
+INSERT INTO `orders` VALUES ('495', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-23 21:52:25');
+INSERT INTO `orders` VALUES ('496', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-23 21:52:25');
+INSERT INTO `orders` VALUES ('497', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-23 21:53:31');
+INSERT INTO `orders` VALUES ('498', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-23 21:53:31');
+INSERT INTO `orders` VALUES ('499', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-23 22:08:01');
+INSERT INTO `orders` VALUES ('500', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-23 22:11:54');
+INSERT INTO `orders` VALUES ('501', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-23 22:12:44');
+INSERT INTO `orders` VALUES ('502', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-23 22:12:55');
+INSERT INTO `orders` VALUES ('503', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-23 22:14:34');
+INSERT INTO `orders` VALUES ('504', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-23 22:15:22');
+INSERT INTO `orders` VALUES ('505', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-23 22:16:41');
+INSERT INTO `orders` VALUES ('506', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 04:51:55');
+INSERT INTO `orders` VALUES ('507', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 04:53:09');
+INSERT INTO `orders` VALUES ('508', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 04:53:40');
+INSERT INTO `orders` VALUES ('509', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 04:54:20');
+INSERT INTO `orders` VALUES ('510', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 05:09:13');
+INSERT INTO `orders` VALUES ('511', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 05:09:16');
+INSERT INTO `orders` VALUES ('512', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 05:11:33');
+INSERT INTO `orders` VALUES ('513', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 05:11:36');
+INSERT INTO `orders` VALUES ('514', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 05:13:05');
+INSERT INTO `orders` VALUES ('515', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 05:13:08');
+INSERT INTO `orders` VALUES ('516', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 05:14:20');
+INSERT INTO `orders` VALUES ('517', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 05:14:22');
+INSERT INTO `orders` VALUES ('518', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 05:15:53');
+INSERT INTO `orders` VALUES ('519', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 05:15:56');
+INSERT INTO `orders` VALUES ('520', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 05:16:42');
+INSERT INTO `orders` VALUES ('521', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 05:16:44');
+INSERT INTO `orders` VALUES ('522', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 05:17:11');
+INSERT INTO `orders` VALUES ('523', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 05:17:13');
+INSERT INTO `orders` VALUES ('524', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 05:22:09');
+INSERT INTO `orders` VALUES ('525', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 05:22:12');
+INSERT INTO `orders` VALUES ('526', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 05:22:52');
+INSERT INTO `orders` VALUES ('527', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 05:22:55');
+INSERT INTO `orders` VALUES ('528', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 05:24:31');
+INSERT INTO `orders` VALUES ('529', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 05:24:33');
+INSERT INTO `orders` VALUES ('530', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 05:27:23');
+INSERT INTO `orders` VALUES ('531', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 05:27:26');
+INSERT INTO `orders` VALUES ('532', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 05:28:34');
+INSERT INTO `orders` VALUES ('533', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 05:28:36');
+INSERT INTO `orders` VALUES ('534', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 05:29:10');
+INSERT INTO `orders` VALUES ('535', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 05:29:13');
+INSERT INTO `orders` VALUES ('536', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 05:30:04');
+INSERT INTO `orders` VALUES ('537', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 05:30:07');
+INSERT INTO `orders` VALUES ('538', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 14:51:45');
+INSERT INTO `orders` VALUES ('539', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 14:51:49');
+INSERT INTO `orders` VALUES ('540', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 14:55:24');
+INSERT INTO `orders` VALUES ('541', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 14:55:24');
+INSERT INTO `orders` VALUES ('542', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 14:56:09');
+INSERT INTO `orders` VALUES ('543', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 14:56:28');
+INSERT INTO `orders` VALUES ('544', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 14:56:28');
+INSERT INTO `orders` VALUES ('545', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 14:56:51');
+INSERT INTO `orders` VALUES ('546', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 14:56:51');
+INSERT INTO `orders` VALUES ('547', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 14:57:08');
+INSERT INTO `orders` VALUES ('548', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 14:57:08');
+INSERT INTO `orders` VALUES ('549', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 14:58:37');
+INSERT INTO `orders` VALUES ('550', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 14:58:37');
+INSERT INTO `orders` VALUES ('551', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 14:59:49');
+INSERT INTO `orders` VALUES ('552', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 14:59:50');
+INSERT INTO `orders` VALUES ('553', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 14:59:52');
+INSERT INTO `orders` VALUES ('554', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 14:59:52');
+INSERT INTO `orders` VALUES ('555', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:00:20');
+INSERT INTO `orders` VALUES ('556', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:00:21');
+INSERT INTO `orders` VALUES ('557', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:00:32');
+INSERT INTO `orders` VALUES ('558', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:00:32');
+INSERT INTO `orders` VALUES ('559', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:03:13');
+INSERT INTO `orders` VALUES ('560', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:03:13');
+INSERT INTO `orders` VALUES ('561', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:03:51');
+INSERT INTO `orders` VALUES ('562', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:03:51');
+INSERT INTO `orders` VALUES ('563', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:05:55');
+INSERT INTO `orders` VALUES ('564', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:05:55');
+INSERT INTO `orders` VALUES ('565', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:09:18');
+INSERT INTO `orders` VALUES ('566', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:09:19');
+INSERT INTO `orders` VALUES ('567', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:15:59');
+INSERT INTO `orders` VALUES ('568', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:15:59');
+INSERT INTO `orders` VALUES ('569', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:21:05');
+INSERT INTO `orders` VALUES ('570', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:21:07');
+INSERT INTO `orders` VALUES ('571', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:21:40');
+INSERT INTO `orders` VALUES ('572', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:21:40');
+INSERT INTO `orders` VALUES ('573', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:22:30');
+INSERT INTO `orders` VALUES ('574', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:22:31');
+INSERT INTO `orders` VALUES ('575', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:23:02');
+INSERT INTO `orders` VALUES ('576', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:23:02');
+INSERT INTO `orders` VALUES ('577', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:23:16');
+INSERT INTO `orders` VALUES ('578', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:23:16');
+INSERT INTO `orders` VALUES ('579', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:23:38');
+INSERT INTO `orders` VALUES ('580', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:23:39');
+INSERT INTO `orders` VALUES ('581', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:24:03');
+INSERT INTO `orders` VALUES ('582', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:24:03');
+INSERT INTO `orders` VALUES ('583', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:24:37');
+INSERT INTO `orders` VALUES ('584', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:24:37');
+INSERT INTO `orders` VALUES ('585', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:25:50');
+INSERT INTO `orders` VALUES ('586', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:25:51');
+INSERT INTO `orders` VALUES ('587', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:29:26');
+INSERT INTO `orders` VALUES ('588', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:29:26');
+INSERT INTO `orders` VALUES ('589', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:31:11');
+INSERT INTO `orders` VALUES ('590', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:31:12');
+INSERT INTO `orders` VALUES ('591', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:33:03');
+INSERT INTO `orders` VALUES ('592', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:33:04');
+INSERT INTO `orders` VALUES ('593', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:34:15');
+INSERT INTO `orders` VALUES ('594', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:34:15');
+INSERT INTO `orders` VALUES ('595', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:34:25');
+INSERT INTO `orders` VALUES ('596', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:34:28');
+INSERT INTO `orders` VALUES ('597', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:34:36');
+INSERT INTO `orders` VALUES ('598', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:34:37');
+INSERT INTO `orders` VALUES ('599', '17', '29', '136', '0', '', '11.99', null, '0', '2009-12-24 15:51:45');
+INSERT INTO `orders` VALUES ('600', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:51:47');
+INSERT INTO `orders` VALUES ('601', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:52:38');
+INSERT INTO `orders` VALUES ('602', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:53:13');
+INSERT INTO `orders` VALUES ('603', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:54:03');
+INSERT INTO `orders` VALUES ('604', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:54:06');
+INSERT INTO `orders` VALUES ('605', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:54:32');
+INSERT INTO `orders` VALUES ('606', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:54:33');
+INSERT INTO `orders` VALUES ('607', '17', '29', '137', '0', '', '11.99', null, '0', '2009-12-24 15:55:38');
+INSERT INTO `orders` VALUES ('608', '17', '29', '140', '0', '', '11.99', null, '0', '2009-12-24 15:55:39');
+INSERT INTO `orders` VALUES ('609', '17', '29', '134', '0', '', '11.99', null, '0', '2009-12-28 19:22:18');
+INSERT INTO `orders` VALUES ('610', '17', '29', '134', '0', '', '11.99', null, '0', '2009-12-28 19:23:44');
+INSERT INTO `orders` VALUES ('611', '17', '29', '134', '0', '', '11.99', null, '0', '2009-12-28 19:24:22');
+INSERT INTO `orders` VALUES ('612', '17', '29', '134', '0', '', '11.99', null, '0', '2009-12-28 19:24:58');
+INSERT INTO `orders` VALUES ('613', '17', '29', '134', '0', '', '11.99', null, '0', '2009-12-28 19:26:01');
+INSERT INTO `orders` VALUES ('614', '17', '29', '134', '0', '', '11.99', null, '0', '2009-12-28 19:26:41');
+INSERT INTO `orders` VALUES ('615', '17', '29', '134', '0', '', '11.99', null, '0', '2009-12-28 19:26:50');
+INSERT INTO `orders` VALUES ('616', '17', '29', '135', '0', '', '11.99', null, '0', '2009-12-28 19:26:50');
+INSERT INTO `orders` VALUES ('617', '17', '29', '134', '0', '', '11.99', null, '0', '2009-12-28 19:34:21');
+INSERT INTO `orders` VALUES ('618', '17', '29', '135', '0', '', '11.99', null, '0', '2009-12-28 19:34:21');
+INSERT INTO `orders` VALUES ('619', '17', '29', '134', '0', '', '11.99', null, '0', '2009-12-28 19:35:09');
+INSERT INTO `orders` VALUES ('620', '17', '29', '135', '0', '', '11.99', null, '0', '2009-12-28 19:35:09');
+INSERT INTO `orders` VALUES ('621', '17', '29', '134', '0', '', '11.99', null, '0', '2009-12-28 19:39:16');
+INSERT INTO `orders` VALUES ('622', '17', '29', '135', '0', '', '11.99', null, '0', '2009-12-28 19:39:16');
 
 -- ----------------------------
 -- Table structure for `plan_types`
@@ -1829,7 +2064,6 @@ CREATE TABLE `plans` (
   `amount` decimal(10,2) NOT NULL,
   `interval` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
-  `occurrences` int(11) NOT NULL,
   `free_trial` int(11) NOT NULL,
   `notification_url` varchar(255) NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
@@ -1838,6 +2072,20 @@ CREATE TABLE `plans` (
 
 -- ----------------------------
 -- Records of plans
+-- ----------------------------
+INSERT INTO `plans` VALUES ('1', '17', '2', '100.00', '30', 'Sample Plan', '60', 'http://yahoo.com/', '0');
+INSERT INTO `plans` VALUES ('2', '17', '2', '100.00', '30', 'Sample Plan', '60', 'http://yahoo.com/', '0');
+INSERT INTO `plans` VALUES ('3', '17', '2', '100.00', '30', 'Sample Plan', '60', 'http://yahoo.com/', '0');
+INSERT INTO `plans` VALUES ('4', '17', '2', '100.00', '30', 'Sample Plan', '60', 'http://yahoo.com/', '0');
+INSERT INTO `plans` VALUES ('5', '17', '2', '100.00', '30', 'Sample Plan', '60', 'http://yahoo.com/', '0');
+INSERT INTO `plans` VALUES ('6', '17', '2', '100.00', '30', 'Sample Plan', '60', 'http://yahoo.com/', '0');
+INSERT INTO `plans` VALUES ('7', '17', '2', '100.00', '30', 'Sample Plan', '60', 'http://yahoo.com/', '0');
+INSERT INTO `plans` VALUES ('8', '17', '2', '100.00', '30', 'Sample Plan', '60', 'http://yahoo.com/', '0');
+INSERT INTO `plans` VALUES ('9', '17', '2', '88.88', '15', 'Updated Plan', '20', 'http://google.com/', '1');
+INSERT INTO `plans` VALUES ('10', '17', '2', '11.99', '30', 'Sample Plan', '60', 'http://yahoo.com/', '0');
+INSERT INTO `plans` VALUES ('11', '17', '2', '11.99', '1', 'Sample Plan', '60', 'http://yahoo.com/', '0');
+INSERT INTO `plans` VALUES ('12', '17', '2', '0.00', '30', 'Sample Plan', '60', 'http://yahoo.com/', '0');
+INSERT INTO `plans` VALUES ('13', '17', '1', '11.99', '30', 'Sample Plan', '60', 'http://yahoo.com/', '0');
 
 -- ----------------------------
 -- Table structure for `recurring_payments`
@@ -1870,7 +2118,7 @@ CREATE TABLE `request_log` (
   `remote_ip` varchar(11) NOT NULL,
   `request` text NOT NULL,
   PRIMARY KEY (`request_log_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2215 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=2272 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of request_log
@@ -4089,6 +4337,63 @@ INSERT INTO `request_log` VALUES ('2211', '2009-12-17 03:53:16', '127.0.0.1', '<
 INSERT INTO `request_log` VALUES ('2212', '2009-12-17 03:54:12', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>29</gateway_id>\r\n	<customer>\r\n		<first_name>Joe</first_name>\r\n		<last_name>Customer</last_name>\r\n		<address_1>1345 Quebec Street</address_1>\r\n		<address_2>Apt 1</address_2>\r\n		<city>Denver</city>\r\n		<state>CO</state>\r\n		<postal_code>80220</postal_code>\r\n		<country>US</country>\r\n	</customer>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
 INSERT INTO `request_log` VALUES ('2213', '2009-12-17 03:54:28', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>29</gateway_id>\r\n	<customer>\r\n		<first_name>Joe</first_name>\r\n		<last_name>Customer</last_name>\r\n		<address_1>1345 Quebec Street</address_1>\r\n		<address_2>Apt 1</address_2>\r\n		<city>Denver</city>\r\n		<state>CO</state>\r\n		<postal_code>80220</postal_code>\r\n		<country>US</country>\r\n	</customer>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
 INSERT INTO `request_log` VALUES ('2214', '2009-12-17 03:54:46', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>29</gateway_id>\r\n	<customer>\r\n		<first_name>Joe</first_name>\r\n		<last_name>Customer</last_name>\r\n		<address_1>1345 Quebec Street</address_1>\r\n		<address_2>Apt 1</address_2>\r\n		<city>Denver</city>\r\n		<state>CO</state>\r\n		<postal_code>80220</postal_code>\r\n		<country>US</country>\r\n	</customer>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2215', '2009-12-23 00:48:46', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>29</gateway_id>\r\n	<customer>\r\n		<first_name>Joe</first_name>\r\n		<last_name>Customer</last_name>\r\n		<address_1>1345 Quebec Street</address_1>\r\n		<address_2>Apt 1</address_2>\r\n		<city>Denver</city>\r\n		<state>CO</state>\r\n		<postal_code>80220</postal_code>\r\n		<country>US</country>\r\n	</customer>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2216', '2009-12-23 20:02:23', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>123456789</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2217', '2009-12-23 20:02:40', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>123456789</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2218', '2009-12-23 20:04:02', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>123456789</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2219', '2009-12-23 20:04:25', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>123456789</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2220', '2009-12-23 20:07:11', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>123456789</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2221', '2009-12-23 20:08:04', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>123456789</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2222', '2009-12-23 20:11:32', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>123456789</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2223', '2009-12-23 20:26:40', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>123456789</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2224', '2009-12-23 20:27:33', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>123456789</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2225', '2009-12-23 20:27:35', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>123456789</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2226', '2009-12-23 20:27:47', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>123456789</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2227', '2009-12-23 20:27:48', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>123456789</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2228', '2009-12-23 20:27:59', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>123456789</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2229', '2009-12-23 20:28:00', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>123456789</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2230', '2009-12-23 20:28:01', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>123456789</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2231', '2009-12-23 20:28:02', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>123456789</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2232', '2009-12-23 20:28:19', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>123456789</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2233', '2009-12-23 20:28:21', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>123456789</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2234', '2009-12-23 20:28:48', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>123456789</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2235', '2009-12-23 20:29:14', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>123456789</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2236', '2009-12-23 20:29:15', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>123456789</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2237', '2009-12-23 20:31:01', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>123456789</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2238', '2009-12-23 20:31:13', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Charge</type>\r\n	<gateway_id>28</gateway_id>\r\n	<customer_id>2</customer_id>\r\n	<credit_card>\r\n		<card_num>4916634239086979</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<customer_ip_address>127.0.0.1</customer_ip_address>\r\n	<amount>10001.00</amount>\r\n	<description>Goods and Services</description>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2239', '2009-12-23 20:41:39', '127.0.0.1', 'request=<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>GetRecurrings</type>\r\n	<plan_id>11</plan_id>\r\n	<limit>500</limit>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2240', '2009-12-23 20:41:56', '127.0.0.1', 'request=<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>GetRecurrings</type>\r\n	<plan_id>11</plan_id>\r\n	<limit>500</limit>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2241', '2009-12-23 20:41:59', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>UpdateRecurring</type>\r\n	<recurring_id>175</recurring_id>\r\n	<amount>10.99</amount>\r\n	<customer_id>2</customer_id>\r\n	<recur>\r\n		<interval>10</interval>\r\n		<notification_url>http://notify.com/notify.php</notification_url>\r\n	</recur>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2242', '2009-12-23 20:42:30', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>UpdateRecurring</type>\r\n	<recurring_id>175</recurring_id>\r\n	<amount>10.99</amount>\r\n	<customer_id>2</customer_id>\r\n	<recur>\r\n		<interval>10</interval>\r\n		<notification_url>http://notify.com/notify.php</notification_url>\r\n	</recur>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2243', '2009-12-23 20:43:53', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>UpdateRecurring</type>\r\n	<recurring_id>175</recurring_id>\r\n	<amount>10.99</amount>\r\n	<customer_id>2</customer_id>\r\n	<recur>\r\n		<interval>10</interval>\r\n		<notification_url>http://notify.com/notify.php</notification_url>\r\n	</recur>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2244', '2009-12-23 20:44:16', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>UpdateRecurring</type>\r\n	<recurring_id>175</recurring_id>\r\n	<amount>10.99</amount>\r\n	<customer_id>2</customer_id>\r\n	<recur>\r\n		<interval>10</interval>\r\n		<notification_url>http://notify.com/notify.php</notification_url>\r\n	</recur>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2245', '2009-12-23 20:45:17', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>UpdateRecurring</type>\r\n	<recurring_id>175</recurring_id>\r\n	<amount>10.99</amount>\r\n	<customer_id>2</customer_id>\r\n	<recur>\r\n		<interval>10</interval>\r\n		<notification_url>http://notify.com/notify.php</notification_url>\r\n	</recur>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2246', '2009-12-23 20:45:33', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>UpdateRecurring</type>\r\n	<recurring_id>175</recurring_id>\r\n	<amount>10.99</amount>\r\n	<customer_id>2</customer_id>\r\n	<recur>\r\n		<interval>10</interval>\r\n		<notification_url>http://notify.com/notify.php</notification_url>\r\n	</recur>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2247', '2009-12-23 20:46:10', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>UpdateRecurring</type>\r\n	<recurring_id>175</recurring_id>\r\n	<amount>10.99</amount>\r\n	<customer_id>2</customer_id>\r\n	<recur>\r\n		<interval>10</interval>\r\n		<notification_url>http://notify.com/notify.php</notification_url>\r\n	</recur>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2248', '2009-12-23 20:46:35', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>UpdateRecurring</type>\r\n	<recurring_id>175</recurring_id>\r\n	<amount>10.99</amount>\r\n	<customer_id>2</customer_id>\r\n	<recur>\r\n		<interval>10</interval>\r\n		<notification_url>http://notify.com/notify.php</notification_url>\r\n	</recur>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2249', '2009-12-23 20:46:45', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>UpdateRecurring</type>\r\n	<recurring_id>175</recurring_id>\r\n	<amount>10.99</amount>\r\n	<customer_id>2</customer_id>\r\n	<recur>\r\n		<interval>10</interval>\r\n		<notification_url>http://notify.com/notify.php</notification_url>\r\n	</recur>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2250', '2009-12-23 20:48:47', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>UpdateRecurring</type>\r\n	<recurring_id>175</recurring_id>\r\n	<amount>10.99</amount>\r\n	<customer_id>2</customer_id>\r\n	<recur>\r\n		<interval>10</interval>\r\n		<notification_url>http://notify.com/notify.php</notification_url>\r\n	</recur>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2251', '2009-12-23 20:49:36', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>UpdateRecurring</type>\r\n	<recurring_id>175</recurring_id>\r\n	<amount>10.99</amount>\r\n	<customer_id>2</customer_id>\r\n	<recur>\r\n		<interval>10</interval>\r\n		<notification_url>http://notify.com/notify.php</notification_url>\r\n	</recur>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2252', '2009-12-23 20:50:11', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>UpdateRecurring</type>\r\n	<recurring_id>175</recurring_id>\r\n	<amount>10.99</amount>\r\n	<customer_id>2</customer_id>\r\n	<recur>\r\n		<interval>10</interval>\r\n		<notification_url>http://notify.com/notify.php</notification_url>\r\n	</recur>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2253', '2009-12-23 20:50:59', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>UpdateRecurring</type>\r\n	<recurring_id>175</recurring_id>\r\n	<amount>10.99</amount>\r\n	<customer_id>2</customer_id>\r\n	<recur>\r\n		<interval>10</interval>\r\n		<notification_url>http://notify.com/notify.php</notification_url>\r\n	</recur>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2254', '2009-12-23 20:52:43', '127.0.0.1', 'request=<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>CancelRecurring</type>\r\n	<recurring_id>164</recurring_id>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2255', '2009-12-23 20:52:54', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>CancelRecurring</type>\r\n	<recurring_id>164</recurring_id>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2256', '2009-12-23 20:53:32', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>CancelRecurring</type>\r\n	<recurring_id>164</recurring_id>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2257', '2009-12-23 20:54:19', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>CancelRecurring</type>\r\n	<recurring_id>164</recurring_id>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2258', '2009-12-23 20:54:54', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>CancelRecurring</type>\r\n	<recurring_id>164</recurring_id>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2259', '2009-12-23 20:55:29', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>CancelRecurring</type>\r\n	<recurring_id>164</recurring_id>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2260', '2009-12-23 20:57:42', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>CancelRecurring</type>\r\n	<recurring_id>164</recurring_id>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2261', '2009-12-27 22:40:23', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewEmail</type>\r\n	<trigger>recurring_autorecur_in_week</trigger>\r\n	<plan>0</plan>\r\n	<email_subject>Your card has been charged.</email_subject>\r\n	<email_body>&lt;a&gt;&lt;strong&gt;Test it yo!&lt;/strong&gt;&lt;/a&gt;</email_body>\r\n	<from_name>David Ryan</from_name>\r\n	<from_email>daveryan187@yahoo.com</from_email>\r\n	<is_html>1</is_html>\r\n	<client_bcc>0</client_bcc>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2262', '2009-12-27 22:42:08', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewEmail</type>\r\n	<trigger>recurring_autorecur_in_week</trigger>\r\n	<plan>0</plan>\r\n	<email_subject>Your card has been charged.</email_subject>\r\n	<email_body>&lt;a&gt;&lt;strong&gt;Test it yo!&lt;/strong&gt;&lt;/a&gt;</email_body>\r\n	<from_name>David Ryan</from_name>\r\n	<from_email>daveryan187@yahoo.com</from_email>\r\n	<is_html>1</is_html>\r\n	<client_bcc>0</client_bcc>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2263', '2009-12-27 22:44:16', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewEmail</type>\r\n	<trigger>recurring_autorecur_in_week</trigger>\r\n	<plan>0</plan>\r\n	<email_subject>Your card has been charged.</email_subject>\r\n	<email_body>&lt;a&gt;&lt;strong&gt;Test it yo!&lt;/strong&gt;&lt;/a&gt;</email_body>\r\n	<from_name>David Ryan</from_name>\r\n	<from_email>daveryan187@yahoo.com</from_email>\r\n	<is_html>1</is_html>\r\n	<client_bcc>0</client_bcc>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2264', '2009-12-27 22:44:54', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewEmail</type>\r\n	<trigger>recurring_autorecur_in_week</trigger>\r\n	<plan>0</plan>\r\n	<email_subject>Your card has been charged.</email_subject>\r\n	<email_body>&lt;a&gt;&lt;strong&gt;Test it yo!&lt;/strong&gt;&lt;/a&gt;</email_body>\r\n	<from_name>David Ryan</from_name>\r\n	<from_email>daveryan187@yahoo.com</from_email>\r\n	<is_html>1</is_html>\r\n	<client_bcc>0</client_bcc>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2265', '2009-12-27 23:37:08', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewEmail</type>\r\n	<trigger>recurring_autorecur_in_month</trigger>\r\n	<plan>0</plan>\r\n	<email_subject>Your card has been charged.</email_subject>\r\n	<email_body>&lt;a&gt;&lt;strong&gt;Test it yo!&lt;/strong&gt;&lt;/a&gt;</email_body>\r\n	<from_name>David Ryan</from_name>\r\n	<from_email>daveryan187@yahoo.com</from_email>\r\n	<is_html>1</is_html>\r\n	<client_bcc>0</client_bcc>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2266', '2009-12-27 23:37:28', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewEmail</type>\r\n	<trigger>recurring_autorecur_in_week</trigger>\r\n	<plan>0</plan>\r\n	<email_subject>Your card has been charged.</email_subject>\r\n	<email_body>&lt;a&gt;&lt;strong&gt;Test it yo!&lt;/strong&gt;&lt;/a&gt;</email_body>\r\n	<from_name>David Ryan</from_name>\r\n	<from_email>daveryan187@yahoo.com</from_email>\r\n	<is_html>1</is_html>\r\n	<client_bcc>0</client_bcc>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2267', '2009-12-27 23:37:36', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewEmail</type>\r\n	<trigger>recurring_autorecur_in_month</trigger>\r\n	<plan>0</plan>\r\n	<email_subject>Your card has been charged.</email_subject>\r\n	<email_body>&lt;a&gt;&lt;strong&gt;Test it yo!&lt;/strong&gt;&lt;/a&gt;</email_body>\r\n	<from_name>David Ryan</from_name>\r\n	<from_email>daveryan187@yahoo.com</from_email>\r\n	<is_html>1</is_html>\r\n	<client_bcc>0</client_bcc>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2268', '2009-12-27 23:37:55', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewEmail</type>\r\n	<trigger>recurring_charge</trigger>\r\n	<plan>0</plan>\r\n	<email_subject>Your card has been charged.</email_subject>\r\n	<email_body>&lt;a&gt;&lt;strong&gt;Test it yo!&lt;/strong&gt;&lt;/a&gt;</email_body>\r\n	<from_name>David Ryan</from_name>\r\n	<from_email>daveryan187@yahoo.com</from_email>\r\n	<is_html>1</is_html>\r\n	<client_bcc>0</client_bcc>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2269', '2009-12-27 23:38:20', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewEmail</type>\r\n	<trigger>recurring_cancel</trigger>\r\n	<plan>0</plan>\r\n	<email_subject>Your card has been charged.</email_subject>\r\n	<email_body>&lt;a&gt;&lt;strong&gt;Test it yo!&lt;/strong&gt;&lt;/a&gt;</email_body>\r\n	<from_name>David Ryan</from_name>\r\n	<from_email>daveryan187@yahoo.com</from_email>\r\n	<is_html>1</is_html>\r\n	<client_bcc>0</client_bcc>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2270', '2009-12-27 23:38:21', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewEmail</type>\r\n	<trigger>recurring_cancel</trigger>\r\n	<plan>0</plan>\r\n	<email_subject>Your card has been charged.</email_subject>\r\n	<email_body>&lt;a&gt;&lt;strong&gt;Test it yo!&lt;/strong&gt;&lt;/a&gt;</email_body>\r\n	<from_name>David Ryan</from_name>\r\n	<from_email>daveryan187@yahoo.com</from_email>\r\n	<is_html>1</is_html>\r\n	<client_bcc>0</client_bcc>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2271', '2009-12-27 23:39:30', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewEmail</type>\r\n	<trigger>recurring_cancel</trigger>\r\n	<plan>0</plan>\r\n	<email_subject>Your card has been charged.</email_subject>\r\n	<email_body>&lt;a&gt;&lt;strong&gt;Test it yo!&lt;/strong&gt;&lt;/a&gt;</email_body>\r\n	<from_name>David Ryan</from_name>\r\n	<from_email>daveryan187@yahoo.com</from_email>\r\n	<is_html>1</is_html>\r\n	<client_bcc>0</client_bcc>\r\n</request>');
 
 -- ----------------------------
 -- Table structure for `request_types`
@@ -4141,17 +4446,7 @@ INSERT INTO `request_types` VALUES ('34', 'GetPlans', '');
 INSERT INTO `request_types` VALUES ('35', 'NewEmail', '');
 INSERT INTO `request_types` VALUES ('36', 'UpdateEmail', '');
 INSERT INTO `request_types` VALUES ('37', 'DeleteEmail', '');
-INSERT INTO `request_types` VALUES ('38', 'GetEmail', '');
-INSERT INTO `request_types` VALUES ('39', 'GetEmailVariables', '');
-INSERT INTO `request_types` VALUES ('40', 'GetEmails', '');
-INSERT INTO `request_types` VALUES ('41', 'ChangeRecurringPlan', '');
-
-CREATE TABLE `notifications` (
-  `notification_id` int(11) NOT NULL AUTO_INCREMENT,
-  `url` varchar(250) NOT NULL,
-  `variables` text,
-  PRIMARY KEY (`notification_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+INSERT INTO `request_types` VALUES ('38', 'GetEmailVariables', '');
 
 -- ----------------------------
 -- Table structure for `required_fields`
@@ -4211,8 +4506,6 @@ INSERT INTO `required_fields` VALUES ('50', '35', 'email_subject');
 INSERT INTO `required_fields` VALUES ('51', '35', 'email_body');
 INSERT INTO `required_fields` VALUES ('53', '35', 'from_name');
 INSERT INTO `required_fields` VALUES ('54', '35', 'from_email');
-INSERT INTO `required_fields` VALUES ('55', '4', 'first_name');
-INSERT INTO `required_fields` VALUES ('55', '4', 'last_name');
 
 -- ----------------------------
 -- Table structure for `subscriptions`
@@ -4225,11 +4518,13 @@ CREATE TABLE `subscriptions` (
   `customer_id` int(11) NOT NULL,
   `plan_id` int(11) NOT NULL DEFAULT '0',
   `notification_url` varchar(255) DEFAULT NULL,
-  `interval` int(11) NOT NULL,
   `start_date` date NOT NULL,
   `end_date` date NOT NULL,
+  `last_charge` date NOT NULL,
   `next_charge` date NOT NULL,
+  `number_charge_failures` int(11) NOT NULL DEFAULT '0',
   `number_occurrences` int(11) NOT NULL,
+  `interval` int(11) NOT NULL,
   `amount` decimal(10,2) NOT NULL,
   `api_customer_reference` varchar(255) DEFAULT NULL,
   `api_payment_reference` varchar(255) DEFAULT NULL,
@@ -4242,186 +4537,186 @@ CREATE TABLE `subscriptions` (
 -- ----------------------------
 -- Records of subscriptions
 -- ----------------------------
-INSERT INTO `subscriptions` VALUES ('2', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816288', null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('3', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816294', null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('4', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816295', null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('5', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816297', null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('6', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816300', null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('7', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816308', null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('8', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('9', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('10', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('11', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('12', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816322', null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('13', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816323', null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('14', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816325', null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('15', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816326', null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('16', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816327', null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('17', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816329', null, null, '0', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('18', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816403', null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('19', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816404', null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('20', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816406', null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('21', '17', '3', '7', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816411', null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('22', '17', '3', '8', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816410', null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('23', '17', '3', '9', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816412', null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('24', '17', '3', '10', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816413', null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('25', '17', '3', '11', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816414', null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('26', '17', '3', '12', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816427', '751320', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('27', '17', '3', '13', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816428', '751321', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('28', '17', '3', '14', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816432', '751325', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('29', '17', '3', '15', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816434', '751327', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('30', '17', '3', '16', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816440', '751333', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('31', '17', '3', '17', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816441', '751334', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('32', '17', '3', '18', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816454', '751345', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('33', '17', '3', '19', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816461', '751352', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('34', '17', '3', '20', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816462', '751353', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('35', '17', '3', '21', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816463', '751354', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('36', '17', '3', '22', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816464', '751355', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('37', '17', '3', '23', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816465', '751356', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('38', '17', '3', '24', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816467', '751358', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('39', '17', '3', '25', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816469', '751360', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('40', '17', '3', '26', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816470', '751361', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('41', '17', '3', '27', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816471', '751362', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('42', '17', '3', '28', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816472', '751363', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('43', '17', '3', '29', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816473', '751364', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('44', '17', '3', '30', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816475', '751366', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('45', '17', '3', '31', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816476', '751367', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('46', '17', '3', '32', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816477', '751368', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('47', '17', '3', '33', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816479', '751370', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('48', '17', '3', '34', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816480', '751371', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('49', '17', '3', '35', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816481', '751372', null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('50', '17', '3', '36', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '365', '289.99', '816483', '751374', null, '0', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('51', '17', '3', '37', '0', null, '2009-12-24', '2010-12-24', '0000-00-00', '365', '289.99', '820132', '754575', null, '0', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('52', '17', '3', '38', '0', null, '2009-12-24', '2010-12-24', '0000-00-00', '365', '289.99', '820140', '754585', null, '0', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('53', '17', '3', '39', '0', null, '2009-12-24', '2010-12-24', '0000-00-00', '365', '289.99', '820141', '754586', null, '0', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('54', '17', '3', '40', '0', null, '2009-12-24', '2010-12-24', '0000-00-00', '365', '289.99', '820142', '754587', null, '0', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('55', '17', '3', '45', '0', '\'http://localhost/notify.php\'', '2009-12-24', '2010-12-24', '0000-00-00', '365', '289.99', '820145', '754592', null, '0', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('56', '17', '3', '48', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '365', '289.99', '820146', '754593', null, '0', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('57', '17', '3', '49', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '365', '289.99', '820147', '754594', null, '0', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('58', '17', '3', '50', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '365', '289.99', '820153', '754600', null, '0', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('59', '17', '3', '51', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '365', '289.99', '820167', '754612', null, '0', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('60', '17', '3', '52', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '365', '289.99', '820185', '754631', null, '0', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('61', '17', '3', '53', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '365', '289.99', '820313', '754761', null, '0', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('62', '17', '3', '54', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '365', '289.99', '820321', '754769', null, '0', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('63', '17', '3', '55', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '365', '289.99', '820322', '754770', null, '0', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('64', '17', '3', '56', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '365', '289.99', '820337', '754785', null, '0', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('65', '17', '3', '57', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '365', '289.99', '820356', '754804', null, '0', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('66', '17', '3', '58', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '365', '289.99', '820360', '754808', null, '0', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('67', '17', '3', '59', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '365', '289.99', '820363', '754811', null, '0', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('68', '17', '3', '60', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '365', '289.99', '820364', '754812', null, '0', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('69', '17', '17', '61', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('70', '17', '17', '62', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('71', '17', '17', '63', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('72', '17', '17', '64', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('73', '17', '17', '65', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('74', '17', '17', '66', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('75', '17', '17', '67', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('76', '17', '17', '68', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('77', '17', '17', '69', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('78', '17', '17', '70', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('79', '17', '17', '71', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('80', '17', '17', '72', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('81', '17', '17', '73', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('82', '17', '17', '74', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', '825426221', null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('83', '17', '17', '75', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', '825427340', null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('84', '17', '17', '76', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', '825427529', null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('85', '17', '17', '77', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', '825427652', null, 'ET1115', '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('86', '17', '17', '78', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', '825429713', null, 'ET2017', '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('87', '17', '17', '79', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', '825430067', null, 'ET2113', '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('88', '17', '17', '80', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', '825430331', null, 'ET2234', '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('89', '17', '17', '81', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('90', '17', '17', '82', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('91', '17', '17', '83', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('92', '17', '17', '84', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('93', '17', '17', '85', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('94', '17', '17', '86', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', '825436301', null, 'ET3719', '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('95', '17', '17', '87', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', '825437726', null, 'ET4233', '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('96', '17', '17', '88', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', '825437834', null, 'ET4300', '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('97', '17', '17', '89', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', '825437972', null, 'ET4331', '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('98', '17', '17', '90', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', '825438149', null, 'ET4415', '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('99', '17', '17', '91', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', '825482114', null, 'ET4902', '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('100', '17', '17', '92', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', '825482456', null, 'ET5057', '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('101', '17', '17', '93', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', '825483089', null, 'ET5512', '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('102', '17', '17', '94', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('103', '17', '17', '95', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', null, null, null, '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('104', '17', '17', '96', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', '825483422', null, 'ET5720', '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('105', '17', '17', '97', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', '825483725', null, 'ET5940', '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('106', '17', '17', '98', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '365', '289.99', '825483764', null, 'ET5954', '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('107', '17', '17', '5', '0', 'http://notify.com/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '37', '10.99', '825483788', null, 'ET0001', '1', '0000-00-00');
-INSERT INTO `subscriptions` VALUES ('108', '17', '29', '105', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('109', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('110', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('111', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('112', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('113', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('114', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('115', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('116', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('117', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('118', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('119', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('120', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('121', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('122', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('123', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('124', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('125', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('126', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('127', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('128', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('129', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('130', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('131', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('132', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('133', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('134', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('135', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('136', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('137', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('138', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('139', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('140', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('141', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('142', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('143', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('144', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('145', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', 'I-2AM9EAE7R6DK', null, null, '0', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('146', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', 'I-LUJYJ05SM6XY', null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('147', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', 'I-H39JCUNWVWMA', null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('148', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', 'I-VYR0BA3UJVW4', null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('149', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('150', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', 'I-BUMJTHB25A1N', null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('151', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', 'I-ATXXVNXHJASM', null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('152', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', 'I-WBT0YDXCUXD5', null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('153', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', 'I-7AECE6MYG5V0', null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('154', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', 'I-FLC8YW82RDG7', null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('155', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '2010-02-07', '12', '24.99', 'I-WHF9WTYV4NX2', null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('156', '17', '29', '2', '0', 'http://localhost/notify.php', '2009-12-10', '2010-12-10', '2010-01-09', '12', '24.99', 'I-7DMJ2XJ2CVB0', null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('157', '17', '29', '106', '0', 'http://localhost/notify.php', '2009-12-10', '2010-12-10', '2010-01-09', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('158', '17', '29', '107', '0', 'http://localhost/notify.php', '2009-12-10', '2010-12-10', '2010-01-09', '12', '24.99', 'I-EJL22MVWY9G2', null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('159', '17', '29', '108', '0', 'http://localhost/notify.php', '2009-12-10', '2010-12-10', '2010-01-09', '12', '24.99', 'I-CEB60PK9U7T1', null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('160', '17', '29', '109', '0', 'http://localhost/notify.php', '2009-12-10', '2010-12-10', '2010-01-09', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('161', '17', '29', '110', '0', 'http://localhost/notify.php', '2009-12-10', '2010-12-10', '2010-01-09', '12', '24.99', 'I-DYCRXJGEAEPH', null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('162', '17', '29', '111', '0', 'http://localhost/notify.php', '2009-12-10', '2010-12-10', '2010-01-09', '12', '24.99', null, null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('163', '17', '29', '112', '0', 'http://localhost/notify.php', '2009-12-10', '2010-12-10', '2010-01-09', '12', '24.99', 'I-57GYNVHW4P9E', null, null, '1', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('164', '17', '29', '113', '0', 'http://localhost/notify.php', '2009-12-10', '2010-12-10', '2010-01-09', '12', '24.99', 'I-TR88TNTK03A3', null, null, '0', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('165', '17', '29', '114', '0', 'http://localhost/notify.php', '2009-12-10', '2010-12-10', '2010-01-09', '12', '24.99', 'I-G1FL3W4FL5TD', null, null, '0', '2009-12-09');
-INSERT INTO `subscriptions` VALUES ('166', '17', '29', '118', '0', 'http://localhost/notify.php', '2009-12-13', '2010-12-13', '2010-01-12', '12', '24.99', null, null, null, '1', '2009-12-12');
-INSERT INTO `subscriptions` VALUES ('167', '17', '29', '119', '0', 'http://localhost/notify.php', '2009-12-13', '2010-12-13', '2010-01-12', '12', '24.99', '0', null, null, '0', '2009-12-12');
-INSERT INTO `subscriptions` VALUES ('168', '17', '29', '120', '0', 'http://localhost/notify.php', '2009-12-13', '2010-12-13', '2010-01-12', '12', '24.99', '0', null, null, '0', '2009-12-12');
-INSERT INTO `subscriptions` VALUES ('169', '17', '29', '121', '0', 'http://localhost/notify.php', '2009-12-13', '2010-12-13', '2010-01-12', '12', '24.99', '0', null, null, '0', '2009-12-12');
-INSERT INTO `subscriptions` VALUES ('170', '17', '29', '122', '0', 'http://localhost/notify.php', '2009-12-13', '2010-12-13', '2010-01-12', '12', '24.99', '0', null, null, '0', '2009-12-12');
-INSERT INTO `subscriptions` VALUES ('171', '17', '29', '123', '0', 'http://localhost/notify.php', '2009-12-13', '2010-12-13', '2010-01-12', '12', '24.99', 'I-FF4KJJB4CH1R', null, null, '1', '2009-12-12');
-INSERT INTO `subscriptions` VALUES ('172', '17', '29', '124', '0', 'http://localhost/notify.php', '2009-12-13', '2010-12-13', '2010-01-12', '12', '24.99', '0', null, null, '0', '2009-12-12');
-INSERT INTO `subscriptions` VALUES ('173', '17', '29', '125', '0', 'http://localhost/notify.php', '2009-12-13', '2010-12-13', '2010-01-12', '12', '24.99', 'I-31SWGR8M7WD9', null, null, '1', '2009-12-12');
-INSERT INTO `subscriptions` VALUES ('174', '17', '29', '126', '0', 'http://localhost/notify.php', '2009-12-13', '2010-12-13', '2010-01-12', '12', '24.99', 'I-LHUC0CY6VBY4', null, null, '1', '2009-12-12');
-INSERT INTO `subscriptions` VALUES ('175', '17', '29', '2', '0', 'http://notify.com/notify.php', '2009-12-13', '2010-12-13', '2010-01-12', '37', '10.99', 'I-GS2PLLJ0TAAT', null, null, '1', '2009-12-12');
-INSERT INTO `subscriptions` VALUES ('176', '17', '29', '129', '0', 'http://localhost/notify.php', '2009-12-20', '2010-12-20', '2010-01-19', '12', '24.99', '0', null, null, '0', '2009-12-13');
-INSERT INTO `subscriptions` VALUES ('177', '17', '29', '131', '0', 'http://yahoo.com/', '2009-12-20', '2010-12-20', '2010-01-19', '12', '11.99', '0', null, null, '0', '2009-12-13');
-INSERT INTO `subscriptions` VALUES ('178', '17', '29', '132', '0', 'http://yahoo.com/', '2009-12-20', '2010-12-20', '2010-01-19', '12', '11.99', 'I-GRH6VVAT9SFY', null, null, '1', '2009-12-13');
-INSERT INTO `subscriptions` VALUES ('179', '17', '29', '133', '0', 'http://yahoo.com/', '2009-12-20', '2010-12-20', '2009-12-21', '365', '11.99', '0', null, null, '0', '2009-12-13');
-INSERT INTO `subscriptions` VALUES ('180', '17', '29', '134', '0', 'http://yahoo.com/', '2009-12-20', '2010-12-20', '2009-12-21', '365', '11.99', '0', null, null, '0', '2009-12-13');
-INSERT INTO `subscriptions` VALUES ('181', '17', '29', '135', '0', 'http://yahoo.com/', '2009-12-20', '2010-12-20', '2009-12-21', '365', '11.99', '0', null, null, '0', '2009-12-13');
-INSERT INTO `subscriptions` VALUES ('182', '17', '29', '136', '0', 'http://yahoo.com/', '2009-12-20', '2010-12-20', '2009-12-21', '365', '11.99', '0', null, null, '0', '2009-12-13');
-INSERT INTO `subscriptions` VALUES ('183', '17', '29', '137', '0', 'http://yahoo.com/', '2009-12-20', '2010-12-20', '2009-12-21', '365', '11.99', 'I-JHPRVTLD9TH9', null, null, '1', '2009-12-13');
-INSERT INTO `subscriptions` VALUES ('184', '17', '29', '140', '11', 'http://yahoo.com/', '2009-12-20', '2010-12-20', '2009-12-21', '365', '11.99', 'I-1153UABGVRY4', null, null, '1', '2009-12-13');
+INSERT INTO `subscriptions` VALUES ('2', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816288', null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('3', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816294', null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('4', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816295', null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('5', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816297', null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('6', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816300', null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('7', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816308', null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('8', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('9', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('10', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('11', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('12', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816322', null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('13', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816323', null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('14', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816325', null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('15', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816326', null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('16', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816327', null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('17', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816329', null, null, '0', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('18', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816403', null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('19', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816404', null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('20', '17', '3', '1', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816406', null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('21', '17', '3', '7', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816411', null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('22', '17', '3', '8', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816410', null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('23', '17', '3', '9', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816412', null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('24', '17', '3', '10', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816413', null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('25', '17', '3', '11', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816414', null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('26', '17', '3', '12', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816427', '751320', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('27', '17', '3', '13', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816428', '751321', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('28', '17', '3', '14', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816432', '751325', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('29', '17', '3', '15', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816434', '751327', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('30', '17', '3', '16', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816440', '751333', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('31', '17', '3', '17', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816441', '751334', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('32', '17', '3', '18', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816454', '751345', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('33', '17', '3', '19', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816461', '751352', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('34', '17', '3', '20', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816462', '751353', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('35', '17', '3', '21', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816463', '751354', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('36', '17', '3', '22', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816464', '751355', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('37', '17', '3', '23', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816465', '751356', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('38', '17', '3', '24', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816467', '751358', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('39', '17', '3', '25', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816469', '751360', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('40', '17', '3', '26', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816470', '751361', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('41', '17', '3', '27', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816471', '751362', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('42', '17', '3', '28', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816472', '751363', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('43', '17', '3', '29', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816473', '751364', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('44', '17', '3', '30', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816475', '751366', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('45', '17', '3', '31', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816476', '751367', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('46', '17', '3', '32', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816477', '751368', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('47', '17', '3', '33', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816479', '751370', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('48', '17', '3', '34', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816480', '751371', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('49', '17', '3', '35', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816481', '751372', null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('50', '17', '3', '36', '0', null, '2009-12-21', '2010-12-21', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '816483', '751374', null, '0', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('51', '17', '3', '37', '0', null, '2009-12-24', '2010-12-24', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '820132', '754575', null, '0', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('52', '17', '3', '38', '0', null, '2009-12-24', '2010-12-24', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '820140', '754585', null, '0', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('53', '17', '3', '39', '0', null, '2009-12-24', '2010-12-24', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '820141', '754586', null, '0', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('54', '17', '3', '40', '0', null, '2009-12-24', '2010-12-24', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '820142', '754587', null, '0', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('55', '17', '3', '45', '0', '\'http://localhost/notify.php\'', '2009-12-24', '2010-12-24', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '820145', '754592', null, '0', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('56', '17', '3', '48', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '820146', '754593', null, '0', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('57', '17', '3', '49', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '820147', '754594', null, '0', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('58', '17', '3', '50', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '820153', '754600', null, '0', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('59', '17', '3', '51', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '820167', '754612', null, '0', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('60', '17', '3', '52', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '820185', '754631', null, '0', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('61', '17', '3', '53', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '820313', '754761', null, '0', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('62', '17', '3', '54', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '820321', '754769', null, '0', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('63', '17', '3', '55', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '820322', '754770', null, '0', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('64', '17', '3', '56', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '820337', '754785', null, '0', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('65', '17', '3', '57', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '820356', '754804', null, '0', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('66', '17', '3', '58', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '820360', '754808', null, '0', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('67', '17', '3', '59', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '820363', '754811', null, '0', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('68', '17', '3', '60', '0', 'http://localhost/notify.php', '2009-12-24', '2010-12-24', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '820364', '754812', null, '0', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('69', '17', '17', '61', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('70', '17', '17', '62', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('71', '17', '17', '63', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('72', '17', '17', '64', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('73', '17', '17', '65', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('74', '17', '17', '66', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('75', '17', '17', '67', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('76', '17', '17', '68', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('77', '17', '17', '69', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('78', '17', '17', '70', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('79', '17', '17', '71', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('80', '17', '17', '72', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('81', '17', '17', '73', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('82', '17', '17', '74', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '825426221', null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('83', '17', '17', '75', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '825427340', null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('84', '17', '17', '76', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '825427529', null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('85', '17', '17', '77', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '825427652', null, 'ET1115', '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('86', '17', '17', '78', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '825429713', null, 'ET2017', '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('87', '17', '17', '79', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '825430067', null, 'ET2113', '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('88', '17', '17', '80', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '825430331', null, 'ET2234', '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('89', '17', '17', '81', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('90', '17', '17', '82', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('91', '17', '17', '83', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('92', '17', '17', '84', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('93', '17', '17', '85', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('94', '17', '17', '86', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '825436301', null, 'ET3719', '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('95', '17', '17', '87', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '825437726', null, 'ET4233', '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('96', '17', '17', '88', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '825437834', null, 'ET4300', '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('97', '17', '17', '89', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '825437972', null, 'ET4331', '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('98', '17', '17', '90', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '825438149', null, 'ET4415', '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('99', '17', '17', '91', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '825482114', null, 'ET4902', '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('100', '17', '17', '92', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '825482456', null, 'ET5057', '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('101', '17', '17', '93', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '825483089', null, 'ET5512', '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('102', '17', '17', '94', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('103', '17', '17', '95', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', null, null, null, '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('104', '17', '17', '96', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '825483422', null, 'ET5720', '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('105', '17', '17', '97', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '825483725', null, 'ET5940', '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('106', '17', '17', '98', '0', 'http://localhost/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '365', '0', '289.99', '825483764', null, 'ET5954', '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('107', '17', '17', '5', '0', 'http://notify.com/notify.php', '2009-12-27', '2010-12-27', '0000-00-00', '0000-00-00', '0', '37', '0', '10.99', '825483788', null, 'ET0001', '1', '0000-00-00');
+INSERT INTO `subscriptions` VALUES ('108', '17', '29', '105', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('109', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('110', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('111', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('112', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('113', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('114', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('115', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('116', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('117', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('118', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('119', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('120', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('121', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('122', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('123', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('124', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('125', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('126', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('127', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('128', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('129', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('130', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('131', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('132', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('133', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('134', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('135', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('136', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('137', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('138', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('139', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('140', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('141', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('142', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('143', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('144', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('145', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', 'I-2AM9EAE7R6DK', null, null, '0', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('146', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', 'I-LUJYJ05SM6XY', null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('147', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', 'I-H39JCUNWVWMA', null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('148', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', 'I-VYR0BA3UJVW4', null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('149', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('150', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', 'I-BUMJTHB25A1N', null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('151', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', 'I-ATXXVNXHJASM', null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('152', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', 'I-WBT0YDXCUXD5', null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('153', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', 'I-7AECE6MYG5V0', null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('154', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', 'I-FLC8YW82RDG7', null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('155', '17', '29', '2', '0', 'http://localhost/notify.php', '2010-01-08', '2011-01-08', '0000-00-00', '2010-02-07', '0', '12', '0', '24.99', 'I-WHF9WTYV4NX2', null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('156', '17', '29', '2', '0', 'http://localhost/notify.php', '2009-12-10', '2010-12-10', '0000-00-00', '2010-01-09', '0', '12', '0', '24.99', 'I-7DMJ2XJ2CVB0', null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('157', '17', '29', '106', '0', 'http://localhost/notify.php', '2009-12-10', '2010-12-10', '0000-00-00', '2010-01-09', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('158', '17', '29', '107', '0', 'http://localhost/notify.php', '2009-12-10', '2010-12-10', '0000-00-00', '2010-01-05', '0', '12', '0', '24.99', 'I-EJL22MVWY9G2', null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('159', '17', '29', '108', '0', 'http://localhost/notify.php', '2009-12-10', '2010-12-10', '0000-00-00', '2010-01-05', '0', '12', '0', '24.99', 'I-CEB60PK9U7T1', null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('160', '17', '29', '109', '0', 'http://localhost/notify.php', '2009-12-10', '2010-12-10', '0000-00-00', '2010-01-05', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('161', '17', '29', '110', '0', 'http://localhost/notify.php', '2009-12-10', '2010-12-10', '0000-00-00', '2010-01-09', '0', '12', '0', '24.99', 'I-DYCRXJGEAEPH', null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('162', '17', '29', '111', '0', 'http://localhost/notify.php', '2009-12-10', '2010-12-10', '0000-00-00', '2010-01-09', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('163', '17', '29', '112', '0', 'http://localhost/notify.php', '2009-12-10', '2010-12-10', '0000-00-00', '2010-01-09', '0', '12', '0', '24.99', 'I-57GYNVHW4P9E', null, null, '1', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('164', '17', '29', '113', '0', 'http://localhost/notify.php', '2009-12-10', '2010-12-10', '0000-00-00', '2010-01-09', '0', '12', '0', '24.99', 'I-TR88TNTK03A3', null, null, '0', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('165', '17', '29', '114', '0', 'http://localhost/notify.php', '2009-12-10', '2010-12-10', '0000-00-00', '2010-01-09', '0', '12', '0', '24.99', 'I-G1FL3W4FL5TD', null, null, '0', '2009-12-09');
+INSERT INTO `subscriptions` VALUES ('166', '17', '29', '118', '0', 'http://localhost/notify.php', '2009-12-13', '2010-12-13', '0000-00-00', '2010-01-12', '0', '12', '0', '24.99', null, null, null, '1', '2009-12-12');
+INSERT INTO `subscriptions` VALUES ('167', '17', '29', '119', '0', 'http://localhost/notify.php', '2009-12-13', '2010-12-13', '0000-00-00', '2010-01-12', '0', '12', '0', '24.99', '0', null, null, '0', '2009-12-12');
+INSERT INTO `subscriptions` VALUES ('168', '17', '29', '120', '0', 'http://localhost/notify.php', '2009-12-13', '2010-12-13', '0000-00-00', '2010-01-12', '0', '12', '0', '24.99', '0', null, null, '0', '2009-12-12');
+INSERT INTO `subscriptions` VALUES ('169', '17', '29', '121', '0', 'http://localhost/notify.php', '2009-12-13', '2010-12-13', '0000-00-00', '2010-01-12', '0', '12', '0', '24.99', '0', null, null, '0', '2009-12-12');
+INSERT INTO `subscriptions` VALUES ('170', '17', '29', '122', '0', 'http://localhost/notify.php', '2009-12-13', '2010-12-13', '0000-00-00', '2010-01-12', '0', '12', '0', '24.99', '0', null, null, '0', '2009-12-12');
+INSERT INTO `subscriptions` VALUES ('171', '17', '29', '123', '0', 'http://localhost/notify.php', '2009-12-13', '2010-12-13', '0000-00-00', '2010-01-12', '0', '12', '0', '24.99', 'I-FF4KJJB4CH1R', null, null, '1', '2009-12-12');
+INSERT INTO `subscriptions` VALUES ('172', '17', '29', '124', '0', 'http://localhost/notify.php', '2009-12-13', '2010-12-13', '0000-00-00', '2010-01-12', '0', '12', '0', '24.99', '0', null, null, '0', '2009-12-12');
+INSERT INTO `subscriptions` VALUES ('173', '17', '29', '125', '0', 'http://localhost/notify.php', '2009-12-13', '2010-12-13', '0000-00-00', '2010-01-12', '0', '12', '0', '24.99', 'I-31SWGR8M7WD9', null, null, '1', '2009-12-12');
+INSERT INTO `subscriptions` VALUES ('174', '17', '29', '126', '0', 'http://localhost/notify.php', '2009-12-13', '2010-12-13', '0000-00-00', '2010-01-12', '0', '12', '0', '24.99', 'I-LHUC0CY6VBY4', null, null, '1', '2009-12-12');
+INSERT INTO `subscriptions` VALUES ('175', '17', '29', '2', '0', 'http://notify.com/notify.php', '2009-12-13', '2010-12-13', '0000-00-00', '2010-01-12', '0', '37', '0', '10.99', 'I-GS2PLLJ0TAAT', null, null, '1', '2009-12-12');
+INSERT INTO `subscriptions` VALUES ('176', '17', '29', '129', '0', 'http://localhost/notify.php', '2009-12-20', '2010-12-20', '0000-00-00', '2010-01-19', '0', '12', '0', '24.99', '0', null, null, '0', '2009-12-13');
+INSERT INTO `subscriptions` VALUES ('177', '17', '29', '131', '0', 'http://yahoo.com/', '2009-12-20', '2010-12-20', '0000-00-00', '2010-01-19', '0', '12', '0', '11.99', '0', null, null, '0', '2009-12-13');
+INSERT INTO `subscriptions` VALUES ('178', '17', '29', '132', '0', 'http://yahoo.com/', '2009-12-20', '2010-12-20', '0000-00-00', '2010-01-04', '0', '12', '0', '11.99', 'I-GRH6VVAT9SFY', null, null, '1', '2009-12-13');
+INSERT INTO `subscriptions` VALUES ('179', '17', '29', '133', '0', 'http://yahoo.com/', '2009-12-20', '2010-01-04', '0000-00-00', '2010-01-04', '0', '365', '0', '11.99', '0', null, null, '1', '2009-12-13');
+INSERT INTO `subscriptions` VALUES ('180', '17', '29', '134', '0', 'http://yahoo.com/', '2009-12-20', '2010-01-04', '2009-12-28', '2009-12-28', '4', '365', '0', '11.99', '0', null, null, '0', '2009-12-13');
+INSERT INTO `subscriptions` VALUES ('181', '17', '29', '135', '0', 'http://yahoo.com/', '2009-12-20', '2010-01-04', '0000-00-00', '2009-12-28', '4', '365', '0', '11.99', '0', null, null, '0', '2009-12-13');
+INSERT INTO `subscriptions` VALUES ('182', '17', '29', '136', '0', 'http://yahoo.com/', '2009-12-20', '2010-12-20', '0000-00-00', '2009-12-24', '1', '365', '0', '11.99', '0', null, null, '1', '2009-12-13');
+INSERT INTO `subscriptions` VALUES ('183', '17', '29', '137', '0', 'http://yahoo.com/', '2009-12-20', '2010-12-20', '2009-12-24', '2009-12-24', '0', '365', '0', '11.99', 'I-JHPRVTLD9TH9', null, null, '1', '2009-12-13');
+INSERT INTO `subscriptions` VALUES ('184', '17', '29', '140', '11', 'http://yahoo.com/', '2009-12-20', '2010-12-20', '2009-12-24', '2009-12-24', '0', '365', '0', '11.99', 'I-1153UABGVRY4', null, null, '1', '2009-12-13');
