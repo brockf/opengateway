@@ -2,6 +2,23 @@
 
 class authnet
 {
+	function Settings()
+	{
+		$settings['name'] = 'Authorize.net';
+		$settings['class_name'] = 'authnet';
+		$settings['description'] = 'Authorize.net';
+		$settings['is_preferred'] = 1;
+		$settings['setup_fee'] = 0;
+		$settings['monthly_fee'] = 0;
+		$settings['transaction_fee'] = 0;
+		$settings['purchase_link'] = '';
+		$settings['allows_updates'] = 1;
+		$settings['allows_refunds'] = 1;
+		$settings['required_fields'] = array('enabled', 'mode', 'login_id', 'transaction_key', 'accept_visa', 'accept_mc', 'accept_discover', 'accept_dc', 'accept_amex', 'enable_arb');
+		
+		return $settings;
+	}
+	
 	function Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card)
 	{			
 		

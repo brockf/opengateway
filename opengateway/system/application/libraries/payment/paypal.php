@@ -1,6 +1,24 @@
 <?php
 class Paypal
 {
+	function Settings()
+	{
+		$settings['name'] = 'Paypal Pro';
+		$settings['class_name'] = 'paypal';
+		$settings['description'] = 'Paypal Pro';
+		$settings['is_preferred'] = 1;
+		$settings['setup_fee'] = 0;
+		$settings['monthly_fee'] = 0;
+		$settings['transaction_fee'] = 0;
+		$settings['purchase_link'] = '';
+		$settings['allows_updates'] = 1;
+		$settings['allows_refunds'] = 1;
+		$settings['required_fields'] = array('enabled', 'mode', 'user', 'pwd', 'signature', 'accept_visa', 'accept_mc', 'accept_discover', 'accept_dc', 'accept_amex', 'enable_arb');
+		
+		return $settings;
+	}
+	
+	
 	function Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card)
 	{
 		$CI =& get_instance();

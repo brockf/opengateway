@@ -46,8 +46,11 @@ class Gateway_model extends Model
 		$gateway_type = $params['gateway_type'];
 		
 		// Validate the required fields
+		$this->load->library('payment/'.$gateway_type);
+		$settings = $this->$gateway_type->Settings();
+		$required_fields = $settings['required_fields'];
 		$this->load->library('field_validation');
-		$request_type_id = $this->field_validation->ValidateRequiredGatewayFields($gateway_type, $params);
+		$request_type_id = $this->field_validation->ValidateRequiredGatewayFields($required_fields, $params);
 		
 		// Get the external API id
 		$external_api_id = $this->GetExternalApiId($gateway_type);
@@ -74,12 +77,14 @@ class Gateway_model extends Model
 		unset($params['enabled']);
 		unset($params['type']);
 		
+		$this->load->library('encrypt');
+		
 		foreach($params as $key => $value)
 		{
 			$insert_data = array(
 								'client_gateway_id'	=> $new_gateway_id,
 								'field' 			=> $key,
-								'value'				=> $value
+								'value'				=> $this->encrypt->encode($value)
 								);  
 		
 			$this->db->insert('client_gateway_params', $insert_data);
@@ -118,6 +123,12 @@ class Gateway_model extends Model
 	*/
 	function Charge($client_id, $params)
 	{
+		// Make sure it came from a secure connection
+		if($_SERVER['HTTPS'] != "on") {
+			die($this->response->Error(5008));
+		}
+		
+		
 		if(isset($params['gateway_id'])) {
 			$gateway_id = $params['gateway_id'];
 		} else {
@@ -193,6 +204,11 @@ class Gateway_model extends Model
 	
 	function Refund($client_id, $params)
 	{
+		// Make sure it came from a secure connection
+		if($_SERVER['HTTPS'] != "on") {
+			die($this->response->Error(5008));
+		}
+		
 		if(!isset($params['gateway_id'])) {
 			die($this->response->Error(3001));
 		}
@@ -260,6 +276,11 @@ class Gateway_model extends Model
 	
 	function Recur($client_id, $params)
 	{		
+		// Make sure it came from a secure connection
+		if($_SERVER['HTTPS'] != "on") {
+			die($this->response->Error(5008));
+		}
+		
 		$CI =& get_instance();
 		
 		if(isset($params['gateway_id'])) {
@@ -643,11 +664,12 @@ class Gateway_model extends Model
 			$data['name'] = $row->name;
 			
 			// Get the params
+			$this->load->library('encrypt');
 			$this->db->where('client_gateway_id', $gateway_id);
 			$query = $this->db->get('client_gateway_params');
 			if($query->num_rows() > 0) {
 				foreach($query->result() as $row) {
-					$data[$row->field] = $row->value;
+					$data[$row->field] = $this->encrypt->decode($row->value);
 				}
 			}
 			return $data;

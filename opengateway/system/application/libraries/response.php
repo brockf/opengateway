@@ -106,6 +106,7 @@ class Response
 						'1006' => 'Invalid format passed.  Acceptable formats: xml, php, and json.',
 						'1007' => 'Invalid country.',
 						'1008' => 'Invalid email address',
+						'1010' => 'A secure SSL connection is required.',
 						'1009' => 'Unspecified error in request.',
 						'2000' => 'Client is not authorized to create new clients.',
 						'2001' => 'Invalid External API.',
