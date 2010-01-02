@@ -158,6 +158,7 @@ class Gateway_model extends Model
 		if(isset($params['customer_id'])) {
 			$CI->load->model('customer_model');
 			$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
+			$created_customer = false;
 		}
 		elseif (isset($params['customer']) and is_array($params['customer'])) {
 			$CI->load->model('customer_model');
@@ -190,6 +191,51 @@ class Gateway_model extends Model
 		return $response;
 	}
 	
+	function Refund($client_id, $params)
+	{
+		if(!isset($params['gateway_id'])) {
+			die($this->response->Error(3001));
+		}
+		
+		$CI =& get_instance();
+		
+		// Get the order details
+		$CI->load->model('order_model');
+		$order = $CI->order_model->GetCharge($client_id, $params['order_id']);
+		$order_id = $order['id'];
+		
+		$params['order'] = $order;
+		
+		// Get the credit card object
+		if(isset($params['credit_card'])) {
+			$credit_card = $params['credit_card']; 
+		} else {
+			$credit_card = FALSE;
+		}
+			
+		
+		// Validate the required fields
+		$this->load->library('field_validation');
+		$this->field_validation->ValidateRequiredFields('Refund', $params);
+		
+		// Get the gateway info to load the proper library
+		$gateway_id = $params['gateway_id'];
+		$CI->load->model('gateway_model');
+		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
+		
+		// Get the customer details
+		$CI->load->model('customer_model');
+		$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
+		
+		// Get the order authorization
+		$CI->load->model('order_authorization_model');
+		$params['authorization'] = $CI->order_authorization_model->getAuthorization($order_id);
+		
+		// Load the proper library
+		$gateway_name = $gateway['name'];
+		$this->load->library('payment/'.$gateway_name);
+		return $this->$gateway_name->Refund($client_id, $order_id, $gateway, $customer, $params, $credit_card);
+	}
 	
 	
 	/**
@@ -708,38 +754,7 @@ class Gateway_model extends Model
 		return $this->$gateway_name->Capture($client_id, $order_id, $gateway, $customer, $params);
 	}
 	
-	function Credit($client_id, $params)
-	{
-		if(!isset($params['gateway_id'])) {
-			die($this->response->Error(3001));
-		}
-		
-		$CI =& get_instance();
-		
-		// Get the order details
-		$CI->load->model('order_model');
-		$order = $CI->order_model->GetOrder($client_id, $params['order_id']);
-		$order_id = $order->order_id;
-		
-		
-		// Validate the required fields
-		$this->load->library('field_validation');
-		$this->field_validation->ValidateRequiredFields('Credit', $params);
-		
-		// Get the gateway info to load the proper library
-		$gateway_id = $params['gateway_id'];
-		$CI->load->model('gateway_model');
-		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
-		
-		// Get the customer details
-		$CI->load->model('customer_model');
-		$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
-		
-		// Load the proper library
-		$gateway_name = $gateway['name'];
-		$this->load->library('payment/'.$gateway_name);
-		return $this->$gateway_name->Credit($client_id, $order_id, $gateway, $customer, $params);
-	}
+	
 	
 	function Void($client_id, $params)
 	{

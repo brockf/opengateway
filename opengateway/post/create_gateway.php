@@ -1,6 +1,6 @@
 <?php
 
-$url = "http://localhost/gateway/";
+$url = "http://localhost/index.php/api/";
 
 $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 <request>
@@ -11,7 +11,7 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 	<type>NewGateway</type>
 	<client_id>17</client_id>
 	<enabled>1</enabled>
-	<mode>test</mode>
+	<mode>live</mode>
 	<gateway_type>paypal</gateway_type>
 	<user>davery_1260232299_biz_api1.gmail.com</user>
 	<pwd>1260232305</pwd>
@@ -21,9 +21,10 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 	<accept_discover>1</accept_discover>
 	<accept_amex>1</accept_amex>
 	<accept_dc>1</accept_dc>
+	<enable_arb>1</enable_arb>
 </request>';
 
-$postfields = 'request='.$post_string; 
+$postfields = $post_string; 
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); 

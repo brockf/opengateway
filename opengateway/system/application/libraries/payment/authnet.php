@@ -190,7 +190,7 @@ class authnet
 	}
 	
 	
-	function Credit($client_id, $order_id, $gateway, $customer, $params)
+	function Refund($client_id, $order_id, $gateway, $customer, $params)
 	{	
 		$CI =& get_instance();
 		
@@ -210,7 +210,7 @@ class authnet
 		
 		// Get the tran id
 		$CI->load->model('order_model');
-		$order = $CI->order_model->GetOrder($client_id, $order_id);
+		$order = $CI->order_model->GetCharge($client_id, $order_id);
 		
 		$post_values = array(
 			"x_login"			=> $gateway['login_id'],
@@ -223,7 +223,7 @@ class authnet
 		
 			"x_type"			=> "CREDIT",
 			"x_method"			=> "CC",
-			"x_tran_id"			=> $order->tran_id,
+			"x_tran_id"			=> $order['id'],
 			"x_amount"			=> $params['amount'],
 			"x_card_num"		=> $params['card_num'],
 			"x_exp_date"		=> $params['exp_month'].$params['exp_year']

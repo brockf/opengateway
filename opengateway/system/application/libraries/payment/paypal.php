@@ -1,7 +1,7 @@
 <?php
 class Paypal
 {
-	 function Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card)
+	function Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card)
 	{
 		$CI =& get_instance();
 		
@@ -80,6 +80,57 @@ class Paypal
 			$CI->load->model('order_model');
 			$CI->order_model->SetStatus($order_id, 0);
 			
+			$response_array = array('reason' => $response['L_LONGMESSAGE0']);
+			$response = $CI->response->TransactionResponse(2, $response_array);
+		}
+		
+		return $response;
+		
+		
+	}
+	
+	function Refund($client_id, $order_id, $gateway, $customer, $params, $credit_card)
+	{
+		$CI =& get_instance();
+		
+		
+		// Get the proper URL
+		switch($gateway['mode'])
+		{
+			case 'live':
+				$post_url = $gateway['url_live'];
+			break;
+			case 'test':
+				$post_url = $gateway['url_test'];
+			break;
+			case 'dev':
+				$post_url = $gateway['url_dev'];
+			break;
+		}
+		
+		$post = array();
+		$post['version'] = '56.0';
+		$post['paymentaction'] = 'sale';
+		$post['method'] = 'RefundTransaction';
+		$post['user'] = $gateway['user'];
+		$post['pwd'] = $gateway['pwd'];
+		$post['signature'] = $gateway['signature'];
+		$post['transactionid'] = $params['authorization']->tran_id;
+		if($params['amount'] == $params['order']['amount']) {
+			$post['refundtype'] = 'FULL'; 
+		} else {
+			$post['refundtype'] = 'PARTIAL';
+			$post['amt'] = $params['amount'];
+		}
+	
+		
+		$response = $this->Process($post_url, $post, $order_id);
+		
+		$response = $this->response_to_array($response);
+		
+		if($response['ACK'] == 'Success') {
+			$response = $CI->response->TransactionResponse(1, array());
+		} else {
 			$response_array = array('reason' => $response['L_LONGMESSAGE0']);
 			$response = $CI->response->TransactionResponse(2, $response_array);
 		}

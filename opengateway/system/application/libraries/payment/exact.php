@@ -61,6 +61,65 @@ class exact
 
 	}
 	
+	function Refund($client_id, $order_id, $gateway, $customer, $params, $credit_card)
+	{			
+		$CI =& get_instance();
+		
+		// Get the proper URL
+		switch($gateway['mode'])
+		{
+			case 'live':
+				$post_url = $gateway['url_live'];
+			break;
+			case 'test':
+				$post_url = $gateway['url_test'];
+			break;
+			case 'dev':
+				$post_url = $gateway['url_dev'];
+			break;
+		}
+			
+		$trxnProperties = array(
+					'ExactID'			=> $gateway['terminal_id'],	
+			  		'Password'			=> $gateway['password'],
+					'Transaction_Type'  => '04',
+				 	'Card_Number' 		=> $credit_card['card_num'],
+					'Expiry_Date'		=> $credit_card['exp_month'] . substr($credit_card['exp_year'],-2,2),
+					'CVD_Presence_Ind' 	=> (empty($credit_card['cvv'])) ? '9' : '1',
+					'Customer_Ref' 		=> $order_id,
+					'DollarAmount' 		=> $params['amount']
+		  		);
+		
+		if(isset($credit_card->cvv)) {
+			$trxnProperties['VerificationStr1'] = $credit_card['cvv'];
+		}  
+		
+		if(isset($customer['customer_id'])) {
+			$trxnProperties['CardHoldersName'] = $customer['first_name'].' '.$customer['last_name'];
+		} else {
+			$name = explode(' ', $credit_card['card_name']);
+			$trxnProperties['CardHoldersName'] = $name[0].' '.$name[1];
+			
+		}
+		  
+		$trxnProperties = $this->CompleteArray($trxnProperties); 
+		  
+		$trxnResult = $this->Process($trxnProperties, $post_url, $order_id);
+		
+		if($trxnResult->EXact_Resp_Code == '00'){
+			$CI->load->model('order_authorization_model');
+			$CI->order_authorization_model->SaveAuthorization($order_id, $trxnResult->Transaction_Tag);
+			$response_array = array('charge_id' => $order_id);
+			$response = $CI->response->TransactionResponse(1, $response_array);
+		} else {
+			$response_array = array('reason' => $trxnResult->EXact_Message);
+			$response = $CI->response->TransactionResponse(2, $response_array);
+		}
+		
+		return $response;
+
+	}
+	
 	function Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $interval, $credit_card, $subscription_id)
 	{
 		$CI =& get_instance();
