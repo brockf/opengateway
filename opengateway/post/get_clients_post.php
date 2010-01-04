@@ -8,9 +8,10 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>
 		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>
 	</authentication>
-	<type>GetRecurrings</type>
-	<plan_id>11</plan_id>
+	<type>GetClients</type>
 	<limit>500</limit>
+	<sort>customer_last_name</sort>
+	<sort_dir>asc</sort_dir>
 </request>';
 
 $postfields = $post_string; 
@@ -20,6 +21,7 @@ curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 curl_setopt($ch, CURLOPT_URL,$url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields); 
 
 

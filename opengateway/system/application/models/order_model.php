@@ -160,6 +160,32 @@ class Order_model extends Model
 			$this->db->limit($params['limit'], $offset);
 		}
 		
+		if(isset($params['sort_dir']) and ($params['sort_dir'] == 'asc' or $params['sort_dir'] == 'desc' )) {
+			$sort_dir = $params['sort_dir'];
+		}
+		
+		if(isset($params['sort'])) {
+			switch($params['sort'])
+			{
+				case 'date':
+					$sort = 'timestamp';
+					break;
+				case 'customer_first_name':
+					$sort = 'first_name';
+					break;
+				case 'customer_last_name':
+					$sort = 'last_name';
+					break;	
+				case 'amount':
+					$sort = 'amount';
+					break;
+				default:
+					$sort = 'last_name';
+					break;	
+			}
+			$this->db->order_by($sort, $sort_dir);	
+		}
+		
 		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$this->db->order_by('orders.order_id','DESC');
@@ -309,5 +335,17 @@ class Order_model extends Model
 		$this->db->update('orders', $update_data);
 		
 		return TRUE;
+	}
+	
+	function GetChargeGatewayInfo($order_id)
+	{
+		$this->db->where('order_id',  $order_id);
+		$this->db->join('order_authorizations', 'orders.order_id = order_authorizations.order_id', 'left');
+		$query = $this->db->get('orders');
+		if($query->num_rows() > 0) {
+			return $query->result_array();
+		} else {
+			return FALSE;
+		}
 	}
 }

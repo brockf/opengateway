@@ -19,6 +19,57 @@ class authnet
 		return $settings;
 	}
 	
+	function TestConnection($client_id, $gateway) 
+	{
+		// Get the proper URL
+		switch($gateway['mode'])
+		{
+			case 'live':
+				$post_url = $gateway['url_live'];
+			break;
+			case 'test':
+				$post_url = $gateway['url_test'];
+			break;
+			case 'dev':
+				$post_url = $gateway['url_dev'];
+			break;
+		}
+		
+		$post_values = array(
+			"x_login"			=> $gateway['login_id'],
+			"x_tran_key"		=> $gateway['transaction_key'],		
+			"x_version"			=> "3.1",
+			"x_delim_data"		=> "TRUE",
+			"x_delim_char"		=> "|",
+			"x_relay_response"	=> "FALSE",		
+			"x_type"			=> "AUTH_CAPTURE",
+			"x_method"			=> "CC",
+			"x_card_num"		=> '4222222222222',
+			"x_exp_date"		=> '1099',
+			"x_amount"			=> 1,
+			"x_test_request"    => TRUE
+		);
+		
+		$post_string = "";
+		foreach( $post_values as $key => $value )
+			{ $post_string .= "$key=" . urlencode( $value ) . "&"; }
+		$post_string = rtrim( $post_string, "& " );
+		
+		$order_id = 0;
+		$response = $this->Process($order_id, $post_url, $post_string, TRUE);
+		
+		$CI =& get_instance();
+		
+		if($response['success']){
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+		
+		return $response;
+		
+	}
+	
 	function Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card)
 	{			
 		
@@ -580,7 +631,7 @@ class authnet
 		return TRUE;
 	}
 	
-	function Process($order_id, $post_url, $post_string)
+	function Process($order_id, $post_url, $post_string, $test = FALSE)
 	{
 		$CI =& get_instance();
 		
@@ -594,10 +645,24 @@ class authnet
 		curl_close ($request); // close curl object
 		
 		$response = explode('|',$post_response);
-		
+
 		// Log the response
-		$this->LogResponse($order_id, $response);
+		//$this->LogResponse($order_id, $response);
+		if(!isset($response[1])) {
+			$response['success'] = FALSE;
+			return $response;
+		}
 		
+		if($test) {
+			if($response[0] == 1) {
+				$response['success'] = TRUE;
+			} else {
+				$response['success'] = FALSE;
+	
+			}
+	
+			return $response;
+		}
 		// Get the response.  1 for the first part meant that it was successful.  Anything else and it failed
 		if($response[0] == 1) {
 			$CI->load->model('order_authorization_model');
@@ -606,7 +671,7 @@ class authnet
 			
 			$response['success'] = TRUE;
 		} else {
-			
+			$CI->load->model('order_model');
 			$CI->order_model->SetStatus($order_id, 0);
 			
 			$response['success'] = FALSE;

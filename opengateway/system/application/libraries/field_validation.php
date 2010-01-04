@@ -81,6 +81,8 @@ class Field_validation
 	function ValidateCreditCard($card_number, $gateway)
 	{
 		
+		$patterns = array();
+		
 		if($gateway['accept_amex'] == 1) {
 			$patterns['amex'] = "/^([34|37]{2})([0-9]{13})$/";
 		}

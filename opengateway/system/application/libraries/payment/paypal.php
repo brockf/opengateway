@@ -18,6 +18,43 @@ class Paypal
 		return $settings;
 	}
 	
+	function TestConnection($client_id, $gateway)
+	{
+		// Get the proper URL
+		switch($gateway['mode'])
+		{
+			case 'live':
+				$post_url = $gateway['url_live'];
+			break;
+			case 'test':
+				$post_url = $gateway['url_test'];
+			break;
+			case 'dev':
+				$post_url = $gateway['url_dev'];
+			break;
+		}
+		
+		$post = array();
+		$post['version'] = '56.0';
+		$post['method'] = 'GetBalance';
+		$post['user'] = $gateway['user'];
+		$post['pwd'] = $gateway['pwd'];
+		$post['signature'] = $gateway['signature'];
+		
+		$response = $this->Process($post_url, $post);
+		
+		$response = $this->response_to_array($response);
+		
+		$CI =& get_instance();
+		
+		if($response['ACK'] == 'Success') {
+			return TRUE;
+		} else {			
+			return FALSE;
+		}
+
+
+	}
 	
 	function Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card)
 	{
@@ -84,6 +121,8 @@ class Paypal
 		$response = $this->Process($post_url, $post, $order_id);
 		
 		$response = $this->response_to_array($response);
+		
+		
 		
 		if($response['ACK'] == 'Success') {
 			$CI->load->model('order_authorization_model');

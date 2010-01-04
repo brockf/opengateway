@@ -49,6 +49,8 @@ class Response
 		}
 		
 		$response = array(
+							'00' => 'Connection Successful.',
+							'01' => 'Connection Failed',
 							'1' => 'Transaction approved.',
 							'2' => 'Transaction declined',
 							'100' => 'Subscription created.',
@@ -161,8 +163,11 @@ class Response
 	}
 	
 	// a system error, not a client error
-	function SystemError ($text) {
-		log_message('error','Error code not passed to function.');
+	function SystemError ($text = '') {
+		if($text == '') {
+			$text = 'General Error';
+		}
+		log_message('error', $text);
 		echo $this->Error('01','System error.');
 		die();
 	}

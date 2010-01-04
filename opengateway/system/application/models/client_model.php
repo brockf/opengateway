@@ -438,4 +438,91 @@ class Client_model extends Model
 				return FALSE;
 			} 
 	}
+	
+	function GetClients($client_id, $params)
+	{
+		// get the user type
+		$client = $this->GetClientDetails($client_id);
+		$client_type = $client->client_type_id;
+		
+		switch($client_type)
+		{
+			case 2:
+				$this->db->where('parent_client_id', $client_id);
+			break;
+			case 1:
+				die($this->response->Error(1002));
+			break;		
+		}
+		
+		$this->db->where('deleted', 0);
+		$this->db->join('countries', 'countries.country_id = clients.country', 'left');
+		$query = $this->db->get('clients');
+		
+		if($query->num_rows() > 0) {
+			$i=0;
+			foreach($query->result() as $row) {
+				$data[$i]['id'] = $row->client_id;
+				$data[$i]['first_name'] = $row->first_name;
+				$data[$i]['last_name'] = $row->last_name;
+				$data[$i]['company'] = $row->company;
+				$data[$i]['address_1'] = $row->address_1;
+				$data[$i]['address_2'] = $row->address_2;
+				$data[$i]['city'] = $row->city;
+				$data[$i]['state'] = $row->state;
+				$data[$i]['postal_code'] = $row->postal_code;
+				$data[$i]['country'] = $row->name;
+				$data[$i]['suspended'] = ($row->suspended == '1') ? 'yes' : 'no';
+				$i++;	
+			}
+		} else {
+			return FALSE;
+		}
+		
+		return $data;
+	}
+	
+	function GetClient($client_id, $params)
+	{
+		// get the user type
+		$client = $this->GetClientDetails($client_id);
+		$client_type = $client->client_type_id;
+		
+		switch($client_type)
+		{
+			case 2:
+				$this->db->where('parent_client_id', $client_id);
+			break;
+			case 1:
+				die($this->response->Error(1002));
+			break;		
+		}
+		
+		$this->db->where('client_id', $params['client_id']);
+		$this->db->where('deleted', 0);
+		$this->db->join('countries', 'countries.country_id = clients.country', 'left');
+		$query = $this->db->get('clients');
+		
+		if($query->num_rows() > 0) {
+
+			$row = $query->row();
+			$data['id'] = $row->client_id;
+			$data['first_name'] = $row->first_name;
+			$data['last_name'] = $row->last_name;
+			$data['company'] = $row->company;
+			$data['address_1'] = $row->address_1;
+			$data['address_2'] = $row->address_2;
+			$data['city'] = $row->city;
+			$data['state'] = $row->state;
+			$data['postal_code'] = $row->postal_code;
+			$data['country'] = $row->name;
+			$data['suspended'] = ($row->suspended == '1') ? 'yes' : 'no';
+			
+		} else {
+			return FALSE;
+		}
+		
+		return $data;
+	}
+	
 }

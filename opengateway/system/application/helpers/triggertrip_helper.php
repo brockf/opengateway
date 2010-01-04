@@ -37,7 +37,7 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
     }
     
     // dynamically get plan-related info for recurring-related stuff
-    if ($subscription_id) {
+    if ($subscription_id and isset($subscription['plan'])) {
     	if (is_array($subscription['plan'])) {
     		$plan = $subscription['plan'];
     		$plan_id = $plan['id'];
@@ -134,6 +134,12 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 	$CI->load->library('field_validation');
 	
 	foreach ($emails as $email) {
+		
+		// is this HTML?
+		$config['mailtype'] = ($email['is_html'] == '1') ? 'html' : 'text';
+		$config['wordwrap'] = ($email['is_html'] == '1') ? FALSE : TRUE;
+		$CI->email->initialize($config);
+		
 		// who is this going to?
 		$to_address = false;
 		if ($email['to_address'] == 'customer' and isset($customer['email']) and !empty($customer['email']) and $CI->field_validation->ValidateEmailAddress($customer['email'])) {
@@ -156,25 +162,23 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 			}
 			
 			// send the email
-			$this->from($from_email, $from_name);
-			$this->to($to_address);
+			$CI->email->from($from_email, $from_name);
+			$CI->email->to($to_address);
 			if (!empty($email['bcc_address'])) {
 				if ($email['bcc_address'] == 'client') {
-					$this->bcc($client_email);
+					$CI->email->bcc($client_email);
 				}
 				elseif ($CI->field_validation->ValidateEmailAddress($email['bcc_address'])) {
 					$this->bcc($email['bcc_address']);
 				}
 			}
 			
-			$this->subject($subject);
-			$this->message($body);
+			$CI->email->subject($subject);
+			$CI->email->message($body);
 			
-			// is this HTML?
-			$config['mailtype'] = ($email['is_html'] == '1') ? 'html' : 'text';
-			$config['wordwrap'] = ($email['is_html'] == '1') ? FALSE : TRUE;
 			
-			$this->send();
+			
+			$CI->email->send();
 		}		
 	}
 }

@@ -244,10 +244,14 @@ class API extends Controller {
 	{
 		// Validate the required fields
 		$this->load->library('field_validation');
-		$this->field_validation->ValidateRequiredFields('MakeDefaultGateway', $params);
+		$this->field_validation->ValidateRequiredFields('DeleteGateway', $params);
 		
 		$this->load->model('gateway_model');
 		if ($this->gateway_model->DeleteGateway($client_id, $params['gateway_id'])) {
+			// End all the subscriptions.
+			$this->load->model('subscription_model');
+			$data = $this->subscription_model->CancelRecurringByGateway($client_id, $params['gateway_id']);
+
 			$response = $this->response->TransactionResponse(402,array());
 			
 			return $response;
@@ -390,6 +394,7 @@ class API extends Controller {
 			$params['limit'] = $this->config->item('query_result_default_limit');
 		}
 	
+		
 		$data = array();
 		if ($customers = $this->customer_model->GetCustomers($client_id, $params)) {
 			unset($params['limit']);
@@ -723,6 +728,87 @@ class API extends Controller {
 		else {
 			return FALSE;
 		}
+	}
+	
+	function TestConnection($client_id, $params)
+	{
+		// Make sure the gateway is actually theirs
+		$this->load->model('gateway_model');
+		$gateway = $this->gateway_model->GetGatewayDetails($client_id, $params['gateway_id']);
+		
+		if(!$gateway) {
+			die($this->response->Error(3000));
+		}
+		
+		// Load the proper library
+		$gateway_name = $gateway['name'];
+		$this->load->library('payment/'.$gateway_name);
+		$response = $this->$gateway_name->TestConnection($client_id, $gateway);
+		
+		if($response) {
+			$response = $this->response->TransactionResponse('00');
+		} else {			
+
+			$response = $this->response->TransactionResponse('01');
+		}
+		
+		return $response;
+		
+		
+	}
+	
+	function GetClients($client_id, $params) 
+	{
+		$this->load->model('client_model');
+		
+		if (!isset($params['limit']) or $params['limit'] > $this->config->item('query_result_default_limit')) {
+			$params['limit'] = $this->config->item('query_result_default_limit');
+		}
+		
+		$data = array();
+		if ($clients = $this->client_model->GetClients($client_id, $params)) {
+			unset($params['limit']);
+			$data['results'] = count($clients);
+			$data['total_results'] = count($this->client_model->GetClients($client_id, $params));
+			
+			while (list(,$client) = each($clients)) {
+				$data['clients']['client'][] = $client;
+			}
+		}
+		else {
+			$data['results'] = 0;
+			$data['total_results'] = 0;
+		}
+		
+		return $data;
+		
+	}
+	
+	function GetClient($client_id, $params) 
+	{
+		$this->load->model('client_model');
+		
+		if (!isset($params['limit']) or $params['limit'] > $this->config->item('query_result_default_limit')) {
+			$params['limit'] = $this->config->item('query_result_default_limit');
+		}
+		
+		$data = array();
+		if ($clients = $this->client_model->GetClient($client_id, $params)) {
+			unset($params['limit']);
+			$data['results'] = count($clients);
+			$data['total_results'] = count($this->client_model->GetClient($client_id, $params));
+			foreach($clients as $key => $value) {
+				$data['client'][$key] = $value;
+			}
+			
+		}
+		else {
+			$data['results'] = 0;
+			$data['total_results'] = 0;
+		}
+		
+		return $data;
+		
 	}
 }
 

@@ -322,6 +322,32 @@ class Subscription_model extends Model
 			$this->db->limit($params['limit'], $offset);
 		}
 		
+		if(isset($params['sort_dir']) and ($params['sort_dir'] == 'asc' or $params['sort_dir'] == 'desc' )) {
+			$sort_dir = $params['sort_dir'];
+		}
+		
+		if(isset($params['sort'])) {
+			switch($params['sort'])
+			{
+				case 'date':
+					$sort = 'timestamp';
+					break;
+				case 'customer_first_name':
+					$sort = 'first_name';
+					break;
+				case 'customer_last_name':
+					$sort = 'last_name';
+					break;	
+				case 'amount':
+					$sort = 'amount';
+					break;
+				default:
+					$sort = 'last_name';
+					break;	
+			}
+			$this->db->order_by($sort, $sort_dir);	
+		}
+		
 		$this->db->join('customers', 'customers.customer_id = subscriptions.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$this->db->join('plans', 'plans.plan_id = subscriptions.plan_id', 'left');
@@ -525,13 +551,15 @@ class Subscription_model extends Model
 		$this->load->library('payment/'.$gateway_name);
 		$cancelled = $this->$gateway_name->CancelRecurring($client_id, $subscription, $gateway);
 		
+		$this->MakeInactive($recurring_id);
+		
 		if($cancelled) {
-			$this->MakeInactive($recurring_id);
+			return TRUE;
 		} else {
 			return FALSE;
 		}
 		
-		return TRUE;
+		
 	}
 	
 	
@@ -558,6 +586,30 @@ class Subscription_model extends Model
 		$this->db->join('client_gateways', 'subscriptions.gateway_id = client_gateways.client_gateway_id', 'inner');
 		$this->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
 		$this->db->where('next_charge', $date);
+		$this->db->where('active', 1);
+		$query = $this->db->get('subscriptions');
+		
+		if($query->num_rows > 0) {
+			return $query->result_array();
+		} else {
+			return FALSE;
+		}
+		
+	}
+	
+	function GetAllSubscriptionsByDate($date_type = FALSE, $date = FALSE)
+	{
+		if(!$date) {
+			$date = date('Y-m-d');
+		}
+		
+		if(!$date_type) {
+			$date_type = 'next_charge';
+		}
+		
+		$this->db->join('client_gateways', 'subscriptions.gateway_id = client_gateways.client_gateway_id', 'inner');
+		$this->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
+		$this->db->where($date_type, $date);
 		$this->db->where('active', 1);
 		$query = $this->db->get('subscriptions');
 		
@@ -652,6 +704,35 @@ class Subscription_model extends Model
 		$query = $this->db->get('subscriptions');
 		if($query->num_rows() > 0) {
 			return $query->result_array();
+		} else {
+			return FALSE;
+		}
+	}
+	
+/**
+	* Get Details of the last order for a customer.
+	*
+	* Returns array of order details for a specific order_id.
+	*
+	* @param int $client_id The client ID.
+	* @param int $customer_id The customer ID.
+	* 
+	* @return array|bool Array with charge details or FALSE upon failure
+	*/
+	
+	function CancelRecurringByGateway($client_id, $gateway_id)
+	{	
+		$this->db->select('subscription_id');
+		$this->db->where('client_id', $client_id);
+		$this->db->where('gateway_id', $gateway_id);
+		$query = $this->db->get('subscriptions');
+		if($query->num_rows() > 0) {
+			foreach($query->result() as $row) {
+				$this->CancelRecurring($client_id, $row->subscription_id);
+			}
+			
+			return TRUE;
+			
 		} else {
 			return FALSE;
 		}

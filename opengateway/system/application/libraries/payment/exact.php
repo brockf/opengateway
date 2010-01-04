@@ -6,7 +6,7 @@ class exact
 	{
 		$settings['name'] = 'E-xact';
 		$settings['class_name'] = 'exact';
-		$settings['description'] = 'PE-xact';
+		$settings['description'] = 'E-xact';
 		$settings['is_preferred'] = 1;
 		$settings['setup_fee'] = 0;
 		$settings['monthly_fee'] = 0;
@@ -14,9 +14,47 @@ class exact
 		$settings['purchase_link'] = '';
 		$settings['allows_updates'] = 1;
 		$settings['allows_refunds'] = 1;
-		$settings['required_fields'] = array('enabled', 'mode', 'user', 'pwd', 'signature', 'accept_visa', 'accept_mc', 'accept_discover', 'accept_dc', 'accept_amex', 'enable_arb');
+		$settings['required_fields'] = array('enabled', 'mode', 'terminal_id', 'password', 'accept_visa', 'accept_mc', 'accept_discover', 'accept_dc', 'accept_amex', 'enable_arb');
 		
 		return $settings;
+	}
+	
+	function TestConnection($client_id, $gateway) 
+	{
+		// Get the proper URL
+		switch($gateway['mode'])
+		{
+			case 'live':
+				$post_url = $gateway['url_live'];
+			break;
+			case 'test':
+				$post_url = $gateway['url_test'];
+			break;
+			case 'dev':
+				$post_url = $gateway['url_dev'];
+			break;
+		}
+		
+		$trxnProperties = array(
+					'ExactID'			=> $gateway['terminal_id'],	
+			  		'Password'			=> $gateway['password'],
+					'Transaction_Type'  => '00',
+				 	'Card_Number' 		=> '4222222222222222',
+					'Expiry_Date'		=> '1099',
+					'CVD_Presence_Ind' 	=> '9',
+					'DollarAmount' 		=> 1
+		  		);
+
+		$trxnProperties = $this->CompleteArray($trxnProperties);   		
+		  		
+		$trxnResult = $this->Process($trxnProperties, $post_url, 0);
+		
+		if($trxnResult->EXact_Resp_Code == '00'){
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+		
 	}
 	
 	function Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card)

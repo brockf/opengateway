@@ -124,9 +124,9 @@ class Gateway_model extends Model
 	function Charge($client_id, $params)
 	{
 		// Make sure it came from a secure connection
-		if($_SERVER['HTTPS'] != "on") {
-			die($this->response->Error(5008));
-		}
+		//if($_SERVER['HTTPS'] != "on") {
+			//die($this->response->Error(5008));
+		//}
 		
 		
 		if(isset($params['gateway_id'])) {
@@ -590,11 +590,11 @@ class Gateway_model extends Model
 		
 		// Mark as deleted
 		$update_data['deleted'] = 1;
-		$this->db->where('client_gateway_id', $params['gateway_id']);
+		$this->db->where('client_gateway_id', $gateway_id);
 		$this->db->update('client_gateways', $update_data);
 		
 		// Delete the client gateway params
-		$this->db->where('client_gateway_id', $params['gateway_id']);
+		$this->db->where('client_gateway_id', $gateway_id);
 		$this->db->delete('client_gateway_params');
 		
 		return TRUE;
@@ -702,6 +702,7 @@ class Gateway_model extends Model
 			}
 		}
 	}
+	
 	
 	/* Future Code - This may be used in the future.  Please code above this line.
 	

@@ -97,7 +97,8 @@ class Customer_model extends Model
 							'country'		=> $country_id,
 							'phone'			=> $phone,
 							'email'			=> $email,
-							'active'		=> 1
+							'active'		=> 1,
+							'date_created'  => date('Y-m-d, H:i:s'),
 							);
 		$this->db->insert('customers', $insert_data);
 		
@@ -370,6 +371,32 @@ class Customer_model extends Model
 		if(isset($params['limit'])) {
 			$this->db->limit($params['limit'], $offset);
 		}
+		
+		if(isset($params['sort_dir']) and ($params['sort_dir'] == 'asc' or $params['sort_dir'] == 'desc' )) {
+			$sort_dir = $params['sort_dir'];
+		}
+		
+		if(isset($params['sort'])) {
+			switch($params['sort'])
+			{
+				case 'date':
+					$sort = 'date_created';
+					break;
+				case 'customer_first_name':
+					$sort = 'first_name';
+					break;
+				case 'customer_last_name':
+					$sort = 'last_name';
+					break;	
+				case 'amount':
+					$sort = 'amount';
+					break;
+				default:
+					$sort = 'last_name';
+					break;		
+			}
+			$this->db->order_by($sort, $sort_dir);	
+		} 
 		
 		$this->db->join('subscriptions', 'customers.customer_id = subscriptions.customer_id', 'inner');
 	

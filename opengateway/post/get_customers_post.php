@@ -1,6 +1,6 @@
 <?php
 
-$url = "http://platform.opengateway.net/api/";
+$url = "http://localhost/api/";
 
 $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 <request>
@@ -10,6 +10,8 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 	</authentication>
 	<type>GetCustomers</type>
 	<limit>500</limit>
+	<sort>customer_last_name</sort>
+	<sort_dir>asc</sort_dir>
 </request>';
 
 $postfields = $post_string; 
