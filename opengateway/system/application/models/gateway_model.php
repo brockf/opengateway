@@ -477,7 +477,7 @@ class Gateway_model extends Model
 			$this->subscription_model->AddFailure($params['subscription_id'], $failures);
 			
 			if($failures >= $num_allowed) {	
-				$this->subscription_model->MakeInactive($params['subscription_id']);
+				$this->subscription_model->CancelRecurring($client_id, $params['subscription_id']);
 			}
 
 		}
@@ -581,11 +581,20 @@ class Gateway_model extends Model
 	
 	function DeleteGateway($client_id, $gateway_id)
 	{
+		$CI =& get_instance();
+		
 		// Make sure the gateway is actually theirs
 		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
 		
 		if(!$gateway) {
 			die($this->response->Error(3000));
+		}
+		
+		// cancel all subscriptions related to it
+		$CI->load->model('subscription_model');
+		$subscriptions = $CI->subscription_model->GetAllSubscriptionsByGatewayID($gateway_id);
+		foreach ($subscriptions as $subscription) {
+			$CI->subscription_model->CancelRecurring($subscription['client_id'],$subscription['subscription_id']);
 		}
 		
 		// Mark as deleted

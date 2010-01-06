@@ -472,7 +472,7 @@ class Client_model extends Model
 				$data[$i]['state'] = $row->state;
 				$data[$i]['postal_code'] = $row->postal_code;
 				$data[$i]['country'] = $row->name;
-				$data[$i]['suspended'] = ($row->suspended == '1') ? 'yes' : 'no';
+				$data[$i]['suspended'] = ($row->suspended == '1') ? '1' : '0';
 				$i++;	
 			}
 		} else {
@@ -516,7 +516,7 @@ class Client_model extends Model
 			$data['state'] = $row->state;
 			$data['postal_code'] = $row->postal_code;
 			$data['country'] = $row->name;
-			$data['suspended'] = ($row->suspended == '1') ? 'yes' : 'no';
+			$data['suspended'] = ($row->suspended == '1') ? '1' : '0';
 			
 		} else {
 			return FALSE;

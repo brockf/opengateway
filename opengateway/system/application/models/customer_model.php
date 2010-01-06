@@ -375,28 +375,26 @@ class Customer_model extends Model
 		if(isset($params['sort_dir']) and ($params['sort_dir'] == 'asc' or $params['sort_dir'] == 'desc' )) {
 			$sort_dir = $params['sort_dir'];
 		}
+		else {
+			$sort_dir = 'asc';
+		}
 		
-		if(isset($params['sort'])) {
-			switch($params['sort'])
-			{
-				case 'date':
-					$sort = 'date_created';
-					break;
-				case 'customer_first_name':
-					$sort = 'first_name';
-					break;
-				case 'customer_last_name':
-					$sort = 'last_name';
-					break;	
-				case 'amount':
-					$sort = 'amount';
-					break;
-				default:
-					$sort = 'last_name';
-					break;		
-			}
-			$this->db->order_by($sort, $sort_dir);	
-		} 
+		switch($params['sort'])
+		{
+			case 'date':
+				$sort = 'date_created';
+				break;
+			case 'first_name':
+				$sort = 'first_name';
+				break;
+			case 'last_name':
+				$sort = 'last_name';
+				break;
+			default:
+				$sort = 'last_name';
+				break;		
+		}
+		$this->db->order_by($sort, $sort_dir);	
 		
 		$this->db->join('subscriptions', 'customers.customer_id = subscriptions.customer_id', 'inner');
 	
@@ -417,7 +415,6 @@ class Customer_model extends Model
 		$this->db->select('countries.iso2');
 		$this->db->select('subscriptions.plan_id');
 		
-		$this->db->order_by('customers.customer_id', 'DESC');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$query = $this->db->get('customers');
 		$data = array();
@@ -438,6 +435,7 @@ class Customer_model extends Model
 				$data[$i]['country'] = $row->iso2;
 				$data[$i]['email'] = $row->email;
 				$data[$i]['phone'] = $row->phone;
+				$data[$i]['date_created'] = $row->date_created;
 				$data[$i]['status'] = ($row->active == 1) ? 'active' : 'deleted';
 				
 				if (isset($row->plan_id) and !empty($row->plan_id)) {	
@@ -500,6 +498,7 @@ class Customer_model extends Model
 			$data['country'] = $row->iso2;
 			$data['email'] = $row->email;
 			$data['phone'] = $row->phone;
+			$data['date_created'] = $row->date_created;
 			$data['status'] = ($row->active == 1) ? 'active' : 'deleted';
 			
 			$plans = $this->GetPlansByCustomer($client_id, $row->customer_id);

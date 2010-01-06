@@ -215,7 +215,7 @@ class Subscription_model extends Model
 		$row = $query->row();
 		
 		$data['id'] = $row->subscription_id;
-		$data['create_date'] = $row->timestamp;
+		$data['date_created'] = $row->timestamp;
 		$data['amount'] = $row->amount;
 		$data['interval'] = $row->interval;
 		$data['start_date'] = $row->start_date;
@@ -325,28 +325,29 @@ class Subscription_model extends Model
 		if(isset($params['sort_dir']) and ($params['sort_dir'] == 'asc' or $params['sort_dir'] == 'desc' )) {
 			$sort_dir = $params['sort_dir'];
 		}
-		
-		if(isset($params['sort'])) {
-			switch($params['sort'])
-			{
-				case 'date':
-					$sort = 'timestamp';
-					break;
-				case 'customer_first_name':
-					$sort = 'first_name';
-					break;
-				case 'customer_last_name':
-					$sort = 'last_name';
-					break;	
-				case 'amount':
-					$sort = 'amount';
-					break;
-				default:
-					$sort = 'last_name';
-					break;	
-			}
-			$this->db->order_by($sort, $sort_dir);	
+		else {
+			$sort_dir = 'desc';
 		}
+		
+		switch($params['sort'])
+		{
+			case 'date':
+				$sort = 'timestamp';
+				break;
+			case 'customer_first_name':
+				$sort = 'first_name';
+				break;
+			case 'customer_last_name':
+				$sort = 'last_name';
+				break;	
+			case 'amount':
+				$sort = 'amount';
+				break;
+			default:
+				$sort = 'timestamp';
+				break;	
+		}
+		$this->db->order_by($sort, $sort_dir);	
 		
 		$this->db->join('customers', 'customers.customer_id = subscriptions.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
@@ -366,7 +367,7 @@ class Subscription_model extends Model
 			$i=0;
 			foreach($query->result() as $row) {
 				$data[$i]['id'] = $row->subscription_id;
-				$data[$i]['create_date'] = $row->timestamp;
+				$data[$i]['date_created'] = $row->timestamp;
 				$data[$i]['amount'] = $row->amount;
 				$data[$i]['interval'] = $row->interval;
 				$data[$i]['start_date'] = $row->start_date;
@@ -575,6 +576,22 @@ class Subscription_model extends Model
 		} else {
 			return FALSE;
 		}
+	}
+	
+	function GetAllSubscriptionsByGatewayID($gateway_id)
+	{
+		$this->db->join('client_gateways', 'subscriptions.gateway_id = client_gateways.client_gateway_id', 'inner');
+		$this->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
+		$this->db->where('subscriptions.gateway_id', $gateway_id);
+		$this->db->where('active', 1);
+		$query = $this->db->get('subscriptions');
+		
+		if($query->num_rows > 0) {
+			return $query->result_array();
+		} else {
+			return FALSE;
+		}
+		
 	}
 	
 	function GetAllSubscriptionsByChargeDate($date = FALSE)

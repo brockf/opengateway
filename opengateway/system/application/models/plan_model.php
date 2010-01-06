@@ -299,28 +299,23 @@ class Plan_model extends Model
 		if(isset($params['sort_dir']) and ($params['sort_dir'] == 'asc' or $params['sort_dir'] == 'desc' )) {
 			$sort_dir = $params['sort_dir'];
 		}
-		
-		if(isset($params['sort'])) {
-			switch($params['sort'])
-			{
-				case 'date':
-					$sort = 'subscriptions.timestamp';
-					break;
-				case 'customer_first_name':
-					$sort = 'first_name';
-					break;
-				case 'customer_last_name':
-					$sort = 'last_name';
-					break;	
-				case 'amount':
-					$sort = 'amount';
-					break;
-				default:
-					$sort = 'last_name';
-					break;	
-			}
-			$this->db->order_by($sort, $sort_dir);	
+		else {
+			$sort_dir = 'desc';
 		}
+		
+		switch($params['sort'])
+		{
+			case 'id':
+				$sort = 'plans.id';
+				break;
+			case 'amount':
+				$sort = 'amount';
+				break;
+			default:
+				$sort = 'id';
+				break;	
+		}
+		$this->db->order_by($sort, $sort_dir);	
 		
 		$this->db->select('plans.*');
 		$this->db->select('plan_types.*');

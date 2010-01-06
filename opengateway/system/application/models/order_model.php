@@ -163,32 +163,32 @@ class Order_model extends Model
 		if(isset($params['sort_dir']) and ($params['sort_dir'] == 'asc' or $params['sort_dir'] == 'desc' )) {
 			$sort_dir = $params['sort_dir'];
 		}
-		
-		if(isset($params['sort'])) {
-			switch($params['sort'])
-			{
-				case 'date':
-					$sort = 'timestamp';
-					break;
-				case 'customer_first_name':
-					$sort = 'first_name';
-					break;
-				case 'customer_last_name':
-					$sort = 'last_name';
-					break;	
-				case 'amount':
-					$sort = 'amount';
-					break;
-				default:
-					$sort = 'last_name';
-					break;	
-			}
-			$this->db->order_by($sort, $sort_dir);	
+		else {
+			$sort_dir = 'DESC';
 		}
+		
+		switch($params['sort'])
+		{
+			case 'date':
+				$sort = 'timestamp';
+				break;
+			case 'customer_first_name':
+				$sort = 'first_name';
+				break;
+			case 'customer_last_name':
+				$sort = 'last_name';
+				break;	
+			case 'amount':
+				$sort = 'amount';
+				break;
+			default:
+				$sort = 'timestamp';
+				break;	
+		}
+		$this->db->order_by($sort, $sort_dir);	
 		
 		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
-		$this->db->order_by('orders.order_id','DESC');
 		
 		$query = $this->db->get('orders');
 		
@@ -221,6 +221,8 @@ class Order_model extends Model
 					$data[$i]['customer']['postal_code'] = $row->postal_code;
 					$data[$i]['customer']['email'] = $row->email;
 					$data[$i]['customer']['phone'] = $row->phone;
+					$data[$i]['customer']['date_created'] = $row->date_created;
+					$data[$i]['customer']['status'] = ($row->active == 1) ? 'active' : 'deleted';
 				}
 				
 				$i++;
@@ -279,6 +281,8 @@ class Order_model extends Model
 				$data['customer']['country'] = $row->iso2;
 				$data['customer']['email'] = $row->email;
 				$data['customer']['phone'] = $row->phone;
+				$data['customer']['date_created'] = $row->date_created;
+				$data['customer']['status'] = ($row->active == 1) ? 'active' : 'deleted';
 			}
 				
 		} else {
