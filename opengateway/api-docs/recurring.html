@@ -439,49 +439,11 @@
 					</tr>
 				</tbody>
 			</table>
-			<p>Example simple response:</p>
-			<pre class="response">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-&lt;response&gt;
-  &lt;charge&gt;
-    &lt;id&gt;140&lt;/id&gt;
-    &lt;gateway_id&gt;12345&lt;/gateway_id&gt;
-    &lt;amount&gt;24.95&lt;/amount&gt;
-    &lt;date&gt;2009-05-29 22:11:44&lt;/date&gt;
-    &lt;card_last_four&gt;9876&lt;/card_last_four&gt;
-    &lt;status&gt;ok&lt;/status&gt;
-  &lt;/charge&gt;
-&lt;/response&gt;</pre>
-			<p>Example response with customer information and linked to a recurring charge:</p>
-			<pre class="response">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-&lt;response&gt;
-  &lt;charge&gt;
-    &lt;id&gt;140&lt;/id&gt;
-    &lt;gateway_id&gt;12346&lt;/gateway_id&gt;
-    &lt;amount&gt;15.35&lt;/amount&gt;
-    &lt;date&gt;2009-05-14 11:25:14&lt;/date&gt;
-    &lt;card_last_four&gt;5467&lt;/card_last_four&gt;
-    &lt;recurring_id&gt;192824&lt;/recurring_id&gt;
-    &lt;status&gt;ok&lt;/status&gt;
-    &lt;customer&gt;
-	    &lt;id&gt;140&lt;/id&gt;
-	    &lt;internal_id/&gt;
-	    &lt;first_name&gt;Joe&lt;/first_name&gt;
-	    &lt;last_name&gt;Customer&lt;/last_name&gt;
-	    &lt;company/&gt;
-	    &lt;address_1&gt;12345 Ontario St.&lt;/address_1&gt;
-	    &lt;address_2/&gt;
-	    &lt;city&gt;Toronto&lt;/city&gt;
-	    &lt;state&gt;ON&lt;/state&gt;
-	    &lt;postal_code&gt;A1B2C3&lt;/postal_code&gt;
-	    &lt;country&gt;CA&lt;/country&gt;
-	    &lt;email&gt;joe@example.com&lt;/email&gt;
-	    &lt;phone/&gt;
-  	&lt;/customer&gt;
-  &lt;/charge&gt;
-&lt;/response&gt;</pre>
-			<h2>Method: <a name="getcharges">GetCharges</a></h2>
-			<p>Returns records of charges, with optional filters.  If a request is made without any filters, the latest 100 active customer records are
-			returned.</p>
+			<p>Example response:</p>
+			<pre class="response">TODO</pre>
+			<h2>Method: <a name="getrecurrings">GetRecurrings</a></h2>
+			<p>Returns records of recurring charges, with optional filters.  If a request is made without any filters, the latest created 100 active recurring charges
+			are	returned.</p>
 			<p>Optional filters:</p>
 			<ul>
 				<li><span class="request">id</span></li>
@@ -489,15 +451,18 @@
 				<li><span class="request">customer_id</span></li>
 				<li><span class="request">customer_last_name</span></li>
 				<li><span class="request">customer_internal_id</span></li>
-				<li><span class="request">recurring_only</span> - Set to "1" to only retrieve charges linked to recurring charges.</li>
-				<li><span class="request">status</span> - Values: "ok" or "failed".  If not present in the request, both "ok" and "failed" transactions are returned.</li>
+				<li><span class="request">created_before</span> - A date in the format of <a href="datatypes.html#date">date</a>.</li>
+				<li><span class="request">created_after</span> - A date in the format of <a href="datatypes.html#date">date</a>.</li>
+				<li><span class="request">amount</span> - Only pull recurring charges that charge this amount.</li>
+				<li><span class="request">active</span> - Set to "0" to retrieve inactive recurring charges.  Default: 1 (only active recurring charges.</li>
+				<li><span class="request">plan_id</span> - Only retrieve recurring charges linked to this plan.</li>
 				<li><span class="request">offset</span> - Retrieval will begin after <i>offset</i> # of records.  Useful for pagination.  Default: 0.</li>
 				<li><span class="request">limit</span> - The total number of records to retrieve, beginning at the offset.  Maximum: 100.  Default: 100.</li>
 				<li><span class="request">sort</span> - The field on which to sort retrieved records.  Default: "date".  Available values:
 					<ul>
 						<li>customer_first_name</li>
 						<li>customer_last_name</li>
-						<li>date</li>
+						<li>date (the date the recurring charge was created)</li>
 						<li>amount</li>
 					</ul>
 				</li>
@@ -505,64 +470,52 @@
 			</ul>
 			<p>Response data:</p>
 			<ul>
-				<li><span class="response">charges</span>
+				<li><span class="response">recurrings</span>
 				<ul>
-					<li>A <span class="response">charge</span> node for each returned charge
+					<li>A <span class="response">recurring</span> node for each returned recurring charge
 					<ul>
-						<li>All data available for the charge, in the format of <a name="#getcharge">GetCharge</a>.</li>
+						<li>All data available for the recurring charge, in the format of <a name="#getrecurring">GetRecurring</a>.</li>
 					</ul>
 					</li>
 				</ul></li>
 			</ul>
 			<p>Example response:</p>
-			<pre class="response">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-&lt;response&gt;
-  &lt;results&gt;2&lt;/results&gt;
-  &lt;total_results&gt;2&lt;/total_results&gt;
-  &lt;charges&gt;
-     &lt;charge&gt;
-       &lt;id&gt;140&lt;/id&gt;
-       &lt;gateway_id&gt;12345&lt;/gateway_id&gt;
-       &lt;amount&gt;24.95&lt;/amount&gt;
-       &lt;date&gt;2009-05-29 22:11:44&lt;/date&gt;
-       &lt;card_last_four&gt;9876&lt;/card_last_four&gt;
-       &lt;status&gt;ok&lt;/status&gt;
-     &lt;/charge&gt;
-     &lt;charge&gt;
-       &lt;id&gt;140&lt;/id&gt;
-       &lt;gateway_id&gt;12346&lt;/gateway_id&gt;
-       &lt;amount&gt;15.35&lt;/amount&gt;
-       &lt;date&gt;2009-05-14 11:25:14&lt;/date&gt;
-       &lt;card_last_four&gt;5467&lt;/card_last_four&gt;
-       &lt;recurring_id&gt;192824&lt;/recurring_id&gt;
-       &lt;status&gt;ok&lt;/status&gt;
-       &lt;customer&gt;
-	      &lt;id&gt;140&lt;/id&gt;
-	      &lt;internal_id/&gt;
-	      &lt;first_name&gt;Joe&lt;/first_name&gt;
-	      &lt;last_name&gt;Customer&lt;/last_name&gt;
-	      &lt;company/&gt;
-	      &lt;address_1&gt;12345 Ontario St.&lt;/address_1&gt;
-	      &lt;address_2/&gt;
-	      &lt;city&gt;Toronto&lt;/city&gt;
-	      &lt;state&gt;ON&lt;/state&gt;
-	      &lt;postal_code&gt;A1B2C3&lt;/postal_code&gt;
-	      &lt;country&gt;CA&lt;/country&gt;
-	      &lt;email&gt;joe@example.com&lt;/email&gt;
-	      &lt;phone/&gt;
-       &lt;/customer&gt;
-     &lt;/charge&gt;
-  &lt;/charges&gt;
-&lt;/response&gt;</pre>
-		    <h2>Method: <a name="getlatestcharge">GetLatestCharge</a></h2>
-			<p>Retrieves available information about a previous charge <i>for a customer</i>.</p>
+			<pre class="response">TODO</pre>
+		    <h2>Method: <a name="changerecurringplan">ChangeRecurringPlan</a></h2>
+			<p>Change the plan of a recurring charge.  This will update the interval, amount, notification_url, and plan_id of the recurring charge.  It will
+			not affect the start_date, end_date, date_created, or total_occurrences.</p>
 			<p>Required data:</p>
 			<ul>
-				<li><span class="request">customer_id</span> - The ID of the customer.</li>
+				<li><span class="request">recurring_id</span> - The ID of the recurring charge.</li>
+				<li><span class="request">plan_id</span> - The ID of the new plan to link the recurring charge too.</li>
 			</ul>
 			<p>Response data:</p>
 			<ul>
-				<li>All charge data (in the format of <a href="#getcharge">GetCharge</a>).</li>
+				<li><span class="response">recurring_id</span> - The ID of the updated recurring charge.</li>
+			</ul>
+			<h2>Method: <a name="updaterecurring">UpdateRecurring</a></h2>
+			<p>Updates a recurring charge.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">recurring_id</span></li>
+			</ul>
+			<p>Optional data that can be updated:</p>
+			<ul>
+				<li><span class="request">recurring_id</span></li>
+				<li><span class="request">customer_id</span></li>
+				<li><span class="request">notification_url</span></li>
+				<li><span class="request">amount</span></li>
+				<li><span class="request">recur</span>
+					<ul>
+						<li><span class="request">interval</span></li>
+					</ul>
+				</li>
+			</ul>
+			<h2>Method: <a name="cancelrecurring">CancelRecurring</a></h2>
+			<p>Cancels an active recurring charge.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">recurring_id</span></li>
 			</ul>
 		</div>
 	</div>
