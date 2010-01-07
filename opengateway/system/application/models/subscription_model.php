@@ -215,6 +215,7 @@ class Subscription_model extends Model
 		$row = $query->row();
 		
 		$data['id'] = $row->subscription_id;
+		$data['gateway_id'] = $row->gateway_id;
 		$data['date_created'] = $row->timestamp;
 		$data['amount'] = $row->amount;
 		$data['interval'] = $row->interval;
@@ -277,6 +278,10 @@ class Subscription_model extends Model
 		
 		// Check which search paramaters are set
 		
+		if(isset($params['id'])) {
+			$this->db->where('recurring_id', $params['id']);
+		}
+		
 		if(isset($params['gateway_id'])) {
 			$this->db->where('gateway_id', $params['gateway_id']);
 		}
@@ -295,6 +300,10 @@ class Subscription_model extends Model
 			$this->db->where('subscriptions.customer_id', $params['customer_id']);
 		}
 		
+		if(isset($params['customer_last_name'])) {
+			$this->db->where('customers.last_name', $params['customer_last_name']);
+		}
+		
 		if(isset($params['customer_internal_id'])) {
 			$this->db->where('customers.internal_id', $params['customer_internal_id']);
 		}
@@ -303,8 +312,11 @@ class Subscription_model extends Model
 			$this->db->where('amount', $params['amount']);
 		}
 		
-		if(isset($params['active'])) {
+		if(isset($params['active']) and $params['active'] == '1' or $params['active'] == '0') {
 			$this->db->where('subscriptions.active', $params['active']);
+		}
+		else {
+			$this->db->where('subscriptions.active','1');
 		}
 		
 		if(isset($params['plan_id'])) {
@@ -369,6 +381,7 @@ class Subscription_model extends Model
 			$i=0;
 			foreach($query->result() as $row) {
 				$data[$i]['id'] = $row->subscription_id;
+				$data[$i]['gateway_id'] = $row->gateway_id;
 				$data[$i]['date_created'] = $row->timestamp;
 				$data[$i]['amount'] = $row->amount;
 				$data[$i]['interval'] = $row->interval;
