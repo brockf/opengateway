@@ -379,6 +379,8 @@ class Customer_model extends Model
 			$sort_dir = 'asc';
 		}
 		
+		$params['sort'] = isset($params['sort']) ? $params['sort'] : '';
+		
 		switch($params['sort'])
 		{
 			case 'date':

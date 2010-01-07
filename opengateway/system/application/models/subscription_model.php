@@ -329,6 +329,8 @@ class Subscription_model extends Model
 			$sort_dir = 'desc';
 		}
 		
+		$params['sort'] = isset($params['sort']) ? $params['sort'] : '';
+		
 		switch($params['sort'])
 		{
 			case 'date':

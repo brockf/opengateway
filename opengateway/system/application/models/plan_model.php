@@ -303,16 +303,18 @@ class Plan_model extends Model
 			$sort_dir = 'desc';
 		}
 		
+		$params['sort'] = isset($params['sort']) ? $params['sort'] : '';
+		
 		switch($params['sort'])
 		{
 			case 'id':
-				$sort = 'plans.id';
+				$sort = 'plans.plan_id';
 				break;
 			case 'amount':
 				$sort = 'amount';
 				break;
 			default:
-				$sort = 'id';
+				$sort = 'plans.plan_id';
 				break;	
 		}
 		$this->db->order_by($sort, $sort_dir);	

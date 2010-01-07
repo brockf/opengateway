@@ -167,6 +167,8 @@ class Order_model extends Model
 			$sort_dir = 'DESC';
 		}
 		
+		$params['sort'] = isset($params['sort']) ? $params['sort'] : '';
+		
 		switch($params['sort'])
 		{
 			case 'date':
