@@ -255,7 +255,7 @@ class Paypal
 		$CI->subscription_model->SaveApiCustomerReference($subscription_id, $profile_id);
 		
 		if($response['success'] == TRUE){
-				$response_array = array('subscription_id' => $subscription_id);
+				$response_array = array('recurring_id' => $subscription_id);
 				$response = $CI->response->TransactionResponse(100, $response_array);
 			} else {
 				// Make the subscription inactive

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>OpenGateway Documentation</title>
+	<title>Customers | OpenGateway Documentation</title>
 	<link href="css/style.css" rel="stylesheet" type="text/css" media="screen" />
 </head>
 <body>
@@ -129,6 +129,12 @@
 						<td><a href="datatypes.html#string">string</a></td>
 						<td></td>
 						<td>1-555-555-0000</td>
+					</tr>
+					<tr>
+						<td>date_created</td>
+						<td><a href="datatypes.html#date">date</a> (<a href="datatypes.html#automatic">automatic</a>)</td>
+						<td></td>
+						<td>The date the record was created, e.g. 2009-05-29 04:44:04</td>
 					</tr>
 				</tbody>
 			</table>
@@ -262,6 +268,7 @@
     &lt;country&gt;CA&lt;/country&gt;
     &lt;email&gt;joe@example.com&lt;/email&gt;
     &lt;phone/&gt;
+    &lt;date_created&gt;2009-05-29 04:44:44&lt;/date_created&gt;
     &lt;plans&gt;
       &lt;plan&gt;
         &lt;id&gt;123456789&lt;/id&gt;
@@ -276,14 +283,24 @@
   &lt;/customer&gt;
 &lt;/response&gt;</pre>
 			<h2>Method: <a name="getcustomers">GetCustomers</a></h2>
-			<p>Searches all customers.  If a request is made without any filters, the latest 100 active customer records are
-			returned.</p>
+			<p>Searches all customers.  If a request is made without any filters, the first 100 customer records, ordered by "last_name",
+			are returned.</p>
 			<p>Optional filters:</p>
 			<ul>
 				<li>Any of the variables listed under Object Data, except <span class="request">id</span>.</li>
+				<li><span class="request">plan_id</span> - Only retrieve customers with an active recurring plan of this ID.</li>
+				<li><span class="request">active_recurring</span> - Only retrieve customers with an active recurring charge of any kind.</li>
 				<li><span class="request">deleted</span> - Set to "1" to retrieve only deleted customers.  Default: 0.</li>
 				<li><span class="request">offset</span> - Retrieval will begin after <i>offset</i> # of records.  Useful for pagination.  Default: 0.</li>
 				<li><span class="request">limit</span> - The total number of records to retrieve, beginning at the offset.  Maximum: 100.  Default: 100.</li>
+				<li><span class="request">sort</span> - The field on which to sort retrieved records.  Default: "last_name".  Available values:
+					<ul>
+						<li>first_name</li>
+						<li>last_name</li>
+						<li>date</li>
+					</ul>
+				</li>
+				<li><span class="request">sort_dir</span> - The direction in which to sort retrieved records.  Default: "asc".  Can also be "desc".</li>
 			</ul>
 			<p>Response data:</p>
 			<ul>
@@ -316,6 +333,7 @@
       &lt;country&gt;CA&lt;/country&gt;
       &lt;email/&gt;
       &lt;phone/&gt;
+      &lt;date_created&gt;2009-05-19 11:11:08&lt;/date_created&gt;
     &lt;/customer&gt;
     &lt;customer&gt;
       &lt;id&gt;4&lt;/id&gt;
@@ -331,6 +349,7 @@
       &lt;country&gt;CA&lt;/country&gt;
       &lt;email/&gt;
       &lt;phone/&gt;
+      &lt;date_created&gt;2009-04-17 04:44:44&lt;/date_created&gt;
     &lt;/customer&gt;
     &lt;customer&gt;
       &lt;id&gt;3&lt;/id&gt;
@@ -346,6 +365,7 @@
       &lt;country/&gt;
       &lt;email/&gt;
       &lt;phone/&gt;
+      &lt;date_created&gt;2009-03-06 14:23:44&lt;/date_created&gt;
       &lt;plans&gt;
         &lt;plan&gt;
           &lt;id&gt;50593&lt;/id&gt;

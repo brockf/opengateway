@@ -192,7 +192,7 @@ class exact
 		
 			if($response['success'] == TRUE){
 				$CI->order_model->SetStatus($order_id, 1);
-				$response_array = array('charge_id' => $order_id, 'subscription_id' => $subscription_id);
+				$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
 				$response = $CI->response->TransactionResponse(100, $response_array);
 			} else {
 				// Make the subscription inactive
@@ -203,7 +203,7 @@ class exact
 				$response = $CI->response->TransactionResponse(2, $response_array);
 			}
 		} else {
-			$response = $CI->response->TransactionResponse(100, array('subscription_id' => $subscription_id));
+			$response = $CI->response->TransactionResponse(100, array('recurring_id' => $subscription_id));
 		}
 		
 		return $response;

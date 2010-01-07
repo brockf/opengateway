@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>OpenGateway Documentation</title>
+	<title>Datatypes | OpenGateway Documentation</title>
 	<link href="css/style.css" rel="stylesheet" type="text/css" media="screen" />
 </head>
 <body>
@@ -52,8 +52,26 @@
 				an error will be returned.
 			</p>
 			<p>
+				<a name="date">date</a><br />
+				Dates are returned in a the format of "YYYY-MM-DD HH:MM:SS" (e.g. 2009-05-29 04:44:04).  Dates are adjusted to match the timezone of your
+				client account.  The hours are returned in 24-hour format, from "00" to "23".
+			</p>
+			<p>
+				<a name="int">int</a><br />
+				A string of numbers (e.g. "1", "123456", "987").  If a non-integer is passed, an error will be returned.
+			</p>
+			<p>
 				<a name="email">email</a><br />
 				Emails should be valid email addresses.  An error will be returned in the email is improperly formatted.
+			</p>
+			<p>
+				<a name="money">money</a><br />
+				A string in the format of "dollars.cents" (e.g. 10.04, 99.04, 1093.67).  Does not contain commas or a currency symbol.
+			</p>
+			<p>
+				<a name="shortdate">shortdate</a><br />
+				Short dates are returned in a the format of "YYYY-MM-DD" (e.g. 2009-05-29).  Dates are adjusted to match the timezone of your
+				client account.".
 			</p>
 			<p>
 				<a name="string">string</a><br />

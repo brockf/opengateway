@@ -188,3 +188,7 @@ table.data td.yes {
 	text-align: center;
 	color: #222;
 }
+
+table.data td.subnode {
+	border-left: 12px solid #ccc;
+}
