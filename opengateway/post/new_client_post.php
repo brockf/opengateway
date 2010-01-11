@@ -1,6 +1,6 @@
 <?php
 
-$url = "http://localhost/gateway/";
+$url = "http://localhost/api/";
 
 $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 <request>
@@ -17,14 +17,15 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 	<city>Anytown</city>
 	<state>CO</state>
 	<postal_code>80220</postal_code>
-	<country>USddd</country>
+	<country>US</country>
+	<timezone>-7</timezone>
 	<phone>3033319812</phone>
 	<email>daveryan187@yahoo.com</email>
-	<username>daveryan18asd7123</username>
+	<username>dasdfsdsdfgdfsghvzxczveryan18asd7123</username>
 	<password>MyPassword187</password>
 </request>';
 
-$postfields = 'request='.$post_string; 
+$postfields = $post_string; 
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); 

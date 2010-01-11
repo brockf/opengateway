@@ -194,13 +194,19 @@ class Order_model extends Model
 		
 		$query = $this->db->get('orders');
 		
+		// We need to get the gmt_offset to show the time in the local timezone
+		$CI =& get_instance();
+		$CI->load->model('client_model');
+		$gmt_offset = $CI->client_model->GetTimezone($client_id);
+		
 		$data = array();
 		if($query->num_rows() > 0) {
 			$i=0;
 			foreach($query->result() as $row) {
 				$data[$i]['id'] = $row->order_id;
 				$data[$i]['gateway_id'] = $row->gateway_id;
-				$data[$i]['date'] = $row->timestamp;
+				$timestamp = strtotime($row->timestamp);
+				$data[$i]['date'] = date('Y-m-d H:i:s', mktime(date('H', $timestamp + $gmt_offset), date('i', $timestamp), date('s', $timestamp), date('m', $timestamp), date('d', $timestamp), date('Y', $timestamp)));
 				$data[$i]['amount'] = $row->amount;
 				$data[$i]['card_last_four'] = $row->card_last_four;
 				$data[$i]['status'] = ($row->status == '1') ? 'ok' : 'failed';

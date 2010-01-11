@@ -1,6 +1,6 @@
 <?php
 
-$url = "http://platform.opengateway.net/api/";
+$url = "http://localhost/api/";
 
 $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 <request>
@@ -9,7 +9,7 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>
 	</authentication>
 	<type>Recur</type>
-	<gateway_id>28</gateway_id>
+	<gateway_id>88</gateway_id>
 	<amount>24.99</amount>
 	<customer>
 		<first_name>Moses</first_name>
@@ -30,7 +30,7 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 	</credit_card>
 	<recur>
 		<plan_id>11</plan_id>
-		<start_date>2009-12-20</start_date>
+		<start_date>2010-01-11</start_date>
 	</recur>
 </request>';
 

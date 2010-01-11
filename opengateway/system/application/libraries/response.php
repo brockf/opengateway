@@ -110,6 +110,7 @@ class Response
 						'1008' => 'Invalid email address',
 						'1010' => 'A secure SSL connection is required.',
 						'1009' => 'Unspecified error in request.',
+						'1011' => 'Invalid timezone.',
 						'2000' => 'Client is not authorized to create new clients.',
 						'2001' => 'Invalid External API.',
 						'2002' => 'Username is already in use.',

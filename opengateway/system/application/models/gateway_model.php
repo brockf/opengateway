@@ -277,9 +277,9 @@ class Gateway_model extends Model
 	function Recur($client_id, $params)
 	{		
 		// Make sure it came from a secure connection
-		if($_SERVER['HTTPS'] != "on") {
-			die($this->response->Error(5008));
-		}
+//		if($_SERVER['HTTPS'] != "on") {
+//			die($this->response->Error(5008));
+//		}
 		
 		$CI =& get_instance();
 		
@@ -350,8 +350,8 @@ class Gateway_model extends Model
 			$plan_id = $plan_details->plan_id;
 		
 			// if there are specified occurrences, we should create an end-date that works with it
-			if ($plan_details->occurrences != 0) {
-				$recur['end_date'] = date('Y-m-d',time() + ($plan_details->occurrences*86400));
+			if ($plan_details->interval != 0) {
+				$recur['end_date'] = date('Y-m-d',time() + ($plan_details->interval*86400));
 			}	
 		} else {
 			

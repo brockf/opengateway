@@ -43,7 +43,8 @@ class Client_model extends Model
 		// Make sure this client is authorized to create a child client
 		if($client_id) {
 			$client = $this->GetClientDetails($client_id);
-			if($client->client_type_id != 1 or $client->client_type_id != 3) {
+			$array = array(1,3);
+			if(!in_array($client->client_type_id, $array)) {
 				die($this->response->Error(2000));
 			}
 		}
@@ -65,6 +66,17 @@ class Client_model extends Model
 			die($this->response->Error(1008));
 		}
 		
+		// If a timezone was provided, validate it
+		if(isset($params['timezone'])) {
+			if($params['timezone'] < -23 OR $params['timezone'] > 23) {
+				die($this->response->Error(1011));
+			}
+			
+			$timezone = $params['timezone'];
+		} else {
+			$timezone = 0;
+		}
+		
 		// Make sure the username is not already in use
 		$exists = $this->UsernameExists($params['username']);
 		
@@ -83,7 +95,7 @@ class Client_model extends Model
 			}
 		}
 		else {
-			$params['client_type'] == 2;
+			$params['client_type'] = 2;
 		}
 		
 		// Make sure the password meets the requirements
@@ -110,6 +122,7 @@ class Client_model extends Model
 							'state'		 		=> $params['state'],
 							'postal_code'		=> $params['postal_code'],
 							'country'	 		=> $country_id,
+							'gmt_offset'		=> $timezone,
 							'phone'				=> $params['phone'],
 							'email'		 		=> $params['email'],
 							'parent_client_id' 	=> $client_id,
@@ -210,6 +223,17 @@ class Client_model extends Model
 				die($this->response->Error(1007));
 			}
 			$update_data['country'] = $country_id;
+		}
+		
+		// If a timezone was provided, validate it
+		if(isset($params['timezone'])) {
+			if($params['timezone'] < -23 OR $params['timezone'] > 23) {
+				die($this->response->Error(1011));
+			}
+			
+			$update_data['gmt_offset'] = $params['timezone'];
+		} else {
+			$update_data['gmt_offset'] = 0;
 		}
 		
 		if(isset($params['phone']) && $params['phone'] != '') {
@@ -445,6 +469,35 @@ class Client_model extends Model
 		$client = $this->GetClientDetails($client_id);
 		$client_type = $client->client_type_id;
 		
+		if(isset($params['sort'])) {
+			
+			switch($params['sort']) {
+				case 'client_last_name':
+					$sort = 'last_name';
+					break;
+				case 'client_first_name':
+					$sort = 'first_name';
+					break;
+			}
+		} else {
+			$sort = FALSE;
+		}
+		
+		if(isset($params['sort_dir'])) {
+			$dir = $params['sort_dir'];
+		} else {
+			$dir = FALSE;
+		}
+		
+		if($sort) {
+			if($dir) {
+				$this->db->order_by($sort, $dir);
+			} else {
+				$this->db->order_by($sort, 'ASC');
+			}
+		}
+		
+		
 		switch($client_type)
 		{
 			case 2:
@@ -525,4 +578,15 @@ class Client_model extends Model
 		return $data;
 	}
 	
+	
+	function GetTimezone($client_id) 
+	{
+		$this->db->where('client_id', $client_id);
+		$query = $this->db->get('clients');
+		if($query->num_rows() > 0) {
+			return $query->row()->gmt_offset;	
+		} else {
+			return 0;
+		}
+	}
 }

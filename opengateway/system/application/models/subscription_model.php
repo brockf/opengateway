@@ -312,8 +312,11 @@ class Subscription_model extends Model
 			$this->db->where('amount', $params['amount']);
 		}
 		
-		if(isset($params['active']) and $params['active'] == '1' or $params['active'] == '0') {
-			$this->db->where('subscriptions.active', $params['active']);
+		if(isset($params['active'])) {
+			
+			if($params['active'] == '1' or $params['active'] == '0') {
+				$this->db->where('subscriptions.active', $params['active']);
+			}
 		}
 		else {
 			$this->db->where('subscriptions.active','1');
