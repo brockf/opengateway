@@ -42,7 +42,7 @@ class Order_model extends Model
 							'timestamp'		  => $timestamp
 							);	
 		
-		if(isset($params['card_last_four'])) {
+		if(isset($params['credit_card']['card_num'])) {
 			$insert_data['card_last_four']  = substr($params['credit_card']['card_num'],-4,4);
 		}					
 							

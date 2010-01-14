@@ -45,12 +45,13 @@ class Subscription_model extends Model
 							'customer_id' 		=> $customer_id,
 							'plan_id'			=> $plan_id,
 							'notification_url'	=> stripslashes($notification_url),
-							'interval' 			=> $interval,
+							'charge_interval' 	=> $interval,
 							'start_date' 		=> $start_date,
 							'end_date'			=> $end_date,
 							'next_charge'		=> $next_charge_date,
 							'number_occurrences'=> $total_occurrences,
 							'amount'			=> $amount,
+							'active'			=> 1,
 							'timestamp'			=> $timestamp
 			  				);  					  				
 			  				
@@ -532,6 +533,7 @@ class Subscription_model extends Model
 		// Update the subscription with the gateway
 		$CI =& get_instance();
 		$CI->load->model('gateway_model');
+
 		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $subscription['gateway_id']);
 		$gateway_type = $gateway['name'];
 		

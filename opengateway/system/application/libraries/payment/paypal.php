@@ -129,13 +129,11 @@ class Paypal
 			if($order_id) {
 				$CI->order_authorization_model->SaveAuthorization($order_id, $response['TRANSACTIONID']);
 			}
-			$CI->order_model->SetStatus($order_id, 1);
 			
 			$response_array = array('charge_id' => $order_id);
 			$response = $CI->response->TransactionResponse(1, $response_array);
 		} else {
-			$CI->load->model('order_model');
-			$CI->order_model->SetStatus($order_id, 0);
+
 			
 			$response_array = array('reason' => $response['L_LONGMESSAGE0']);
 			$response = $CI->response->TransactionResponse(2, $response_array);
@@ -241,6 +239,27 @@ class Paypal
 	{		
 		$CI =& get_instance();
 		
+		// If the start date is today, we'll do the first one manually
+		if(strtotime($start_date) == strtotime(date('Y-m-d'))) {
+			// Create an order
+			$CI->load->model('order_model');
+			
+			$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $subscription_id);
+			$response = $this->Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card);
+			
+			if($response['response_code'] == 1) {
+				$response_array['charge_id'] = $response['charge_id'];
+				$start_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400));
+			} else {
+				$CI->load->model('subscription_model');
+				$CI->subscription_model->MakeInactive($subscription_id);
+				$response_array = array('reason' => $response['reason']);
+				$response = $CI->response->TransactionResponse(2, $response_array);
+				return $response;
+				exit;
+			}
+		}
+		
 		// Create a new paypal profile
 		$response = $this->CreateProfile($client_id, $gateway, $customer, $params, $start_date, $subscription_id, $total_occurrences, $interval);
 		
@@ -251,11 +270,11 @@ class Paypal
 		}
 		
 		// save the api_customer_reference
-		$CI->load->model('subscription_model');
+		
 		$CI->subscription_model->SaveApiCustomerReference($subscription_id, $profile_id);
 		
 		if($response['success'] == TRUE){
-				$response_array = array('recurring_id' => $subscription_id);
+				$response_array['recurring_id'] = $subscription_id;
 				$response = $CI->response->TransactionResponse(100, $response_array);
 			} else {
 				// Make the subscription inactive
@@ -359,7 +378,7 @@ class Paypal
 			$post['lastname'] = $params['customer']['last_name'];
 			$post['street'] = $params['customer']['address_1'];
 			
-			if(isset($params['customer']['address_1'])) {
+			if(isset($params['customer']['address_2'])) {
 				$post['street'] .= ' '.$params['customer']['address_2'];
 			}
 			
@@ -403,7 +422,7 @@ class Paypal
 		switch($gateway['mode'])
 		{
 			case 'live':
-				$post_url = $subscription['arb_live_url'];
+				$post_url = $subscription['arb_prod_url'];
 			break;
 			case 'test':
 				$post_url = $subscription['arb_test_url'];
@@ -443,7 +462,7 @@ class Paypal
 		switch($gateway['mode'])
 		{
 			case 'live':
-				$post_url = $subscription['arb_live_url'];
+				$post_url = $subscription['arb_prod_url'];
 			break;
 			case 'test':
 				$post_url = $subscription['arb_test_url'];
@@ -487,6 +506,8 @@ class Paypal
 		$post_response = $this->Process($post_url, $post);
 		
 		$post_response = $this->response_to_array($post_response);
+		
+		print_r($post_response);
 		
 		if($post_response['ACK'] == 'Success') {
 			$response = TRUE;

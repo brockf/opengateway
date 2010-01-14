@@ -196,7 +196,10 @@ class Gateway_model extends Model
 		
 		// If it was successful, send an email
 		if($response['response_code'] == 1) {
+			$this->order_model->SetStatus($order_id, 1);
 			TriggerTrip('charge', $client_id, $response['charge_id']);
+		} else {
+			$this->order_model->SetStatus($order_id, 0);
 		}
 		
 		return $response;
@@ -355,6 +358,10 @@ class Gateway_model extends Model
 			}	
 		} else {
 			
+			if(!isset($recur['interval'])) {
+				die($this->response->Error(5011));
+			}
+			
 			if(!is_numeric($recur['interval'])) {
 				die($this->response->Error(5011));
 			} else {
@@ -382,13 +389,13 @@ class Gateway_model extends Model
 		
 		// Validate the start date to make sure it is in the future
 		if(isset($recur['start_date'])) {
-			if(!$this->field_validation->ValidateDate($recur['start_date']) or strtotime($recur['start_date']) < time()) {
+			if(!$this->field_validation->ValidateDate($recur['start_date']) or $recur['start_date'] < date('Y-m-d')) {
 				die($this->response->Error(5001));
 			} else {
 				$start_date = date('Y-m-d', strtotime($recur['start_date']));
 			}
 		} else {
-			$start_date = date('Y-m-d', (time()));
+			$start_date = date('Y-m-d');
 		}
 		
 		if($free_trial) {
@@ -466,6 +473,8 @@ class Gateway_model extends Model
 			
 			$this->subscription_model->SetChargeDates($params['subscription_id'], $last_charge, $next_charge);
 			
+			$this->order_model->SetStatus($order_id, 1);
+			
 			$CI->load->library('notification');
 			$CI->notify->QueueNotification();
 			
@@ -474,6 +483,8 @@ class Gateway_model extends Model
 			// Check the number of failures allowed
 			$num_allowed = $this->config->item('recurring_charge_failures_allowed');
 			$failures = $params['number_charge_failures'];
+			
+			$this->order_model->SetStatus($order_id, 0);
 			
 			$failures++;
 			$this->subscription_model->AddFailure($params['subscription_id'], $failures);

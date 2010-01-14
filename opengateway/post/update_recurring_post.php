@@ -1,6 +1,6 @@
 <?php
 
-$url = "http://localhost/index.php/api/";
+$url = "http://localhost/api/";
 
 $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 <request>
@@ -9,13 +9,8 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>
 	</authentication>
 	<type>UpdateRecurring</type>
-	<recurring_id>175</recurring_id>
-	<amount>10.99</amount>
-	<customer_id>2</customer_id>
-	<recur>
-		<interval>10</interval>
-		<notification_url>http://notify.com/notify.php</notification_url>
-	</recur>
+	<recurring_id>188</recurring_id>
+	<amount>199.99</amount>
 </request>';
 
 $postfields = $post_string; 
