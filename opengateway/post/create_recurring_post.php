@@ -12,8 +12,8 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 	<gateway_id>63</gateway_id>
 	<amount>24.99</amount>
 	<customer>
-		<first_name>Moses</first_name>
-		<last_name>Malone</last_name>
+		<first_name>Ahab</first_name>
+		<last_name>Arab</last_name>
 		<address_1>123 Main Street</address_1>
 		<address_2>Apt. 1</address_2>
 		<city>Denver</city>
@@ -29,9 +29,8 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 		<cvv>123</cvv>
 	</credit_card>
 	<recur>
-		<start_date>2010-01-13</start_date>
-		<end_date>2011-01-14</end_date>
-		<interval>30</interval>
+		<start_date>2010-01-16</start_date>
+		<plan_id>16</plan_id>
 	</recur>
 </request>';
 

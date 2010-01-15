@@ -349,12 +349,17 @@ class Gateway_model extends Model
 			$notification_url 	= $plan_details->notification_url;
 			$amount 			= $plan_details->amount;
 			$free_trial 		= $plan_details->free_trial;
+			$occurrences		= $plan_details->occurrences;
 			
 			$plan_id = $plan_details->plan_id;
 		
 			// if there are specified occurrences, we should create an end-date that works with it
-			if ($plan_details->interval != 0) {
-				$recur['end_date'] = date('Y-m-d',time() + ($plan_details->interval*86400));
+			if ($occurrences != 0) {
+				//echo $interval;
+				$total = $occurrences * ($interval*86400);
+				echo $total;
+				$recur['end_date'] = date('Y-m-d',time() + ($interval*86400));
+				//echo date('Y-m-d', strtotime($recur['end_date']));
 			}	
 		} else {
 			

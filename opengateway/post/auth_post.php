@@ -1,6 +1,6 @@
 <?php
 
-$url = "http://localhost/gateway/";
+$url = "http://localhost/api/";
 
 $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 <request>
@@ -22,7 +22,7 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 	<description>Goods and Services</description>
 </request>';
 
-$postfields = 'request='.$post_string; 
+$postfields = $post_string; 
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); 

@@ -20,7 +20,7 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 	</params>
 </request>';
 
-$postfields = 'request='.$post_string; 
+$postfields = $post_string; 
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); 

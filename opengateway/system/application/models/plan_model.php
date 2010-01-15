@@ -35,18 +35,18 @@ class Plan_model extends Model
 	function NewPlan($client_id, $params)
 	{
 		// Get the plan params
-		$plan = $params;
+		$plan = $params['plan'];
 		
 		$this->load->library('field_validation');
 		
-		if(isset($plan['type'])) {
-			$plan_type_id = $this->GetPlanTypeId($plan['type']);
+		if(isset($plan['plan_type'])) {
+			$plan_type_id = $this->GetPlanTypeId($plan['plan_type']);
 			$insert_data['plan_type_id'] = $plan_type_id;
 		} else {
 			die($this->response->Error(1004));
 		}
 		
-		if($plan['type'] == 'free') {
+		if($plan['plan_type'] == 'free') {
 			$insert_data['amount'] = 0;
 		} else {
 			if(isset($plan['amount'])) {
@@ -101,7 +101,7 @@ class Plan_model extends Model
 		
 		$insert_data['client_id'] = $client_id;
 		$insert_data['deleted'] = 0;
-							
+		
 		if ($this->db->insert('plans', $insert_data)) {
 			return $this->db->insert_id();
 		}
