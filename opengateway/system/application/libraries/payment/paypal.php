@@ -507,8 +507,6 @@ class Paypal
 		
 		$post_response = $this->response_to_array($post_response);
 		
-		print_r($post_response);
-		
 		if($post_response['ACK'] == 'Success') {
 			$response = TRUE;
 		} else {
@@ -528,8 +526,7 @@ class Paypal
 		$today = date('Y-m-d');
 		$failed_payments = $details['FAILEDPAYMENTCOUNT'];
 		
-		if($last_payment == $today && $failed_payments < 1) {
-			
+		if($last_payment == $today && $failed_payments < 1) {		
 			$response['success'] = TRUE;
 		} else {
 			$response['success'] = FALSE;
@@ -595,5 +592,4 @@ class Paypal
 
 		return $values;
 	}
-
 }
