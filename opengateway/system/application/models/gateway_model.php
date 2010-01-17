@@ -124,9 +124,9 @@ class Gateway_model extends Model
 	function Charge($client_id, $params)
 	{
 		// Make sure it came from a secure connection
-		//if($_SERVER['HTTPS'] != "on") {
-			//die($this->response->Error(5008));
-		//}
+		if(empty($_SERVER["HTTPS"])) {
+			die($this->response->Error(1010));
+		}
 		
 		
 		if(isset($params['gateway_id'])) {
@@ -207,9 +207,10 @@ class Gateway_model extends Model
 	
 	function Refund($client_id, $params)
 	{
+
 		// Make sure it came from a secure connection
-		if($_SERVER['HTTPS'] != "on") {
-			die($this->response->Error(5008));
+		if(empty($_SERVER["HTTPS"])) {
+			die($this->response->Error(1010));
 		}
 		
 		if(!isset($params['gateway_id'])) {
@@ -280,9 +281,9 @@ class Gateway_model extends Model
 	function Recur($client_id, $params)
 	{		
 		// Make sure it came from a secure connection
-//		if($_SERVER['HTTPS'] != "on") {
-//			die($this->response->Error(5008));
-//		}
+		if(empty($_SERVER["HTTPS"])) {
+			die($this->response->Error(1010));
+		}
 		
 		$CI =& get_instance();
 		
