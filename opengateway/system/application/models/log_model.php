@@ -1,11 +1,31 @@
 <?php
 
+/**
+* Log Model 
+*
+* Contains all the methods used to Log requests and errors
+*
+* @version 1.0
+* @author David Ryan
+* @package OpenGateway
+
+*/
+
 class Log_model extends Model
 {
 	function Log_Model()
 	{
 		parent::Model();
 	}
+	
+	/**
+	* Log the request.
+	*
+	* Logs a request
+	*
+	* @param string $request The request
+	*
+	*/
 	
 	function LogRequest($request = FALSE)
 	{

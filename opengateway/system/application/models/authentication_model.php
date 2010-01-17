@@ -1,11 +1,32 @@
 <?php
+/**
+* Authentication Model 
+*
+* Contains the methods used to authenticate clients and allow access to the API.
+*
+* @version 1.0
+* @author David Ryan
+* @package OpenGateway
 
+*/
 class Authentication_model extends Model
 {
 	function Authentication_model()
 	{
 		parent::Model();
 	}
+	
+	/**
+	* Authenticate the client.
+	*
+	* Authenticates the client using the api_id and secret_key.  Will only authenticate if the Client is not suspended
+	* or deleted.  Returns object containg client details on success or FALSE on authentication failure.
+	*
+	* @param string $api_id The API identifier used by the client
+	* @param string $secret_key 
+	* 
+	* @return mixed Object containg all client details on success of FALSE on failure.
+	*/
 	
 	function Authenticate($api_id = '', $secret_key = '')
 	{

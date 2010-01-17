@@ -460,6 +460,19 @@ class Gateway_model extends Model
 		return $response;
 	}
 	
+	/**
+	* Process a credit card recurring charge
+	*
+	* Processes a credit card CHARGE transaction for a recurring subscription using the gateway_id to use the proper client gateway.
+	* Returns an array response from the appropriate payment library
+	*
+	* @param int $client_id	The Client ID
+	* @param int $params['gateway_id'] The client_gateway used to process the charge
+	* @param int $params['subscription_id']  The subscription_id to charge 
+	* 
+	* @return mixed Array with response_code and response_text
+	*/
+	
 	function ChargeRecurring($client_id, $params)
 	{
 		$CI =& get_instance();

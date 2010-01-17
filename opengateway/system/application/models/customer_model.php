@@ -28,14 +28,15 @@ class Customer_model extends Model
 	* @param string $params['address_1'] Client's address line 1. Optional.
 	* @param string $params['address_2'] Client's address line 2. Optional.
 	* @param string $params['city'] Client's city. Optional.
-	* @param string $params['state'] Client's state. Optional.
+	* @param string $params['state'] Client's state. Optional.  If the country is US or Canada, the 2-letter abbreviation should be used.
 	* @param string $params['postal_code'] Client's postal code. Optional. 
-	* @param string $params['country'] Client's country. Optional.
+	* @param string $params['country'] Client's country in ISO format. Optional.
 	* @param string $params['phone'] Client's phone. Optional.
 	* @param string $params['email'] Client's email. Optional.
 	* 
 	* @return int New Customer ID
 	*/
+	
 	function NewCustomer($client_id, $params)
 	{	
 		// Validate the required fields
@@ -93,6 +94,27 @@ class Customer_model extends Model
 			return FALSE;
 		}
 	}
+	
+	/**
+	* Save the new customer
+	*
+	* Saves a new customer into the database and returns the resulting customer_id
+	*
+	* @param int $client_id The client ID of the gateway client.
+	* @param string $params['first_name'] Client's first name
+	* @param string $params['last_name'] Client's last name
+	* @param string $params['company'] Client's company. Optional.
+	* @param string $params['address_1'] Client's address line 1. Optional.
+	* @param string $params['address_2'] Client's address line 2. Optional.
+	* @param string $params['city'] Client's city. Optional.
+	* @param string $params['state'] Client's state. Optional.  If the country is US or Canada, the 2-letter abbreviation should be used.
+	* @param string $params['postal_code'] Client's postal code. Optional. 
+	* @param string $params['country'] Client's country in ISO format. Optional.
+	* @param string $params['phone'] Client's phone. Optional.
+	* @param string $params['email'] Client's email. Optional.
+	* 
+	* @return int New Customer ID
+	*/
 	
 	// Save new customer 
 	function SaveNewCustomer($client_id, $first_name, $last_name, $company = '', $internal_id = '', $address_1 = '', $address_2 = '', $city = '', $state = '', $postal_code = '', $country_id = '', $phone = '', $email = '')
@@ -316,6 +338,8 @@ class Customer_model extends Model
 	* @param string $params['email'] Customer's email. Optional.
 	* @param int $params['plan_id'] Filter by active plan. Optional.
 	* @param int $params['deleted'] Set to 1 for deleted customers.  Optional.
+	* @param string $pararms['sort'] Used to change the order of results returned.  Possible values are date, first_name, and last_name. Optional.
+	* @param string $params['sort_dir'] Used only when a sort valus is padded.  Possible values are asc and desc
 	* 
 	* @return mixed Array containing the search results
 	*/
@@ -420,6 +444,22 @@ class Customer_model extends Model
 				$sort = 'last_name';
 				break;		
 		}
+		
+		$params['sort_dir'] = isset($params['sort_dir']) ? $params['sort_dir'] : '';
+		
+		switch($params['sort_dir'])
+		{
+			case 'asc':
+				$sort = 'ASC';
+				break;
+			case 'desc':
+				$sort = 'DESC';
+				break;
+			default:
+				$sort = 'DESC';
+				break;		
+		}
+		
 		$this->db->order_by($sort, $sort_dir);	
 		
 		$this->db->join('subscriptions', 'customers.customer_id = subscriptions.customer_id', 'inner');

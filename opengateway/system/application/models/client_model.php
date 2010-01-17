@@ -28,9 +28,9 @@ class Client_model extends Model
 	* @param string $params['address_1'] Client's address line 1.
 	* @param string $params['address_2'] Client's address line 2. Optional.
 	* @param string $params['city'] Client's city
-	* @param string $params['state'] Client's state
+	* @param string $params['state'] Client's state.  If in the US or Canada, it should be the 2-letter abbreviation.  The system will try to determin the correct county.
 	* @param string $params['postal_code'] Client's postal code
-	* @param string $params['country'] Client's country
+	* @param string $params['country'] Client's country in ISO format.
 	* @param string $params['phone'] Client's phone
 	* @param string $params['email'] Client's email
 	* @param string $params['username'] Client's username
@@ -58,6 +58,18 @@ class Client_model extends Model
 		
 		if(!$country_id) {
 			die($this->response->Error(1007));
+		}
+		
+		// If the country is US or Canada, we need to validate and supply the 2 letter abbreviation
+		$this->load->helper('states_helper');
+		$country_array = array(124,840);
+		if(in_array($country_id, $country_array)) {
+			$state = GetState($params['state']);
+			if($state) {
+				$params['state'] = $state;
+			} else {
+				die($this->response->Error(1012));
+			}
 		}
 		
 		$valid_email = $this->field_validation->ValidateEmailAddress($params['email']);
@@ -155,9 +167,9 @@ class Client_model extends Model
 	* @param string $params['address_1'] Client's address line 1.
 	* @param string $params['address_2'] Client's address line 2.
 	* @param string $params['city'] Client's city
-	* @param string $params['state'] Client's state
+	* @param string $params['state'] Client's state.  If in the US or Canada, it should be the 2-letter abbreviation.  The system will try to determin the correct county.
 	* @param string $params['postal_code'] Client's postal code
-	* @param string $params['country'] Client's country
+	* @param string $params['country'] Client's country in ISO format
 	* @param string $params['phone'] Client's phone
 	* @param string $params['email'] Client's email
 	* @param string $params['username'] Client's username
@@ -207,9 +219,7 @@ class Client_model extends Model
 			$update_data['city'] = $params['city'];
 		}
 		
-		if(isset($params['state']) && $params['state'] != '') {
-			$update_data['state'] = $params['state'];
-		}
+		
 		
 		if(isset($params['postal_code']) && $params['postal_code'] != '') {
 			$update_data['postal_code'] = $params['postal_code'];
@@ -223,6 +233,20 @@ class Client_model extends Model
 				die($this->response->Error(1007));
 			}
 			$update_data['country'] = $country_id;
+		}
+		
+		if(isset($params['state']) && $params['state'] != '') {
+		// If the country is US or Canada, we need to validate and supply the 2 letter abbreviation
+			$this->load->helper('states_helper');
+			$country_array = array(124,840);
+			if(in_array($country_id, $country_array)) {
+				$state = GetState($params['state']);
+				if($state) {
+					$update_data['state'] = $state;
+				} else {
+					die($this->response->Error(1012));
+				}
+			}
 		}
 		
 		// If a timezone was provided, validate it
@@ -463,6 +487,18 @@ class Client_model extends Model
 			} 
 	}
 	
+	/**
+	* Get a list of Clients.
+	*
+	* Search the database for a formatted list of clients.  
+	*
+	* @param int $client_id The client id
+	* @param string $params['sort'] Field to search clients by.  Possible values are client_first_name and client_last_name
+	* @param string $params['sort_dir'] Used with $params['sort'].  Possible values are asc and desc
+	* 
+	* @return mixed Array containing a list of clients and client details meeting the criteria.
+	*/
+	
 	function GetClients($client_id, $params)
 	{
 		// get the user type
@@ -535,6 +571,17 @@ class Client_model extends Model
 		return $data;
 	}
 	
+	/**
+	* Get Client details.
+	*
+	* get the details of a specific client based on client ID.  
+	*
+	* @param int $client_id The client id
+	* @param int $params['client_id'] The client ID to return the details for
+	* 
+	* @return mixed Array containing a the details of the client.
+	*/
+	
 	function GetClient($client_id, $params)
 	{
 		// get the user type
@@ -578,6 +625,15 @@ class Client_model extends Model
 		return $data;
 	}
 	
+	/**
+	* Get client timezone
+	*
+	* Get a client's timezone.  Returns the number of hours (-23 to 23) for the GMT offset.  
+	*
+	* @param int $client_id The client id
+	* 
+	* @return int Number of hours difference with GMT
+	*/
 	
 	function GetTimezone($client_id) 
 	{

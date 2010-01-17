@@ -51,6 +51,17 @@ class API extends Controller {
 		// Make sure the first letter is capitalized
 		$request_type = ucfirst($request_type);
 		
+		// Make sure a proper format was passed
+		if(isset($params['format'])) {
+			$format = $params['format'];
+			if(!in_array($format, array('xml', 'json', 'php'))) {
+				echo $this->response->Error(1006);
+				die();
+			}
+		} else {
+			$format = 'xml';
+		}
+		
 		// validate the request type
 		$this->load->model('request_type_model', 'request_type');
 		$request_type_model = $this->request_type->ValidateRequestType($request_type);
@@ -73,17 +84,6 @@ class API extends Controller {
 		// handle errors that didn't just kill the code
 		if ($response == FALSE) {
 			die($this->response->Error(1009));
-		}
-		
-		// Make sure a proper format was passed
-		if(isset($params['format'])) {
-			$format = $params['format'];
-			if(!in_array($format, array('xml', 'json', 'php'))) {
-				echo $this->response->Error(1006);
-				die();
-			}
-		} else {
-			$format = 'xml';
 		}
 		
 		// Echo the response

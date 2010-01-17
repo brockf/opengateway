@@ -5,7 +5,7 @@
 * Contains all the methods used to create, update, and delete client Emails.
 *
 * @version 1.0
-* @author David Ryan
+* @author Brock Ferguson
 * @package OpenGateway
 
 */
@@ -16,6 +16,16 @@ class Email_model extends Model
 	{
 		parent::Model();
 	}
+	
+	/**
+	* Get Email Trigger ID
+	*
+	* Returns the Email trigger ID based on the trigger_name.  
+	*
+	* @param string $trigger_name The email trigger system name
+	* 
+	* @return int The email trigger ID
+	*/
 	
 	function GetTriggerId($trigger_name)
 	{
@@ -28,6 +38,14 @@ class Email_model extends Model
 		}
 	}
 	
+	/**
+	* Get All Email Triggers
+	*
+	* Returns an array containing all email triggers. 
+	*
+	* @return mixed Array with all email triggers
+	*/
+	
 	function GetTriggers() {
 		$query = $this->db->get('email_triggers');
 		foreach ($query->result_array() as $row) {
@@ -36,6 +54,25 @@ class Email_model extends Model
 		
 		return $return;
 	}
+	
+	/**
+	* Save a new customer email
+	*
+	* Creates a new customer email to be called by an email trigger  
+	*
+	* @param int $client_id The client ID
+	* @param int $trigger_id The Email Trigger ID
+	* @param string $params['email_subject'] The subject line of the email
+	* @param string $params['from_name'] The name that the email will be sent from
+	* @param string $params['from_email'] The email address that the email will be sent from
+	* @param string $params['email_body'] The email body.  Can be in plain text or HTML
+	* @param int $params['plan'] Plan ID to trigger email. Optional.
+	* @param int $params['is_html'] Whether or not the email to be sent is HTML.  If the email_body is in HTML, this must be set to 1. Optional.
+	* @param string $params['to_address'] The email address to send the email to.  If not supplied, the customer's saved email address will be used. Optional.
+	* @param string $params['bcc_address'] The email address to send as BCC.  Optional.
+	* 
+	* @return int The email ID
+	*/
 	
 	function SaveEmail($client_id, $trigger_id, $params)
 	{
@@ -77,6 +114,25 @@ class Email_model extends Model
 		
 		return $this->db->insert_id();
 	}
+	
+	/**
+	* Update and existing email
+	*
+	* Updates and existing customer email with the supplied parameters.  
+	*
+	* @param int $client_id The client ID
+	* @param int $trigger_id The Email Trigger ID. Optional.
+	* @param string $params['email_subject'] The subject line of the email. Optional.
+	* @param string $params['from_name'] The name that the email will be sent from. Optional.
+	* @param string $params['from_email'] The email address that the email will be sent from. Optional.
+	* @param string $params['email_body'] The email body.  Can be in plain text or HTML. Optional.
+	* @param int $params['plan'] Plan ID to trigger email. Optional.
+	* @param int $params['is_html'] Whether or not the email to be sent is HTML.  If the email_body is in HTML, this must be set to 1. Optional.
+	* @param string $params['to_address'] The email address to send the email to.  If not supplied, the customer's saved email address will be used. Optional.
+	* @param string $params['bcc_address'] The email address to send as BCC.  Optional.
+	* 
+	* @return boolean TRUE or FALSE depending in update success
+	*/
 	
 	function UpdateEmail($client_id, $email_id, $params, $trigger_id = FALSE)
 	{
@@ -125,6 +181,15 @@ class Email_model extends Model
 		return TRUE;
 	}
 	
+	/**
+	* Delete an email
+	*
+	* Marks an existing email as inactive
+	*
+	* @param int $client_id The client ID
+	* @param int $email_id The Email ID
+	*/
+	
 	function DeleteEmail($client_id, $email_id)
 	{
 		$update_data['active'] = 0;
@@ -134,6 +199,16 @@ class Email_model extends Model
 		
 		$this->db->update('client_emails', $update_data);
 	}
+	
+	/**
+	* Get email variables
+	*
+	* Returns all variables that can be replaced in the body or subject line of an email.
+	*
+	* @param int $trigger_id The email trigger ID.
+	* 
+	* @return mixed An array containing all of the available email variables
+	*/
 	
 	function GetEmailVariables($trigger_id)
 	{
@@ -150,6 +225,17 @@ class Email_model extends Model
 			return FALSE;
 		}
 	}
+	
+	/**
+	* Get email details.
+	*
+	* Returns the details of an existing client email. 
+	*
+	* @param int $client_id The client ID
+	* @param int $email_id The email ID
+	* 
+	* @return mixed An array containing all of the email details
+	*/
 	
 	function GetEmail($client_id, $email_id)
 	{
@@ -191,6 +277,24 @@ class Email_model extends Model
 			return FALSE;
 		}
 	}
+	
+	/**
+	* Get details of all emails
+	*
+	* Returns details of all emails for a client.  All parameters except $client_id are optional. 
+	*
+	* @param int $client_id The client ID
+	*
+	* @param int $params['deleted'] Whether or not the email is deleted.  Possible values are 1 for deleted and 0 for active
+	* @param string $params['trigger'] Returns only emails for a specific email_trigger.  May be a trigger_id or system_name.  Optional.
+	* @param int $params['id'] The email ID.  GetEmail could also be used. Optional.
+	* @param string $params['to_address'] The email address to send to. Optional.
+	* @param string $params['email_subject'] The email subject line. Optional.
+	* @param int $params['offset']
+	* @param int $params['limit'] The number of records to return. Optional.
+	* 
+	* @return mixed Array containg all emails meeting criteria
+	*/
 	
 	function GetEmails($client_id, $params)
 	{		
@@ -269,6 +373,18 @@ class Email_model extends Model
 		
 		return $data;
 	}
+	
+	/**
+	* Get all emails by trigger
+	*
+	* Returns an array containg the details of all emails for a specific email_trigger_id   
+	*
+	* @param int $client_id The client ID
+	* @param int $trigger_type_id The Email Trigger ID.
+	* @param int $plan_id Plan ID to limit results.  Possible values are -1 for no plans, 0 for all plans, or X where X equals a specific plan_id 
+	*  
+	* @return mixed Arrary containing all email details
+	*/
 	
 	function GetEmailsByTrigger($client_id, $trigger_type_id, $plan_id = false)
 	{

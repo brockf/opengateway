@@ -1,5 +1,14 @@
 <?php
+/**
+* Request Type Model 
+*
+* Contains all the methods used to validate and get required fields for request types.
+*
+* @version 1.0
+* @author David Ryan
+* @package OpenGateway
 
+*/
 class Request_type_model extends Model
 {
 	function Request_type_model()
@@ -7,7 +16,16 @@ class Request_type_model extends Model
 		parent::Model();
 	}
 	
-	// Validate the request
+	/**
+	* Validate Request Type.
+	*
+	* Validates a request type and returns the request_type model to be used
+	*
+	* @param string $request_type The request type name
+	*
+	* @return string The model
+	*/
+	
 	function ValidateRequestType($request_type = FALSE)
 	{
 		if($request_type) {
@@ -25,6 +43,16 @@ class Request_type_model extends Model
 			}
 		}
 	}
+	
+	/**
+	* Get Required Fields.
+	*
+	* Returns the required fields for a request_type.
+	*
+	* @param string $request_type The request type name
+	*
+	* @return mixed Array containing the required field.
+	*/
 	
 	function GetRequiredFields($request_type)
 	{

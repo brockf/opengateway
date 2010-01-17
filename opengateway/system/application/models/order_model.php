@@ -79,6 +79,8 @@ class Order_model extends Model
 	* @param boolean $params['recurring_only'] Returns only orders that are part of a recurring subscription. Optional.
 	* @param int $params['offset'] Offsets the database query.
 	* @param int $params['limit'] Limits the number of results returned. Optional.
+	* @param string $params['sort'] Variable used to sort the results.  Possible values are date, customer_first_name, customer_last_name, amount. Optional
+	* @param string $params['sort_dir'] Used when a sort param is supplied.  Possible values are asc and desc. Optional.
 	* 
 	* @return array|bool Charge results or FALSE upon failure
 	*/
@@ -187,6 +189,10 @@ class Order_model extends Model
 				$sort = 'timestamp';
 				break;	
 		}
+		
+		$sort_dir = isset($params['sort_dir']) ? $params['sort_dir'] : 'ASC';
+		
+		
 		$this->db->order_by($sort, $sort_dir);	
 		
 		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
@@ -348,6 +354,16 @@ class Order_model extends Model
 		
 		return TRUE;
 	}
+	
+	/**
+	* Get order authorization details
+	* 
+	* Returns order authorization information.
+	*
+	* @param int $order_id The Order ID
+	*
+	* @return mixed Array containg authorization details
+	*/
 	
 	function GetChargeGatewayInfo($order_id)
 	{
