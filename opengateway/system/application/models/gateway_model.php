@@ -426,6 +426,14 @@ class Gateway_model extends Model
 			$end_date = date('Y-m-d', strtotime($start_date) + ($this->config->item('max_recurring_days_from_today') * 86400));
 		}
 		
+		// If the credit card expiration date is before the end date, we need to set the end date to one day before the expiration
+		$expiry = mktime(0,0,0, $params['credit_card']['exp_month'], days_in_month($params['credit_card']['exp_month'], $params['credit_card']['exp_year']), $params['credit_card']['exp_year']);
+		
+		if($expiry < strtotime($end_date)) {
+			$end_date = mktime(0,0,0, $params['credit_card']['exp_month'], (days_in_month($params['credit_card']['exp_month'], $params['credit_card']['exp_year']) - 1), $params['credit_card']['exp_year']);
+			$end_date = date('Y-m-d', $end_date);
+		}
+		
 		// Figure the total number of occurrences
 		$total_occurrences = round((strtotime($end_date) - strtotime($start_date)) / ($interval * 86400), 0);
 		

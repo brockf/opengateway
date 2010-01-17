@@ -11,7 +11,7 @@ class Paypal
 		$settings['monthly_fee'] = 0;
 		$settings['transaction_fee'] = 0;
 		$settings['purchase_link'] = '';
-		$settings['allows_updates'] = 1;
+		$settings['allows_updates'] = 0;
 		$settings['allows_refunds'] = 1;
 		$settings['required_fields'] = array('enabled', 'mode', 'user', 'pwd', 'signature', 'accept_visa', 'accept_mc', 'accept_discover', 'accept_dc', 'accept_amex', 'enable_arb');
 		

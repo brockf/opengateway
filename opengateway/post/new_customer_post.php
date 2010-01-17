@@ -1,6 +1,6 @@
 <?php
 
-$url = "http://platform.opengateway.net/api/";
+$url = "http://localhost/api/";
 
 $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 <request>
@@ -16,9 +16,9 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 	<address_1>123 Main Street</address_1>
 	<address_2>APT 1</address_2>
 	<city>Denver</city>
-	<state>CO</state>
+	<state>Ontario</state>
 	<postal_code>80220</postal_code>
-	<country>NL</country>
+	<country>CA</country>
 	<phone>3033319812</phone>
 	<email>daveryan187@yahoo.com</email>
 </request>';

@@ -24,12 +24,12 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 	<credit_card>
 		<name>Moses Malone</name>
 		<card_num>4024007155715823</card_num>
-		<exp_month>10</exp_month>
-		<exp_year>2011</exp_year>
+		<exp_month>04</exp_month>
+		<exp_year>2010</exp_year>
 		<cvv>123</cvv>
 	</credit_card>
 	<recur>
-		<start_date>2010-01-16</start_date>
+		<start_date>2010-01-20</start_date>
 		<plan_id>16</plan_id>
 	</recur>
 </request>';

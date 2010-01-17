@@ -538,6 +538,13 @@ class Subscription_model extends Model
 		$gateway_type = $gateway['name'];
 		
 		$this->load->library('payment/'.$gateway_type);
+		
+		// get the settings for the gateway
+		$settings = $this->$gateway_type->Settings();
+		if($settings['allows_updates'] === 0) {
+			die($this->response->Error(5016));
+		}
+		
 		$update_success = $this->$gateway_type->UpdateRecurring($client_id, $gateway, $subscription, $customer, $params);
 		
 		if(!$update_success) {

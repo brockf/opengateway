@@ -62,6 +62,20 @@ class Customer_model extends Model
 			}
 		}
 		
+		
+		// If the country is US or Canada, we need to validate and supply the 2 letter abbreviation
+		$this->load->helper('states_helper');
+		$country_array = array(124,840);
+		if(in_array($country_id, $country_array)) {
+			$state = GetState($params['state']);
+			if($state) {
+				$params['state'] = $state;
+			} else {
+				die($this->response->Error(1012));
+			}
+		}
+		
+		
 		// Make sure the email address is valid
 		if ($params['email']) {
 			$valid_email = $this->field_validation->ValidateEmailAddress($params['email']);
@@ -196,10 +210,6 @@ class Customer_model extends Model
 			$update_data['city'] = $params['city'];
 		}
 		
-		if(isset($params['state'])) {
-			$update_data['state'] = $params['state'];
-		}
-		
 		if(isset($params['postal_code'])) {
 			$update_data['postal_code'] = $params['postal_code'];
 		}
@@ -213,6 +223,20 @@ class Customer_model extends Model
 				die($this->response->Error(1007));
 			}
 			$update_data['country'] = $country_id;
+		}
+		
+		if(isset($params['state'])) {
+			// If the country is US or Canada, we need to validate and supply the 2 letter abbreviation
+			$this->load->helper('states_helper');
+			$country_array = array(124,840);
+			if(in_array($country_id, $country_array)) {
+				$state = GetState($params['state']);
+				if($state) {
+					$update_data['state'] = $state;
+				} else {
+					die($this->response->Error(1012));
+				}
+			}
 		}
 		
 		if(isset($params['phone'])) {

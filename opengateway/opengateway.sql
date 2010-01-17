@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50137
 File Encoding         : 65001
 
-Date: 2010-01-15 12:43:19
+Date: 2010-01-17 13:34:18
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -356,7 +356,7 @@ CREATE TABLE `client_gateway_params` (
   `field` varchar(255) NOT NULL,
   `value` varchar(255) NOT NULL,
   PRIMARY KEY (`client_gateway_params_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=743 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=752 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of client_gateway_params
@@ -1056,6 +1056,15 @@ INSERT INTO `client_gateway_params` VALUES ('739', '91', 'accept_discover', 'g48
 INSERT INTO `client_gateway_params` VALUES ('740', '91', 'accept_amex', 'NKKD21YmMVSO3itYMfaP7GhdynGACIXqEdvsezGvVbZX9cGAU8oc0qIKQcM8iaM/7hP4Avzdd6z1HylwOnvTZA==');
 INSERT INTO `client_gateway_params` VALUES ('741', '91', 'accept_dc', '7u3U1+5kt3pBw6nwy/4to1hCTaZkI0IqMz8IqYxk6nSJujGz30AcpcXrMWf5Xirz7tQ68F34AIxzQdAH9MtLRw==');
 INSERT INTO `client_gateway_params` VALUES ('742', '91', 'enable_arb', 'ci++dHgDAwdJ0rLRJiGRZuOecXrOY5Rfj3aAxaF56VoXhMp5d7eSI149zBRR4+yRyIr0XBfwnNpG8VXrGaTjdQ==');
+INSERT INTO `client_gateway_params` VALUES ('743', '92', 'mode', 'p8y5e9ArSevjNYG3S55Kqo0E05PD+YaUbFMcH+eVoYmbgiAOqYaTTt8QYtq8e7Op+0ZtcLWRdHTy7D0cuhFARg==');
+INSERT INTO `client_gateway_params` VALUES ('744', '92', 'terminal_id', '7r/2VU9cADrABlLWulC9M5EqICAmUbPLHL+o6bKN+fWVnJe6n5XloTmbTBut971CIiPTh9amgrVkIuO5ZvO8Bw==');
+INSERT INTO `client_gateway_params` VALUES ('745', '92', 'password', 'mxl2bGHo2HLOrtOXhf+u3tFpWddhYxx5y9EnXxOf5YxusbR3iO/L7G/MAwCliaYlzQTPqw8YapkHxpZ99MWiPQ==');
+INSERT INTO `client_gateway_params` VALUES ('746', '92', 'accept_visa', '4qvLR0bjNEC2fslHRk7c4FXoarGgNr4AY2FGS/StUvZo5MTT4Yc93LWt2phVhy4NQurVkdboxotNfE4RTMOlqw==');
+INSERT INTO `client_gateway_params` VALUES ('747', '92', 'accept_mc', 'vugLYT2S+VuBSYhDKD3iEYKfbtvSuthZqqf+CaLU8Li+BPcHfWkvhsRPzqnfyBFYRsVBdUId1iB90gtU25//kw==');
+INSERT INTO `client_gateway_params` VALUES ('748', '92', 'accept_discover', 'uOtJfmST1miLds8yi7oSeR7gzkbnZD1DIInOJj5eVpeVmXm/EThF7T1CJECCyW0E5DcGMO03yypTgh2z+SuSaA==');
+INSERT INTO `client_gateway_params` VALUES ('749', '92', 'accept_amex', 'YhYpg5RxnX1APAjaR8V0RsbEbYcvwB4haMBFhP/04jt0/gMLYCiJ41k8HwLhP52p/wufpS5QFi0XLi/cwgBjSg==');
+INSERT INTO `client_gateway_params` VALUES ('750', '92', 'accept_dc', 'kOpKQ75mfaIFP2aKlF7q6aIwrpXzHo6lf9PovcpepKhX9cGAU8oc0qIKQcM8iaM/7hP4Avzdd6z1HylwOnvTZA==');
+INSERT INTO `client_gateway_params` VALUES ('751', '92', 'enable_arb', 'Bn3H2CMP8UaGvinlTh3o9BWWQ2V9Rh0g4gP0neRY4oqJujGz30AcpcXrMWf5Xirz7tQ68F34AIxzQdAH9MtLRw==');
 
 -- ----------------------------
 -- Table structure for `client_gateways`
@@ -1069,7 +1078,7 @@ CREATE TABLE `client_gateways` (
   `deleted` int(11) NOT NULL DEFAULT '0',
   `create_date` date NOT NULL,
   PRIMARY KEY (`client_gateway_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=92 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=93 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of client_gateways
@@ -1148,6 +1157,7 @@ INSERT INTO `client_gateways` VALUES ('88', '17', '2', '1', '0', '2010-01-03');
 INSERT INTO `client_gateways` VALUES ('89', '17', '2', '1', '0', '2010-01-10');
 INSERT INTO `client_gateways` VALUES ('90', '17', '2', '1', '0', '2010-01-13');
 INSERT INTO `client_gateways` VALUES ('91', '17', '2', '1', '0', '2010-01-14');
+INSERT INTO `client_gateways` VALUES ('92', '17', '2', '1', '0', '2010-01-17');
 
 -- ----------------------------
 -- Table structure for `client_types`
@@ -1508,7 +1518,7 @@ CREATE TABLE `customers` (
   `active` tinyint(4) NOT NULL,
   `date_created` datetime NOT NULL,
   PRIMARY KEY (`customer_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=243 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=252 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of customers
@@ -1755,6 +1765,15 @@ INSERT INTO `customers` VALUES ('239', '17', 'Ahab', 'Arab', '', '', '123 Main S
 INSERT INTO `customers` VALUES ('240', '17', 'Ahab', 'Arab', '', '', '123 Main St', 'Apt. 1', 'Denver', 'CO', '80220', '840', '', '', '1', '2010-01-15 12:28:49');
 INSERT INTO `customers` VALUES ('241', '17', 'Ahab', 'Arab', '', '', '123 Main St', 'Apt. 1', 'Denver', 'CO', '80220', '840', '', '', '1', '2010-01-15 12:30:56');
 INSERT INTO `customers` VALUES ('242', '17', 'Ahab', 'Arab', '', '', '123 Main St', 'Apt. 1', 'Denver', 'CO', '80220', '840', '', '', '0', '2010-01-15 12:31:34');
+INSERT INTO `customers` VALUES ('243', '17', 'David', 'Ryan', 'ABC Inc.', '12343434', '123 Main St', 'APT 1', 'Denver', 'CO', '80220', '840', '3033319812', 'daveryan187@yahoo.com', '1', '2010-01-17 11:53:46');
+INSERT INTO `customers` VALUES ('244', '17', 'David', 'Ryan', 'ABC Inc.', '12343434', '123 Main St', 'APT 1', 'Denver', 'AL', '80220', '840', '3033319812', 'daveryan187@yahoo.com', '1', '2010-01-17 11:54:28');
+INSERT INTO `customers` VALUES ('245', '17', 'David', 'Ryan', 'ABC Inc.', '12343434', '123 Main St', 'APT 1', 'Denver', 'lalalal', '80220', '528', '3033319812', 'daveryan187@yahoo.com', '1', '2010-01-17 11:56:58');
+INSERT INTO `customers` VALUES ('246', '17', 'David', 'Ryan', 'ABC Inc.', '12343434', '123 Main St', 'APT 1', 'Denver', 'ON', '80220', '124', '3033319812', 'daveryan187@yahoo.com', '1', '2010-01-17 11:57:55');
+INSERT INTO `customers` VALUES ('247', '17', 'Ahab', 'Arab', '', '', '123 Main St', 'Apt. 1', 'Denver', 'CO', '80220', '840', '', '', '1', '2010-01-17 13:23:33');
+INSERT INTO `customers` VALUES ('248', '17', 'Ahab', 'Arab', '', '', '123 Main St', 'Apt. 1', 'Denver', 'CO', '80220', '840', '', '', '1', '2010-01-17 13:23:46');
+INSERT INTO `customers` VALUES ('249', '17', 'Ahab', 'Arab', '', '', '123 Main St', 'Apt. 1', 'Denver', 'CO', '80220', '840', '', '', '1', '2010-01-17 13:27:22');
+INSERT INTO `customers` VALUES ('250', '17', 'Ahab', 'Arab', '', '', '123 Main St', 'Apt. 1', 'Denver', 'CO', '80220', '840', '', '', '1', '2010-01-17 13:27:34');
+INSERT INTO `customers` VALUES ('251', '17', 'Ahab', 'Arab', '', '', '123 Main St', 'Apt. 1', 'Denver', 'CO', '80220', '840', '', '', '1', '2010-01-17 13:27:56');
 
 -- ----------------------------
 -- Table structure for `email_triggers`
@@ -1943,9 +1962,6 @@ CREATE TABLE `external_apis` (
 -- ----------------------------
 INSERT INTO `external_apis` VALUES ('1', 'authnet', 'https://secure.authorize.net/gateway/transact.dll', 'https://test.authorize.net/gateway/transact.dll', 'https://test.authorize.net/gateway/transact.dll', 'https://api.authorize.net/xml/v1/request.api', 'https://apitest.authorize.net/xml/v1/request.api', 'https://apitest.authorize.net/xml/v1/request.api');
 INSERT INTO `external_apis` VALUES ('2', 'exact', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl');
-INSERT INTO `external_apis` VALUES ('3', 'firstdata', '', '', '', '', '', '');
-INSERT INTO `external_apis` VALUES ('4', 'netbilling', '', '', '', '', '', '');
-INSERT INTO `external_apis` VALUES ('5', 'psigate', '', '', '', '', '', '');
 INSERT INTO `external_apis` VALUES ('6', 'paypal', 'https://api-3t.sandbox.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp');
 
 -- ----------------------------
@@ -2870,7 +2886,7 @@ CREATE TABLE `request_log` (
   `remote_ip` varchar(11) NOT NULL,
   `request` text NOT NULL,
   PRIMARY KEY (`request_log_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2790 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=2815 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of request_log
@@ -5664,6 +5680,31 @@ INSERT INTO `request_log` VALUES ('2786', '2010-01-15 12:28:08', '127.0.0.1', '<
 INSERT INTO `request_log` VALUES ('2787', '2010-01-15 12:28:49', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Recur</type>\r\n	<gateway_id>63</gateway_id>\r\n	<amount>24.99</amount>\r\n	<customer>\r\n		<first_name>Ahab</first_name>\r\n		<last_name>Arab</last_name>\r\n		<address_1>123 Main Street</address_1>\r\n		<address_2>Apt. 1</address_2>\r\n		<city>Denver</city>\r\n		<state>CO</state>\r\n		<postal_code>80220</postal_code>\r\n		<country>US</country>\r\n	</customer>\r\n	<credit_card>\r\n		<name>Moses Malone</name>\r\n		<card_num>4024007155715823</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<recur>\r\n		<start_date>2010-01-16</start_date>\r\n		<plan_id>16</plan_id>\r\n	</recur>\r\n</request>');
 INSERT INTO `request_log` VALUES ('2788', '2010-01-15 12:30:56', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Recur</type>\r\n	<gateway_id>63</gateway_id>\r\n	<amount>24.99</amount>\r\n	<customer>\r\n		<first_name>Ahab</first_name>\r\n		<last_name>Arab</last_name>\r\n		<address_1>123 Main Street</address_1>\r\n		<address_2>Apt. 1</address_2>\r\n		<city>Denver</city>\r\n		<state>CO</state>\r\n		<postal_code>80220</postal_code>\r\n		<country>US</country>\r\n	</customer>\r\n	<credit_card>\r\n		<name>Moses Malone</name>\r\n		<card_num>4024007155715823</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<recur>\r\n		<start_date>2010-01-16</start_date>\r\n		<plan_id>16</plan_id>\r\n	</recur>\r\n</request>');
 INSERT INTO `request_log` VALUES ('2789', '2010-01-15 12:31:34', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Recur</type>\r\n	<gateway_id>63</gateway_id>\r\n	<amount>24.99</amount>\r\n	<customer>\r\n		<first_name>Ahab</first_name>\r\n		<last_name>Arab</last_name>\r\n		<address_1>123 Main Street</address_1>\r\n		<address_2>Apt. 1</address_2>\r\n		<city>Denver</city>\r\n		<state>CO</state>\r\n		<postal_code>80220</postal_code>\r\n		<country>US</country>\r\n	</customer>\r\n	<credit_card>\r\n		<name>Moses Malone</name>\r\n		<card_num>4024007155715823</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<recur>\r\n		<start_date>2010-01-16</start_date>\r\n		<plan_id>16</plan_id>\r\n	</recur>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2790', '2010-01-17 10:48:07', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewGateway</type>\r\n	<client_id>17</client_id>\r\n	<enabled>1</enabled>\r\n	<mode>dev</mode>\r\n	<gateway_type>exact</gateway_type>\r\n	<terminal_id>A00427-01</terminal_id>\r\n	<password>testus</password>\r\n	<accept_visa>1</accept_visa>\r\n	<accept_mc>1</accept_mc>\r\n	<accept_discover>1</accept_discover>\r\n	<accept_amex>1</accept_amex>\r\n	<accept_dc>1</accept_dc>\r\n	<enable_arb>1</enable_arb>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2791', '2010-01-17 11:52:55', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewCustomer</type>\r\n	<first_name>David</first_name>\r\n	<last_name>Ryan</last_name>\r\n	<company>ABC Inc.</company>\r\n	<internal_id>12343434</internal_id>\r\n	<address_1>123 Main Street</address_1>\r\n	<address_2>APT 1</address_2>\r\n	<city>Denver</city>\r\n	<state>Colorado</state>\r\n	<postal_code>80220</postal_code>\r\n	<country>US</country>\r\n	<phone>3033319812</phone>\r\n	<email>daveryan187@yahoo.com</email>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2792', '2010-01-17 11:53:46', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewCustomer</type>\r\n	<first_name>David</first_name>\r\n	<last_name>Ryan</last_name>\r\n	<company>ABC Inc.</company>\r\n	<internal_id>12343434</internal_id>\r\n	<address_1>123 Main Street</address_1>\r\n	<address_2>APT 1</address_2>\r\n	<city>Denver</city>\r\n	<state>Colorado</state>\r\n	<postal_code>80220</postal_code>\r\n	<country>US</country>\r\n	<phone>3033319812</phone>\r\n	<email>daveryan187@yahoo.com</email>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2793', '2010-01-17 11:54:28', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewCustomer</type>\r\n	<first_name>David</first_name>\r\n	<last_name>Ryan</last_name>\r\n	<company>ABC Inc.</company>\r\n	<internal_id>12343434</internal_id>\r\n	<address_1>123 Main Street</address_1>\r\n	<address_2>APT 1</address_2>\r\n	<city>Denver</city>\r\n	<state>Alabama</state>\r\n	<postal_code>80220</postal_code>\r\n	<country>US</country>\r\n	<phone>3033319812</phone>\r\n	<email>daveryan187@yahoo.com</email>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2794', '2010-01-17 11:54:45', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewCustomer</type>\r\n	<first_name>David</first_name>\r\n	<last_name>Ryan</last_name>\r\n	<company>ABC Inc.</company>\r\n	<internal_id>12343434</internal_id>\r\n	<address_1>123 Main Street</address_1>\r\n	<address_2>APT 1</address_2>\r\n	<city>Denver</city>\r\n	<state>Alabama1212</state>\r\n	<postal_code>80220</postal_code>\r\n	<country>US</country>\r\n	<phone>3033319812</phone>\r\n	<email>daveryan187@yahoo.com</email>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2795', '2010-01-17 11:55:24', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewCustomer</type>\r\n	<first_name>David</first_name>\r\n	<last_name>Ryan</last_name>\r\n	<company>ABC Inc.</company>\r\n	<internal_id>12343434</internal_id>\r\n	<address_1>123 Main Street</address_1>\r\n	<address_2>APT 1</address_2>\r\n	<city>Denver</city>\r\n	<state>lalalal</state>\r\n	<postal_code>80220</postal_code>\r\n	<country>NL</country>\r\n	<phone>3033319812</phone>\r\n	<email>daveryan187@yahoo.com</email>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2796', '2010-01-17 11:55:25', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewCustomer</type>\r\n	<first_name>David</first_name>\r\n	<last_name>Ryan</last_name>\r\n	<company>ABC Inc.</company>\r\n	<internal_id>12343434</internal_id>\r\n	<address_1>123 Main Street</address_1>\r\n	<address_2>APT 1</address_2>\r\n	<city>Denver</city>\r\n	<state>lalalal</state>\r\n	<postal_code>80220</postal_code>\r\n	<country>NL</country>\r\n	<phone>3033319812</phone>\r\n	<email>daveryan187@yahoo.com</email>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2797', '2010-01-17 11:55:45', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewCustomer</type>\r\n	<first_name>David</first_name>\r\n	<last_name>Ryan</last_name>\r\n	<company>ABC Inc.</company>\r\n	<internal_id>12343434</internal_id>\r\n	<address_1>123 Main Street</address_1>\r\n	<address_2>APT 1</address_2>\r\n	<city>Denver</city>\r\n	<state>lalalal</state>\r\n	<postal_code>80220</postal_code>\r\n	<country>NL</country>\r\n	<phone>3033319812</phone>\r\n	<email>daveryan187@yahoo.com</email>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2798', '2010-01-17 11:56:02', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewCustomer</type>\r\n	<first_name>David</first_name>\r\n	<last_name>Ryan</last_name>\r\n	<company>ABC Inc.</company>\r\n	<internal_id>12343434</internal_id>\r\n	<address_1>123 Main Street</address_1>\r\n	<address_2>APT 1</address_2>\r\n	<city>Denver</city>\r\n	<state>lalalal</state>\r\n	<postal_code>80220</postal_code>\r\n	<country>NL</country>\r\n	<phone>3033319812</phone>\r\n	<email>daveryan187@yahoo.com</email>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2799', '2010-01-17 11:56:03', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewCustomer</type>\r\n	<first_name>David</first_name>\r\n	<last_name>Ryan</last_name>\r\n	<company>ABC Inc.</company>\r\n	<internal_id>12343434</internal_id>\r\n	<address_1>123 Main Street</address_1>\r\n	<address_2>APT 1</address_2>\r\n	<city>Denver</city>\r\n	<state>lalalal</state>\r\n	<postal_code>80220</postal_code>\r\n	<country>NL</country>\r\n	<phone>3033319812</phone>\r\n	<email>daveryan187@yahoo.com</email>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2800', '2010-01-17 11:56:03', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewCustomer</type>\r\n	<first_name>David</first_name>\r\n	<last_name>Ryan</last_name>\r\n	<company>ABC Inc.</company>\r\n	<internal_id>12343434</internal_id>\r\n	<address_1>123 Main Street</address_1>\r\n	<address_2>APT 1</address_2>\r\n	<city>Denver</city>\r\n	<state>lalalal</state>\r\n	<postal_code>80220</postal_code>\r\n	<country>NL</country>\r\n	<phone>3033319812</phone>\r\n	<email>daveryan187@yahoo.com</email>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2801', '2010-01-17 11:56:04', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewCustomer</type>\r\n	<first_name>David</first_name>\r\n	<last_name>Ryan</last_name>\r\n	<company>ABC Inc.</company>\r\n	<internal_id>12343434</internal_id>\r\n	<address_1>123 Main Street</address_1>\r\n	<address_2>APT 1</address_2>\r\n	<city>Denver</city>\r\n	<state>lalalal</state>\r\n	<postal_code>80220</postal_code>\r\n	<country>NL</country>\r\n	<phone>3033319812</phone>\r\n	<email>daveryan187@yahoo.com</email>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2802', '2010-01-17 11:56:04', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewCustomer</type>\r\n	<first_name>David</first_name>\r\n	<last_name>Ryan</last_name>\r\n	<company>ABC Inc.</company>\r\n	<internal_id>12343434</internal_id>\r\n	<address_1>123 Main Street</address_1>\r\n	<address_2>APT 1</address_2>\r\n	<city>Denver</city>\r\n	<state>lalalal</state>\r\n	<postal_code>80220</postal_code>\r\n	<country>NL</country>\r\n	<phone>3033319812</phone>\r\n	<email>daveryan187@yahoo.com</email>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2803', '2010-01-17 11:56:04', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewCustomer</type>\r\n	<first_name>David</first_name>\r\n	<last_name>Ryan</last_name>\r\n	<company>ABC Inc.</company>\r\n	<internal_id>12343434</internal_id>\r\n	<address_1>123 Main Street</address_1>\r\n	<address_2>APT 1</address_2>\r\n	<city>Denver</city>\r\n	<state>lalalal</state>\r\n	<postal_code>80220</postal_code>\r\n	<country>NL</country>\r\n	<phone>3033319812</phone>\r\n	<email>daveryan187@yahoo.com</email>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2804', '2010-01-17 11:56:04', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewCustomer</type>\r\n	<first_name>David</first_name>\r\n	<last_name>Ryan</last_name>\r\n	<company>ABC Inc.</company>\r\n	<internal_id>12343434</internal_id>\r\n	<address_1>123 Main Street</address_1>\r\n	<address_2>APT 1</address_2>\r\n	<city>Denver</city>\r\n	<state>lalalal</state>\r\n	<postal_code>80220</postal_code>\r\n	<country>NL</country>\r\n	<phone>3033319812</phone>\r\n	<email>daveryan187@yahoo.com</email>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2805', '2010-01-17 11:56:58', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewCustomer</type>\r\n	<first_name>David</first_name>\r\n	<last_name>Ryan</last_name>\r\n	<company>ABC Inc.</company>\r\n	<internal_id>12343434</internal_id>\r\n	<address_1>123 Main Street</address_1>\r\n	<address_2>APT 1</address_2>\r\n	<city>Denver</city>\r\n	<state>lalalal</state>\r\n	<postal_code>80220</postal_code>\r\n	<country>NL</country>\r\n	<phone>3033319812</phone>\r\n	<email>daveryan187@yahoo.com</email>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2806', '2010-01-17 11:57:15', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewCustomer</type>\r\n	<first_name>David</first_name>\r\n	<last_name>Ryan</last_name>\r\n	<company>ABC Inc.</company>\r\n	<internal_id>12343434</internal_id>\r\n	<address_1>123 Main Street</address_1>\r\n	<address_2>APT 1</address_2>\r\n	<city>Denver</city>\r\n	<state>lalalal</state>\r\n	<postal_code>80220</postal_code>\r\n	<country>Canada</country>\r\n	<phone>3033319812</phone>\r\n	<email>daveryan187@yahoo.com</email>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2807', '2010-01-17 11:57:26', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewCustomer</type>\r\n	<first_name>David</first_name>\r\n	<last_name>Ryan</last_name>\r\n	<company>ABC Inc.</company>\r\n	<internal_id>12343434</internal_id>\r\n	<address_1>123 Main Street</address_1>\r\n	<address_2>APT 1</address_2>\r\n	<city>Denver</city>\r\n	<state>lalalal</state>\r\n	<postal_code>80220</postal_code>\r\n	<country>CA</country>\r\n	<phone>3033319812</phone>\r\n	<email>daveryan187@yahoo.com</email>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2808', '2010-01-17 11:57:55', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>NewCustomer</type>\r\n	<first_name>David</first_name>\r\n	<last_name>Ryan</last_name>\r\n	<company>ABC Inc.</company>\r\n	<internal_id>12343434</internal_id>\r\n	<address_1>123 Main Street</address_1>\r\n	<address_2>APT 1</address_2>\r\n	<city>Denver</city>\r\n	<state>Ontario</state>\r\n	<postal_code>80220</postal_code>\r\n	<country>CA</country>\r\n	<phone>3033319812</phone>\r\n	<email>daveryan187@yahoo.com</email>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2809', '2010-01-17 12:05:31', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>UpdateRecurring</type>\r\n	<recurring_id>188</recurring_id>\r\n	<amount>199.99</amount>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2810', '2010-01-17 13:23:33', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Recur</type>\r\n	<gateway_id>63</gateway_id>\r\n	<amount>24.99</amount>\r\n	<customer>\r\n		<first_name>Ahab</first_name>\r\n		<last_name>Arab</last_name>\r\n		<address_1>123 Main Street</address_1>\r\n		<address_2>Apt. 1</address_2>\r\n		<city>Denver</city>\r\n		<state>CO</state>\r\n		<postal_code>80220</postal_code>\r\n		<country>US</country>\r\n	</customer>\r\n	<credit_card>\r\n		<name>Moses Malone</name>\r\n		<card_num>4024007155715823</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<recur>\r\n		<start_date>2010-01-16</start_date>\r\n		<plan_id>16</plan_id>\r\n	</recur>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2811', '2010-01-17 13:23:46', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Recur</type>\r\n	<gateway_id>63</gateway_id>\r\n	<amount>24.99</amount>\r\n	<customer>\r\n		<first_name>Ahab</first_name>\r\n		<last_name>Arab</last_name>\r\n		<address_1>123 Main Street</address_1>\r\n		<address_2>Apt. 1</address_2>\r\n		<city>Denver</city>\r\n		<state>CO</state>\r\n		<postal_code>80220</postal_code>\r\n		<country>US</country>\r\n	</customer>\r\n	<credit_card>\r\n		<name>Moses Malone</name>\r\n		<card_num>4024007155715823</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<recur>\r\n		<start_date>2010-01-20</start_date>\r\n		<plan_id>16</plan_id>\r\n	</recur>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2812', '2010-01-17 13:27:22', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Recur</type>\r\n	<gateway_id>63</gateway_id>\r\n	<amount>24.99</amount>\r\n	<customer>\r\n		<first_name>Ahab</first_name>\r\n		<last_name>Arab</last_name>\r\n		<address_1>123 Main Street</address_1>\r\n		<address_2>Apt. 1</address_2>\r\n		<city>Denver</city>\r\n		<state>CO</state>\r\n		<postal_code>80220</postal_code>\r\n		<country>US</country>\r\n	</customer>\r\n	<credit_card>\r\n		<name>Moses Malone</name>\r\n		<card_num>4024007155715823</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<recur>\r\n		<start_date>2010-01-20</start_date>\r\n		<plan_id>16</plan_id>\r\n	</recur>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2813', '2010-01-17 13:27:34', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Recur</type>\r\n	<gateway_id>63</gateway_id>\r\n	<amount>24.99</amount>\r\n	<customer>\r\n		<first_name>Ahab</first_name>\r\n		<last_name>Arab</last_name>\r\n		<address_1>123 Main Street</address_1>\r\n		<address_2>Apt. 1</address_2>\r\n		<city>Denver</city>\r\n		<state>CO</state>\r\n		<postal_code>80220</postal_code>\r\n		<country>US</country>\r\n	</customer>\r\n	<credit_card>\r\n		<name>Moses Malone</name>\r\n		<card_num>4024007155715823</card_num>\r\n		<exp_month>10</exp_month>\r\n		<exp_year>2011</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<recur>\r\n		<start_date>2010-01-20</start_date>\r\n		<plan_id>16</plan_id>\r\n	</recur>\r\n</request>');
+INSERT INTO `request_log` VALUES ('2814', '2010-01-17 13:27:56', '127.0.0.1', '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request>\r\n	<authentication>\r\n		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>\r\n		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>\r\n	</authentication>\r\n	<type>Recur</type>\r\n	<gateway_id>63</gateway_id>\r\n	<amount>24.99</amount>\r\n	<customer>\r\n		<first_name>Ahab</first_name>\r\n		<last_name>Arab</last_name>\r\n		<address_1>123 Main Street</address_1>\r\n		<address_2>Apt. 1</address_2>\r\n		<city>Denver</city>\r\n		<state>CO</state>\r\n		<postal_code>80220</postal_code>\r\n		<country>US</country>\r\n	</customer>\r\n	<credit_card>\r\n		<name>Moses Malone</name>\r\n		<card_num>4024007155715823</card_num>\r\n		<exp_month>04</exp_month>\r\n		<exp_year>2010</exp_year>\r\n		<cvv>123</cvv>\r\n	</credit_card>\r\n	<recur>\r\n		<start_date>2010-01-20</start_date>\r\n		<plan_id>16</plan_id>\r\n	</recur>\r\n</request>');
 
 -- ----------------------------
 -- Table structure for `request_types`
@@ -5779,6 +5820,85 @@ INSERT INTO `required_fields` VALUES ('50', '35', 'email_subject');
 INSERT INTO `required_fields` VALUES ('51', '35', 'email_body');
 INSERT INTO `required_fields` VALUES ('53', '35', 'from_name');
 INSERT INTO `required_fields` VALUES ('54', '35', 'from_email');
+
+-- ----------------------------
+-- Table structure for `states`
+-- ----------------------------
+DROP TABLE IF EXISTS `states`;
+CREATE TABLE `states` (
+  `state_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name_long` varchar(20) NOT NULL DEFAULT '' COMMENT 'Common Name',
+  `name_short` char(2) NOT NULL DEFAULT '' COMMENT 'USPS Abbreviation',
+  PRIMARY KEY (`state_id`),
+  UNIQUE KEY `name_long` (`name_long`)
+) ENGINE=MyISAM AUTO_INCREMENT=64 DEFAULT CHARSET=latin1 COMMENT='US States';
+
+-- ----------------------------
+-- Records of states
+-- ----------------------------
+INSERT INTO `states` VALUES ('1', 'Alabama', 'AL');
+INSERT INTO `states` VALUES ('2', 'Alaska', 'AK');
+INSERT INTO `states` VALUES ('3', 'Arizona', 'AZ');
+INSERT INTO `states` VALUES ('4', 'Arkansas', 'AR');
+INSERT INTO `states` VALUES ('5', 'California', 'CA');
+INSERT INTO `states` VALUES ('6', 'Colorado', 'CO');
+INSERT INTO `states` VALUES ('7', 'Connecticut', 'CT');
+INSERT INTO `states` VALUES ('8', 'Delaware', 'DE');
+INSERT INTO `states` VALUES ('9', 'Florida', 'FL');
+INSERT INTO `states` VALUES ('10', 'Georgia', 'GA');
+INSERT INTO `states` VALUES ('11', 'Hawaii', 'HI');
+INSERT INTO `states` VALUES ('12', 'Idaho', 'ID');
+INSERT INTO `states` VALUES ('13', 'Illinois', 'IL');
+INSERT INTO `states` VALUES ('14', 'Indiana', 'IN');
+INSERT INTO `states` VALUES ('15', 'Iowa', 'IA');
+INSERT INTO `states` VALUES ('16', 'Kansas', 'KS');
+INSERT INTO `states` VALUES ('17', 'Kentucky', 'KY');
+INSERT INTO `states` VALUES ('18', 'Louisiana', 'LA');
+INSERT INTO `states` VALUES ('19', 'Maine', 'ME');
+INSERT INTO `states` VALUES ('20', 'Maryland', 'MD');
+INSERT INTO `states` VALUES ('21', 'Massachusetts', 'MA');
+INSERT INTO `states` VALUES ('22', 'Michigan', 'MI');
+INSERT INTO `states` VALUES ('23', 'Minnesota', 'MN');
+INSERT INTO `states` VALUES ('24', 'Mississippi', 'MS');
+INSERT INTO `states` VALUES ('25', 'Missouri', 'MO');
+INSERT INTO `states` VALUES ('26', 'Montana', 'MT');
+INSERT INTO `states` VALUES ('27', 'Nebraska', 'NE');
+INSERT INTO `states` VALUES ('28', 'Nevada', 'NV');
+INSERT INTO `states` VALUES ('29', 'New Hampshire', 'NH');
+INSERT INTO `states` VALUES ('30', 'New Jersey', 'NJ');
+INSERT INTO `states` VALUES ('31', 'New Mexico', 'NM');
+INSERT INTO `states` VALUES ('32', 'New York', 'NY');
+INSERT INTO `states` VALUES ('33', 'North Carolina', 'NC');
+INSERT INTO `states` VALUES ('34', 'North Dakota', 'ND');
+INSERT INTO `states` VALUES ('35', 'Ohio', 'OH');
+INSERT INTO `states` VALUES ('36', 'Oklahoma', 'OK');
+INSERT INTO `states` VALUES ('37', 'Oregon', 'OR');
+INSERT INTO `states` VALUES ('38', 'Pennsylvania', 'PA');
+INSERT INTO `states` VALUES ('39', 'Rhode Island', 'RI');
+INSERT INTO `states` VALUES ('40', 'South Carolina', 'SC');
+INSERT INTO `states` VALUES ('41', 'South Dakota', 'SD');
+INSERT INTO `states` VALUES ('42', 'Tennessee', 'TN');
+INSERT INTO `states` VALUES ('43', 'Texas', 'TX');
+INSERT INTO `states` VALUES ('44', 'Utah', 'UT');
+INSERT INTO `states` VALUES ('45', 'Vermont', 'VT');
+INSERT INTO `states` VALUES ('46', 'Virginia', 'VA');
+INSERT INTO `states` VALUES ('47', 'Washington', 'WA');
+INSERT INTO `states` VALUES ('48', 'West Virginia', 'WV');
+INSERT INTO `states` VALUES ('49', 'Wisconsin', 'WI');
+INSERT INTO `states` VALUES ('50', 'Wyoming', 'WY');
+INSERT INTO `states` VALUES ('51', 'Alberta', 'AB');
+INSERT INTO `states` VALUES ('52', 'British Columbia', 'BC');
+INSERT INTO `states` VALUES ('53', 'Manitoba', 'MB');
+INSERT INTO `states` VALUES ('54', 'New Brunswick', 'NB');
+INSERT INTO `states` VALUES ('55', 'Newfoundland and Lab', 'NL');
+INSERT INTO `states` VALUES ('56', 'Northwest Territorie', 'NT');
+INSERT INTO `states` VALUES ('57', 'Nova Scotia', 'NS');
+INSERT INTO `states` VALUES ('58', 'Nunavut', 'NU');
+INSERT INTO `states` VALUES ('59', 'Ontario', 'ON');
+INSERT INTO `states` VALUES ('60', 'Prince Edward Island', 'PE');
+INSERT INTO `states` VALUES ('61', 'Quebec', 'QC');
+INSERT INTO `states` VALUES ('62', 'Saskatchewan', 'SK');
+INSERT INTO `states` VALUES ('63', 'Yukon', 'YT');
 
 -- ----------------------------
 -- Table structure for `subscriptions`
