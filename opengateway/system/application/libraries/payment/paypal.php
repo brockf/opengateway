@@ -3,9 +3,9 @@ class Paypal
 {
 	function Settings()
 	{
-		$settings['name'] = 'Paypal Pro';
+		$settings['name'] = 'PayPal Pro';
 		$settings['class_name'] = 'paypal';
-		$settings['description'] = 'Paypal Pro';
+		$settings['description'] = 'PayPal Pro';
 		$settings['is_preferred'] = 1;
 		$settings['setup_fee'] = 0;
 		$settings['monthly_fee'] = 0;

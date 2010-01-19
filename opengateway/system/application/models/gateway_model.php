@@ -128,7 +128,6 @@ class Gateway_model extends Model
 			die($this->response->Error(1010));
 		}
 		
-		
 		if(isset($params['gateway_id'])) {
 			$gateway_id = $params['gateway_id'];
 		} else {
