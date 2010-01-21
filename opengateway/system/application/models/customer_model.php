@@ -420,13 +420,6 @@ class Customer_model extends Model
 			$this->db->limit($params['limit'], $offset);
 		}
 		
-		if(isset($params['sort_dir']) and ($params['sort_dir'] == 'asc' or $params['sort_dir'] == 'desc' )) {
-			$sort_dir = $params['sort_dir'];
-		}
-		else {
-			$sort_dir = 'asc';
-		}
-		
 		$params['sort'] = isset($params['sort']) ? $params['sort'] : '';
 		
 		switch($params['sort'])
@@ -450,19 +443,19 @@ class Customer_model extends Model
 		switch($params['sort_dir'])
 		{
 			case 'asc':
-				$sort = 'ASC';
+				$sort_dir = 'ASC';
 				break;
 			case 'desc':
-				$sort = 'DESC';
+				$sort_dir = 'DESC';
 				break;
 			default:
-				$sort = 'DESC';
+				$sort_dir = 'DESC';
 				break;		
 		}
 		
 		$this->db->order_by($sort, $sort_dir);	
 		
-		$this->db->join('subscriptions', 'customers.customer_id = subscriptions.customer_id', 'inner');
+		$this->db->join('subscriptions', 'customers.customer_id = subscriptions.customer_id', 'left');
 	
 		if(isset($params['active_recurring'])) {
 			if($params['active_recurring'] == 1) {
@@ -483,6 +476,7 @@ class Customer_model extends Model
 		
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$query = $this->db->get('customers');
+		
 		$data = array();
 		if($query->num_rows() > 0) {
 			$i=0;
