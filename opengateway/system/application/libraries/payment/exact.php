@@ -6,35 +6,88 @@ class exact
 	{
 		$settings['name'] = 'E-xact';
 		$settings['class_name'] = 'exact';
-		$settings['description'] = 'E-xact';
+		$settings['description'] = 'E-xact from VersaPay is the perfect gateway for both Canadian and American merchants.';
 		$settings['is_preferred'] = 1;
-		$settings['setup_fee'] = 0;
-		$settings['monthly_fee'] = 0;
-		$settings['transaction_fee'] = 0;
-		$settings['purchase_link'] = '';
+		$settings['setup_fee'] = '$149.99';
+		$settings['monthly_fee'] = '$29.99';
+		$settings['transaction_fee'] = '$0.25';
+		$settings['purchase_link'] = 'http://www.opengateway.net/gateways/exact';
 		$settings['allows_updates'] = 1;
 		$settings['allows_refunds'] = 1;
-		$settings['required_fields'] = array('enabled', 'mode', 'terminal_id', 'password', 'accept_visa', 'accept_mc', 'accept_discover', 'accept_dc', 'accept_amex', 'enable_arb');
+		$settings['required_fields'] = array('enabled',
+											 'terminal_id',
+											 'password',
+											 'accept_visa',
+											 'accept_mc',
+											 'accept_discover',
+											 'accept_dc',
+											 'accept_amex');
+											 
+		$settings['field_details'] = array(
+										'enabled' => array(
+														'text' => 'Enable this gateway?',
+														'type' => 'radio',
+														'options' => array(
+																		'1' => 'Enabled',
+																		'0' => 'Disabled')
+														),
+										'terminal_id' => array(
+														'text' => 'Terminal ID',
+														'type' => 'text'
+														),
+										'password' => array(
+														'text' => 'Password',
+														'type' => 'text'
+														),
+										'accept_visa' => array(
+														'text' => 'Accept VISA?',
+														'type' => 'radio',
+														'options' => array(
+																		'1' => 'Yes',
+																		'0' => 'No'
+																	)
+														),
+										'accept_mc' => array(
+														'text' => 'Accept MasterCard?',
+														'type' => 'radio',
+														'options' => array(
+																		'1' => 'Yes',
+																		'0' => 'No'
+																	)
+														),
+										'accept_discover' => array(
+														'text' => 'Accept Discover?',
+														'type' => 'radio',
+														'options' => array(
+																		'1' => 'Yes',
+																		'0' => 'No'
+																	)
+														),
+										'accept_dc' => array(
+														'text' => 'Accept Diner\'s Club?',
+														'type' => 'radio',
+														'options' => array(
+																		'1' => 'Yes',
+																		'0' => 'No'
+																	)
+														),
+										'accept_amex' => array(
+														'text' => 'Accept American Express?',
+														'type' => 'radio',
+														'options' => array(
+																		'1' => 'Yes',
+																		'0' => 'No'
+																	)
+														)
+											);
 		
 		return $settings;
 	}
 	
 	function TestConnection($client_id, $gateway) 
 	{
-		// Get the proper URL
-		switch($gateway['mode'])
-		{
-			case 'live':
-				$post_url = $gateway['url_live'];
-			break;
-			case 'test':
-				$post_url = $gateway['url_test'];
-			break;
-			case 'dev':
-				$post_url = $gateway['url_dev'];
-			break;
-		}
-		
+		$post_url = $gateway['url_live'];
+			
 		$trxnProperties = array(
 					'ExactID'			=> $gateway['terminal_id'],	
 			  		'Password'			=> $gateway['password'],
@@ -61,19 +114,7 @@ class exact
 	{			
 		$CI =& get_instance();
 		
-		// Get the proper URL
-		switch($gateway['mode'])
-		{
-			case 'live':
-				$post_url = $gateway['url_live'];
-			break;
-			case 'test':
-				$post_url = $gateway['url_test'];
-			break;
-			case 'dev':
-				$post_url = $gateway['url_dev'];
-			break;
-		}
+		$post_url = $gateway['url_live'];
 			
 		$trxnProperties = array(
 					'ExactID'			=> $gateway['terminal_id'],	
@@ -120,19 +161,7 @@ class exact
 	{			
 		$CI =& get_instance();
 		
-		// Get the proper URL
-		switch($gateway['mode'])
-		{
-			case 'live':
-				$post_url = $gateway['url_live'];
-			break;
-			case 'test':
-				$post_url = $gateway['url_test'];
-			break;
-			case 'dev':
-				$post_url = $gateway['url_dev'];
-			break;
-		}
+		$post_url = $gateway['url_live'];
 			
 		$trxnProperties = array(
 					'ExactID'			=> $gateway['terminal_id'],	
@@ -213,19 +242,7 @@ class exact
 	{
 		$CI =& get_instance();
 		
-		// Get the proper URL
-		switch($gateway['mode'])
-		{
-			case 'live':
-				$post_url = $gateway['url_live'];
-			break;
-			case 'test':
-				$post_url = $gateway['url_test'];
-			break;
-			case 'dev':
-				$post_url = $gateway['url_dev'];
-			break;
-		}
+		$post_url = $gateway['url_live'];
 
 		// Create the recurring seed
 		
@@ -276,19 +293,7 @@ class exact
 	{
 		$CI =& get_instance();
 		
-		// Get the proper URL
-		switch($gateway['mode'])
-		{
-			case 'live':
-				$post_url = $gateway['url_live'];
-			break;
-			case 'test':
-				$post_url = $gateway['url_test'];
-			break;
-			case 'dev':
-				$post_url = $gateway['url_dev'];
-			break;
-		}
+		$post_url = $gateway['url_live'];
 
 		// Create the charge
 		
@@ -395,38 +400,38 @@ class exact
 	function LogResponse($order_id, $response)
 	{		
 		$response_array = array(
-		'ExactID',
-		'Password',
-		'Transaction_Type',
-		'DollarAmount',
-		'SurchargeAmount',
-		'Transaction_Tag',
-		'PAN',
-		'Expiry_Date',
-		'CardHoldersName',
-		'VerificationStr1',
-		'CVD_Presence_Ind',
-		'Secure_AuthRequired',
-		'Secure_AuthResult',
-		'Ecommerce_Flag',
-		'CAVV_Algorithm',
-		'Customer_Ref',
-		'LogonMessage',
-		'Error_Number',
-		'Error_Description',
-		'Transaction_Error',
-		'Transaction_Approved',
-		'EXact_Resp_Code',
-		'EXact_Message',
-		'MerchantName',
-		'MerchantAddress',
-		'MerchantCity',
-		'MerchantProvince',
-		'MerchantCountry',
-		'MerchantPostal',
-		'MerchantURL',
-		'CTR'
-		);
+					'ExactID',
+					'Password',
+					'Transaction_Type',
+					'DollarAmount',
+					'SurchargeAmount',
+					'Transaction_Tag',
+					'PAN',
+					'Expiry_Date',
+					'CardHoldersName',
+					'VerificationStr1',
+					'CVD_Presence_Ind',
+					'Secure_AuthRequired',
+					'Secure_AuthResult',
+					'Ecommerce_Flag',
+					'CAVV_Algorithm',
+					'Customer_Ref',
+					'LogonMessage',
+					'Error_Number',
+					'Error_Description',
+					'Transaction_Error',
+					'Transaction_Approved',
+					'EXact_Resp_Code',
+					'EXact_Message',
+					'MerchantName',
+					'MerchantAddress',
+					'MerchantCity',
+					'MerchantProvince',
+					'MerchantCountry',
+					'MerchantPostal',
+					'MerchantURL',
+					'CTR'
+				);
 		
 		foreach($response_array as $item) {
 			if(isset($response->$item)) {

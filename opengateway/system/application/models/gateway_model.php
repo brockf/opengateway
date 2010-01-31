@@ -50,7 +50,7 @@ class Gateway_model extends Model
 		$settings = $this->$gateway_type->Settings();
 		$required_fields = $settings['required_fields'];
 		$this->load->library('field_validation');
-		$request_type_id = $this->field_validation->ValidateRequiredGatewayFields($required_fields, $params);
+		$validate = $this->field_validation->ValidateRequiredGatewayFields($required_fields, $params);
 		
 		// Get the external API id
 		$external_api_id = $this->GetExternalApiId($gateway_type);
@@ -60,7 +60,7 @@ class Gateway_model extends Model
 		$create_date = date('Y-m-d');
 		
 		$insert_data = array(
-							'client_id' 		=> $params['client_id'],
+							'client_id' 		=> $client_id,
 							'external_api_id' 	=> $external_api_id,
 							'enabled'			=> $params['enabled'],
 							'create_date'		=> $create_date
@@ -145,6 +145,10 @@ class Gateway_model extends Model
 		
 		// Get the gateway info to load the proper library
 		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
+		
+		if ($gateway['enabled'] == '0') {
+			die($this->response->Error(5017));
+		}
 		
 		// Validate the Credit Card number
 		$params['card_type'] = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
@@ -297,6 +301,10 @@ class Gateway_model extends Model
 		
 		// Get the gateway info to load the proper library
 		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
+		
+		if ($gateway['enabled'] == '0') {
+			die($this->response->Error(5017));
+		}
 		
 		$this->load->library('field_validation');
 		
@@ -482,6 +490,10 @@ class Gateway_model extends Model
 		// Get the gateway info to load the proper library
 		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
 		
+		if ($gateway['enabled'] == '0') {
+			return FALSE;
+		}
+		
 		// Create a new order
 		$CI->load->model('order_model');
 		$order_id = $CI->order_model->CreateNewOrder($client_id, $params);
@@ -581,21 +593,32 @@ class Gateway_model extends Model
 			die($this->response->Error(3000));
 		}
 		
-		// Get the gateway fields
-		$fields = $this->GetRequiredGatewayFields($gateway['name']);
+		// Validate the required fields
+		$this->load->library('payment/'.$gateway['name'], $gateway['name']);
+		$settings = $this->$gateway['name']->Settings();
+		$required_fields = $settings['required_fields'];
+		$this->load->library('field_validation');
+		$validate = $this->field_validation->ValidateRequiredGatewayFields($required_fields, $params);
+				
+		$this->load->library('encrypt');
 		
+		// manually handle "enabled"
+		if (isset($params['enabled']) and ($params['enabled'] == '0' or $params['enabled'] == '1')) {
+			$update_data['enabled'] = $params['enabled'];
+			$this->db->where('client_gateway_id', $params['gateway_id']);
+			$this->db->update('client_gateways', $update_data);
+			unset($update_data);
+		}
+				
 		$i = 0;
-		foreach($fields as $required_value)
+		foreach($required_fields as $field)
 		{
-			foreach($required_value as $key => $value)
-			{
-				if(isset($params[$value]) && $params[$value] != '') {
-					$update_data['value'] = $params[$value];
-					$this->db->where('client_gateway_id', $params['gateway_id']);
-					$this->db->where('field', $value);
-					$this->db->update('client_gateway_params', $update_data);
-					$i++;
-				}
+			if(isset($params[$field]) and $params[$field] != '') {
+				$update_data['value'] = $this->encrypt->encode($params[$field]);
+				$this->db->where('client_gateway_id', $params['gateway_id']);
+				$this->db->where('field', $field);
+				$this->db->update('client_gateway_params', $update_data);
+				$i++;
 			}
 		}
 		
@@ -674,6 +697,69 @@ class Gateway_model extends Model
 	}
 	
 	/**
+	* Get list of current gateways
+	*
+	* Returns details of all gateways for a client.  All parameters except $client_id are optional. 
+	*
+	* @param int $client_id The client ID
+	*
+	* @param int $params['deleted'] Whether or not the gateway is deleted.  Possible values are 1 for deleted and 0 for active
+	* @param int $params['id'] The email ID.  GetGateway could also be used. Optional.
+	* @param int $params['offset']
+	* @param int $params['limit'] The number of records to return. Optional.
+	* 
+	* @return mixed Array containg all gateways meeting criteria
+	*/
+	
+	function GetGateways ($client_id, $params)
+	{		
+		if(isset($params['deleted']) and $params['deleted'] == '1') {
+			$this->db->where('client_gateways.deleted', '1');
+		}
+		else {
+			$this->db->where('client_gateways.deleted', '0');
+		}
+		
+		if (isset($params['offset'])) {
+			$offset = $params['offset'];
+		}
+		else {
+			$offset = 0;
+		}
+		
+		if(isset($params['limit'])) {
+			$this->db->limit($params['limit'], $offset);
+		}
+		
+		$this->db->join('external_apis', 'external_apis.external_api_id = client_gateways.external_api_id', 'left');
+		
+		$this->db->select('client_gateways.*');
+		$this->db->select('external_apis.*');
+		
+		$this->db->where('client_gateways.client_id', $client_id);
+		
+		$query = $this->db->get('client_gateways');
+		$data = array();
+		if($query->num_rows() > 0) {
+			foreach($query->result_array() as $row)
+			{
+				$array = array(
+								'id' => $row['client_gateway_id'],
+								'gateway' => $row['display_name'],
+								'date_created' => $row['create_date']
+								);
+								
+				$data[] = $array;
+			}
+			
+		} else {
+			return FALSE;
+		}
+		
+		return $data;
+	}
+	
+	/**
 	* Get the gateway details.
 	*
 	* Returns an array containg all the details for the Client Gateway
@@ -695,7 +781,6 @@ class Gateway_model extends Model
 		
 		$this->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
 		$this->db->where('client_gateways.client_id', $client_id);
-		$this->db->where('enabled', 1);
 		$this->db->where('deleted', 0);
 		$this->db->limit(1);
 		$query = $this->db->get('client_gateways');
@@ -710,6 +795,7 @@ class Gateway_model extends Model
 			$data['arb_url_test'] = $row->arb_test_url;
 			$data['arb_url_dev'] = $row->arb_dev_url;
 			$data['name'] = $row->name;
+			$data['enabled'] = $row->enabled;
 			
 			// Get the params
 			$this->load->library('encrypt');
@@ -720,6 +806,7 @@ class Gateway_model extends Model
 					$data[$row->field] = $this->encrypt->decode($row->value);
 				}
 			}
+			
 			return $data;
 		} else {
 			die($this->response->Error(3000));
@@ -727,27 +814,31 @@ class Gateway_model extends Model
 	}
 	
 	/**
-	* Get required gateway fields.
+	* Get available Gateway External API's
 	*
-	* Get the fields required for creating a new instance of a client_gateway depending on gateway type.
-	*
-	* @param string $gateway_type The name of the gateway ('authnet', 'exact', etc.)
+	* Loads a list of all possible gateway types, as well as their required fields
 	* 
 	* @return array|bool Returns an array containing all of the fields required for that gateway type or FALSE upon failure
 	*/
-	function GetRequiredGatewayFields($gateway_type = FALSE)
+	function GetExternalAPIs()
 	{
-		if($gateway_type)
-		{
-			$this->db->select('external_api_required_fields.field_name');
-			$this->db->join('external_api_required_fields', 'external_api_required_fields.external_api_id = external_apis.external_api_id', 'inner');
-			$this->db->where('external_apis.name', $gateway_type);
-			$query = $this->db->get('external_apis');
-			if($query->num_rows() > 0) {
-				return $query->result_array();	
-			} else {
-				return FALSE;
-			}
+		$this->db->order_by('display_name');
+		
+		$query = $this->db->get('external_apis');
+		if($query->num_rows() > 0) {
+			$gateways = array();
+			
+			foreach ($query->result_array() as $row) {
+				$this->load->library('payment/' . $row['name'] . '.php',$row['name']);
+				
+				$settings = $this->$row['name']->Settings();
+			
+				$gateways[] = $settings;
+			}	
+			
+			return $gateways;
+		} else {
+			return FALSE;
 		}
 	}
 	

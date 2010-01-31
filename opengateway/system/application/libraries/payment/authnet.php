@@ -6,15 +6,92 @@ class authnet
 	{
 		$settings['name'] = 'Authorize.net';
 		$settings['class_name'] = 'authnet';
-		$settings['description'] = 'Authorize.net';
+		$settings['description'] = 'Authorize.net is the USA\'s premier gateway.  Coupled with the powerful Customer Information Manager (CIM), this gateway is an affordable and powerful gateway for any American merchant.';
 		$settings['is_preferred'] = 1;
-		$settings['setup_fee'] = 0;
-		$settings['monthly_fee'] = 0;
-		$settings['transaction_fee'] = 0;
-		$settings['purchase_link'] = '';
+		$settings['setup_fee'] = '$99.00';
+		$settings['monthly_fee'] = '$40.00';
+		$settings['transaction_fee'] = '$0.10';
+		$settings['purchase_link'] = 'http://www.opengateway.net/gateways/authnet';
 		$settings['allows_updates'] = 1;
 		$settings['allows_refunds'] = 1;
-		$settings['required_fields'] = array('enabled', 'mode', 'login_id', 'transaction_key', 'accept_visa', 'accept_mc', 'accept_discover', 'accept_dc', 'accept_amex', 'enable_arb');
+		$settings['required_fields'] = array(
+										'enabled',
+										'mode', 
+										'login_id',
+										'transaction_key',
+										'accept_visa',
+										'accept_mc',
+										'accept_discover',
+										'accept_dc',
+										'accept_amex'
+										);
+										
+		$settings['field_details'] = array(
+										'enabled' => array(
+														'text' => 'Enable this gateway?',
+														'type' => 'radio',
+														'options' => array(
+																		'1' => 'Enabled',
+																		'0' => 'Disabled')
+														),
+										'mode' => array(
+														'text' => 'Mode',
+														'type' => 'select',
+														'options' => array(
+																		'live' => 'Live Mode',
+																		'test' => 'Test Mode',
+																		'dev' => 'Development Server'
+																		)
+														),
+										'login_id' => array(
+														'text' => 'Login ID',
+														'type' => 'text'
+														),
+										'transaction_key' => array(
+														'text' => 'Transaction Key',
+														'type' => 'text'
+														),
+										'accept_visa' => array(
+														'text' => 'Accept VISA?',
+														'type' => 'radio',
+														'options' => array(
+																		'1' => 'Yes',
+																		'0' => 'No'
+																	)
+														),
+										'accept_mc' => array(
+														'text' => 'Accept MasterCard?',
+														'type' => 'radio',
+														'options' => array(
+																		'1' => 'Yes',
+																		'0' => 'No'
+																	)
+														),
+										'accept_discover' => array(
+														'text' => 'Accept Discover?',
+														'type' => 'radio',
+														'options' => array(
+																		'1' => 'Yes',
+																		'0' => 'No'
+																	)
+														),
+										'accept_dc' => array(
+														'text' => 'Accept Diner\'s Club?',
+														'type' => 'radio',
+														'options' => array(
+																		'1' => 'Yes',
+																		'0' => 'No'
+																	)
+														),
+										'accept_amex' => array(
+														'text' => 'Accept American Express?',
+														'type' => 'radio',
+														'options' => array(
+																		'1' => 'Yes',
+																		'0' => 'No'
+																	)
+														)
+											);
 		
 		return $settings;
 	}

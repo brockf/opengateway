@@ -786,21 +786,40 @@ class API extends Controller {
 	
 	function GetClient($client_id, $params) 
 	{
+		if(!$params['client_id']) {
+			die($this->response->Error(3002));
+		}
+		
 		$this->load->model('client_model');
+		
+		if ($response = $this->client_model->GetClient($client_id,$params['client_id'])) {
+			$data['client'] = $response;
+			return $data;
+		}
+		else {
+			return FALSE;
+		}	
+		
+		return $data;
+	}
+	
+	function GetGateways($client_id, $params)
+	{
+		$this->load->model('gateway_model');
 		
 		if (!isset($params['limit']) or $params['limit'] > $this->config->item('query_result_default_limit')) {
 			$params['limit'] = $this->config->item('query_result_default_limit');
 		}
 		
 		$data = array();
-		if ($clients = $this->client_model->GetClient($client_id, $params)) {
+		if ($gateways = $this->gateway_model->GetGateways($client_id, $params)) {
 			unset($params['limit']);
-			$data['results'] = count($clients);
-			$data['total_results'] = count($this->client_model->GetClient($client_id, $params));
-			foreach($clients as $key => $value) {
-				$data['client'][$key] = $value;
-			}
+			$data['results'] = count($gateways);
+			$data['total_results'] = count($this->gateway_model->GetGateways($client_id, $params));
 			
+			while (list(,$gateway) = each($gateways)) {
+				$data['gateways']['gateway'][] = $gateway;
+			}
 		}
 		else {
 			$data['results'] = 0;
@@ -808,7 +827,25 @@ class API extends Controller {
 		}
 		
 		return $data;
+	}
+	
+	function GetGateway($client_id, $params) 
+	{
+		if(!$params['gateway_id']) {
+			die($this->response->Error(3001));
+		}
 		
+		$this->load->model('gateway_model');
+		
+		if ($response = $this->gateway_model->GetGatewayDetails($client_id,$params['gateway_id'])) {
+			$data['gateway'] = $response;
+			return $data;
+		}
+		else {
+			return FALSE;
+		}	
+		
+		return $data;
 	}
 }
 

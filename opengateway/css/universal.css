@@ -500,3 +500,40 @@ form.form input.number {
 	padding: 1%;
 	margin: 0;
 }
+
+div.gateway_listing {
+	background-color: #f0f0f0;
+	padding: 10px;
+	margin-bottom: 10px;
+}
+
+div.gateway_listing p.description {
+	clear: both;
+	margin-left: 27px;
+}
+
+div.gateway_listing a.purchase {
+	background-color: #00b5c0;
+	color: #fff;
+	font-size: 10pt;
+	font-weight: bold;
+	padding: 5px 10px 5px 10px;
+	text-decoration: none;
+}
+
+div.setup_fee, div.monthly_fee, div.transaction_fee {
+	background-color: #999;
+	padding: 5px 10px 5px 10px;
+	float: right;
+	color: #fff;
+	font-size: 11pt;
+	margin-right: 10px;
+}
+
+div.setup_fee h3, div.monthly_fee h3, div.transaction_fee h3 {
+	font-weight: bold;
+	padding-left: 5px;
+	margin: 0;
+	font-size: 8pt;
+	display: inline;
+}

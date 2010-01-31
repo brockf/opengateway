@@ -290,6 +290,7 @@ class Email_model extends Model
 	* @param int $params['id'] The email ID.  GetEmail could also be used. Optional.
 	* @param string $params['to_address'] The email address to send to. Optional.
 	* @param string $params['email_subject'] The email subject line. Optional.
+	* @param string $params['plan_id'] The linked plan.
 	* @param int $params['offset']
 	* @param int $params['limit'] The number of records to return. Optional.
 	* 
@@ -298,20 +299,24 @@ class Email_model extends Model
 	
 	function GetEmails($client_id, $params)
 	{		
+		if(isset($params['trigger'])) {
+			$trigger_id = (!is_numeric($params['trigger'])) ? $this->GetTriggerId($params['trigger']) : $params['trigger'];
+			$this->db->where('trigger_id', $trigger_id);
+		}
+
 		if(isset($params['deleted']) and $params['deleted'] == '1') {
 			$this->db->where('client_emails.active', '0');
 		}
 		else {
 			$this->db->where('client_emails.active', '1');
 		}
-		
-		if(isset($params['trigger'])) {
-			$trigger_id = (!is_numeric($params['trigger'])) ? $this->GetTriggerId($params['trigger']) : $params['trigger'];
-			$this->db->where('trigger', $trigger_id);
-		}
-		
+				
 		if(isset($params['id'])) {
 			$this->db->where('client_emails.email_id', $params['id']);
+		}
+		
+		if(isset($params['plan_id'])) {
+			$this->db->where('client_emails.plan_id', $params['plan_id']);
 		}
 		
 		if(isset($params['to_address'])) {
@@ -342,6 +347,7 @@ class Email_model extends Model
 		$this->db->select('plans.name');
 		
 		$this->db->where('client_emails.client_id', $client_id);
+		
 		$query = $this->db->get('client_emails');
 		$data = array();
 		if($query->num_rows() > 0) {

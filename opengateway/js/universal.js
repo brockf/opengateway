@@ -165,10 +165,19 @@ $(document).ready(function() {
 		// check for empty required fields
 		var field_names = '';
 		$('.required').each(function() {
-			if ($(this).val() == '') {
+			// radio button mod
+			if ($(this).attr('type') == 'radio' && $('input[name=\''+$(this).attr('name')+'\']:checked').length == 0) {
 				field_label = $('label[for="'+$(this).attr('id')+'"]').text();
 				// adds the label contents to the list of required fields
-				field_names = field_names +'"'+field_label + '", ';
+				if (field_names.indexOf(field_label) == -1) {
+					field_names = field_names + '"'+field_label + '", ';
+				}
+				errors_in_form = true;
+			}
+			if ($(this).attr('type') != 'radio' && $(this).val() == '') {
+				field_label = $('label[for="'+$(this).attr('id')+'"]').text();
+				// adds the label contents to the list of required fields
+				field_names = field_names + '"'+field_label + '", ';
 				errors_in_form = true;
 			}
 		});

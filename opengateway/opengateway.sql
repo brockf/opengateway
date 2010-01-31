@@ -3,7 +3,7 @@ Navicat MySQL Data Transfer
 
 Source Server         : local
 Source Server Version : 50137
-Source Host           : localhost:3306
+Source Host           : localhost:3306cl
 Source Database       : opengateway
 
 Target Server Type    : MYSQL
@@ -223,7 +223,7 @@ INSERT INTO `authnet_log` VALUES ('153', '634', '3', '2', '13', 'The merchant lo
 INSERT INTO `authnet_log` VALUES ('154', '0', '<HTML><BODY', null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
 -- ----------------------------
--- Table structure for `client_emails`
+-- Table structure for ``
 -- ----------------------------
 DROP TABLE IF EXISTS `client_emails`;
 CREATE TABLE `client_emails` (
@@ -231,7 +231,7 @@ CREATE TABLE `client_emails` (
   `client_id` int(11) NOT NULL,
   `trigger_id` int(11) NOT NULL,
   `plan_id` int(11) NOT NULL,
-  `to_address` varchar(11) NOT NULL,
+  `to_address` varchar(255) NOT NULL,
   `bcc_address` varchar(255) DEFAULT NULL,
   `email_subject` varchar(255) NOT NULL,
   `email_body` text NOT NULL,
@@ -1947,7 +1947,8 @@ INSERT INTO `exact_log` VALUES ('93', '655', 'A00427-01', '#######', '0', '10001
 DROP TABLE IF EXISTS `external_apis`;
 CREATE TABLE `external_apis` (
   `external_api_id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(20) NOT NULL,
+  `name` varchar(20) NOT NULL,`
+  `display_name` varchar(255) NOT NULL,
   `prod_url` varchar(255) NOT NULL,
   `test_url` varchar(255) NOT NULL,
   `dev_url` varchar(255) NOT NULL,
@@ -1960,9 +1961,9 @@ CREATE TABLE `external_apis` (
 -- ----------------------------
 -- Records of external_apis
 -- ----------------------------
-INSERT INTO `external_apis` VALUES ('1', 'authnet', 'https://secure.authorize.net/gateway/transact.dll', 'https://test.authorize.net/gateway/transact.dll', 'https://test.authorize.net/gateway/transact.dll', 'https://api.authorize.net/xml/v1/request.api', 'https://apitest.authorize.net/xml/v1/request.api', 'https://apitest.authorize.net/xml/v1/request.api');
-INSERT INTO `external_apis` VALUES ('2', 'exact', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl');
-INSERT INTO `external_apis` VALUES ('6', 'paypal', 'https://api-3t.sandbox.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp');
+INSERT INTO `external_apis` VALUES ('1', 'authnet', 'Authorize.net', 'https://secure.authorize.net/gateway/transact.dll', 'https://test.authorize.net/gateway/transact.dll', 'https://test.authorize.net/gateway/transact.dll', 'https://api.authorize.net/xml/v1/request.api', 'https://apitest.authorize.net/xml/v1/request.api', 'https://apitest.authorize.net/xml/v1/request.api');
+INSERT INTO `external_apis` VALUES ('2', 'exact', 'E-xact', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl');
+INSERT INTO `external_apis` VALUES ('6', 'paypal', 'PayPal Pro', 'https://api-3t.sandbox.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp');
 
 -- ----------------------------
 -- Table structure for `order_authorizations`
@@ -5741,7 +5742,7 @@ INSERT INTO `request_types` VALUES ('18', 'GetCustomers', '');
 INSERT INTO `request_types` VALUES ('19', 'UpdateClient', '');
 INSERT INTO `request_types` VALUES ('20', 'SuspendClient', '');
 INSERT INTO `request_types` VALUES ('21', 'UnsuspendClient', '');
-INSERT INTO `request_types` VALUES ('0', 'DeleteClient', '');
+INSERT INTO `request_types` VALUES ('22', 'DeleteClient', '');
 INSERT INTO `request_types` VALUES ('23', 'UpdateAccount', '');
 INSERT INTO `request_types` VALUES ('24', 'MakeDefaultGateway', '');
 INSERT INTO `request_types` VALUES ('25', 'DeleteGateway', '');
@@ -5761,6 +5762,9 @@ INSERT INTO `request_types` VALUES ('38', 'GetEmailVariables', '');
 INSERT INTO `request_types` VALUES ('39', 'TestConnection', '');
 INSERT INTO `request_types` VALUES ('40', 'GetClients', '');
 INSERT INTO `request_types` VALUES ('41', 'GetClient', '');
+INSERT INTO `request_types` VALUES ('42', 'GetEmails', '');
+INSERT INTO `request_types` VALUES ('43', 'GetGateways', '');
+INSERT INTO `request_types` VALUES ('44', 'GetGateway', '');
 
 -- ----------------------------
 -- Table structure for `required_fields`

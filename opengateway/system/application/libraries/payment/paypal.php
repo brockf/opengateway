@@ -1,20 +1,96 @@
 <?php
-class Paypal
+
+class paypal
 {
 	function Settings()
 	{
 		$settings['name'] = 'PayPal Pro';
 		$settings['class_name'] = 'paypal';
-		$settings['description'] = 'PayPal Pro';
+		$settings['description'] = 'PayPal Pro is easy to setup and even easier to use.  Though not as powerful as other gateways (you cannot edit existing subscriptions, only cancel them), this gateway is very easy to setup.  Requires the Recurring Billing addon.';
 		$settings['is_preferred'] = 1;
-		$settings['setup_fee'] = 0;
-		$settings['monthly_fee'] = 0;
-		$settings['transaction_fee'] = 0;
-		$settings['purchase_link'] = '';
+		$settings['setup_fee'] = '$0.00';
+		$settings['monthly_fee'] = '$30.00';
+		$settings['transaction_fee'] = '2.5% + $0.30';
+		$settings['purchase_link'] = 'http://www.opengateway.net/gateways/paypal';
 		$settings['allows_updates'] = 0;
 		$settings['allows_refunds'] = 1;
-		$settings['required_fields'] = array('enabled', 'mode', 'user', 'pwd', 'signature', 'accept_visa', 'accept_mc', 'accept_discover', 'accept_dc', 'accept_amex', 'enable_arb');
+		$settings['required_fields'] = array('enabled',
+											 'mode',
+											 'user',
+											 'pwd',
+											 'signature',
+											 'accept_visa',
+											 'accept_mc',
+											 'accept_discover',
+											 'accept_dc',
+											 'accept_amex'
+											);
 		
+		$settings['field_details'] = array(
+										'enabled' => array(
+														'text' => 'Enable this gateway?',
+														'type' => 'radio',
+														'options' => array(
+																		'1' => 'Enabled',
+																		'0' => 'Disabled')
+														),
+										'mode' => array(
+														'text' => 'Mode',
+														'type' => 'select',
+														'options' => array(
+																		'live' => 'Live Mode',
+																		'test' => 'Sandbox'
+																		)
+														),
+										'user' => array(
+														'text' => 'User',
+														'type' => 'text'
+														),
+										'pwd' => array(
+														'text' => 'Password',
+														'type' => 'text'
+														),
+										'accept_visa' => array(
+														'text' => 'Accept VISA?',
+														'type' => 'radio',
+														'options' => array(
+																		'1' => 'Yes',
+																		'0' => 'No'
+																	)
+														),
+										'accept_mc' => array(
+														'text' => 'Accept MasterCard?',
+														'type' => 'radio',
+														'options' => array(
+																		'1' => 'Yes',
+																		'0' => 'No'
+																	)
+														),
+										'accept_discover' => array(
+														'text' => 'Accept Discover?',
+														'type' => 'radio',
+														'options' => array(
+																		'1' => 'Yes',
+																		'0' => 'No'
+																	)
+														),
+										'accept_dc' => array(
+														'text' => 'Accept Diner\'s Club?',
+														'type' => 'radio',
+														'options' => array(
+																		'1' => 'Yes',
+																		'0' => 'No'
+																	)
+														),
+										'accept_amex' => array(
+														'text' => 'Accept American Express?',
+														'type' => 'radio',
+														'options' => array(
+																		'1' => 'Yes',
+																		'0' => 'No'
+																	)
+														)
+											);
 		return $settings;
 	}
 	
@@ -28,9 +104,6 @@ class Paypal
 			break;
 			case 'test':
 				$post_url = $gateway['url_test'];
-			break;
-			case 'dev':
-				$post_url = $gateway['url_dev'];
 			break;
 		}
 		
@@ -85,9 +158,6 @@ class Paypal
 			case 'test':
 				$post_url = $gateway['url_test'];
 			break;
-			case 'dev':
-				$post_url = $gateway['url_dev'];
-			break;
 		}
 		
 		$post = array();
@@ -122,8 +192,6 @@ class Paypal
 		
 		$response = $this->response_to_array($response);
 		
-		
-		
 		if($response['ACK'] == 'Success') {
 			$CI->load->model('order_authorization_model');
 			if($order_id) {
@@ -148,7 +216,6 @@ class Paypal
 	{
 		$CI =& get_instance();
 		
-		
 		// Get the proper URL
 		switch($gateway['mode'])
 		{
@@ -157,9 +224,6 @@ class Paypal
 			break;
 			case 'test':
 				$post_url = $gateway['url_test'];
-			break;
-			case 'dev':
-				$post_url = $gateway['url_dev'];
 			break;
 		}
 		
@@ -190,9 +254,7 @@ class Paypal
 			$response = $CI->response->TransactionResponse(2, $response_array);
 		}
 		
-		return $response;
-		
-		
+		return $response;	
 	}
 	
 	function Process($url, $post_data, $order_id = FALSE)
@@ -315,9 +377,6 @@ class Paypal
 			break;
 			case 'test':
 				$post_url = $gateway['arb_url_test'];
-			break;
-			case 'dev':
-				$post_url = $gateway['arb_url_dev'];
 			break;
 		}
 		

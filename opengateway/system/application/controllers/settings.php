@@ -81,7 +81,7 @@ class Settings extends Controller {
 							'name' => 'Plan Link',
 							'type' => 'select',
 							'options' => $options,
-							'filter' => 'emails.plan_id',
+							'filter' => 'plan_id',
 							'width' => '14%'
 							);
 		}
@@ -98,7 +98,7 @@ class Settings extends Controller {
 				);
 		
 		$this->dataset->Initialize('email_model','GetEmails',$columns);
-		
+
 		// add actions
 		$this->dataset->Action('Delete','settings/delete_emails');
 		
@@ -278,5 +278,213 @@ class Settings extends Controller {
 		
 		echo $return;
 		return true;
+	}
+	
+	/**
+	* Manage gateways
+	*
+	* Lists active gateways for managing
+	*/
+	function gateways()
+	{	
+		$this->navigation->PageTitle('Manage Gateways');
+		
+		$this->load->model('cp/dataset','dataset');
+		
+		$columns = array(
+						array(
+							'name' => 'ID #',
+							'sort_column' => 'id',
+							'type' => 'id',
+							'width' => '5%',
+							'filter' => 'id'),
+						array(
+							'name' => 'Gateway',
+							'type' => 'text',
+							'width' => '40%'),
+						array(
+							'name' => 'Date Created',
+							'width' => '25%',
+							'type' => 'date'),
+						array(
+							'name' => '',
+							'width' => '25%'
+							)
+					);
+		
+		$this->dataset->Initialize('gateway_model','GetGateways',$columns);
+
+		// add actions
+		$this->dataset->Action('Delete','settings/delete_gateways');
+		
+		// sidebar
+		$this->navigation->SidebarButton('Setup New Gateway','settings/new_gateway');
+		
+		$this->load->view('cp/gateways.php');
+	}
+	
+	/**
+	* Delete Gateways
+	*
+	* Delete gateways as passed from the dataset
+	*
+	* @param string Hex'd, base64_encoded, serialized array of gateway ID's
+	* @param string Return URL for Dataset
+	*
+	* @return bool Redirects to dataset
+	*/
+	function delete_gateways ($gateways, $return_url) {
+		$this->load->model('gateway_model');
+		$this->load->library('asciihex');
+		
+		$gateways = unserialize(base64_decode($this->asciihex->HexToAscii($gateways)));
+		$return_url = base64_decode($this->asciihex->HexToAscii($return_url));
+		
+		foreach ($gateways as $gateway) {
+			$this->gateway_model->DeleteGateway($this->user->Get('client_id'),$gateway);
+		}
+		
+		$this->notices->SetNotice($this->lang->line('gateways_deleted'));
+		
+		redirect($return_url);
+		return true;
+	}
+	
+	/**
+	* New Gateway
+	*
+	* Create a new gateway
+	*
+	* @return true Passes to view
+	*/
+	function new_gateway ()
+	{
+		$this->navigation->PageTitle('New Gateway');
+		
+		$this->load->model('gateway_model');
+		$gateways = $this->gateway_model->GetExternalAPIs();
+		
+		$data = array(
+					'gateways' => $gateways
+					);
+		
+		$this->load->view('cp/new_gateway_type.php',$data);
+	}
+	
+	/**
+	* New Gateway Step 2
+	*
+	* Create a new gateway
+	*
+	* @return true Passes to view
+	*/
+	function new_gateway_details ()
+	{
+		if ($this->input->post('external_api') == '') {
+			redirect('settings/new_gateway');
+			return false;
+		}
+		else {
+			$this->load->library('payment/' . $this->input->post('external_api'), $this->input->post('external_api'));
+			$class = $this->input->post('external_api');
+			$settings = $this->$class->Settings();
+		}
+		$this->navigation->PageTitle($settings['name'] . ': Details');
+		
+		$data = array(
+					'form_title' => $settings['name'] . ': Details',
+					'form_action' => site_url('settings/post_gateway/new'),
+					'external_api' => $this->input->post('external_api'),
+					'fields' => $settings['field_details']
+					);
+		
+		$this->load->view('cp/gateway_details.php',$data);
+	}
+	
+	/**
+	* Handle New/Edit Gateway Post
+	*/
+	function post_gateway ($action, $id = false) {		
+		if ($this->input->post('external_api') == '') {
+			$this->notices->SetError('No external API ID in form posting.');
+			$error = true;
+		}
+		else {
+			$this->load->library('payment/' . $this->input->post('external_api'), $this->input->post('external_api'));
+			$class = $this->input->post('external_api');
+			$settings = $this->$class->Settings();
+		}
+		
+		foreach ($settings['field_details'] as $name => $details) {
+			if ($this->input->post($name) == '') {
+				$this->notices->SetError('Required field missing: ' . $details['text']);
+				$error = true;
+			}
+		}
+		reset($settings['field_details']);
+		
+		if (isset($error)) {
+			if ($action == 'new') {
+				redirect('settings/new_gateway');
+				return false;
+			}
+			else {
+				redirect('settings/edit_gateway/' . $id);
+			}	
+		}
+		
+		$params = array(
+						'gateway_type' => $this->input->post('external_api')
+					);
+					
+		foreach ($settings['field_details'] as $name => $details) {
+			$params[$name] = $this->input->post($name);
+		}
+		
+		$this->load->model('gateway_model');
+		
+		if ($action == 'new') {
+			$email_id = $this->gateway_model->NewGateway($this->user->Get('client_id'), $params);
+			$this->notices->SetNotice($this->lang->line('gateway_added'));
+		}
+		else {
+			$params['gateway_id'] = $id;
+			
+			$this->gateway_model->UpdateGateway($this->user->Get('client_id'), $params);
+			$this->notices->SetNotice($this->lang->line('gateway_updated'));
+		}
+		
+		redirect('settings/gateways');
+		
+		return true;
+	}
+	
+	/**
+	* Edit Gateway
+	*
+	* Show the gateway form, preloaded with variables
+	*
+	* @param int $id the ID of the gateway
+	*
+	* @return string The email form view
+	*/
+	function edit_gateway($id) {
+		$this->load->model('gateway_model');
+		$gateway = $this->gateway_model->GetGatewayDetails($this->user->Get('client_id'), $id);
+	
+		$this->load->library('payment/' . $gateway['name'], $gateway['name']);
+		$settings = $this->$gateway['name']->Settings();
+
+		$this->navigation->PageTitle($settings['name'] . ': Details');
+		
+		$data = array(
+					'form_title' => $settings['name'] . ': Details',
+					'form_action' => site_url('settings/post_gateway/edit/' . $id),
+					'external_api' => $gateway['name'],
+					'fields' => $settings['field_details'],
+					'values' => $gateway
+					);
+		
+		$this->load->view('cp/gateway_details.php',$data);
 	}
 }

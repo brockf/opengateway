@@ -582,7 +582,7 @@ class Client_model extends Model
 	* @return mixed Array containing a the details of the client.
 	*/
 	
-	function GetClient($client_id, $params)
+	function GetClient($client_id, $real_client_id)
 	{
 		// get the user type
 		$client = $this->GetClientDetails($client_id);
@@ -598,7 +598,7 @@ class Client_model extends Model
 			break;		
 		}
 		
-		$this->db->where('client_id', $params['client_id']);
+		$this->db->where('client_id', $real_client_id);
 		$this->db->where('deleted', 0);
 		$this->db->join('countries', 'countries.country_id = clients.country', 'left');
 		$query = $this->db->get('clients');

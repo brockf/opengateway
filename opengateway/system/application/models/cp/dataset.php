@@ -47,6 +47,7 @@ class Dataset extends Model {
     	$CI->load->library('asciihex');
     	
     	// prep columns
+    	// possible types: "id", "date", "select", "text"
 	    foreach ($columns as $column) {
 	    	$this->columns[] = array(
 	    					'name' => $column['name'],
@@ -61,7 +62,7 @@ class Dataset extends Model {
 	    				);
 	    			
 	    	// error checking			
-	    	if (isset($column['type']) and $column['type'] == 'date' and (!isset($column['field_start_date']) or !isset($column['field_end_date']))) {
+	    	if (isset($column['type']) and $column['type'] == 'date' and isset($column['filter']) and (!isset($column['field_start_date']) or !isset($column['field_end_date']))) {
 	    		die(show_error('Unable to create a "date" filter without field_start_date and field_end_date.'));
 	    	}
 	    	elseif (isset($column['type']) and $column['type'] == 'select' and !isset($column['options'])) {
@@ -145,6 +146,7 @@ class Dataset extends Model {
     	}
     
     	$CI->load->model($data_model,'data_model');
+    	
     	$this->data = $CI->data_model->$data_function($CI->user->Get('client_id'),$params);
     	
     	unset($params);
