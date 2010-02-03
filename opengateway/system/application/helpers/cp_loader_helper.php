@@ -28,7 +28,7 @@ function CPLoader () {
 	$CI->navigation->Add('settings','Settings');
 	$CI->navigation->Add('settings/emails','Emails','settings');
 	$CI->navigation->Add('settings/gateways','Gateways','settings');
-	$CI->navigation->Add('settings/api','API Key','settings');
+	$CI->navigation->Add('settings/api','API Access','settings');
 	
 	// Set default page title
 	$CI->navigation->PageTitle('Control Panel');

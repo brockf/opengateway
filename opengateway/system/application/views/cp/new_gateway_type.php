@@ -6,7 +6,7 @@
 	<label for="external_api" style="display:none">Gateway Type</label>
 	<? foreach ($gateways as $gateway) { ?>
 	<div class="gateway_listing">
-		<h2><input type="radio" class="required" name="external_api" id="external_api" value="<?=$gateway['class_name'];?>" />&nbsp;<?=$gateway['name'];?> <a class="purchase" href="<?=$gateway['purchase_link'];?>">No account yet?  Apply for one now.</a></h2>
+		<h2><input type="radio" class="required" name="external_api" id="external_api" value="<?=$gateway['class_name'];?>" />&nbsp;<?=$gateway['name'];?> <a class="purchase" href="<?=$gateway['purchase_link'];?>">Apply for an account now.</a></h2>
 		<p class="description"><?=$gateway['description'];?></p>
 		<div class="monthly_fee"><?=$gateway['monthly_fee'];?><h3>Monthly Fee</h3></div>
 		<div class="setup_fee"><?=$gateway['setup_fee'];?><h3>Setup Fee</h3></div>

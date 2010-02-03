@@ -155,6 +155,31 @@ class Client_model extends Model
 	}
 	
 	/**
+	* Regenerate API Access Info
+	*
+	* Generates a new API ID and Secret key for the client
+	*
+	* @return bool TRUE upon success
+	*/
+	function GenerateNewAccessKeys ($client_id)
+	{
+		// Generate an API ID and Secret Key
+		$this->load->library('key');
+		$api_id = strtoupper($this->key->GenerateKey(20));
+		$secret_key = strtoupper($this->key->GenerateKey(40));
+		
+		$update_data = array(
+							'api_id' => $api_id,
+							'secret_key' => $secret_key
+						);
+						
+		$this->db->where('client_id',$client_id);
+		$this->db->update('clients',$update_data);
+		
+		return TRUE;
+	}
+	
+	/**
 	* Update Client information.
 	*
 	* Updates client information.  All fields are optional

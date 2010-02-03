@@ -487,4 +487,31 @@ class Settings extends Controller {
 		
 		$this->load->view('cp/gateway_details.php',$data);
 	}
+	
+	/**
+	* API Access
+	*
+	* Display the current API login ID and Secret Key.
+	*
+	*/
+	function api () {
+		$data = array(
+					'api_id' => $this->user->Get('api_id'),
+					'secret_key' => $this->user->Get('secret_key')
+					);	
+					
+		$this->load->view('cp/api_key.php',$data);
+	}
+	
+	/**
+	* Generate new access info
+	*
+	*/
+	function regenerate_api () {
+		$this->load->model('client_model');
+		$this->client_model->GenerateNewAccessKeys($this->user->Get('client_id'));
+		
+		redirect('settings/api');
+		return true;
+	}
 }

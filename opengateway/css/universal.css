@@ -200,6 +200,10 @@ ul#account_menu li a:hover {
 	color: #333;
 }
 
+#content h3 {
+	font-weight: bold;
+}
+
 #content {
 	text-align: left;
 	width: 75%;
@@ -208,6 +212,7 @@ ul#account_menu li a:hover {
 	background-image: url(../images/box-right.gif);
 	background-repeat: repeat-y;
 	background-position: top right;
+	line-height: 1.4em;
 }
 
 #box-top-right {
@@ -270,6 +275,24 @@ ul#account_menu li a:hover {
 
 #footer a {
 	color: #777;
+}
+
+p.warning {
+	padding-left: 84px;
+	background-image: url(../images/warning64.png);
+	background-repeat: no-repeat;
+	background-position: top left;
+	height: 64px;
+}
+
+p.warning span {
+	display: block;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	background-color: #faeec1;
+	padding: 15px;
+	height: 34px;
 }
 
 /* datasets */
@@ -505,6 +528,9 @@ div.gateway_listing {
 	background-color: #f0f0f0;
 	padding: 10px;
 	margin-bottom: 10px;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
 }
 
 div.gateway_listing p.description {
@@ -513,8 +539,11 @@ div.gateway_listing p.description {
 }
 
 div.gateway_listing a.purchase {
-	background-color: #00b5c0;
-	color: #fff;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	background-color: #fff;
+	color: #00b5c0;
 	font-size: 10pt;
 	font-weight: bold;
 	padding: 5px 10px 5px 10px;
@@ -522,6 +551,9 @@ div.gateway_listing a.purchase {
 }
 
 div.setup_fee, div.monthly_fee, div.transaction_fee {
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
 	background-color: #999;
 	padding: 5px 10px 5px 10px;
 	float: right;
@@ -536,4 +568,38 @@ div.setup_fee h3, div.monthly_fee h3, div.transaction_fee h3 {
 	margin: 0;
 	font-size: 8pt;
 	display: inline;
+}
+
+/* individual page stylings */
+
+div.api_keys {
+	padding-left: 84px;
+	background-image: url(../images/secure64.png);
+	background-repeat: no-repeat;
+	background-position: top left;
+	height: 80px;
+	margin: 0 auto;
+	width: 370px;
+	margin-top: 35px;
+}
+
+div.api_keys span.key_name {
+	clear: both;
+	display: block;
+	float: left;
+	font-weight: bold;
+	width: 100px;
+	text-align: left;
+}
+
+div.api_keys span.key_value {
+	display: block;
+	float: left;
+	width: 100px;
+}
+
+div.api_keys a#generate_new_api {
+	display: block;
+	clear: both;
+	padding-left: 100px;
 }
