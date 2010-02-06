@@ -145,6 +145,9 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 		if ($email['to_address'] == 'customer' and isset($customer['email']) and !empty($customer['email']) and $CI->field_validation->ValidateEmailAddress($customer['email'])) {
 			$to_address = $customer['email'];
 		}
+		elseif ($email['to_address'] == 'client') {
+			$to_address = $client_email;
+		}
 		elseif ($CI->field_validation->ValidateEmailAddress($email['to_address'])) {
 			$to_address = $email['to_address'];
 		}

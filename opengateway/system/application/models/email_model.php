@@ -116,9 +116,9 @@ class Email_model extends Model
 	}
 	
 	/**
-	* Update and existing email
+	* Update an existing email
 	*
-	* Updates and existing customer email with the supplied parameters.  
+	* Updates an existing customer email with the supplied parameters.  
 	*
 	* @param int $client_id The client ID
 	* @param int $trigger_id The Email Trigger ID. Optional.
@@ -136,7 +136,6 @@ class Email_model extends Model
 	
 	function UpdateEmail($client_id, $email_id, $params, $trigger_id = FALSE)
 	{
-		
 		if($trigger_id) {
 			$update_data['trigger_id'] = $trigger_id;
 		}
