@@ -536,14 +536,18 @@ class API extends Controller {
 		$this->load->model('client_model');
 		
 		$params['client_id'] = $client_id;
-		return $this->UpdateClient($client_id, $params);
+		return $this->UpdateClient($client_id, $client_id, $params);
 	}
 	
 	function UpdateClient($client_id, $params)
 	{
 		$this->load->model('client_model');
 		
-		if ($this->client_model->UpdateClient($client_id, $params)) {
+		if (!isset($params['client_id']) or !is_numeric($params['client_id'])) {
+			die($this->response->Error(1003));
+		}
+		
+		if ($this->client_model->UpdateClient($client_id, $params['client_id'], $params)) {
 			return $this->response->TransactionResponse(301,array());
 		}
 		else {

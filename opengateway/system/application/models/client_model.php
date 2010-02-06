@@ -8,6 +8,11 @@
 * @author David Ryan
 * @package OpenGateway
 
+* Client Types
+* 1 = Service Provider
+* 2 = End User
+* 3 = Administrator
+
 */
 class Client_model extends Model
 {
@@ -80,13 +85,9 @@ class Client_model extends Model
 		
 		// If a timezone was provided, validate it
 		if(isset($params['timezone'])) {
-			if($params['timezone'] < -23 OR $params['timezone'] > 23) {
-				die($this->response->Error(1011));
-			}
-			
 			$timezone = $params['timezone'];
 		} else {
-			$timezone = 0;
+			$timezone = 'UTC';
 		}
 		
 		// Make sure the username is not already in use
@@ -102,7 +103,7 @@ class Client_model extends Model
 				// only Administrators can make Service Providers
 				die($this->response->Error(2006));
 			}
-			elseif ($params['client_type'] < 1 or $params['client_type'] > 2) {
+			elseif ($params['client_type'] < 1 or $params['client_type'] > 2 or !is_numeric($params['client_type'])) {
 				die($this->response->Error(2007));
 			}
 		}
@@ -146,7 +147,7 @@ class Client_model extends Model
 		$this->db->insert('clients', $insert_data);
 		
 		$response = array(
-						 'user_id' 		=> $this->db->insert_id(),
+						 'client_id' 	=> $this->db->insert_id(),
 						 'api_id' 		=> $api_id,
 						 'secret_key' 	=> $secret_key
 						 );
@@ -185,7 +186,7 @@ class Client_model extends Model
 	* Updates client information.  All fields are optional
 	*
 	* @param int $client_id The client ID of the Parent Client
-	* @param int $params['client_id'] The ID of the client being updated
+	* @param int $updated_client_id The ID of the client being updated
 	* @param string $params['first_name'] Client's first name
 	* @param string $params['last_name'] Client's last name
 	* @param string $params['company'] Client's company
@@ -202,7 +203,7 @@ class Client_model extends Model
 	* 
 	* @return bool TRUE upon success, FALSE upon failure
 	*/
-	function UpdateClient($client_id, $params)
+	function UpdateClient($client_id, $updated_client_id, $params)
 	{
 		// Validate the required fields
 		$this->load->library('field_validation');
@@ -210,10 +211,10 @@ class Client_model extends Model
 		
 		// Make sure it's them or their client
 		
-		if($params['client_id'] == $client_id) {
+		if($updated_client_id == $client_id) {
 			$client = $this->GetClientDetails($client_id);
 		} else {
-			$client = $this->GetChildClientDetails($client_id, $params['client_id']);
+			$client = $this->GetChildClientDetails($client_id, $updated_client_id);
 		}
 		
 		if(!$client) {
@@ -243,8 +244,6 @@ class Client_model extends Model
 		if(isset($params['city']) && $params['city'] != '') {
 			$update_data['city'] = $params['city'];
 		}
-		
-		
 		
 		if(isset($params['postal_code']) && $params['postal_code'] != '') {
 			$update_data['postal_code'] = $params['postal_code'];
@@ -298,7 +297,7 @@ class Client_model extends Model
 			$update_data['email'] = $params['email'];
 		}
 		
-		if(isset($params['username']) && $params['username'] != '') {
+		if(isset($params['username']) && $params['username'] != '' && $client->username != $params['username']) {
 			// Make sure the username is not already in use
 			$exists = $this->UsernameExists($params['username']);
 			
@@ -318,11 +317,24 @@ class Client_model extends Model
 			$update_data['password'] = md5($params['password']);
 		}
 		
+		$request_client = $this->GetClientDetails($client_id);
+		if (isset($params['client_type'])) {
+			if ($params['client_type'] == 1 and $request_client->client_type_id != 3) {
+				// only Administrators can make Service Providers
+				die($this->response->Error(2006));
+			}
+			elseif ($params['client_type'] < 1 or $params['client_type'] > 2 or !is_numeric($params['client_type'])) {
+				die($this->response->Error(2007));
+			}
+			
+			$update_data['client_type_id'] = $params['client_type'];
+		}
+		
 		if(!isset($update_data)) {
 			die($this->response->Error(6003));
 		}
 		
-		$this->db->where('client_id', $params['client_id']);
+		$this->db->where('client_id', $updated_client_id);
 		if ($this->db->update('clients', $update_data)) {
 			return TRUE;
 		}
@@ -431,9 +443,21 @@ class Client_model extends Model
 	
 	function GetChildClientDetails($parent_client_id, $child_client_id)
 	{
+		// if the requesting client is an administrator, we won't filter
+		$requesting_client = $this->GetClientDetails($parent_client_id);	
+		if ($requesting_client->client_type_id != 3) {
+			$this->db->where('parent_client_id', $parent_client_id);
+		
+		}
+		
+		// if they are an end user, we'll outright reject
+		if ($requesting_client->client_type_id == 2) {
+			return FALSE;
+		}
+		
 		$this->db->select('clients.*, countries.iso2 as country');
-		$this->db->join('countries', 'countries.country_id = clients.country_id', 'left');
-		$this->db->where('parent_client_id', $parent_client_id);
+		$this->db->join('countries', 'countries.country_id = clients.country', 'left');
+	
 		$this->db->where('client_id', $child_client_id);
 		$this->db->limit(1);
 		$query = $this->db->get('clients');
@@ -455,8 +479,11 @@ class Client_model extends Model
 	*/
 	function GetClientDetails($client_id)
 	{
-		$this->db->select('clients.*, countries.iso2 as country');
+		$this->db->select('clients.*');
+		$this->db->select('countries.iso2 as country');
+		$this->db->select('client_types.description AS client_type');
 		$this->db->join('countries', 'countries.country_id = clients.country', 'left');
+		$this->db->join('client_types','clients.client_type_id = client_types.client_type_id', 'left');
 		$this->db->where('client_id', $client_id);
 		$this->db->limit(1);
 		$query = $this->db->get('clients');
@@ -500,11 +527,7 @@ class Client_model extends Model
 	{
 		if(
 			ctype_alnum($password) // numbers & digits only
-			&& strlen($password) > 6 // at least 7 chars
-			&& strlen($password) < 21 // at most 20 chars
-			&& preg_match('`[A-Z]`',$password) // at least one upper case
-			&& preg_match('`[a-z]`',$password) // at least one lower case
-			&& preg_match('`[0-9]`',$password) // at least one digit
+			&& strlen($password) > 5 // at least 6 chars
 			) {
 				return TRUE;
 			}else {
@@ -518,6 +541,7 @@ class Client_model extends Model
 	* Search the database for a formatted list of clients.  
 	*
 	* @param int $client_id The client id
+	* @param int $params['client_id'] Filter by Client ID.
 	* @param string $params['sort'] Field to search clients by.  Possible values are client_first_name and client_last_name
 	* @param string $params['sort_dir'] Used with $params['sort'].  Possible values are asc and desc
 	* 
@@ -531,13 +555,18 @@ class Client_model extends Model
 		$client_type = $client->client_type_id;
 		
 		if(isset($params['sort'])) {
-			
 			switch($params['sort']) {
-				case 'client_last_name':
+				case 'last_name':
 					$sort = 'last_name';
 					break;
-				case 'client_first_name':
+				case 'first_name':
 					$sort = 'first_name';
+					break;
+				case 'email':
+					$sort = 'email';
+					break;
+				case 'username':
+					$sort = 'username';
 					break;
 			}
 		} else {
@@ -556,27 +585,46 @@ class Client_model extends Model
 			} else {
 				$this->db->order_by($sort, 'ASC');
 			}
-		}
-		
+		}	
 		
 		switch($client_type)
 		{
-			case 2:
+			case 1:
 				$this->db->where('parent_client_id', $client_id);
 			break;
-			case 1:
+			case 2:
 				die($this->response->Error(1002));
 			break;		
 		}
 		
+		if (isset($params['client_id']) and is_numeric($params['client_id'])) {
+			$this->db->where('client_id',$params['client_id']);
+		}
+		
+		if (isset($params['suspended']) and ($params['suspended'] == '1' or $params['suspended'] == '0')) {
+			$this->db->where('suspended',$params['suspended']);
+		}
+		
+		if (isset($params['username'])) {
+			$this->db->where('username',$params['username']);
+		}
+		
+		if (isset($params['email'])) {
+			$this->db->where('email',$params['email']);
+		}
+		
 		$this->db->where('deleted', 0);
 		$this->db->join('countries', 'countries.country_id = clients.country', 'left');
+		$this->db->join('client_types','clients.client_type_id = client_types.client_type_id', 'left');
 		$query = $this->db->get('clients');
 		
 		if($query->num_rows() > 0) {
 			$i=0;
 			foreach($query->result() as $row) {
 				$data[$i]['id'] = $row->client_id;
+				$data[$i]['client_type_id'] = $row->client_type_id;
+				$data[$i]['client_type'] = $row->description;
+				$data[$i]['parent_id'] = $row->parent_client_id;
 				$data[$i]['first_name'] = $row->first_name;
 				$data[$i]['last_name'] = $row->last_name;
 				$data[$i]['company'] = $row->company;
@@ -585,8 +633,15 @@ class Client_model extends Model
 				$data[$i]['city'] = $row->city;
 				$data[$i]['state'] = $row->state;
 				$data[$i]['postal_code'] = $row->postal_code;
-				$data[$i]['country'] = $row->name;
+				$data[$i]['country'] = $row->iso2;
 				$data[$i]['suspended'] = ($row->suspended == '1') ? '1' : '0';
+				$data[$i]['timezone'] = $row->gmt_offset;
+				$data[$i]['phone'] = $row->phone;
+				$data[$i]['email'] = $row->email;
+				$data[$i]['api_id'] = $row->api_id;
+				$data[$i]['secret_key'] = $row->secret_key;
+				$data[$i]['username'] = $row->username;
+				
 				$i++;	
 			}
 		} else {
@@ -615,23 +670,26 @@ class Client_model extends Model
 		
 		switch($client_type)
 		{
-			case 2:
+			case 1:
 				$this->db->where('parent_client_id', $client_id);
 			break;
-			case 1:
+			case 2:
 				die($this->response->Error(1002));
 			break;		
 		}
 		
 		$this->db->where('client_id', $real_client_id);
-		$this->db->where('deleted', 0);
 		$this->db->join('countries', 'countries.country_id = clients.country', 'left');
+		$this->db->join('client_types','clients.client_type_id = client_types.client_type_id', 'left');
 		$query = $this->db->get('clients');
 		
 		if($query->num_rows() > 0) {
 
 			$row = $query->row();
 			$data['id'] = $row->client_id;
+			$data['client_type_id'] = $row->client_type_id;
+			$data['client_type'] = $row->description;
+			$data['parent_id'] = $row->parent_client_id;
 			$data['first_name'] = $row->first_name;
 			$data['last_name'] = $row->last_name;
 			$data['company'] = $row->company;
@@ -640,8 +698,14 @@ class Client_model extends Model
 			$data['city'] = $row->city;
 			$data['state'] = $row->state;
 			$data['postal_code'] = $row->postal_code;
-			$data['country'] = $row->name;
+			$data['country'] = $row->iso2;
 			$data['suspended'] = ($row->suspended == '1') ? '1' : '0';
+			$data['timezone'] = $row->gmt_offset;
+			$data['phone'] = $row->phone;
+			$data['email'] = $row->email;
+			$data['api_id'] = $row->api_id;
+			$data['secret_key'] = $row->secret_key;
+			$data['username'] = $row->username;
 			
 		} else {
 			return FALSE;

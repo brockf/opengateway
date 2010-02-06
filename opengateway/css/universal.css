@@ -281,8 +281,8 @@ p.warning {
 	padding-left: 84px;
 	background-image: url(../images/warning64.png);
 	background-repeat: no-repeat;
-	background-position: top left;
-	height: 64px;
+	background-position: middle left;
+	min-height: 64px;
 }
 
 p.warning span {
@@ -292,7 +292,7 @@ p.warning span {
 	-webkit-border-radius: 10px;
 	background-color: #faeec1;
 	padding: 15px;
-	height: 34px;
+	min-height: 34px;
 }
 
 /* datasets */
@@ -491,7 +491,7 @@ form.form div.submit {
 
 form.form div.submit input {
 	font-size: 13pt;
-}
+}		
 
 form.form ul.panel li {
 	clear: none;
@@ -602,4 +602,13 @@ div.api_keys a#generate_new_api {
 	display: block;
 	clear: both;
 	padding-left: 100px;
+}
+
+span.suspended {
+	color: #e26350;
+}
+
+span.suspended img {
+	float: left;
+	margin-right: 5px;
 }

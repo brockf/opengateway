@@ -146,7 +146,7 @@ $(document).ready(function() {
 	
 	// fill in "blank" entry text for emails
 	$('form.form input.email').each(function() {
-		if ($(this).val() == '') {
+		if ($(this).val() == '' || $(this).val() == 'email@example.com') {
 			$(this).val('email@example.com');
 			$(this).addClass('emptyfield');
 		}
@@ -174,7 +174,7 @@ $(document).ready(function() {
 				}
 				errors_in_form = true;
 			}
-			if ($(this).attr('type') != 'radio' && $(this).val() == '') {
+			if ($(this).attr('type') != 'radio' && ($(this).val() == '' || $(this).hasClass('emptyfield'))) {
 				field_label = $('label[for="'+$(this).attr('id')+'"]').text();
 				// adds the label contents to the list of required fields
 				field_names = field_names + '"'+field_label + '", ';

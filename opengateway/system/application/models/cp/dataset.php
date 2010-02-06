@@ -211,11 +211,12 @@ class Dataset extends Model {
     	
     	$actions = '';
     	$i = 1;
+    	
     	// build action buttons
     	if (!empty($this->actions)) {
     		$actions .= 'With selected: ';
     		while (list(,$action) = each($this->actions)) {
-    			$actions .= '<input type="button" class="action_button" rel="' . site_url($action['link']) . '" name="action_' . $i . '" value="' . $action['name'] . '" />';
+    			$actions .= '<input type="button" class="action_button" rel="' . site_url($action['link']) . '" name="action_' . $i . '" value="' . $action['name'] . '" />&nbsp;';
     			$i++;
     		}
     	}

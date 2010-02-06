@@ -24,7 +24,11 @@ function CPLoader () {
 	$CI->navigation->Add('transactions','Transactions');
 	$CI->navigation->Add('customers','Customers');
 	$CI->navigation->Add('plans','Recurring Plans');
-	$CI->navigation->Add('clients','Clients');
+	
+	if ($CI->user->LoggedIn() and ($CI->user->Get('client_type_id') == 1 or $CI->user->Get('client_type_id') == 3)) {
+		$CI->navigation->Add('clients','Clients');
+	}
+	
 	$CI->navigation->Add('settings','Settings');
 	$CI->navigation->Add('settings/emails','Emails','settings');
 	$CI->navigation->Add('settings/gateways','Gateways','settings');

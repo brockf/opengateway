@@ -173,6 +173,7 @@ class Plans extends Controller {
 			}
 			else {
 				redirect('plans/edit/' . $id);
+				return false;
 			}	
 		}
 		
