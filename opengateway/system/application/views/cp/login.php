@@ -9,7 +9,7 @@
 	<script type="text/javascript" src="<?=base_url();?>js/universal.js"></script>
 </head>
 <body>
-	<?=get_notices();?>
+	<div id="notices"><?=get_notices();?></div>
 	<div id="login_form">
 		<h1>Control Panel</h1>
 		<h2>OpenGateway.net</h2>

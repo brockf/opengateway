@@ -62,7 +62,9 @@ class Customer_model extends Model
 				die($this->response->Error(1007));
 			}
 		}
-		
+		else {
+			$country_id = '';
+		}
 		
 		// If the country is US or Canada, we need to validate and supply the 2 letter abbreviation
 		$this->load->helper('states_helper');
@@ -178,7 +180,7 @@ class Customer_model extends Model
 	* Updates a customer details. If the customer does not belong to the client, an error is returned.
 	*
 	* @param int $client_id The client ID of the gateway client.
-	* @param int $params['customer_id'] The Customer to update.
+	* @param int $customer_id The Customer to update.
 	* @param string $params['internal_id'] Customer's internal_id.  Optional.
 	* @param string $params['first_name'] Customer's first name. Optional.
 	* @param string $params['last_name'] Customer's last name. Optional.
@@ -194,9 +196,9 @@ class Customer_model extends Model
 	* 
 	* @return mixed Array containing new customer_id
 	*/
-	function UpdateCustomer($client_id, $params)
+	function UpdateCustomer($client_id, $customer_id, $params)
 	{
-		if(!isset($params['customer_id'])) {
+		if(!isset($customer_id)) {
 			return FALSE;
 		}
 
@@ -237,14 +239,19 @@ class Customer_model extends Model
 		}
 		
 		if(isset($params['country'])) {
-			// Make sure the country is in the proper format
-			$this->load->library('field_validation');
-			$country_id = $this->field_validation->ValidateCountry($params['country']);
-			
-			if(!$country_id) {
-				die($this->response->Error(1007));
+			if ($params['country'] == '') {
+				$update_data['country'] = '';
 			}
-			$update_data['country'] = $country_id;
+			else {
+				// Make sure the country is in the proper format
+				$this->load->library('field_validation');
+				$country_id = $this->field_validation->ValidateCountry($params['country']);
+				
+				if(!$country_id) {
+					die($this->response->Error(1007));
+				}
+				$update_data['country'] = $country_id;
+			}
 		}
 		
 		if(isset($params['state'])) {
@@ -280,7 +287,7 @@ class Customer_model extends Model
 		
 		// Make sure they update their own customer
 		$this->db->where('client_id', $client_id);
-		$this->db->where('customer_id', $params['customer_id']);
+		$this->db->where('customer_id', $customer_id);
 		
 		if ($this->db->update('customers', $update_data)) {
 			return TRUE;

@@ -21,35 +21,38 @@ if (!isset($form)) {
 				'client_type' => '2'	
 			);
 } ?>
-<?=$this->load->view('cp/header', array('head_files' => '<script type="text/javascript" src="' . site_url('js/form.client.js') . '"></script>'));?>
+<?=$this->load->view('cp/header', array('head_files' => '<script type="text/javascript" src="' . site_url('js/form.address.js') . '"></script>'));?>
 <h1><?=$form_title;?></h1>
-<form class="form" id="form_email" method="post" action="<?=site_url($form_action);?>">
+<form class="form" id="form_client" method="post" action="<?=site_url($form_action);?>">
 <fieldset>
 	<legend>System Information</legend>
 	<ul class="form">
 		<li>
-			<label for="username" class="full">Username</labe>
+			<label for="username" class="full">Username</label>
 		</li>
 		<li>
-			<input type="text" class="text required full" id="username" name="username" value="<?=$form['username'];?>" />
+			<input type="text" autocomplete="off" class="text required full" id="username" name="username" value="<?=$form['username'];?>" />
 		</li>
 		<li>
 			<label for="email" class="full">Email Address</label>
 		</li>
 		<li>
-			<input type="text" class="text required full email" id="email" name="email" value="<?=$form['email'];?>" />
+			<input type="text" autocomplete="off" class="text required full email" id="email" name="email" value="<?=$form['email'];?>" />
 		</li>
 		<li>
 			<label for="password" class="full">Password</label>
 		</li>
 		<li>
-			<input type="password" class="text <? if ($action == 'new') { ?>required<? } ?> full" id="password" name="password" value="" />
-		</li>
+			<input type="password" autocomplete="off" class="text <? if ($action == 'new') { ?>required<? } ?> full" id="password" name="password" value="" />
+		</li>	
 		<li>
 			<label for="password2" class="full">Repeat Password</label>
 		</li>
 		<li>
-			<input type="password" class="text <? if ($action == 'new') { ?>required<? } ?> full" id="password2" name="password2" value="" />
+			<input type="password" autocomplete="off" class="text <? if ($action == 'new') { ?>required<? } ?> full" id="password2" name="password2" value="" />
+		</li>
+		<li>
+			<div class="help">Passwords must be at least 6 characters in length.<? if ($action == 'edit') { ?>Leave blank to keep the user's current password.<? } ?></div>
 		</li>
 	</ul>
 </fieldset>
@@ -62,7 +65,7 @@ if (!isset($form)) {
 		</li>
 		<li>
 			<label for="company">Company</label>
-			<input class="text" type="text required" id="company" name="company" value="<?=$form['company'];?>" />
+			<input type="text" class="text required" id="company" name="company" value="<?=$form['company'];?>" />
 		</li>
 		<li>
 			<label for="address_1">Street Address</label>
@@ -77,12 +80,12 @@ if (!isset($form)) {
 			<input type="text" class="text required" name="city" id="city" value="<?=$form['city'];?>">
 		</li>
 		<li>
-			<label for="state">Region</label>
-			<input type="text" class="text" name="state" id="state" value="<?=$form['state'];?>"><select id="state_select" name="state_select"><? foreach ($states as $state) { ?><option <? if ($form['state'] == $state['code']) { ?> selected="selected" <? } ?> value="<?=$state['code'];?>"><?=$state['name'];?></option><? } ?></select>
-		</li>
-		<li>
 			<label for="Country">Country</label>
 			<select id="country" name="country" class="required"><? foreach ($countries as $country) { ?><option <? if ($form['country'] == $country['iso2']) { ?> selected="selected" <? } ?> value="<?=$country['iso2'];?>"><?=$country['name'];?></option><? } ?></select>
+		</li>
+		<li>
+			<label for="state">Region</label>
+			<input type="text" class="text" name="state" id="state" value="<?=$form['state'];?>"><select id="state_select" name="state_select"><? foreach ($states as $state) { ?><option <? if ($form['state'] == $state['code']) { ?> selected="selected" <? } ?> value="<?=$state['code'];?>"><?=$state['name'];?></option><? } ?></select>
 		</li>
 		<li>
 			<label for="postal_code">Postal Code</label>
@@ -110,7 +113,7 @@ if (!isset($form)) {
 		</li>
 		<? if ($this->user->Get('client_type_id') == '3') { ?>
 		<li>
-			<div class="help"><b>Service Providers</b> can create client accounts for End Users.  <b>End Users</b> do not have client creation abilities.</span>
+			<div class="help"><b>Service Providers</b> can create client accounts for End Users.  <b>End Users</b> do not have client creation abilities.</div>
 		</li>
 		<? } ?>
 		<li>
@@ -120,7 +123,7 @@ if (!isset($form)) {
 	</ul>
 </fieldset>
 <div class="submit">
-	<input type="submit" name="go_email" value="<?=ucfirst($form_title);?>" />
+	<input type="submit" name="go_client" value="<?=ucfirst($form_title);?>" />
 </div>
 </form>
 <?=$this->load->view('cp/footer');?>

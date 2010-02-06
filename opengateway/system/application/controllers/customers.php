@@ -41,19 +41,19 @@ class Customers extends Controller {
 							'name' => 'First Name',
 							'sort_column' => 'customers.first_name',
 							'type' => 'text',
-							'width' => '20%',
+							'width' => '15%',
 							'filter' => 'first_name'),
 						array(
 							'name' => 'Last Name',
 							'sort_column' => 'customers.last_name',
 							'type' => 'text',
-							'width' => '25%',
+							'width' => '20%',
 							'filter' => 'last_name'),
 						array(
 							'name' => 'Email Address',
 							'sort_column' => 'email',
 							'type' => 'text',
-							'width' => '20%',
+							'width' => '25%',
 							'filter' => 'email')
 					);
 					
@@ -79,9 +79,14 @@ class Customers extends Controller {
 		else {
 			$columns[] = array(
 				'name' => 'Plan Link',
-				'width' => '20%'
+				'width' => '15%'
 				);
 		}
+		
+		$columns[] = array(
+				'name' => '',
+				'width' => '10%'
+				);
 		
 		$this->dataset->Initialize('customer_model','GetCustomers',$columns);
 		
@@ -115,6 +120,84 @@ class Customers extends Controller {
 		$this->notices->SetNotice($this->lang->line('customers_deleted'));
 		
 		redirect($return_url);
+		return true;
+	}
+	
+	/**
+	* Edit customer
+	*
+	* Edit customer address, etc.
+	*
+	* @return string view
+	*/	
+	function edit($id) {
+		$this->navigation->PageTitle('Edit Customer');
+		
+		$this->load->model('states_model');
+		$countries = $this->states_model->GetCountries();
+		$states = $this->states_model->GetStates();
+		
+		$this->load->model('customer_model');
+		
+		$customer = $this->customer_model->GetCustomer($this->user->Get('client_id'),$id);
+		
+		$data = array(
+					'form_title' => 'Edit Customer',
+					'form_action' => 'customers/post_edit/' . $id,
+					'states' => $states,
+					'countries' => $countries,
+					'form' => $customer
+					);
+				
+		$this->load->view('cp/customer_form.php',$data);
+	}
+	
+	/**
+	* Post Customer Update
+	*
+	* Handles an update customer post
+	*
+	* @return string view
+	*/
+	function post_edit ($id) {
+		$this->load->library('field_validation');
+	
+		if ($this->input->post('country') != '' and !$this->field_validation->ValidateCountry($this->input->post('country'))) {
+			$this->notices->SetError('Your country is in an improper format.');
+			$error = true;
+		}
+		if ($this->input->post('email') != '' and !$this->field_validation->ValidateEmailAddress($this->input->post('email'))) {
+			$this->notices->SetError('Email is in an improper format.');
+			$error = true;
+		}
+		
+		if (isset($error)) {
+			redirect('customers/edit/' . $id);
+			return false;	
+		}
+		
+		$params = array(
+						'first_name' => $this->input->post('first_name'),
+						'last_name' => $this->input->post('last_name'),
+						'company' => $this->input->post('company'),
+						'address_1' => $this->input->post('address_1'),
+						'address_2' => $this->input->post('address_2'),
+						'city' => $this->input->post('city'),
+						'state' => ($this->input->post('country') == 'US' or $this->input->post('country') == 'CA') ? $this->input->post('state_select') : $this->input->post('state'),
+						'country' => $this->input->post('country'),
+						'postal_code' => $this->input->post('postal_code'),
+						'phone' => $this->input->post('phone'),
+						'email' => $this->input->post('email'),
+						'internal_id' => $this->input->post('internal_id')
+						);
+							
+		$this->load->model('customer_model');
+			
+		$this->customer_model->UpdateCustomer($this->user->Get('client_id'), $id, $params);
+		$this->notices->SetNotice($this->lang->line('customer_updated'));
+		
+		redirect('customers');
+		
 		return true;
 	}
 }

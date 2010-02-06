@@ -18,6 +18,8 @@ $lang['email_updated'] = 'Email edited successfully.';
 $lang['plan_updated'] = 'Plan edited successfully.';
 $lang['gateway_updated'] = 'Gateway edited successfully.';
 $lang['client_updated'] = 'Client updated successfully.';
+$lang['account_updated'] = 'Account updated successfully.';
+$lang['customer_updated'] = 'Customer updated successfully.';
 
 $lang['clients_suspended'] = 'Client(s) suspended successfully.  Access to the API and Control Panel will be refused.';
 $lang['clients_unsuspended'] = 'Client(s) unsuspended successfully.  Access to the API and Control Panel re-established.';

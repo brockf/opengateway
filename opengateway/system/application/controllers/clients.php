@@ -35,32 +35,26 @@ class Clients extends Controller {
 							'name' => 'ID #',
 							'sort_column' => 'clients.id',
 							'type' => 'id',
-							'width' => '10%',
+							'width' => '5%',
 							'filter' => 'client_id'),
 						array(
 							'name' => 'Username',
 							'sort_column' => 'username',
 							'type' => 'text',
-							'width' => '10%',
+							'width' => '12%',
 							'filter' => 'username'
 							),
 						array(
-							'name' => 'First Name',
-							'sort_column' => 'first_name',
-							'type' => 'text',
-							'width' => '12%',
-							'filter' => 'first_name'),
-						array(
-							'name' => 'Last Name',
+							'name' => 'Name',
 							'sort_column' => 'last_name',
 							'type' => 'text',
-							'width' => '12%',
+							'width' => '20%',
 							'filter' => 'last_name'),
 						array(
 							'name' => 'Email Address',
 							'sort_column' => 'email',
 							'type' => 'text',
-							'width' => '20%',
+							'width' => '23%',
 							'filter' => 'email'),
 						array(
 							'name' => 'Status',
@@ -218,19 +212,19 @@ class Clients extends Controller {
 			$this->notices->SetError('Username is a required field.');
 			$error = true;
 		}
-		elseif ($this->input->post('first_name') == '') {
+		if ($this->input->post('first_name') == '') {
 			$this->notices->SetError('First Name is a required field.');
 			$error = true;
 		}
-		elseif ($this->input->post('last_name') == '') {
+		if ($this->input->post('last_name') == '') {
 			$this->notices->SetError('Last Name is a required field.');
 			$error = true;
 		}
-		elseif (!$this->field_validation->ValidateCountry($this->input->post('country'))) {
+		if (!$this->field_validation->ValidateCountry($this->input->post('country'))) {
 			$this->notices->SetError('Your country is in an improper format.');
 			$error = true;
 		}
-		elseif (!$this->field_validation->ValidateEmailAddress($this->input->post('email'))) {
+		if (!$this->field_validation->ValidateEmailAddress($this->input->post('email'))) {
 			$this->notices->SetError('Email is in an improper format.');
 			$error = true;
 		}

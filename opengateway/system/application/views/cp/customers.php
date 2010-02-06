@@ -20,13 +20,14 @@ if (isset($row['plans'])) {
 }
 			
 ?></td>
+		<td class="options"><a href="<?=site_url('customers/edit/' . $row['id']);?>">edit</a></td>
 		</tr>
 	<?
 	}
 }
 else {
 ?>
-<tr><td colspan="6">Empty data set.</td></tr>
+<tr><td colspan="7">Empty data set.</td></tr>
 <?
 }	
 ?>

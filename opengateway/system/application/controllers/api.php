@@ -362,7 +362,7 @@ class API extends Controller {
 		
 		$this->load->model('customer_model');
 		
-		if ($this->customer_model->UpdateCustomer($client_id, $params)) {
+		if ($this->customer_model->UpdateCustomer($client_id, $params['customer_id'], $params)) {
 			return $this->response->TransactionResponse(201);
 		}
 		else {
