@@ -21,7 +21,6 @@ class Dashboard extends Controller {
 	
 	function index()
 	{		
-		die($this->response->Error(5016));
 		$this->load->view('cp/dashboard');
 	}
 
