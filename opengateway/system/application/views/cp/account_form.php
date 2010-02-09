@@ -37,15 +37,15 @@
 		</li>
 		<li>
 			<label for="address_1">Street Address</label>
-			<input type="text" class="text required" name="address_1" id="address_1" value="<?=$form['address_1'];?>">
+			<input type="text" class="text required" name="address_1" id="address_1" value="<?=$form['address_1'];?>" />
 		</li>
 		<li>
 			<label for="address_2">Address Line 2</label>
-			<input type="text" class="text" name="address_2" id="address_2" value="<?=$form['address_2'];?>">
+			<input type="text" class="text" name="address_2" id="address_2" value="<?=$form['address_2'];?>" />
 		</li>
 		<li>
 			<label for="city">City</label>
-			<input type="text" class="text required" name="city" id="city" value="<?=$form['city'];?>">
+			<input type="text" class="text required" name="city" id="city" value="<?=$form['city'];?>" />
 		</li>
 		<li>
 			<label for="Country">Country</label>
@@ -53,11 +53,11 @@
 		</li>
 		<li>
 			<label for="state">Region</label>
-			<input type="text" class="text" name="state" id="state" value="<?=$form['state'];?>"><select id="state_select" name="state_select"><? foreach ($states as $state) { ?><option <? if ($form['state'] == $state['code']) { ?> selected="selected" <? } ?> value="<?=$state['code'];?>"><?=$state['name'];?></option><? } ?></select>
+			<input type="text" class="text" name="state" id="state" value="<?=$form['state'];?>" /><select id="state_select" name="state_select"><? foreach ($states as $state) { ?><option <? if ($form['state'] == $state['code']) { ?> selected="selected" <? } ?> value="<?=$state['code'];?>"><?=$state['name'];?></option><? } ?></select>
 		</li>
 		<li>
 			<label for="postal_code">Postal Code</label>
-			<input type="text" class="text required" name="postal_code" id="postal_code" value="<?=$form['postal_code'];?>">
+			<input type="text" class="text required" name="postal_code" id="postal_code" value="<?=$form['postal_code'];?>" />
 		</li>
 		<li>
 			<label for="phone">Phone</label>

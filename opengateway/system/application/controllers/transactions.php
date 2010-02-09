@@ -71,4 +71,27 @@ class Transactions extends Controller {
 		
 		$this->load->view('cp/transactions.php');
 	}
+	
+	/**
+	* New Charge
+	*
+	* Creates a new one-time or recurring-charge
+	*
+	* @return string viewe
+	*/
+	function create() {
+		$this->navigation->PageTitle('New Transaction');
+	
+		$this->load->model('states_model');
+		$countries = $this->states_model->GetCountries();
+		$states = $this->states_model->GetStates();
+		
+		$data = array(
+					'states' => $states,
+					'countries' => $countries
+					);
+					
+		$this->load->view('cp/new_transaction.php', $data);
+		return true;
+	}
 }

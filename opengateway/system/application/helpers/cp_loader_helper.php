@@ -22,11 +22,14 @@ function CPLoader () {
 	// Build Navigation
 	$CI->navigation->Add('dashboard','Dashboard');
 	$CI->navigation->Add('transactions','Transactions');
+	$CI->navigation->Add('transactions/create','New Charge','transactions');
 	$CI->navigation->Add('customers','Customers');
 	$CI->navigation->Add('plans','Recurring Plans');
+	$CI->navigation->Add('plans/new_plan','New Plan','plans');
 	
 	if ($CI->user->LoggedIn() and ($CI->user->Get('client_type_id') == 1 or $CI->user->Get('client_type_id') == 3)) {
 		$CI->navigation->Add('clients','Clients');
+		$CI->navigation->Add('clients/create','New Client','clients');
 	}
 	
 	$CI->navigation->Add('settings','Settings');

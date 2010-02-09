@@ -19,6 +19,7 @@ class paypal
 											 'user',
 											 'pwd',
 											 'signature',
+											 'currency',
 											 'accept_visa',
 											 'accept_mc',
 											 'accept_discover',
@@ -43,12 +44,28 @@ class paypal
 																		)
 														),
 										'user' => array(
-														'text' => 'User',
+														'text' => 'API Username',
 														'type' => 'text'
 														),
 										'pwd' => array(
-														'text' => 'Password',
+														'text' => 'API Password',
 														'type' => 'text'
+														),
+										'signature' => array(
+														'text' => 'API Signature',
+														'type' => 'text',
+														),
+										'currency' => array(
+														'text' => 'Currency',
+														'type' => 'select',
+														'options' => array(
+																		'USD' => 'US Dollar',
+																		'CAD' => 'Canadian Dollar',
+																		'EUR' => 'Euro',
+																		'GBP' => 'UK Pound',
+																		'AUD' => 'Australian Dollar',
+																		'JPY' => 'Japanese Yen'
+																	)
 														),
 										'accept_visa' => array(
 														'text' => 'Accept VISA?',
@@ -172,6 +189,7 @@ class paypal
 		$post['creditcardtype'] = $card_type;
 		$post['expdate'] = $credit_card['exp_month'].$credit_card['exp_year'];
 		$post['invnum'] = $order_id;
+		$post['currencycode'] = $gateway['currency'];
 		
 		if(isset($credit_card['cvv'])) {
 			$post['cvv2'] = $credit_card['cvv'];
