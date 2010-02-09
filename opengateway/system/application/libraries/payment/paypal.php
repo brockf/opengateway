@@ -253,6 +253,8 @@ class paypal
 		$post['pwd'] = $gateway['pwd'];
 		$post['signature'] = $gateway['signature'];
 		$post['transactionid'] = $params['authorization']->tran_id;
+		$post['currencycode'] = $gateway['currency'];
+		
 		if($params['amount'] == $params['order']['amount']) {
 			$post['refundtype'] = 'FULL'; 
 		} else {
@@ -406,6 +408,7 @@ class paypal
 		$post['signature'] = $gateway['signature'];
 		$post['amt'] = $params['amount']; 
 		$post['acct'] = $params['credit_card']['card_num'];
+		$post['currencycode'] = $gateway['currency'];
 		$post['creditcardtype'] = $card_type;
 		$post['expdate'] = $params['credit_card']['exp_month'].$params['credit_card']['exp_year'];
 		$post['billingperiod'] = 'Day';
@@ -488,7 +491,6 @@ class paypal
 		}
 		
 		return $response;
-		
 	}
 	
 	function CancelRecurring($client_id, $subscription, $gateway)
@@ -558,6 +560,7 @@ class paypal
 		$post['profileid'] = $subscription['api_customer_reference'];
 		
 		if(isset($params['amount'])) {
+			$post['currencycode'] = $gateway['currency'];
 			$post['amt'] = $params['amount'];
 		}
 		
