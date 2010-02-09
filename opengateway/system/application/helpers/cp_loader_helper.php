@@ -3,6 +3,9 @@
 function CPLoader () {
 	$CI =& get_instance();
 	
+	// define active Control Panel
+	define("_CONTROLPANEL","1");
+	
 	$CI->load->library('session');
 	$CI->load->model('cp/user','user');
 	$CI->load->helper('url');

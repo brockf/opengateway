@@ -157,14 +157,27 @@ class Response
 						'8001' => 'A valid Email ID is required.',
 						'8002' => 'Email body must be encoded.'
 						);
-		
-				
+						
 		$error_array = array(
 							'error' => $code,
 							'error_text' => $errors[$code]
 							);
-				
-		return $this->FormatResponse($error_array);
+						
+		// if this isn't a control panel call, it's an API call
+		// and we must report the error as such
+		if (!defined("_CONTROLPANEL")) {			
+			return $this->FormatResponse($error_array);
+		}
+		else {
+			// let's format the error slightly
+			$CI =& get_instance();
+			
+			$CI->navigation->PageTitle('System Error');
+			
+			$view = $CI->load->view('cp/error.php', $error_array, true);
+			
+			return $view;
+		}
 	}
 	
 	// a system error, not a client error
