@@ -14,7 +14,7 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 	<plan>1</plan>
 	<email_subject>Your card has been charged again.</email_subject>
 	<email_body>This is the body of my email.</email_body>
-	<from_name>David Ryan</from_name>
+	<from_name>Electric Function, Inc.</from_name>
 	<from_email>daveryan187@yahoo.com</from_email>
 	<is_html>1</is_html>
 	<client_bcc>0</client_bcc>

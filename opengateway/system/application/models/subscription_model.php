@@ -5,7 +5,7 @@
 * Contains all the methods used to create, update, and search subscriptions.
 *
 * @version 1.0
-* @author David Ryan
+* @author Electric Function, Inc.
 * @package OpenGateway
 
 */

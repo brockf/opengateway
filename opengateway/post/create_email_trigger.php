@@ -13,7 +13,7 @@ $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 	<plan>0</plan>
 	<email_subject>Your card has been charged.</email_subject>
 	<email_body>'.htmlentities('<a><strong>Test it yo!</strong></a>').'</email_body>
-	<from_name>David Ryan</from_name>
+	<from_name>Electric Function, Inc.</from_name>
 	<from_email>daveryan187@yahoo.com</from_email>
 	<is_html>1</is_html>
 	<client_bcc>0</client_bcc>

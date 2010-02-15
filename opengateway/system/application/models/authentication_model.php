@@ -5,7 +5,7 @@
 * Contains the methods used to authenticate clients and allow access to the API.
 *
 * @version 1.0
-* @author David Ryan
+* @author Electric Function, Inc.
 * @package OpenGateway
 
 */

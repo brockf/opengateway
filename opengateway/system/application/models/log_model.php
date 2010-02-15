@@ -6,7 +6,7 @@
 * Contains all the methods used to Log requests and errors
 *
 * @version 1.0
-* @author David Ryan
+* @author Electric Function, Inc.
 * @package OpenGateway
 
 */
