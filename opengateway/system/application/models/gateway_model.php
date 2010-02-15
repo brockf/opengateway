@@ -363,14 +363,10 @@ class Gateway_model extends Model
 		
 			// if there are specified occurrences, we should create an end-date that works with it
 			if ($occurrences != 0) {
-				//echo $interval;
 				$total = $occurrences * ($interval*86400);
-				echo $total;
 				$recur['end_date'] = date('Y-m-d',time() + ($interval*86400));
-				//echo date('Y-m-d', strtotime($recur['end_date']));
 			}	
-		} else {
-			
+		} else {	
 			if(!isset($recur['interval'])) {
 				die($this->response->Error(5011));
 			}

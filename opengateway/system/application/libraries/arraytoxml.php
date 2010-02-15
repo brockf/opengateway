@@ -1,4 +1,5 @@
 <?php
+
 class ArrayToXML
 {
     /**
@@ -48,14 +49,13 @@ class ArrayToXML
         // pass back as XML
         //return $xml->asXML();
 
-    // if you want the XML to be formatted, use the below instead to return the XML
+    	// if you want the XML to be formatted, use the below instead to return the XML
         $doc = new DOMDocument('1.0');
         $doc->preserveWhiteSpace = false;
         $doc->loadXML( $xml->asXML() );
         $doc->formatOutput = true;
         return $doc->saveXML();
     }
-
 
     /**
      * Convert an XML document to a multi dimensional array
