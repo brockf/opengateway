@@ -40,7 +40,7 @@ class OpenGateway
 		      		}
 		      		$xml_params[$i] .= '</'.$key.'>';
 		      	} else {
-		      		$xml_params[$i] .= '<'.strtolower($key).'>'.$value.'</'.strtolower($key).'>';
+		      		$xml_params[$i] = '<'.strtolower($key).'>'.$value.'</'.strtolower($key).'>';
 		      	}
 		      	
 		      	$i++;
