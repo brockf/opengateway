@@ -475,6 +475,7 @@ class Customer_model extends Model
 		
 		if(isset($params['plan_id'])) {
 			$this->db->where('subscriptions.plan_id',$params['plan_id']);
+			$this->db->where('subscriptions.start_date < NOW()');
 		}
 		
 		$this->db->select('customers.*');
@@ -613,7 +614,7 @@ class Customer_model extends Model
 		
 		if (is_array($recurrings)) {
 			while (list(,$recurring) = each($recurrings)) {
-				if (!empty($recurring['plan']['id'])) {
+				if (!empty($recurring['plan']['id']) and strtotime($recurring['start_date']) < now()) {
 					$plans[] = array(
 									'id' => $recurring['plan']['id'],
 									'type' => $recurring['plan']['type'],
