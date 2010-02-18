@@ -118,7 +118,7 @@ class Field_validation
 			return FALSE;
 		}
 		
-		if($amount < 1) {
+		if($amount < 0) {
 			return FALSE;
 		}
 		

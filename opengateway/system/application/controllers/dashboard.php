@@ -25,49 +25,55 @@ class Dashboard extends Controller {
 		
 		$revenue = $this->order_model->GetRevenueByDay($this->user->Get('client_id'));
 		
-		$series = array();
-		foreach ($revenue as $day) {
-			$series[] = $day['revenue'];
-			$series2[] = date("M j",strtotime($day['day']));
+		$data = array();
+		
+		if (!empty($revenue)) {
+			$series = array();
+			foreach ($revenue as $day) {
+				$series[] = $day['revenue'];
+				$series2[] = date("M j",strtotime($day['day']));
+			}
+			
+			include(BASEPATH . 'application/libraries/pchart/pData.class');
+			include(BASEPATH . 'application/libraries/pchart/pChart.class');
+			  
+			// Dataset definition   
+			$DataSet = new pData;  
+			$DataSet->AddPoint($series, "Revenue");  
+			$DataSet->AddPoint($series2, "Serie2");
+			$DataSet->AddAllSeries();  
+			$DataSet->SetAbsciseLabelSerie("Serie2");   
+			
+			$DataSet->RemoveSerie("Serie2");
+			
+			$DataSet->SetXAxisName('Date');
+			$DataSet->SetYAxisName('Revenue');
+			//$DataSet->SetXAxisFormat('date');
+			  
+			// Initialise the graph  
+			$Test = new pChart(1000,260);  
+			$Test->setFontProperties(BASEPATH . 'application/libraries/pchart/Arial.ttf',10);  
+			$Test->setGraphArea(90,30,960,200);  
+			$Test->drawGraphArea(252,252,252);  
+			$Test->drawScale($DataSet->GetData(),$DataSet->GetDataDescription(),SCALE_NORMAL,150,150,150,TRUE,0,2);  
+			$Test->drawGrid(4,TRUE,230,230,230,255);  
+			  
+			// Draw the line graph  
+			$Test->drawLineGraph($DataSet->GetData(),$DataSet->GetDataDescription());  
+			$Test->drawPlotGraph($DataSet->GetData(),$DataSet->GetDataDescription(),3,2,255,255,255);  
+			  
+			// Finish the graph  
+			$Test->setFontProperties(BASEPATH . 'application/libraries/pchart/Arial.ttf',8);  
+			$Test->drawLegend(45,35,$DataSet->GetDataDescription(),255,255,255);  
+			$Test->setFontProperties(BASEPATH . 'application/libraries/pchart/Arial.ttf',10);  
+			//$Test->drawTitle(60,22,"Last 30 Days",50,50,50,585);  
+			$Test->Render(BASEPATH . '../writeable/rev_chart_' . $this->user->Get('client_id') . '.png');
+		}
+		else {
+			$data['no_revenue'] = 'true';
 		}
 		
-		include(BASEPATH . 'application/libraries/pchart/pData.class');
-		include(BASEPATH . 'application/libraries/pchart/pChart.class');
-		  
-		// Dataset definition   
-		$DataSet = new pData;  
-		$DataSet->AddPoint($series, "Revenue");  
-		$DataSet->AddPoint($series2, "Serie2");
-		$DataSet->AddAllSeries();  
-		$DataSet->SetAbsciseLabelSerie("Serie2");   
-		
-		$DataSet->RemoveSerie("Serie2");
-		
-		$DataSet->SetXAxisName('Date');
-		$DataSet->SetYAxisName('Revenue');
-		//$DataSet->SetXAxisFormat('date');
-		  
-		// Initialise the graph  
-		$Test = new pChart(1000,260);  
-		$Test->setFontProperties(BASEPATH . 'application/libraries/pchart/Arial.ttf',10);  
-		$Test->setGraphArea(90,30,960,200);  
-		$Test->drawGraphArea(252,252,252);  
-		$Test->drawScale($DataSet->GetData(),$DataSet->GetDataDescription(),SCALE_NORMAL,150,150,150,TRUE,0,2);  
-		$Test->drawGrid(4,TRUE,230,230,230,255);  
-		  
-		// Draw the line graph  
-		$Test->drawLineGraph($DataSet->GetData(),$DataSet->GetDataDescription());  
-		$Test->drawPlotGraph($DataSet->GetData(),$DataSet->GetDataDescription(),3,2,255,255,255);  
-		  
-		// Finish the graph  
-		$Test->setFontProperties(BASEPATH . 'application/libraries/pchart/Arial.ttf',8);  
-		$Test->drawLegend(45,35,$DataSet->GetDataDescription(),255,255,255);  
-		$Test->setFontProperties(BASEPATH . 'application/libraries/pchart/Arial.ttf',10);  
-		//$Test->drawTitle(60,22,"Last 30 Days",50,50,50,585);  
-		$Test->Render(BASEPATH . '../writeable/rev_chart_' . $this->user->Get('client_id') . '.png');
-	
-		
-		$this->load->view('cp/dashboard');
+		$this->load->view('cp/dashboard', $data);
 	}
 
 	/**

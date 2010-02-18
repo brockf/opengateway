@@ -7,6 +7,8 @@ function local_time ($client_id, $time) {
 	$client = $CI->client_model->GetClientDetails($client_id);
 	
 	$timestamp = strtotime($time);
+	$timestamp = $timestamp - date("Z");
+	
 	$timezone = $client->gmt_offset;
 	$daylight_saving = (date("I") == 1) ? TRUE : FALSE;
 	
@@ -29,7 +31,7 @@ function local_time ($client_id, $time) {
 function server_time ($time, $format = "Y-m-d", $today_or_more = false) {
 	$time = strtotime($time);
 	
-	$time = $time + date("Z");
+	$time = $time - date("Z");
 	
 	if ($today_or_more == true) {
 		if ($time < strtotime(date('Y-m-d'))) {

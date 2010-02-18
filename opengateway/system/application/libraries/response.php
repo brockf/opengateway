@@ -115,7 +115,7 @@ class Response
 						'2000' => 'Client is not authorized to create new clients.',
 						'2001' => 'Invalid External API.',
 						'2002' => 'Username is already in use.',
-						'2003' => 'Password must contain only letters and numbers and be greater than 5 characters in length.',
+						'2003' => 'Password must be greater than 5 characters in length.',
 						'2004' => 'Invalid client ID.',
 						'2005' => 'Error contacting payment gateway.',
 						'2006' => 'Only administrators can create new Service Provider accounts.',

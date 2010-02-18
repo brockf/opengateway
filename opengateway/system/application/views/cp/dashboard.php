@@ -12,5 +12,9 @@
 	</li>
 </ul>
 <div style="clear:both"></div>
+<? if (isset($no_revenue)) { ?>
+<p>You do not have any revenue yet.  When you do, we'll display a nice revenue graph here.</p>
+<? } else { ?>
 <img src="<?=site_url('writeable/rev_chart_' . $this->user->Get('client_id') . '.png');?>" alt="Revenue Chart" style="width:100%; height: 260px" />
+<? } ?>
 <?=$this->load->view('cp/footer');?>

@@ -221,10 +221,10 @@ class Transactions extends Controller {
 			$this->notices->SetError($this->lang->line('transaction_error') . $response['error_text'] . ' (#' . $response['error'] . ')');
 		}
 		
-		if ($response['recurring_id']) {
+		if (isset($response['recurring_id'])) {
 			$redirect = site_url('transactions/recurring/' . $response['recurring_id']);
 		}
-		elseif ($response['charge_id']) {
+		elseif (isset($response['charge_id'])) {
 			$redirect = site_url('transactions/charge/' . $response['charge_id']);
 		}
 		else {

@@ -525,14 +525,12 @@ class Client_model extends Model
 	*/
 	function ValidatePassword($password)
 	{
-		if(
-			ctype_alnum($password) // numbers & digits only
-			&& strlen($password) > 5 // at least 6 chars
-			) {
-				return TRUE;
-			}else {
-				return FALSE;
-			} 
+		if (strlen($password) > 5) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	
 	/**
