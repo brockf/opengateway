@@ -124,7 +124,7 @@ class Gateway_model extends Model
 	function Charge($client_id, $params)
 	{
 		// Make sure it came from a secure connection
-		if(empty($_SERVER["HTTPS"])) {
+		if(empty($_SERVER["HTTPS"]) and $this->config->item('ssl_active') == TRUE) {
 			die($this->response->Error(1010));
 		}
 		
@@ -145,6 +145,8 @@ class Gateway_model extends Model
 		
 		// Get the gateway info to load the proper library
 		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
+		
+		$params['gateway_id'] = $gateway['gateway_id'];
 		
 		if ($gateway['enabled'] == '0') {
 			die($this->response->Error(5017));
@@ -171,7 +173,8 @@ class Gateway_model extends Model
 		// Get the customer details if a customer id was included
 		if(isset($params['customer_id'])) {
 			$CI->load->model('customer_model');
-			$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
+			$customer = $CI->customer_model->GetCustomer($client_id, $params['customer_id']);
+			$customer['customer_id'] = $customer['id'];
 			$created_customer = false;
 		}
 		elseif (isset($params['customer']) and is_array($params['customer'])) {
@@ -190,10 +193,10 @@ class Gateway_model extends Model
 		$this->load->library('payment/'.$gateway_name);
 		$response = $this->$gateway_name->Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card);	
 		
-		if ($created_customer and $response['response_code'] != 1) {
+		if (isset($created_customer) and ($response['response_code'] != 100)) {
 			$CI->customer_model->DeleteCustomer($client_id, $customer['customer_id']);
 		}
-		elseif ($created_customer) {
+		elseif (isset($created_customer)) {
 			$response['customer_id'] = $customer['customer_id'];
 		}
 		
@@ -248,7 +251,8 @@ class Gateway_model extends Model
 		
 		// Get the customer details
 		$CI->load->model('customer_model');
-		$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
+		$customer = $CI->customer_model->GetCustomer($client_id, $params['customer_id']);
+		$customer['customer_id'] = $customer;
 		
 		// Get the order authorization
 		$CI->load->model('order_authorization_model');
@@ -284,7 +288,7 @@ class Gateway_model extends Model
 	function Recur($client_id, $params)
 	{		
 		// Make sure it came from a secure connection
-		if(empty($_SERVER["HTTPS"])) {
+		if(empty($_SERVER["HTTPS"]) and $this->config->item('ssl_active') == TRUE) {
 			die($this->response->Error(1010));
 		}
 		
@@ -301,6 +305,8 @@ class Gateway_model extends Model
 		
 		// Get the gateway info to load the proper library
 		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
+		
+		$params['gateway_id'] = $gateway['gateway_id'];
 		
 		if ($gateway['enabled'] == '0') {
 			die($this->response->Error(5017));
@@ -321,8 +327,10 @@ class Gateway_model extends Model
 		
 		// Get the customer details if a customer id was included
 		$this->load->model('customer_model');
+		
 		if(isset($params['customer_id'])) {
-			$customer = $CI->customer_model->GetCustomerDetails($client_id, $params['customer_id']);
+			$customer = $CI->customer_model->GetCustomer($client_id, $params['customer_id']);
+			$customer['customer_id'] = $customer['id'];
 		}
 		elseif (isset($params['customer']) and is_array($params['customer'])) {
 			// look for embedded customer information
@@ -338,7 +346,7 @@ class Gateway_model extends Model
 				$name = explode(' ', $credit_card['name']);
 				$customer['first_name'] = $name[0];
 				$customer['last_name'] = $name[1];
-				$customer['customer_id'] = $this->customer_model->SaveNewCustomer($client_id, $name[0], $name[1]);
+				$customer['customer_id'] = $CI->customer_model->SaveNewCustomer($client_id, $name[0], $name[1]);
 			}
 		}
 		
@@ -450,10 +458,10 @@ class Gateway_model extends Model
 		$this->load->library('payment/'.$gateway_name);
 		$response = $this->$gateway_name->Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences);
 		
-		if ($created_customer and $response['response_code'] != 1) {
+		if (isset($created_customer) and $response['response_code'] != 1) {
 			$CI->customer_model->DeleteCustomer($client_id, $customer['customer_id']);
 		}
-		elseif ($created_customer) {
+		elseif (isset($created_customer)) {
 			$response['customer_id'] = $customer['customer_id'];
 		}
 		
@@ -792,10 +800,11 @@ class Gateway_model extends Model
 			$data['arb_url_dev'] = $row->arb_dev_url;
 			$data['name'] = $row->name;
 			$data['enabled'] = $row->enabled;
+			$data['gateway_id'] = $row->client_gateway_id;
 			
 			// Get the params
 			$this->load->library('encrypt');
-			$this->db->where('client_gateway_id', $gateway_id);
+			$this->db->where('client_gateway_id', $row->client_gateway_id);
 			$query = $this->db->get('client_gateway_params');
 			if($query->num_rows() > 0) {
 				foreach($query->result() as $row) {

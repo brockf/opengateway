@@ -24,7 +24,7 @@ class Field_validation
 						$error = TRUE;
 					}
 					
-					if($params[$value] == '') {
+					if(!isset($params[$value]) or $params[$value] == '') {
 						$error = TRUE;
 					}
 				}
@@ -79,8 +79,7 @@ class Field_validation
 	}
 	
 	function ValidateCreditCard($card_number, $gateway)
-	{
-		
+	{	
 		$patterns = array();
 		
 		if($gateway['accept_amex'] == 1) {

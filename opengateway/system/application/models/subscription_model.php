@@ -388,7 +388,7 @@ class Subscription_model extends Model
 				$data[$i]['gateway_id'] = $row->gateway_id;
 				$data[$i]['date_created'] = $row->timestamp;
 				$data[$i]['amount'] = $row->amount;
-				$data[$i]['interval'] = $row->interval;
+				$data[$i]['interval'] = $row->charge_interval;
 				$data[$i]['start_date'] = $row->start_date;
 				$data[$i]['end_date'] = $row->end_date;
 				$data[$i]['next_charge_date'] = $row->next_charge;

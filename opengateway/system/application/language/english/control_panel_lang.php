@@ -23,3 +23,6 @@ $lang['customer_updated'] = 'Customer updated successfully.';
 
 $lang['clients_suspended'] = 'Client(s) suspended successfully.  Access to the API and Control Panel will be refused.';
 $lang['clients_unsuspended'] = 'Client(s) unsuspended successfully.  Access to the API and Control Panel re-established.';
+
+$lang['transaction_ok'] = 'Transaction approved';
+$lang['transaction_error'] = 'Transaction Error: ';

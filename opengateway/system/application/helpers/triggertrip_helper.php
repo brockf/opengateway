@@ -32,7 +32,7 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
     if (isset($subscription) and is_array($subscription['customer'])) {
     	$customer = $subscription['customer'];
     }
-    elseif (isset($charge) and is_array($charge['customer'])) {
+    elseif (isset($charge) and isset($charge['customer']) and is_array($charge['customer'])) {
     	$customer = $charge['customer'];
     }
     

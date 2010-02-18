@@ -35,7 +35,7 @@ class Plan_model extends Model
 	function NewPlan($client_id, $params)
 	{
 		// Get the plan params
-		$plan = $params['plan'];
+		$plan = $params;
 		
 		$this->load->library('field_validation');
 		

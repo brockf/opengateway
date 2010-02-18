@@ -503,6 +503,10 @@ form.form input.number {
 	width: 40px;
 }
 
+form.form input.number.full {
+	width: 100%;
+}
+
 .emptyfield {
 	color: #999;
 }
@@ -568,6 +572,49 @@ div.setup_fee h3, div.monthly_fee h3, div.transaction_fee h3 {
 	margin: 0;
 	font-size: 8pt;
 	display: inline;
+}
+
+div#transaction_cc, div#transaction_amount, div#transaction_recur, div#transaction_customer, div#transaction_gateway {
+	width: 92%;
+	padding-left: 8%;
+}
+
+div#transaction_amount {
+	background-image: url(../images/money.png);
+	background-position: 0px 38px;
+	background-repeat: no-repeat;
+}
+
+div#transaction_cc {
+	background-image: url(../images/creditcard.png);
+	background-position: 0px 38px;
+	background-repeat: no-repeat;
+}
+
+div#transaction_recur {
+	background-image: url(../images/recurring.png);
+	background-position: 0px 38px;
+	background-repeat: no-repeat;
+}
+
+div#transaction_customer {
+	background-image: url(../images/customer.png);
+	background-position: 0px 38px;
+	background-repeat: no-repeat;
+}
+
+div#transaction_gateway {
+	background-image: url(../images/gateway.png);
+	background-position: 0px 22px;
+	background-repeat: no-repeat;
+}
+
+div.transaction.submit {
+	padding-left: 8%;
+}
+
+div#recurring_details {
+	display: none;
 }
 
 /* individual page stylings */

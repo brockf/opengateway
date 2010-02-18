@@ -142,8 +142,6 @@ class paypal
 		} else {			
 			return FALSE;
 		}
-
-
 	}
 	
 	function Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card)
@@ -326,12 +324,14 @@ class paypal
 			// Create an order
 			$CI->load->model('order_model');
 			
-			$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $subscription_id);
+			$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
+			$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $subscription_id, $customer['customer_id']);
 			$response = $this->Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card);
 			
 			if($response['response_code'] == 1) {
 				$response_array['charge_id'] = $response['charge_id'];
 				$start_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400));
+				$CI->order_model->SetStatus($order_id, 1);
 			} else {
 				$CI->load->model('subscription_model');
 				$CI->subscription_model->MakeInactive($subscription_id);
@@ -467,7 +467,7 @@ class paypal
 			$post['zip'] = $params['customer']['postal_code'];
 			
 			if(isset($params['customer']['email'])) {
-				$post['email'] .= $params['customer']['email'];
+				$post['email'] = $params['customer']['email'];
 			}
 		}
 		

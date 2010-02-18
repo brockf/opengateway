@@ -11,7 +11,7 @@
 |	http://example.com/
 |
 */
-$config['base_url']	= "http://localhost/";
+$config['base_url']	= "http://platform.opengateway.net/";
 
 /*
 |--------------------------------------------------------------------------
@@ -23,7 +23,7 @@ $config['base_url']	= "http://localhost/";
 | variable so that it is blank.
 |
 */
-$config['index_page'] = "index.php";
+$config['index_page'] = "";
 
 /*
 |--------------------------------------------------------------------------
@@ -295,7 +295,7 @@ $config['compress_output'] = FALSE;
 | regarding date handling.
 |
 */
-$config['time_reference'] = 'local';
+$config['time_reference'] = 'gmt';
 
 
 /*
@@ -332,8 +332,9 @@ $config['proxy_ips'] = '';
 */
 $config['max_recurring_days_from_today'] = 365;
 $config['query_result_default_limit'] = 100;
-$config['recurring_charge_failures_allowed'] = 4;
+$config['recurring_charge_failures_allowed'] = 1;
 $config['support_url'] = 'http://www.opengateway.net/support/';
+$config['ssl_active'] = false;
 
 /* End of file config.php */
 /* Location: ./system/application/config/config.php */

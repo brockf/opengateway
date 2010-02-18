@@ -210,7 +210,8 @@ class exact
 		
 		// Create an order for today's payment
 		$CI->load->model('order_model');
-		$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $subscription_id);
+		$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
+		$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $subscription_id, $customer['customer_id']);
 		
 		// Create the recurring seed
 		$response = $this->CreateProfile($client_id, $gateway, $customer, $credit_card, $subscription_id, $params, $order_id);

@@ -31,7 +31,7 @@ class Order_model extends Model
 	* 
 	* @return int $order_id The new order id
 	*/
-	function CreateNewOrder($client_id, $params, $subscription_id = 0)
+	function CreateNewOrder($client_id, $params, $subscription_id = 0, $customer_id = FALSE)
 	{
 		$timestamp = date('Y-m-d H:i:s');
 		$insert_data = array(
@@ -50,7 +50,10 @@ class Order_model extends Model
 			$insert_data['customer_ip_address'] = $params['customer_ip_address'];
 		}
 
-		if(isset($params['customer_id'])) {
+		if (isset($customer_id)) {
+			$insert_data['customer_id'] = $customer_id;
+		}
+		elseif(isset($params['customer_id'])) {
 			$insert_data['customer_id'] = $params['customer_id'];
 		}
 		
@@ -147,7 +150,7 @@ class Order_model extends Model
 		}
 		
 		if (isset($params['status'])) {
-			$status = ($params['status'] == 'ok') ? '1' : '0';
+			$status = ($params['status'] == '1' or $params['status'] == 'ok') ? '1' : '0';
 			$this->db->where('orders.status',$status);
 		}
 		
@@ -190,7 +193,7 @@ class Order_model extends Model
 				break;	
 		}
 		
-		$sort_dir = isset($params['sort_dir']) ? $params['sort_dir'] : 'ASC';
+		$sort_dir = isset($params['sort_dir']) ? $params['sort_dir'] : 'DESC';
 		
 		
 		$this->db->order_by($sort, $sort_dir);	

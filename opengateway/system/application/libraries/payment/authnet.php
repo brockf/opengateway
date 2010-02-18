@@ -174,7 +174,7 @@ class authnet
 			"x_type"			=> "AUTH_CAPTURE",
 			"x_method"			=> "CC",
 			"x_card_num"		=> $credit_card['card_num'],
-			"x_exp_date"		=> $credit_card['exp_month'].$credit_card['exp_year'],
+			"x_exp_date"		=> $credit_card['exp_month'].'/'.$credit_card['exp_year'],
 			"x_amount"			=> $params['amount']
 			);
 
@@ -479,11 +479,13 @@ class authnet
 			
 			// Create an order for today's payment
 			$CI->load->model('order_model');
-			$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $subscription_id);
+			$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
+			$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $subscription_id, $customer['customer_id']);
 			
 			$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $profile_id, $payment_profile_id, $params);
 			
 			if($response['success'] == TRUE){
+				$CI->order_model->SetStatus($order_id, 1);
 				$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
 				$response = $CI->response->TransactionResponse(100, $response_array);
 			} else {

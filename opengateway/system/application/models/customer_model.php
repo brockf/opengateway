@@ -135,7 +135,7 @@ class Customer_model extends Model
 							'country'		=> $country_id,
 							'phone'			=> $phone,
 							'email'			=> $email,
-							'active'		=> 1,
+							'active'		=> '1',
 							'date_created'  => date('Y-m-d, H:i:s'),
 							);
 		$this->db->insert('customers', $insert_data);
@@ -475,7 +475,6 @@ class Customer_model extends Model
 		
 		if(isset($params['plan_id'])) {
 			$this->db->where('subscriptions.plan_id',$params['plan_id']);
-			$this->db->where('subscriptions.start_date < NOW()');
 		}
 		
 		$this->db->select('customers.*');
@@ -483,6 +482,7 @@ class Customer_model extends Model
 		$this->db->select('subscriptions.plan_id');
 		
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
+		$this->db->group_by('customers.customer_id');
 		$query = $this->db->get('customers');
 		
 		$data = array();
@@ -614,7 +614,7 @@ class Customer_model extends Model
 		
 		if (is_array($recurrings)) {
 			while (list(,$recurring) = each($recurrings)) {
-				if (!empty($recurring['plan']['id']) and strtotime($recurring['start_date']) < now()) {
+				if (!empty($recurring['plan']['id'])) {
 					$plans[] = array(
 									'id' => $recurring['plan']['id'],
 									'type' => $recurring['plan']['type'],

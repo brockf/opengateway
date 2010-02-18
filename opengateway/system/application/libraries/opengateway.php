@@ -13,6 +13,9 @@
 class OpenGateway
 {		
 	private $params;
+	public $post_url;
+	public $api_id;
+	public $secret_key;
 	
 	/**
 	* Authenticate
@@ -24,7 +27,7 @@ class OpenGateway
 	* @param string $server Secure URL for the OpenGateway server (optional)
 	* @return bool TRUE
 	*/
-	public function Authenticate ($api_id, $secret_key, $server ='https://platform.opengateway.net')  {
+	public function Authenticate ($api_id, $secret_key, $server = 'https://platform.opengateway.net/api')  {
 		$this->api_id = $api_id;
 		$this->secret_key = $secret_key;
 		$this->post_url = $server;
@@ -75,6 +78,10 @@ class OpenGateway
 	* @return array The response from the server
 	*/
 	public function Process($debug = FALSE)  {
+		if ($this->post_url == '') {
+			return FALSE;
+		}
+		
 	    // See which params are set
 	    $i=0;
 	    if(isset($this->params)) {
@@ -118,10 +125,12 @@ class OpenGateway
         	$doc->loadXML($xml->asXML());
         	$doc->formatOutput = true;
         	echo $doc->saveXML();
+        	
+        	return true;
 	    }
-	    
+	     
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); 
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); 
 		curl_setopt($ch, CURLOPT_URL, $this->post_url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_TIMEOUT, 60);
@@ -134,9 +143,9 @@ class OpenGateway
 		}
 		else {
 			curl_close($ch);
-			
-			$xml = $this->toArray($xml);
-		    return $data;
+						
+			$xml = $this->toArray($data);
+		    return $xml;
 		}
 	}
 	

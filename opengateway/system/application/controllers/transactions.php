@@ -86,12 +86,136 @@ class Transactions extends Controller {
 		$countries = $this->states_model->GetCountries();
 		$states = $this->states_model->GetStates();
 		
+		// load plans if they exist
+		$this->load->model('plan_model');
+		$plans = $this->plan_model->GetPlans($this->user->Get('client_id'),array());
+		
+		// load existing customers
+		$this->load->model('customer_model');
+		$customers = $this->customer_model->GetCustomers($this->user->Get('client_id'),array());
+		
+		// load existing gateways
+		$this->load->model('gateway_model');
+		$gateways = $this->gateway_model->GetGateways($this->user->Get('client_id'),array());
+		
 		$data = array(
 					'states' => $states,
-					'countries' => $countries
+					'countries' => $countries,
+					'plans' => $plans,
+					'customers' => $customers,
+					'gateways' => $gateways
 					);
 					
 		$this->load->view('cp/new_transaction.php', $data);
+		return true;
+	}
+	
+	/**
+	* Post Charge
+	*/
+	function post() {
+		$this->load->library('opengateway');
+		
+		if ($this->input->post('recurring') == '0') {
+			$charge = new Charge;
+		}
+		else {
+			$charge = new Recur;
+		}
+		
+		$api_url = site_url('api');
+		$api_url = ($this->config->item('ssl_active') == TRUE) ? str_replace('http://','https://',$api_url) : $api_url;
+		
+		$charge->Authenticate(
+						$this->user->Get('api_id'),
+						$this->user->Get('secret_key'),
+						site_url('api')
+					);
+		
+		$charge->Amount($this->input->post('amount'));
+		
+		$charge->CreditCard(
+						$this->input->post('cc_name'),
+						$this->input->post('cc_number'),
+						$this->input->post('cc_expiry_month'),
+						$this->input->post('cc_expiry_year'),
+						$this->input->post('cc_security')
+					);
+					
+		if ($this->input->post('recurring') == '1') {
+			$charge->UsePlan($this->input->post('recurring_plan'));
+		}		
+		elseif ($this->input->post('recurring') == '2') {
+			$free_trial = $this->input->post('free_trial');
+			$free_trial = empty($free_trial) ? NULL : $free_trial;
+			
+			$occurrences = ($this->input->post('recurring_end') == 'occurrences') ? $this->input->post('occurrences') : NULL;
+			
+			$start_date = $this->input->post('start_date_year') . '-' . $this->input->post('start_date_month') . '-' . $this->input->post('start_date_day');
+			$end_date = $this->input->post('end_date_year') . '-' . $this->input->post('end_date_month') . '-' . $this->input->post('end_date_day');
+			
+			$end_date = ($this->input->post('recurring_end') == 'date') ? $end_date : NULL;
+			
+			$charge->Schedule(
+						$this->input->post('interval'),
+						$free_trial,
+						$occurrences,
+						$start_date,
+						$end_date
+					);
+		}
+		
+		if ($this->input->post('customer_id') != '') {
+			$charge->UseCustomer($this->input->post('customer_id'));
+		}
+		else {
+			$first_name = ($this->input->post('first_name') == 'First Name') ? '' : $this->input->post('first_name');
+			$last_name = ($this->input->post('last_name') == 'Last Name') ? '' : $this->input->post('last_name');
+			$email = ($this->input->post('email') == 'email@example.com') ? '' : $this->input->post('email');
+			$state = ($this->input->post('country') == 'US' or $this->input->post('country') == 'CA') ? $this->input->post('state_select') : $this->input->post('state');
+			
+			if (!empty($first_name) and !empty($last_name)) {
+				$charge->Customer(
+								$first_name,
+								$last_name,
+								$this->input->post('company'),
+								$this->input->post('address_1'),
+								$this->input->post('address_2'),
+								$this->input->post('city'),
+								$state,
+								$this->input->post('country'),
+								$this->input->post('postal_code'),
+								$this->input->post('phone'),
+								$email
+						);	
+			}	
+		}
+		
+		if ($this->input->post('gateway_type') == 'specify') {
+			$charge->UseGateway($this->input->post('gateway'));
+		}
+		
+		$response = $charge->Charge();
+		
+		if (isset($response['response_code']) and ($response['response_code'] == '1' or $response['response_code'] == '100')) {
+			$this->notices->SetNotice($this->lang->line('transaction_ok'));
+		}
+		else {
+			$this->notices->SetError($this->lang->line('transaction_error') . $response['response_text']);
+		}
+		
+		if ($response['recurring_id']) {
+			$redirect = site_url('transactions/recurring/' . $response['recurring_id']);
+		}
+		elseif ($response['charge_id']) {
+			$redirect = site_url('transactions/charge/' . $response['charge_id']);
+		}
+		else {
+			$redirect = site_url('transactions/create');
+		}
+		
+		redirect($redirect);
+		
 		return true;
 	}
 }

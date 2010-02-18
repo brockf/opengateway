@@ -179,7 +179,7 @@ class Plans extends Controller {
 		
 		$params = array(
 						'name' => $this->input->post('name',true),
-						'type' => ($this->input->post('plan_type') == 'free') ? 'free' : 'paid',
+						'plan_type' => ($this->input->post('plan_type') == 'free') ? 'free' : 'paid',
 						'amount' => ($this->input->post('plan_type') == 'free') ? '0' : $this->input->post('amount',true),
 						'interval' => $this->input->post('interval',true),
 						'notification_url' => ($this->input->post('notification_url') == 'http://') ? '' : $this->input->post('notification_url',true),
