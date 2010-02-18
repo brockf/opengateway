@@ -1,4 +1,16 @@
 <?=$this->load->view('cp/header');?>
 <h1>Dashboard</h1>
-
+<ul class="dashboard">
+	<li>
+		<a class="dash_charge" href="<?=site_url('transactions/create');?>">New Charge</a>
+	</li>
+	<li>
+		<a class="dash_records" href="<?=site_url('transactions');?>">Records</a>
+	</li>
+	<li>
+		<a class="dash_settings" href="<?=site_url('settings');?>">Settings</a>
+	</li>
+</ul>
+<div style="clear:both"></div>
+<img src="<?=site_url('writeable/rev_chart_' . $this->user->Get('client_id') . '.png');?>" alt="Revenue Chart" style="width:100%; height: 260px" />
 <?=$this->load->view('cp/footer');?>

@@ -35,10 +35,10 @@ function CPLoader () {
 		$CI->navigation->Add('clients/create','New Client','clients');
 	}
 	
-	$CI->navigation->Add('settings','Settings');
-	$CI->navigation->Add('settings/emails','Emails','settings');
-	$CI->navigation->Add('settings/gateways','Gateways','settings');
-	$CI->navigation->Add('settings/api','API Access','settings');
+	$CI->navigation->Add('#','Settings',false,true);
+	$CI->navigation->Add('settings/emails','Emails','#');
+	$CI->navigation->Add('settings/gateways','Gateways','#');
+	$CI->navigation->Add('settings/api','API Access','#');
 	
 	// Set default page title
 	$CI->navigation->PageTitle('Control Panel');

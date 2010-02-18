@@ -489,6 +489,18 @@ class Settings extends Controller {
 	}
 	
 	/**
+	* Make Default Gateway
+	*/
+	function make_default_gateway ($id) {
+		$this->load->model('gateway_model');
+		$this->gateway_model->MakeDefaultGateway($this->user->Get('client_id'),$id);
+		
+		$this->notices->SetNotice($this->lang->line('default_gateway_changed'));
+		
+		redirect(site_url('settings/gateways'));
+	}
+	
+	/**
 	* API Access
 	*
 	* Display the current API login ID and Secret Key.

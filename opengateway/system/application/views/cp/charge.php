@@ -52,6 +52,7 @@ This charge is related to recurring charge #<a href="<?=site_url('transactions/r
 	<a href="mailto:<?=$customer['email'];?>"><?=$customer['email'];?></a></p>
 	<? } ?>
 <? } ?>
+<p><a href="<?=site_url('customers/edit/' . $customer['id']);?>">Edit Customer Record</a></p>
 </div>
 
 <? } ?>

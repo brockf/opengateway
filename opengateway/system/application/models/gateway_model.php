@@ -193,7 +193,7 @@ class Gateway_model extends Model
 		$this->load->library('payment/'.$gateway_name);
 		$response = $this->$gateway_name->Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card);	
 		
-		if (isset($created_customer) and ($response['response_code'] != 1)) {
+		if (isset($created_customer) and $created_customer == true and ($response['response_code'] != 1)) {
 			$CI->customer_model->DeleteCustomer($client_id, $customer['customer_id']);
 		}
 		elseif (isset($created_customer)) {
@@ -406,6 +406,9 @@ class Gateway_model extends Model
 		
 		// Validate the start date to make sure it is in the future
 		if(isset($recur['start_date'])) {
+			// adjust to server time
+			$recur['start_date'] = server_time($recur['start_date'], 'Y-m-d', true);
+		
 			if(!$this->field_validation->ValidateDate($recur['start_date']) or $recur['start_date'] < date('Y-m-d')) {
 				die($this->response->Error(5001));
 			} else {
@@ -424,6 +427,9 @@ class Gateway_model extends Model
 		
 		// If an end date was passed, make sure it's valid
 		if(isset($recur['end_date'])) {
+			// adjust to server time
+			$recur['end_date'] = server_time($recur['end_date']);
+			
 			if(strtotime($recur['end_date']) < time()) {
 				die($this->response->Error(5002));
 			} elseif(strtotime($recur['end_date']) < strtotime($start_date)) {
@@ -453,15 +459,20 @@ class Gateway_model extends Model
 		$CI->load->model('subscription_model');
 		$subscription_id = $CI->subscription_model->SaveSubscription($client_id, $params['gateway_id'], $customer['customer_id'], $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id);
 		
+		// set last_charge as today
+		if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
+			$CI->subscription_model->SetChargeDates($subscription_id, date('Y-m-d'), $next_charge_date);
+		}
+		
 		// Load the proper library
 		$gateway_name = $gateway['name'];
 		$this->load->library('payment/'.$gateway_name);
 		$response = $this->$gateway_name->Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences);
 		
-		if (isset($created_customer) and $response['response_code'] != 100) {
+		if (isset($created_customer) and $created_customer == true and $response['response_code'] != 100) {
 			$CI->customer_model->DeleteCustomer($client_id, $customer['customer_id']);
 		}
-		elseif (isset($created_customer)) {
+		elseif (isset($created_customer) and $created_customer == true) {
 			$response['customer_id'] = $customer['customer_id'];
 		}
 		
@@ -776,9 +787,15 @@ class Gateway_model extends Model
 	
 	function GetGatewayDetails($client_id, $gateway_id = FALSE)
 	{
+		$CI =& get_instance();
+		$CI->load->model('client_model');
+		$client = $CI->client_model->GetClientDetails($client_id);
+		
 		// If they have not passed a gateway ID, we will choose the first one created.
 		if($gateway_id) {
 			$this->db->where('client_gateways.client_gateway_id', $gateway_id);
+		} elseif (!empty($client->default_gateway_id)) {
+			$this->db->where('client_gateways.client_gateway_id', $client->default_gateway_id);
 		} else {
 			$this->db->order_by('create_date', 'ASC');
 		}

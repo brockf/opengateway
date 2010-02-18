@@ -77,8 +77,7 @@ class Customer_model extends Model
 				die($this->response->Error(1012));
 			}
 		}
-		
-		
+			
 		// Make sure the email address is valid
 		if ($params['email']) {
 			$valid_email = $this->field_validation->ValidateEmailAddress($params['email']);
@@ -503,7 +502,7 @@ class Customer_model extends Model
 				$data[$i]['country'] = $row->iso2;
 				$data[$i]['email'] = $row->email;
 				$data[$i]['phone'] = $row->phone;
-				$data[$i]['date_created'] = $row->date_created;
+				$data[$i]['date_created'] = local_time($client_id, $row->date_created);
 				$data[$i]['status'] = ($row->active == 1) ? 'active' : 'deleted';
 				
 				if (isset($row->plan_id) and !empty($row->plan_id)) {	
@@ -566,7 +565,7 @@ class Customer_model extends Model
 			$data['country'] = $row->iso2;
 			$data['email'] = $row->email;
 			$data['phone'] = $row->phone;
-			$data['date_created'] = $row->date_created;
+			$data['date_created'] = local_time($client_id, $row->date_created);
 			$data['status'] = ($row->active == 1) ? 'active' : 'deleted';
 			
 			$plans = $this->GetPlansByCustomer($client_id, $row->customer_id);

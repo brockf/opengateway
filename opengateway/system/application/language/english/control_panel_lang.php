@@ -26,3 +26,5 @@ $lang['clients_unsuspended'] = 'Client(s) unsuspended successfully.  Access to t
 
 $lang['transaction_ok'] = 'Transaction approved';
 $lang['transaction_error'] = 'Transaction Error: ';
+
+$lang['default_gateway_changed'] = 'Default gateway updated.';

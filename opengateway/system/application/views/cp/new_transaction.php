@@ -262,7 +262,7 @@ begin processing transactions, you should <a href="<?=site_url('settings/new_gat
 					<input type="radio" name="gateway_type" value="specify" /> Select gateway: 
 					<select name="gateway">
 						<? foreach ($gateways as $gateway) { ?>
-							<option value="<?=$gateway['id'];?>"><?=$gateway['gateway'];?></option>
+							<option value="<?=$gateway['id'];?>" <? if ($this->user->Get('default_gateway_id') == $gateway['id']) {?> selected="selected"<? } ?>><?=$gateway['gateway'];?></option>
 						<? } ?>
 					</select>
 				</li>

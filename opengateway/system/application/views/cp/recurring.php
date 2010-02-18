@@ -12,6 +12,9 @@
 <? if ($status == 'active') { ?>
 <p><b>Next Charge Date</b><br />
 <?=$next_charge_date;?> (<a href="<?=site_url('transactions/cancel_recurring/' . $id);?>">cancel recurring</a>)</p>
+<? } else { ?>
+<p><b>Cancel Date</b><br />
+<?=$cancel_date;?></p>
 <? } ?>
 <p><b>Status</b><br />
 <?=$status;?>&nbsp;
@@ -43,6 +46,7 @@
 	<a href="mailto:<?=$customer['email'];?>"><?=$customer['email'];?></a></p>
 	<? } ?>
 <? } ?>
+<p><a href="<?=site_url('customers/edit/' . $customer['id']);?>">Edit Customer Record</a></p>
 </div>
 
 <? } ?>

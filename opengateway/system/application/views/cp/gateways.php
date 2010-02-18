@@ -10,7 +10,9 @@ if (!empty($this->dataset->data)) {
 			<td><?=$row['id'];?></td>
 			<td><?=$row['gateway'];?></td>
 			<td><?=$row['date_created'];?></td>
-			<td class="options"><a href="<?=site_url('settings/edit_gateway/' . $row['id']);?>">edit</a></td>
+			<td class="options"><a href="<?=site_url('settings/edit_gateway/' . $row['id']);?>">edit</a> | 
+			<? if ($this->user->Get('default_gateway_id') == $row['id']) { ?><b>default</b><? } else { ?>
+			<a href="<?=site_url('settings/make_default_gateway/' . $row['id']);?>">make default</a><? } ?></td>
 		</tr>
 	<?
 	}

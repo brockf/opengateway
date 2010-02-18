@@ -161,8 +161,9 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 			// replace all possible variables
 			while (list($name,$value) = each($variables)) {
 				$subject = str_ireplace('[[' . $name . ']]',$value,$subject);
-				$body = str_ireplace('[[' . $body . ']]',$value,$body);
+				$body = str_ireplace('[[' . $name . ']]',$value,$body);
 			}
+			reset($variables);
 			
 			// send the email
 			$CI->email->from($from_email, $from_name);

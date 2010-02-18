@@ -191,7 +191,7 @@ CREATE TABLE `clients` (
 -- Dumping data for table `clients`
 -- 
 
-INSERT INTO `clients` (`client_id`, `client_type_id`, `first_name`, `last_name`, `company`, `address_1`, `address_2`, `city`, `state`, `postal_code`, `country`, `gmt_offset`, `phone`, `email`, `parent_client_id`, `api_id`, `secret_key`, `username`, `password`, `default_gateway_id`, `suspended`, `deleted`) VALUES (1, 3, 'Brock', 'Ferguson', 'Electric Function, Inc.', '235 Charlotte St.', NULL, 'Ottawa', 'ON', 'K1N8L4', 124, '-5', '1-888-828-4186', 'brock@electricfunction.com', 0, '', '', 'admin', '63a9f0ea7bb98050796b649e85481845', 0, 0, 0);
+INSERT INTO `clients` (`client_id`, `client_type_id`, `first_name`, `last_name`, `company`, `address_1`, `address_2`, `city`, `state`, `postal_code`, `country`, `gmt_offset`, `phone`, `email`, `parent_client_id`, `api_id`, `secret_key`, `username`, `password`, `default_gateway_id`, `suspended`, `deleted`) VALUES (1, 3, 'Brock', 'Ferguson', 'Electric Function, Inc.', '235 Charlotte St.', NULL, 'Ottawa', 'ON', 'K1N8L4', 124, 'UM5', '1-888-828-4186', 'brock@electricfunction.com', 0, '', '', 'admin', '63a9f0ea7bb98050796b649e85481845', 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -925,6 +925,7 @@ CREATE TABLE `subscriptions` (
   `api_payment_reference` varchar(255) default NULL,
   `api_auth_number` varchar(255) default NULL,
   `active` tinyint(1) NOT NULL default '1',
+  `cancel_date` datetime NOT NULL,
   `timestamp` date NOT NULL,
   PRIMARY KEY  (`subscription_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=1 ;

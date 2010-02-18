@@ -52,6 +52,7 @@ class Subscription_model extends Model
 							'number_occurrences'=> $total_occurrences,
 							'amount'			=> $amount,
 							'active'			=> 1,
+							'cancel_date'		=> '0000-00-00 00:00:00',
 							'timestamp'			=> $timestamp
 			  				);  					  				
 			  				
@@ -127,7 +128,7 @@ class Subscription_model extends Model
 	*/
 	function MakeInactive($subscription_id)
 	{
-		$update_data = array('active' => 0);
+		$update_data = array('active' => 0, 'cancel_date' => date('Y-m-d H:i:s'));
 		
 		$this->db->where('subscription_id', $subscription_id);
 		$this->db->update('subscriptions', $update_data);
@@ -218,12 +219,13 @@ class Subscription_model extends Model
 		
 		$data['id'] = $row->subscription_id;
 		$data['gateway_id'] = $row->gateway_id;
-		$data['date_created'] = $row->timestamp;
+		$data['date_created'] = local_time($client_id, $row->timestamp);
 		$data['amount'] = money_format("%!i",$row->amount);
 		$data['interval'] = $row->charge_interval;
-		$data['start_date'] = $row->start_date;
-		$data['end_date'] = $row->end_date;
-		$data['next_charge_date'] = $row->next_charge;
+		$data['start_date'] = local_time($client_id, $row->start_date);
+		$data['end_date'] = local_time($client_id, $row->end_date);
+		$data['next_charge_date'] = local_time($client_id, $row->next_charge);
+		if ($row->sub_active == '0') { $data['cancel_date'] = local_time($client_id, $row->cancel_date); }
 		$data['number_occurrences'] = $row->number_occurrences;
 		$data['notification_url'] = $row->notification_url;
 		$data['status'] = ($row->sub_active == '1') ? 'active' : 'inactive';
@@ -388,12 +390,13 @@ class Subscription_model extends Model
 			foreach($query->result() as $row) {
 				$data[$i]['id'] = $row->subscription_id;
 				$data[$i]['gateway_id'] = $row->gateway_id;
-				$data[$i]['date_created'] = $row->timestamp;
+				$data[$i]['date_created'] = local_time($client_id, $row->timestamp);
 				$data[$i]['amount'] = money_format("%!i",$row->amount);
-				$data[$i]['interval'] = $row->charge_interval;
-				$data[$i]['start_date'] = $row->start_date;
-				$data[$i]['end_date'] = $row->end_date;
-				$data[$i]['next_charge_date'] = $row->next_charge;
+				$data[$i]['interval'] = local_time($client_id, $row->charge_interval);
+				$data[$i]['start_date'] = local_time($client_id, $row->start_date);
+				$data[$i]['end_date'] = local_time($client_id, $row->end_date);
+				$data[$i]['next_charge_date'] = local_time($client_id, $row->next_charge);
+				if ($row->sub_active == '0') { $data[$i]['cancel_date'] = local_time($client_id, $row->cancel_date); }
 				$data[$i]['number_occurrences'] = $row->number_occurrences;
 				$data[$i]['notification_url'] = $row->notification_url;
 				$data[$i]['status'] = ($row->sub_active == '1') ? 'active' : 'inactive';
@@ -691,7 +694,7 @@ class Subscription_model extends Model
 		$this->db->update('subscriptions', $update_data);
 	}
 	
-/**
+	/**
 	* Get Details of the last order for a customer.
 	*
 	* Returns array of order details for a specific order_id.

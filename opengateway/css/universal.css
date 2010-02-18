@@ -700,3 +700,34 @@ div#recurring_info {
 	background-repeat: no-repeat;
 	padding-left: 65px;
 }
+
+ul.dashboard {
+	list-style-type: none;
+}
+
+ul.dashboard li a {
+	display: block;
+	float: left;
+	width: 20%;
+	height: 70px;
+	font-weight: bold;
+	padding-left: 80px;
+	padding-top: 20px;
+	margin-top: 10px;
+	font-size: 14pt;
+	background-repeat: no-repeat;
+	background-position: top left;
+	text-decoration: none;
+}
+
+a.dash_charge {
+	background-image: url(../images/dash_charge.png);
+}
+
+a.dash_records {
+	background-image: url(../images/dash_records.png);
+}
+
+a.dash_settings {
+	background-image: url(../images/dash_settings.png);
+}

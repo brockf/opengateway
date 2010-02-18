@@ -23,21 +23,34 @@ class Dashboard extends Controller {
 	{		
 		$this->load->model('order_model');
 		
-		die($this->order_model->GetRevenueByDay($this->user->Get('client_id')));
+		$revenue = $this->order_model->GetRevenueByDay($this->user->Get('client_id'));
 		
-		$this->load->library('pchart/pData.class');
-		$this->load->library('pchart/pChart.class');      
+		$series = array();
+		foreach ($revenue as $day) {
+			$series[] = $day['revenue'];
+			$series2[] = date("M j",strtotime($day['day']));
+		}
+		
+		include(BASEPATH . 'application/libraries/pchart/pData.class');
+		include(BASEPATH . 'application/libraries/pchart/pChart.class');
 		  
 		// Dataset definition   
 		$DataSet = new pData;  
-		$DataSet->AddPoint(array(1,4,3,2,3,3,2,1,0,7,4,3,2,3,3,5,1,0,7));  
-		$DataSet->AddSerie();  
-		$DataSet->SetSerieName("Revenue","Serie1");  
+		$DataSet->AddPoint($series, "Revenue");  
+		$DataSet->AddPoint($series2, "Serie2");
+		$DataSet->AddAllSeries();  
+		$DataSet->SetAbsciseLabelSerie("Serie2");   
+		
+		$DataSet->RemoveSerie("Serie2");
+		
+		$DataSet->SetXAxisName('Date');
+		$DataSet->SetYAxisName('Revenue');
+		//$DataSet->SetXAxisFormat('date');
 		  
 		// Initialise the graph  
-		$Test = new pChart(700,230);  
-		$Test->setFontProperties("Fonts/tahoma.ttf",10);  
-		$Test->setGraphArea(40,30,680,200);  
+		$Test = new pChart(1000,260);  
+		$Test->setFontProperties(BASEPATH . 'application/libraries/pchart/Arial.ttf',10);  
+		$Test->setGraphArea(90,30,960,200);  
 		$Test->drawGraphArea(252,252,252);  
 		$Test->drawScale($DataSet->GetData(),$DataSet->GetDataDescription(),SCALE_NORMAL,150,150,150,TRUE,0,2);  
 		$Test->drawGrid(4,TRUE,230,230,230,255);  
@@ -47,11 +60,12 @@ class Dashboard extends Controller {
 		$Test->drawPlotGraph($DataSet->GetData(),$DataSet->GetDataDescription(),3,2,255,255,255);  
 		  
 		// Finish the graph  
-		$Test->setFontProperties("Fonts/tahoma.ttf",8);  
+		$Test->setFontProperties(BASEPATH . 'application/libraries/pchart/Arial.ttf',8);  
 		$Test->drawLegend(45,35,$DataSet->GetDataDescription(),255,255,255);  
-		$Test->setFontProperties("Fonts/tahoma.ttf",10);  
-		$Test->drawTitle(60,22,"My pretty graph",50,50,50,585);  
-		$Test->Render("Naked.png");  
+		$Test->setFontProperties(BASEPATH . 'application/libraries/pchart/Arial.ttf',10);  
+		//$Test->drawTitle(60,22,"Last 30 Days",50,50,50,585);  
+		$Test->Render(BASEPATH . '../writeable/rev_chart_' . $this->user->Get('client_id') . '.png');
+	
 		
 		$this->load->view('cp/dashboard');
 	}

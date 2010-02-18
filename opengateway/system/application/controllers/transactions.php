@@ -211,6 +211,12 @@ class Transactions extends Controller {
 		if (isset($response['response_code']) and ($response['response_code'] == '1' or $response['response_code'] == '100')) {
 			$this->notices->SetNotice($this->lang->line('transaction_ok'));
 		}
+		elseif (isset($response['reason'])) {
+			$this->notices->SetError($this->lang->line('transaction_error') . $response['reason']);
+		}
+		elseif (isset($response['response_text'])) {
+			$this->notices->SetError($this->lang->line('transaction_error') . $response['response_text']);
+		}
 		else {
 			$this->notices->SetError($this->lang->line('transaction_error') . $response['error_text'] . ' (#' . $response['error'] . ')');
 		}

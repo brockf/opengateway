@@ -75,12 +75,18 @@ class Order_model extends Model
 		$this->db->select('DATE(orders.timestamp) AS day');
 		$this->db->where('orders.client_id', $client_id);
 		$this->db->where('orders.timestamp >',date('Y-m-d',time()-(60*60*24*$back_days)));
-		$this->db->group_by('DATE(\'orders.timestamp\')');
+		$this->db->group_by('DATE(orders.timestamp)');
 		$result = $this->db->get('orders');
 		
+		$revenue = array();
 		foreach ($result->result_array() as $row) {
-			print_r($row);
+			$revenue[] = array(
+							'revenue' => $row['total_amount'],
+							'day' => $row['day']
+						);
 		}
+		
+		return $revenue;
 	}
 	
 	/**
@@ -229,7 +235,7 @@ class Order_model extends Model
 			foreach($query->result() as $row) {
 				$data[$i]['id'] = $row->order_id;
 				$data[$i]['gateway_id'] = $row->gateway_id;
-				$data[$i]['date'] = $row->timestamp;
+				$data[$i]['date'] = local_time($client_id, $row->timestamp);
 				$data[$i]['amount'] = money_format("%!i",$row->amount);
 				$data[$i]['card_last_four'] = $row->card_last_four;
 				$data[$i]['status'] = ($row->status == '1') ? 'ok' : 'failed';
@@ -252,7 +258,7 @@ class Order_model extends Model
 					$data[$i]['customer']['postal_code'] = $row->postal_code;
 					$data[$i]['customer']['email'] = $row->email;
 					$data[$i]['customer']['phone'] = $row->phone;
-					$data[$i]['customer']['date_created'] = $row->date_created;
+					$data[$i]['customer']['date_created'] = local_time($client_id, $row->date_created);
 					$data[$i]['customer']['status'] = ($row->active == 1) ? 'active' : 'deleted';
 				}
 				
@@ -289,7 +295,7 @@ class Order_model extends Model
 			$row = $query->row();
 			$data['id'] = $row->order_id;
 			$data['gateway_id'] = $row->gateway_id;
-			$data['date'] = $row->timestamp;
+			$data['date'] = local_time($client_id, $row->timestamp);
 			$data['amount'] = money_format("%!i",$row->amount);
 			$data['card_last_four'] = $row->card_last_four;
 			$data['status'] = ($row->status == 1) ? 'ok' : 'failed';
@@ -312,7 +318,7 @@ class Order_model extends Model
 				$data['customer']['country'] = $row->iso2;
 				$data['customer']['email'] = $row->email;
 				$data['customer']['phone'] = $row->phone;
-				$data['customer']['date_created'] = $row->date_created;
+				$data['customer']['date_created'] = local_time($client_id, $row->date_created);
 				$data['customer']['status'] = ($row->active == 1) ? 'active' : 'deleted';
 			}
 				
