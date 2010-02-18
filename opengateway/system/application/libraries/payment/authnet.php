@@ -177,6 +177,10 @@ class authnet
 			"x_exp_date"		=> $credit_card['exp_month'].'/'.$credit_card['exp_year'],
 			"x_amount"			=> $params['amount']
 			);
+			
+		if ($gateway['mode'] == 'test') {
+			$post_values['x_test_request'] = 'TRUE';
+		}
 
 		if(isset($credit_card->cvv)) {
 			$post_values['x_card_code'] = $credit_card['cvv'];
@@ -453,7 +457,8 @@ class authnet
 		
 		// Create a new authnet profile
 		$response = $this->CreateProfile($gateway, $subscription_id);
-		if($response) {
+		
+		if(isset($response) and !empty($response['success'])) {
 			$profile_id = $response['profile_id'];	
 		} else {
 			die($CI->response->Error(5005));
@@ -571,12 +576,15 @@ class authnet
 		{
 			case 'live':
 				$post_url = $gateway['arb_url_live'];
+				$mode = 'liveMode';
 			break;
 			case 'test':
 				$post_url = $gateway['arb_url_test'];
+				$mode = 'testMode';
 			break;
 			case 'dev':
 				$post_url = $gateway['arb_url_dev'];
+				$mode = 'liveMode';
 			break;
 		}
 		
@@ -584,7 +592,7 @@ class authnet
 			$first_name = $customer['first_name'];
 			$last_name = $customer['last_name'];
 		} else {
-			$name = explode(' ', (string)$credit_card->name);
+			$name = explode(' ', $credit_card['name']);
 			$first_name = $name[0];
 			$last_name = $name[1];
 		}
@@ -605,12 +613,12 @@ class authnet
 		"</billTo>".
 		"<payment>".
 		 "<creditCard>".
-		  "<cardNumber>".(string)$credit_card->card_num."</cardNumber>".
-		  "<expirationDate>".(string)$credit_card->exp_year."-".(string)$credit_card->exp_month."</expirationDate>". // required format for API is YYYY-MM
+		  "<cardNumber>".$credit_card['card_num']."</cardNumber>".
+		  "<expirationDate>".$credit_card['exp_year']."-".$credit_card['exp_month']."</expirationDate>". // required format for API is YYYY-MM
 		 "</creditCard>".
 		"</payment>".
 		"</paymentProfile>".
-		"<validationMode>testMode</validationMode>". // or testMode
+		"<validationMode>" . $mode . "</validationMode>".
 		"</createCustomerPaymentProfileRequest>";
 		
 		$request = curl_init($post_url); // initiate curl object

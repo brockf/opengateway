@@ -19,7 +19,7 @@ $(document).ready(function () {
 		}
 	});
 	
-	$('select#customer_id').change(function () {
+	$('select#customer_id').change(function () {	
 		if ($(this).val() != '') {
 			$('div#transaction_customer_details').slideUp();
 		}

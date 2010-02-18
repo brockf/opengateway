@@ -57,17 +57,28 @@ class Transactions extends Controller {
 							'name' => 'Customer Name',
 							'sort_column' => 'customers.last_name',
 							'type' => 'text',
-							'width' => '30%',
+							'width' => '20%',
 							'filter' => 'customer_last_name'),
 						array(
 							'name' => 'Credit Card',
 							'sort_column' => 'card_last_four',
 							'type' => 'text',
-							'width' => '30%',
+							'width' => '12%',
 							'filter' => 'card_last_four'),
+						array(
+							'name' => 'Recurring',
+							'width' => '12%'
+							),
+						array(
+							'name' => '',
+							'width' => '16%'
+							)
 					);
 		
 		$this->dataset->Initialize('order_model','GetCharges',$columns);
+		
+		// sidebar
+		$this->navigation->SidebarButton('New Charge','transactions/create');
 		
 		$this->load->view('cp/transactions.php');
 	}
@@ -201,7 +212,7 @@ class Transactions extends Controller {
 			$this->notices->SetNotice($this->lang->line('transaction_ok'));
 		}
 		else {
-			$this->notices->SetError($this->lang->line('transaction_error') . $response['response_text']);
+			$this->notices->SetError($this->lang->line('transaction_error') . $response['error_text'] . ' (#' . $response['error'] . ')');
 		}
 		
 		if ($response['recurring_id']) {
@@ -217,5 +228,58 @@ class Transactions extends Controller {
 		redirect($redirect);
 		
 		return true;
+	}
+	
+	/**
+	* View Individual Charge
+	*
+	*/
+	function charge ($id) {
+		$this->load->model('order_model');
+		$charge = $this->order_model->GetCharge($this->user->Get('client_id'),$id);
+		
+		$data = $charge;
+		
+		$this->load->model('gateway_model');
+		$gateway = $this->gateway_model->GetGatewayDetails($this->user->Get('client_id'),$charge['gateway_id']);
+		
+		$data['gateway'] = $gateway;
+		
+		$details = $this->order_model->GetChargeGatewayInfo($id);
+		
+		$data['details'] = $details;
+		 
+		$this->load->view('cp/charge', $data);
+		
+		return true;
+	}
+	
+	/**
+	* View Recurring Charge
+	*/
+	function recurring ($id) {
+		$this->load->model('subscription_model');
+		$recurring = $this->subscription_model->GetRecurring($this->user->Get('client_id'),$id);
+		
+		$data = $recurring;
+		
+		$this->load->model('gateway_model');
+		$gateway = $this->gateway_model->GetGatewayDetails($this->user->Get('client_id'),$recurring['gateway_id']);
+		
+		$data['gateway'] = $gateway;
+		
+		$this->load->view('cp/recurring', $data);
+	}
+	
+	/**
+	* Cancel Recurring
+	*/
+	function cancel_recurring ($id) {
+		$this->load->model('subscription_model');
+		$this->subscription_model->CancelRecurring($this->user->Get('client_id'),$id);
+		
+		$this->notices->SetNotice('Recurring charge #' . $id . ' cancelled');
+		
+		redirect(site_url('transactions/recurring/' . $id));
 	}
 }

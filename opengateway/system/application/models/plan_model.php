@@ -223,6 +223,9 @@ class Plan_model extends Model
 			if ($key == 'plan_id') {
 				$data['id'] = $value;
 			}
+			elseif ($key == 'amount') {
+				$data['amount'] = money_format("%!i",$value);
+			}
 			else {	
 				$data[$key] = $value;
 			}
@@ -336,7 +339,7 @@ class Plan_model extends Model
 								'id' => $row->plan_id,
 								'type' => $row->type,
 								'name' => $row->name,
-								'amount' => $row->amount,
+								'amount' => money_format("%!i",$row->amount),
 								'interval' => $row->interval,
 								'notification_url' => $row->notification_url,
 								'free_trial' => $row->free_trial,

@@ -64,6 +64,26 @@ class Order_model extends Model
 	}
 	
 	/**
+	* Get Revenue by Day
+	*
+	* @param int $client_id The client ID
+	* @param int $back_days (Optional) How many days to go back?  Default: 30
+	* @return array Each day as key, total revenue as value
+	*/
+	function GetRevenueByDay ($client_id, $back_days = 30) {
+		$this->db->select('SUM(orders.amount) AS total_amount');
+		$this->db->select('DATE(orders.timestamp) AS day');
+		$this->db->where('orders.client_id', $client_id);
+		$this->db->where('orders.timestamp >',date('Y-m-d',time()-(60*60*24*$back_days)));
+		$this->db->group_by('DATE(\'orders.timestamp\')');
+		$result = $this->db->get('orders');
+		
+		foreach ($result->result_array() as $row) {
+			print_r($row);
+		}
+	}
+	
+	/**
 	* Search Orders.
 	*
 	* Returns an array of results based on submitted search criteria.  All fields are optional.
@@ -203,20 +223,14 @@ class Order_model extends Model
 		
 		$query = $this->db->get('orders');
 		
-		// We need to get the gmt_offset to show the time in the local timezone
-		$CI =& get_instance();
-		$CI->load->model('client_model');
-		$gmt_offset = $CI->client_model->GetTimezone($client_id);
-		
 		$data = array();
 		if($query->num_rows() > 0) {
 			$i=0;
 			foreach($query->result() as $row) {
 				$data[$i]['id'] = $row->order_id;
 				$data[$i]['gateway_id'] = $row->gateway_id;
-				$timestamp = strtotime($row->timestamp);
-				$data[$i]['date'] = date('Y-m-d H:i:s', mktime(date('H', $timestamp + $gmt_offset), date('i', $timestamp), date('s', $timestamp), date('m', $timestamp), date('d', $timestamp), date('Y', $timestamp)));
-				$data[$i]['amount'] = $row->amount;
+				$data[$i]['date'] = $row->timestamp;
+				$data[$i]['amount'] = money_format("%!i",$row->amount);
 				$data[$i]['card_last_four'] = $row->card_last_four;
 				$data[$i]['status'] = ($row->status == '1') ? 'ok' : 'failed';
 				
@@ -257,14 +271,14 @@ class Order_model extends Model
 	* Returns array of order details for a specific order_id.
 	*
 	* @param int $client_id The client ID.
-	* @param int $charge_id The order id to search for.
+	* @param int $charge_id The order ID to search for.
 	* 
 	* @return array|bool Array with charge info, FALSE upon failure.
 	*/
 	
 	function GetCharge($client_id, $charge_id)
 	{
-		$this->db->join('order_authorizations', 'order_authorizations.order_id = orders.order_id', 'inner');
+		//$this->db->join('order_authorizations', 'order_authorizations.order_id = orders.order_id', 'inner');
 		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$this->db->where('orders.client_id', $client_id);
@@ -276,7 +290,7 @@ class Order_model extends Model
 			$data['id'] = $row->order_id;
 			$data['gateway_id'] = $row->gateway_id;
 			$data['date'] = $row->timestamp;
-			$data['amount'] = $row->amount;
+			$data['amount'] = money_format("%!i",$row->amount);
 			$data['card_last_four'] = $row->card_last_four;
 			$data['status'] = ($row->status == 1) ? 'ok' : 'failed';
 				
@@ -338,7 +352,6 @@ class Order_model extends Model
 		}
 	}
 	
-
 	
 	/**
 	* Set the status of an order to either 1 or 0
@@ -370,11 +383,13 @@ class Order_model extends Model
 	
 	function GetChargeGatewayInfo($order_id)
 	{
-		$this->db->where('order_id',  $order_id);
+		$this->db->select('order_authorizations.*');
+		$this->db->where('order_authorizations.order_id',  $order_id);
 		$this->db->join('order_authorizations', 'orders.order_id = order_authorizations.order_id', 'left');
 		$query = $this->db->get('orders');
 		if($query->num_rows() > 0) {
-			return $query->result_array();
+			$array = $query->result_array();
+			return $array[0];
 		} else {
 			return FALSE;
 		}

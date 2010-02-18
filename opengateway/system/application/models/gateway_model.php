@@ -166,10 +166,6 @@ class Gateway_model extends Model
 			die($this->response->Error(5009));
 		}
 		
-		// Create a new order
-		$CI->load->model('order_model');
-		$order_id = $CI->order_model->CreateNewOrder($client_id, $params);
-		
 		// Get the customer details if a customer id was included
 		if(isset($params['customer_id'])) {
 			$CI->load->model('customer_model');
@@ -188,12 +184,16 @@ class Gateway_model extends Model
 			$customer = array();
 		}
 		
+		// Create a new order
+		$CI->load->model('order_model');
+		$order_id = $CI->order_model->CreateNewOrder($client_id, $params, false, $customer['customer_id']);
+		
 		// Load the proper library
 		$gateway_name = $gateway['name'];
 		$this->load->library('payment/'.$gateway_name);
 		$response = $this->$gateway_name->Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card);	
 		
-		if (isset($created_customer) and ($response['response_code'] != 100)) {
+		if (isset($created_customer) and ($response['response_code'] != 1)) {
 			$CI->customer_model->DeleteCustomer($client_id, $customer['customer_id']);
 		}
 		elseif (isset($created_customer)) {
@@ -345,7 +345,7 @@ class Gateway_model extends Model
 			} else {
 				$name = explode(' ', $credit_card['name']);
 				$customer['first_name'] = $name[0];
-				$customer['last_name'] = $name[1];
+				$customer['last_name'] = $name[count($name) - 1];
 				$customer['customer_id'] = $CI->customer_model->SaveNewCustomer($client_id, $name[0], $name[1]);
 			}
 		}
@@ -458,7 +458,7 @@ class Gateway_model extends Model
 		$this->load->library('payment/'.$gateway_name);
 		$response = $this->$gateway_name->Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences);
 		
-		if (isset($created_customer) and $response['response_code'] != 1) {
+		if (isset($created_customer) and $response['response_code'] != 100) {
 			$CI->customer_model->DeleteCustomer($client_id, $customer['customer_id']);
 		}
 		elseif (isset($created_customer)) {

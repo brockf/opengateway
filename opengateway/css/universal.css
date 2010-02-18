@@ -659,3 +659,44 @@ span.suspended img {
 	float: left;
 	margin-right: 5px;
 }
+
+div#charge_recurring {
+	background-image: url(../images/recurring.png);
+	background-position: 0px 0px;
+	background-repeat: no-repeat;
+	padding-left: 65px;
+	padding-top: 15px;
+	font-weight: bold;
+	height: 50px;
+	margin-top: 10px;
+	border-bottom: 3px solid #f0f0f1;
+}
+
+div#charge_info {
+	background-image: url(../images/money.png);
+	background-position: 0px 15px;
+	background-repeat: no-repeat;
+	padding-left: 65px;
+}
+
+div#charge_customer {
+	background-image: url(../images/customer.png);
+	background-position: 0px 15px;
+	background-repeat: no-repeat;
+	padding-left: 65px;
+	border-top: 3px solid #f0f0f1;
+}
+
+div#charge_details {
+	border: 1px solid #ccc;
+	background-color: #f0f0f1;
+	padding: 15px;
+	float: right;
+}
+
+div#recurring_info {
+	background-image: url(../images/recurring.png);
+	background-position: 0px 15px;
+	background-repeat: no-repeat;
+	padding-left: 65px;
+}

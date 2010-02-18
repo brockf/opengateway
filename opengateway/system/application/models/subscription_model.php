@@ -200,6 +200,7 @@ class Subscription_model extends Model
 		$this->db->join('plans', 'plans.plan_id = subscriptions.plan_id', 'left');
 		$this->db->join('plan_types', 'plan_types.plan_type_id = plans.plan_type_id', 'left');
 		$this->db->select('subscriptions.*');
+		$this->db->select('subscriptions.active AS sub_active');
 		$this->db->select('customers.*');
 		$this->db->select('countries.*');
 		$this->db->select('plans.name');
@@ -218,14 +219,14 @@ class Subscription_model extends Model
 		$data['id'] = $row->subscription_id;
 		$data['gateway_id'] = $row->gateway_id;
 		$data['date_created'] = $row->timestamp;
-		$data['amount'] = $row->amount;
-		$data['interval'] = $row->interval;
+		$data['amount'] = money_format("%!i",$row->amount);
+		$data['interval'] = $row->charge_interval;
 		$data['start_date'] = $row->start_date;
 		$data['end_date'] = $row->end_date;
 		$data['next_charge_date'] = $row->next_charge;
 		$data['number_occurrences'] = $row->number_occurrences;
 		$data['notification_url'] = $row->notification_url;
-		$data['status'] = ($row->active == '1') ? 'active' : 'inactive';
+		$data['status'] = ($row->sub_active == '1') ? 'active' : 'inactive';
 		
 		if($row->customer_id !== 0) {
 			$data['customer']['id'] = $row->customer_id;
@@ -247,7 +248,7 @@ class Subscription_model extends Model
 			$data['plan']['id'] = $row->plan_id;
 			$data['plan']['type'] = $row->plan_type;
 			$data['plan']['name'] = $row->name;
-			$data['plan']['amount'] = $row->plan_amount;
+			$data['plan']['amount'] = money_format("%!i",$row->plan_amount);
 			$data['plan']['interval'] = $row->plan_interval;
 			$data['plan']['notification_url'] = $row->plan_notification_url;
 		}
@@ -372,6 +373,7 @@ class Subscription_model extends Model
 		$this->db->join('plans', 'plans.plan_id = subscriptions.plan_id', 'left');
 		$this->db->join('plan_types', 'plan_types.plan_type_id = plans.plan_type_id', 'left');
 		$this->db->select('subscriptions.*');
+		$this->db->select('subscriptions.active AS sub_active');
 		$this->db->select('customers.*');
 		$this->db->select('countries.*');
 		$this->db->select('plans.name');
@@ -387,14 +389,14 @@ class Subscription_model extends Model
 				$data[$i]['id'] = $row->subscription_id;
 				$data[$i]['gateway_id'] = $row->gateway_id;
 				$data[$i]['date_created'] = $row->timestamp;
-				$data[$i]['amount'] = $row->amount;
+				$data[$i]['amount'] = money_format("%!i",$row->amount);
 				$data[$i]['interval'] = $row->charge_interval;
 				$data[$i]['start_date'] = $row->start_date;
 				$data[$i]['end_date'] = $row->end_date;
 				$data[$i]['next_charge_date'] = $row->next_charge;
 				$data[$i]['number_occurrences'] = $row->number_occurrences;
 				$data[$i]['notification_url'] = $row->notification_url;
-				$data[$i]['status'] = ($row->active == '1') ? 'active' : 'inactive';
+				$data[$i]['status'] = ($row->sub_active == '1') ? 'active' : 'inactive';
 				
 				if($row->customer_id !== 0) {
 					$data[$i]['customer']['id'] = $row->customer_id;
@@ -416,7 +418,7 @@ class Subscription_model extends Model
 					$data[$i]['plan']['id'] = $row->plan_id;
 					$data[$i]['plan']['type'] = $row->plan_type;
 					$data[$i]['plan']['name'] = $row->name;
-					$data[$i]['plan']['amount'] = $row->plan_amount;
+					$data[$i]['plan']['amount'] = money_format("%!i",$row->plan_amount);
 					$data[$i]['plan']['interval'] = $row->plan_interval;
 					$data[$i]['plan']['notification_url'] = $row->plan_notification_url;
 				}
@@ -581,15 +583,12 @@ class Subscription_model extends Model
 		
 		$this->MakeInactive($recurring_id);
 		
-		if($cancelled) {
+		if ($cancelled) {
 			return TRUE;
 		} else {
 			return FALSE;
 		}
-		
-		
-	}
-	
+	}	
 	
 	function GetPlansByCustomer($customer_id)
 	{
