@@ -253,11 +253,11 @@ class Customer_model extends Model
 			}
 		}
 		
-		if(isset($params['state'])) {
+		if(isset($params['state']) and !empty($params['state'])) {
 			// If the country is US or Canada, we need to validate and supply the 2 letter abbreviation
 			$this->load->helper('states_helper');
 			$country_array = array(124,840);
-			if(in_array($country_id, $country_array)) {
+			if(isset($country_id) and in_array($country_id, $country_array)) {
 				$state = GetState($params['state']);
 				if($state) {
 					$update_data['state'] = $state;
