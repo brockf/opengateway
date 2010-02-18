@@ -61,8 +61,7 @@ class Cron extends Controller {
 				if(TriggerTrip('recurring_autorecur_in_week', $charge['client_id'], false, $charge['subscription_id'])) {
 					$sent_emails['recurring_autorecur_in_week'][] = $charge['subscription_id'];
 				}
-			}
-			
+			}		
 		}
 		
 		// Get all the recurring charge emails to send in one month
@@ -75,8 +74,7 @@ class Cron extends Controller {
 				if(TriggerTrip('recurring_autorecur_in_month', $charge['client_id'])) {
 					$sent_emails['recurring_autorecur_in_month'][] = $charge['subscription_id'];
 				}
-			}
-			
+			}		
 		}
 
 		// Get all the recurring expiration emails to send in one week
@@ -88,8 +86,7 @@ class Cron extends Controller {
 				if(TriggerTrip('recurring_expiring_in_week', $charge['client_id'])) {
 					$sent_emails['recurring_expiring_in_week'][] = $charge['subscription_id'];
 				}
-			}
-			
+			}		
 		}
 		
 		// Get all the recurring expiration emails to send in one month
@@ -101,8 +98,7 @@ class Cron extends Controller {
 				if(TriggerTrip('recurring_expiring_in_month', $charge['client_id'])) {
 					$sent_emails['recurring_expiring_in_month'][] = $charge['subscription_id'];
 				}
-			}
-			
+			}		
 		}
 		
 		$charge_success = count($charge_success);
@@ -113,18 +109,17 @@ class Cron extends Controller {
 		$expire_week = count($sent_emails['recurring_expiring_in_week']);
 		$expire_month = count($sent_emails['recurring_expiring_in_month']);
 		
-		$response = $charge_success." Successfull Charges. ";
-		$response .= $charge_failure." Failed Charges. ";
-		$response .= $cancelled." Expired Subscriptions";
-		$response .= $autorecur_week." Weekly Charge Reminders Sent. ";
-		$response .= $autorecur_month." Monthly Charge Reminders Sent. ";
-		$response .= $expire_week." Weekly Expiration Reminders Sent. ";
-		$response .= $expire_month." Monthly Expiration Reminders Sent. ";
+		$response = $charge_success." Successful Charges. \n";
+		$response .= $charge_failure." Failed Charges. \n";
+		$response .= $cancelled." Expired Subscriptions. \n";
+		$response .= $autorecur_week." Weekly Charge Reminders Sent. \n";
+		$response .= $autorecur_month." Monthly Charge Reminders Sent. \n";
+		$response .= $expire_week." Weekly Expiration Reminders Sent. \n";
+		$response .= $expire_month." Monthly Expiration Reminders Sent. \n";
 		
 		echo $response;
 	}
 }
-
 
 
 /* End of file gateway.php */
