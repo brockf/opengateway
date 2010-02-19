@@ -1,11 +1,5 @@
 <?php
 
-if($_SERVER['SCRIPT_FILENAME'] != 'SubscriptionMaintenance.php') { 
-	
-	header('location: /');
-	exit; 
-}
-
 class Cron extends Controller {
 
 	function Cron()
@@ -13,8 +7,13 @@ class Cron extends Controller {
 		parent::Controller();	
 	}
 	
-	function SubscriptionMaintenance()
+	function SubscriptionMaintenance($key)
 	{
+		if ($this->config->item('cron_key') != $key) {
+			echo 'Invalid key.';
+			return FALSE;
+		}
+	
 		// get all the subscriptions with a next_charge date of today\
 		$today = date('Y-m-d');
 		$this->load->model('subscription_model');
@@ -37,6 +36,7 @@ class Cron extends Controller {
 		}
 		
 		// Cancel subscription if the end date is today
+		$cancelled = array();
 		$subscriptions = $this->subscription_model->GetAllSubscriptionsByDate('end_date', $today);
 		if($subscriptions) {
 			$this->load->model('gateway_model');
@@ -122,5 +122,5 @@ class Cron extends Controller {
 }
 
 
-/* End of file gateway.php */
-/* Location: ./system/application/controllers/gateway.php */
+/* End of file cron.php */
+/* Location: ./system/application/controllers/cron.php */

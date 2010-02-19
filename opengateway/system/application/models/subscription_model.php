@@ -677,13 +677,11 @@ class Subscription_model extends Model
 		$query = $this->db->get('subscriptions');
 		if($query->num_rows() > 0) {
 			$row = $query->row();
-			print_r($row);
-			$next_charge = strtotime($from_date) + ($row->interval * 86400);
+			$next_charge = strtotime($from_date) + ($row->charge_interval * 86400);
 			return date('Y-m-d', $next_charge);
 		}
 		
-		return FALSE;
-		
+		return FALSE;	
 	}
 	
 	function SetChargeDates($subscription_id, $last_charge, $next_charge)

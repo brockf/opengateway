@@ -290,6 +290,10 @@ class exact
 		return $response;
 	}
 	
+	function AutoRecurringCharge ($client_id, $order_id, $gateway, $params) {
+		return $this->ChargeRecurring($client_id, $gateway, $order_id, $params['api_customer_reference'], $params['api_payment_reference'], $params);
+	}
+	
 	function ChargeRecurring($client_id, $gateway, $order_id, $transaction_tag, $auth_num, $params)
 	{
 		$CI =& get_instance();
@@ -449,5 +453,4 @@ class exact
 		$CI->log_model->LogApiResponse('exact', $insert_data);
 		
 	}
-	
 }

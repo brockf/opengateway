@@ -596,6 +596,10 @@ class paypal
 		return $response;
 	}
 	
+	function AutoRecurringCharge ($client_id, $order_id, $gateway, $params) {
+		return $this->ChargeRecurring($client_id, $gateway, $params);
+	}
+	
 	function ChargeRecurring($client_id, $gateway, $params)
 	{
 		$details = $this->GetProfileDetails($client_id, $gateway, $params);
@@ -613,8 +617,7 @@ class paypal
 			$response['reason'] = "The charge has failed.";
 		}
 		
-		return $response;
-		
+		return $response;	
 	}
 	
 	function GetProfileDetails($client_id, $gateway, $params)

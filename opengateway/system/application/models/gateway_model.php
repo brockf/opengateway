@@ -517,7 +517,7 @@ class Gateway_model extends Model
 		// Load the proper library
 		$gateway_name = $gateway['name'];
 		$this->load->library('payment/'.$gateway_name);
-		$response = $this->$gateway_name->ChargeRecurring($client_id, $gateway, $params);	
+		$response = $this->$gateway_name->AutoRecurringCharge($client_id, $order_id, $gateway, $params);	
 
 		$this->load->model('subscription_model');
 		if($response['success'] == TRUE) {
@@ -529,10 +529,7 @@ class Gateway_model extends Model
 			
 			$this->order_model->SetStatus($order_id, 1);
 			
-			$CI->load->library('notification');
-			$CI->notify->QueueNotification();
-			
-			$this->email->TriggerTrip('recurring_charge', $client_id, $response['charge_id']);
+			TriggerTrip('recurring_charge', $client_id, $response['charge_id']);
 		} else {
 			// Check the number of failures allowed
 			$num_allowed = $this->config->item('recurring_charge_failures_allowed');

@@ -335,6 +335,7 @@ $config['query_result_default_limit'] = 100;
 $config['recurring_charge_failures_allowed'] = 1;
 $config['support_url'] = 'http://www.opengateway.net/support/';
 $config['ssl_active'] = false;
+$config['cron_key'] = 'f39g8gjfdg848g92';
 
 /* End of file config.php */
 /* Location: ./system/application/config/config.php */

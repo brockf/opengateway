@@ -412,7 +412,10 @@ class authnet
 		}
 		
 		return $response;
-
+	}
+	
+	function AutoRecurringCharge ($client_id, $order_id, $gateway, $params) {
+		return $this->ChargeRecurring($client_id, $gateway, $order_id, $params['api_customer_reference'], $params['api_payment_reference'], $params);
 	}
 	
 	function ChargeRecurring($client_id, $gateway, $order_id, $profile_id, $payment_profile_id, $params)
@@ -479,8 +482,7 @@ class authnet
 			$response['reason'] = (string)$response->messages->message->text;
 		}
 		
-		return $response;
-		
+		return $response;	
 	}
 	
 	function UpdateRecurring()
