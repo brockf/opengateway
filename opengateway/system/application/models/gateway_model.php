@@ -512,7 +512,7 @@ class Gateway_model extends Model
 		
 		// Create a new order
 		$CI->load->model('order_model');
-		$order_id = $CI->order_model->CreateNewOrder($client_id, $params);
+		$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $params['subscription_id'], $params['customer_id']);
 		
 		// Load the proper library
 		$gateway_name = $gateway['name'];
