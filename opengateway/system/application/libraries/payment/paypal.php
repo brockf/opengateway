@@ -606,11 +606,14 @@ class paypal
 		if(!$details) {
 			return FALSE;
 		}
+		/*
+		* We can check to see if today was the last payment date
 		$last_payment = date('Y-m-d',strtotime($details['LASTPAYMENTDATE']));
+		*/
 		$today = date('Y-m-d');
 		$failed_payments = $details['FAILEDPAYMENTCOUNT'];
 		
-		if($last_payment == $today && $failed_payments < 1) {		
+		if($failed_payments < 1) {		
 			$response['success'] = TRUE;
 		} else {
 			$response['success'] = FALSE;
@@ -650,15 +653,13 @@ class paypal
 		$post['profileid'] = $params['api_customer_reference'];
 		
 		$post_response = $this->Process($post_url, $post);
+		$response = $this->response_to_array($post_response);
 		
-		if($post_response['ACK'] == 'Success') {
-			$response = $this->response_to_array($post_response);
+		if ($response['ACK'] == 'Success') {
+			return $response;
 		} else {
-			$response = FALSE;
+			return FALSE;
 		}
-		
-		return $response;
-		
 	}
 	
 	private function response_to_array($string)

@@ -510,6 +510,15 @@ class Gateway_model extends Model
 			return FALSE;
 		}
 		
+		// get the credit card last four digits
+		$this->db->select('card_last_four');
+		$this->db->where('subscription_id',$params['subscription_id']);
+		$this->db->order_by('timestamp','asc');
+		$this->db->limit('1');
+		$result = $this->db->get('orders');
+		$row = $result->result_array();
+		$params['credit_card']['card_num'] = $row[0]['card_last_four'];
+		
 		// Create a new order
 		$CI->load->model('order_model');
 		$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $params['subscription_id'], $params['customer_id']);
@@ -529,7 +538,7 @@ class Gateway_model extends Model
 			
 			$this->order_model->SetStatus($order_id, 1);
 			
-			TriggerTrip('recurring_charge', $client_id, $response['charge_id']);
+			TriggerTrip('recurring_charge', $client_id, $order_id);
 		} else {
 			// Check the number of failures allowed
 			$num_allowed = $this->config->item('recurring_charge_failures_allowed');
