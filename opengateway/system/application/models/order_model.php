@@ -104,7 +104,6 @@ class Order_model extends Model
 	* @param string $params['amount'] The amount of the charge.  Optional.
 	* @param string $params['customer_last_name'] The last name of the customer.  Optional.
 	* @param int $params['status'] Set to ok/failed to filter results.  Optional.
-	* @param int $params['subscription_id'] Returns only recurring orders that have this subscription ID. Optional.
 	* @param boolean $params['recurring_only'] Returns only orders that are part of a recurring subscription. Optional.
 	* @param int $params['offset'] Offsets the database query.
 	* @param int $params['limit'] Limits the number of results returned. Optional.
@@ -173,6 +172,10 @@ class Order_model extends Model
 		
 		if(isset($params['recurring_only']) && $params['recurring_only'] == 1) {
 			$this->db->where('orders.subscription_id <>', 0);
+		}
+		
+		if (isset($params['recurring_id'])) {
+			$this->db->where('orders.subscription_id', $params['recurring_id']);
 		}
 		
 		if (isset($params['status'])) {

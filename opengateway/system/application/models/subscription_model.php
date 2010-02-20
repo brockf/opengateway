@@ -1,4 +1,5 @@
 <?php
+
 /**
 * Subscription Model 
 *
@@ -224,6 +225,7 @@ class Subscription_model extends Model
 		$data['interval'] = $row->charge_interval;
 		$data['start_date'] = local_time($client_id, $row->start_date);
 		$data['end_date'] = local_time($client_id, $row->end_date);
+		$data['last_charge_date'] = local_time($client_id, $row->last_charge);
 		$data['next_charge_date'] = local_time($client_id, $row->next_charge);
 		if ($row->sub_active == '0') { $data['cancel_date'] = local_time($client_id, $row->cancel_date); }
 		$data['number_occurrences'] = $row->number_occurrences;
@@ -271,6 +273,7 @@ class Subscription_model extends Model
 	* @param string $params['customer_internal_id'] The customer's internal id associated with the subscription. Optional.
 	* @param int $params['amount'] Only subscriptions for this amount will be returned. Optional.
 	* @param boolean $params['active'] Returns only active subscriptions. Optional.
+	* @param int $params['plan_id'] Only return subscriptions link to this plan ID
 	* @param int $params['limit'] Limits the number of results returned. Optional.
 	* 
 	* @return mixed Array containing results
@@ -317,7 +320,6 @@ class Subscription_model extends Model
 		}
 		
 		if(isset($params['active'])) {
-			
 			if($params['active'] == '1' or $params['active'] == '0') {
 				$this->db->where('subscriptions.active', $params['active']);
 			}
@@ -395,6 +397,7 @@ class Subscription_model extends Model
 				$data[$i]['interval'] = local_time($client_id, $row->charge_interval);
 				$data[$i]['start_date'] = local_time($client_id, $row->start_date);
 				$data[$i]['end_date'] = local_time($client_id, $row->end_date);
+				$data[$i]['last_charge_date'] = local_time($client_id, $row->last_charge);
 				$data[$i]['next_charge_date'] = local_time($client_id, $row->next_charge);
 				if ($row->sub_active == '0') { $data[$i]['cancel_date'] = local_time($client_id, $row->cancel_date); }
 				$data[$i]['number_occurrences'] = $row->number_occurrences;

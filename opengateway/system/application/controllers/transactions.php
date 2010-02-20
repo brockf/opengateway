@@ -67,7 +67,9 @@ class Transactions extends Controller {
 							'filter' => 'card_last_four'),
 						array(
 							'name' => 'Recurring',
-							'width' => '12%'
+							'width' => '12%',
+							'type' => 'text',
+							'filter' => 'recurring_id'
 							),
 						array(
 							'name' => '',
@@ -81,6 +83,90 @@ class Transactions extends Controller {
 		$this->navigation->SidebarButton('New Charge','transactions/create');
 		
 		$this->load->view('cp/transactions.php');
+	}
+	
+	function all_recurring ()
+	{	
+		$this->navigation->PageTitle('Recurring Charges');
+		
+		$this->load->model('cp/dataset','dataset');
+		
+		$columns = array(
+						array(
+							'name' => 'ID #',
+							'sort_column' => 'id',
+							'type' => 'id',
+							'width' => '7%',
+							'filter' => 'id'),
+						array(
+							'name' => 'Status',
+							'sort_column' => 'active',
+							'type' => 'select',
+							'options' => array('1' => 'active','0' => 'inactive'),
+							'width' => '10%',
+							'filter' => 'active'),
+						array(
+							'name' => 'Date Created',
+							'width' => '13%'),
+						array(
+							'name' => 'Last Charge',
+							'width' => '13%'
+							),
+						array(
+							'name' => 'Next Charge',
+							'width' => '12%'
+							),
+						array(
+							'name' => 'Amount',
+							'sort_column' => 'amount',
+							'type' => 'text',
+							'width' => '10%',
+							'filter' => 'amount'),
+						array(
+							'name' => 'Customer Name',
+							'sort_column' => 'customers.last_name',
+							'type' => 'text',
+							'width' => '15%',
+							'filter' => 'customer_last_name')
+						);
+						
+		// handle recurring plans if they exist
+		$this->load->model('plan_model');
+		$plans = $this->plan_model->GetPlans($this->user->Get('client_id'),array());
+		
+		if ($plans) {
+			// build $options
+			$options = array();
+			while (list(,$plan) = each($plans)) {
+				$options[$plan['id']] = $plan['name'];
+			}
+			
+			$columns[] = array(
+							'name' => 'Plan',
+							'type' => 'select',
+							'options' => $options,
+							'filter' => 'plan_id',
+							'width' => '15%'
+							);
+		}
+		else {
+			$columns[] = array(
+				'name' => 'Plan',
+				'width' => '15%'
+				);
+		}
+		
+		$columns[] = array(
+							'name' => '',
+							'width' => '10%'
+							);
+		
+		$this->dataset->Initialize('subscription_model','GetRecurrings',$columns);
+		
+		// sidebar
+		$this->navigation->SidebarButton('New Charge','transactions/create');
+		
+		$this->load->view('cp/recurrings.php');
 	}
 	
 	/**
@@ -158,14 +244,14 @@ class Transactions extends Controller {
 		}		
 		elseif ($this->input->post('recurring') == '2') {
 			$free_trial = $this->input->post('free_trial');
-			$free_trial = empty($free_trial) ? NULL : $free_trial;
+			$free_trial = empty($free_trial) ? FALSE : $free_trial;
 			
-			$occurrences = ($this->input->post('recurring_end') == 'occurrences') ? $this->input->post('occurrences') : NULL;
+			$occurrences = ($this->input->post('recurring_end') == 'occurrences') ? $this->input->post('occurrences') : FALSE;
 			
 			$start_date = $this->input->post('start_date_year') . '-' . $this->input->post('start_date_month') . '-' . $this->input->post('start_date_day');
 			$end_date = $this->input->post('end_date_year') . '-' . $this->input->post('end_date_month') . '-' . $this->input->post('end_date_day');
 			
-			$end_date = ($this->input->post('recurring_end') == 'date') ? $end_date : NULL;
+			$end_date = ($this->input->post('recurring_end') == 'date') ? $end_date : FALSE;
 			
 			$charge->Schedule(
 						$this->input->post('interval'),
@@ -263,7 +349,12 @@ class Transactions extends Controller {
 	/**
 	* View Recurring Charge
 	*/
-	function recurring ($id) {
+	function recurring ($id = FALSE) {
+		if (!$id) {
+			// pass to recurring index
+			return $this->all_recurring();
+		}
+		
 		$this->load->model('subscription_model');
 		$recurring = $this->subscription_model->GetRecurring($this->user->Get('client_id'),$id);
 		

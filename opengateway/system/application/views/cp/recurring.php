@@ -6,9 +6,9 @@
 <p><b>Amount</b><br />
 <?=$amount;?> every <?=$interval;?> days</p>
 <p><b>Date Created</b><br />
-<?=$start_date;?></p>
+<?=$start_date;?> (<a href="<?=dataset_link('transactions/index',array('recurring_id' => $id));?>">view all charges</a>)</p>
 <p><b>End Date</b><br />
-<?=$start_date;?></p>
+<?=$end_date;?></p>
 <? if ($status == 'active') { ?>
 <p><b>Next Charge Date</b><br />
 <?=$next_charge_date;?> (<a href="<?=site_url('transactions/cancel_recurring/' . $id);?>">cancel recurring</a>)</p>

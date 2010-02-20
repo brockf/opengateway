@@ -402,7 +402,7 @@ class Gateway_model extends Model
 			}
 			
 			$plan_id = 0;
-			$free_trial = FALSE;
+			$free_trial = (isset($recur['free_trial']) and is_numeric($recur['free_trial'])) ? $recur['free_trial'] : FALSE;
 		}
 		
 		// Validate the start date to make sure it is in the future
@@ -424,7 +424,12 @@ class Gateway_model extends Model
 		}
 		
 		// Get the next payment date
-		$next_charge_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400));
+		if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
+			$next_charge_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400));
+		}
+		else {
+			$next_charge_date = date('Y-m-d', strtotime($start_date));
+		}
 		
 		// If an end date was passed, make sure it's valid
 		if(isset($recur['end_date'])) {
@@ -441,7 +446,7 @@ class Gateway_model extends Model
 		} elseif (isset($recur['occurrences'])) {
 			$end_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400 * ($recur['occurrences']-1)) + 86400);
 		} else {
-			// Find the end date based on the interval and the max end date
+			// Find the end date based on the max end date
 			$end_date = date('Y-m-d', strtotime($start_date) + ($this->config->item('max_recurring_days_from_today') * 86400));
 		}
 		
@@ -460,7 +465,7 @@ class Gateway_model extends Model
 		$CI->load->model('subscription_model');
 		$subscription_id = $CI->subscription_model->SaveSubscription($client_id, $params['gateway_id'], $customer['customer_id'], $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id);
 		
-		// set last_charge as today
+		// set last_charge as today, if today was a charge
 		if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
 			$CI->subscription_model->SetChargeDates($subscription_id, date('Y-m-d'), $next_charge_date);
 		}

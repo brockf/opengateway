@@ -26,6 +26,7 @@ function CPLoader () {
 	$CI->navigation->Add('dashboard','Dashboard');
 	$CI->navigation->Add('transactions','Transactions');
 	$CI->navigation->Add('transactions/create','New Charge','transactions');
+	$CI->navigation->Add('transactions/all_recurring','Recurring Charges','transactions');
 	$CI->navigation->Add('customers','Customers');
 	$CI->navigation->Add('plans','Recurring Plans');
 	$CI->navigation->Add('plans/new_plan','New Plan','plans');

@@ -18,10 +18,12 @@ function local_time ($client_id, $time) {
 		$format = 'M j, Y h:i a';
 	}
 	
-	if (empty($timestamp) and defined("_CONTROLPANEL")) {
+	$check_empty = $timestamp + date("Z");
+	
+	if (empty($check_empty) and defined("_CONTROLPANEL")) {
 		return 'N/A';
 	}
-	elseif (empty($timestamp)) {
+	elseif (empty($check_empty)) {
 		return '0';
 	}
 
