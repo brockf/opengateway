@@ -86,7 +86,6 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 		$variables['customer_email'] = $customer['email'];
 		$variables['customer_phone'] = $customer['phone'];
 	}
-	
 	    	
 	// just in case, we'll grab the email of the client
 	$CI->load->model('client_model');
@@ -168,21 +167,29 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 			// send the email
 			$CI->email->from($from_email, $from_name);
 			$CI->email->to($to_address);
-			if (!empty($email['bcc_address'])) {
-				if ($email['bcc_address'] == 'client') {
-					$CI->email->bcc($client_email);
-				}
-				elseif ($CI->field_validation->ValidateEmailAddress($email['bcc_address'])) {
-					$this->bcc($email['bcc_address']);
-				}
-			}
-			
 			$CI->email->subject($subject);
 			$CI->email->message($body);
 			
-			
-			
 			$CI->email->send();
+			
+			// send a BCC?
+			$send_bcc = false;
+			if (!empty($email['bcc_address'])) {
+				if ($email['bcc_address'] == 'client') {
+					$send_bcc = $client_email;
+				}
+				elseif ($CI->field_validation->ValidateEmailAddress($email['bcc_address'])) {
+					$send_bcc = $email['bcc_address'];
+				}
+			}
+			
+			if ($send_bcc != false) {
+				$CI->email->from($from_email, $from_name);
+				$CI->email->to($send_bcc);
+				$CI->email->subject($subject);
+				$CI->email->message($body);
+				$CI->email->send();
+			}
 		}		
 	}
 }
