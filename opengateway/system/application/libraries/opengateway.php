@@ -10,6 +10,7 @@
 * @version 1.0
 * @copyright 2010, Electric Function, Inc.
 */
+
 class OpenGateway
 {		
 	private $params;
@@ -155,6 +156,12 @@ class OpenGateway
 	* @param string $xml XML string
 	* @return array PHP array
 	*/
+	/**
+	* Convert XML to PHP Array
+	*
+	* @param string $xml XML string
+	* @return array PHP array
+	*/
 	private function toArray($xml) {
         if (is_string($xml)) $xml = new SimpleXMLElement($xml);
         $children = $xml->children();
@@ -170,7 +177,7 @@ class OpenGateway
 
             // if the node is already set, put it into an array
             if (isset($arr[$key])) {
-                if (!is_array($arr[$key]) || $arr[$key][0] == null) {
+                if (!is_array($arr[$key]) || !isset($arr[$key][0]) || $arr[$key][0] == null) {
                 	$arr[$key] = array($arr[$key]);
                 }
                 $arr[$key][] = $node;

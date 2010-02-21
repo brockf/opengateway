@@ -21,7 +21,7 @@ if (!empty($this->dataset->data)) {
 }
 else {
 ?>
-<tr><td colspan="8">Empty data set.</td></tr>
+<tr><td colspan="9">Empty data set.</td></tr>
 <?
 }	
 ?>

@@ -9,6 +9,8 @@
 <?=$start_date;?> (<a href="<?=dataset_link('transactions/index',array('recurring_id' => $id));?>">view all charges</a>)</p>
 <p><b>End Date</b><br />
 <?=$end_date;?></p>
+<p><b>Last Charge Date</b><br />
+<?=$last_charge_date;?></p>
 <? if ($status == 'active') { ?>
 <p><b>Next Charge Date</b><br />
 <?=$next_charge_date;?> (<a href="<?=site_url('transactions/cancel_recurring/' . $id);?>">cancel recurring</a>)</p>

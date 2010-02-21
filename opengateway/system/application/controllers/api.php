@@ -35,11 +35,13 @@ class API extends Controller {
 		$this->load->model('authentication_model', 'auth');
 		
 		$client = $this->auth->Authenticate($api_id, $secret_key);
-		$client_id = $client->client_id;
 		
-		if(!$client_id) {
+		// did they authenticate?
+		if(!$client) {
 			die($this->response->Error(1001));
-		}	
+		}
+		
+		$client_id = $client->client_id;	
 		
 		// Get the request type
 		if(!isset($params['type'])) {
