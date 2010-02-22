@@ -2,22 +2,30 @@
 
 class Notifications {
 	function QueueNotification ($url, $variables) {
+		$CI =& get_instance();
+		
 		$insert = array(
 						'notification_id' => '',
 						'url' => $url,
 						'variables' => serialize($variables)
 				);
 				
-		$this->db->insert('notifications',$insert);
+		$CI->db->insert('notifications',$insert);
 		
 		return true;
 	}
 	
 	function ProcessQueue () {
-		$result = $this->db->get('notifications');
+		$CI =& get_instance();
 		
+		$CI->db->limit(10);
+		$result = $CI->db->get('notifications');
+		
+		$count = 0;
 		foreach ($result->result_array() as $item) {
 			$postfields = '';
+			
+			$item['variables'] = unserialize($item['variables']);
 			
 			while (list($k,$v) = each($item['variables'])) {
 				$postfields .= urlencode($k) . '=' . urlencode($v) . '&';
@@ -34,6 +42,13 @@ class Notifications {
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields); 
 			curl_exec($ch); 
 			curl_close($ch);
+			
+			$CI->db->where('notification_id',$item['notification_id']);
+			$CI->db->delete('notifications');
+			
+			$count++;
 		}
+		
+		return $count;
 	}
 }

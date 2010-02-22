@@ -7,6 +7,21 @@ class Cron extends Controller {
 		parent::Controller();	
 	}
 	
+	function SendNotifications ($key) {
+		if ($this->config->item('cron_key') != $key) {
+			echo 'Invalid key.';
+			return FALSE;
+		}
+		
+		$this->load->library('notifications');
+		
+		$notified = $this->notifications->ProcessQueue();
+		
+		echo $notified . ' notifications sent.';
+
+		return true;
+	}
+	
 	function SubscriptionMaintenance($key)
 	{
 		if ($this->config->item('cron_key') != $key) {
@@ -35,16 +50,17 @@ class Cron extends Controller {
 			}
 		}
 		
-		// Cancel subscription if the end date is today
+		// Expire subscription if the end date is today or before
 		$cancelled = array();
-		$subscriptions = $this->subscription_model->GetAllSubscriptionsByDate('end_date', $today);
+		$subscriptions = $this->subscription_model->GetAllSubscriptionsForExpiring();
 		if($subscriptions) {
 			$this->load->model('gateway_model');
 		
 			foreach($subscriptions as $subscription) {
 				// Try and make the charge
-				$response = $this->subscription_model->CancelRecurring($subscription['client_id'], $subscription);
+				$response = $this->subscription_model->CancelRecurring($subscription['client_id'], $subscription['subscription_id'], TRUE);
 				if($response) {
+					TriggerTrip('recurring_expire', $subscription['client_id'], FALSE, $subscription['subscription_id']);
 					$cancelled[] = $subscription['subscription_id'];
 				}
 			}
@@ -58,7 +74,7 @@ class Cron extends Controller {
 		$charges = $this->subscription_model->GetChargesByDate($next_week);
 		if($charges) {
 			foreach($charges as $charge) {
-				if(TriggerTrip('recurring_autorecur_in_week', $charge['client_id'], false, $charge['subscription_id'])) {
+				if (TriggerTrip('recurring_autorecur_in_week', $charge['client_id'], false, $charge['subscription_id'])) {
 					$sent_emails['recurring_autorecur_in_week'][] = $charge['subscription_id'];
 				}
 			}		
@@ -71,7 +87,7 @@ class Cron extends Controller {
 		if($charges) {
 			$this->load->library('email');
 			foreach($charges as $charge) {
-				if(TriggerTrip('recurring_autorecur_in_month', $charge['client_id'])) {
+				if (TriggerTrip('recurring_autorecur_in_month', $charge['client_id'], false, $charge['subscription_id'])) {
 					$sent_emails['recurring_autorecur_in_month'][] = $charge['subscription_id'];
 				}
 			}		
@@ -83,7 +99,7 @@ class Cron extends Controller {
 		if($charges) {
 			$this->load->library('email');
 			foreach($charges as $charge) {
-				if(TriggerTrip('recurring_expiring_in_week', $charge['client_id'])) {
+				if (TriggerTrip('recurring_expiring_in_week', $charge['client_id'], false, $charge['subscription_id'])) {
 					$sent_emails['recurring_expiring_in_week'][] = $charge['subscription_id'];
 				}
 			}		
@@ -95,7 +111,7 @@ class Cron extends Controller {
 		if($charges) {
 			$this->load->library('email');
 			foreach($charges as $charge) {
-				if(TriggerTrip('recurring_expiring_in_month', $charge['client_id'])) {
+				if (TriggerTrip('recurring_expiring_in_month', $charge['client_id'], false, $charge['subscription_id'])) {
 					$sent_emails['recurring_expiring_in_month'][] = $charge['subscription_id'];
 				}
 			}		

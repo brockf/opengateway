@@ -132,8 +132,9 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 	// load validation
 	$CI->load->library('field_validation');
 	
-	foreach ($emails as $email) {
-		
+	$email_count = 0;
+	
+	foreach ($emails as $email) {		
 		// is this HTML?
 		$config['mailtype'] = ($email['is_html'] == '1') ? 'html' : 'text';
 		$config['wordwrap'] = ($email['is_html'] == '1') ? FALSE : TRUE;
@@ -190,6 +191,10 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 				$CI->email->message($body);
 				$CI->email->send();
 			}
-		}		
+		}
+		
+		$email_count++;		
 	}
+	
+	return $email_count;
 }

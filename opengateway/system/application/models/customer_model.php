@@ -474,6 +474,7 @@ class Customer_model extends Model
 		
 		if(isset($params['plan_id'])) {
 			$this->db->where('subscriptions.plan_id',$params['plan_id']);
+			$this->db->where('subscriptions.active','1');
 		}
 		
 		$this->db->select('customers.*');

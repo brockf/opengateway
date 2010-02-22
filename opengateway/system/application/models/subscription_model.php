@@ -572,7 +572,7 @@ class Subscription_model extends Model
 	*
 	*/
 	
-	function CancelRecurring($client_id, $recurring_id)
+	function CancelRecurring($client_id, $recurring_id, $expiring = FALSE)
 	{
 		// Get the subscription information
 		$this->load->model('subscription_model');
@@ -588,6 +588,10 @@ class Subscription_model extends Model
 		$cancelled = $this->$gateway_name->CancelRecurring($client_id, $subscription, $gateway);
 		
 		$this->MakeInactive($recurring_id);
+		
+		if ($expiring == FALSE) {
+			TriggerTrip('recurring_cancel', $client_id, FALSE, $recurring_id);
+		}
 		
 		if ($cancelled) {
 			return TRUE;
@@ -646,6 +650,20 @@ class Subscription_model extends Model
 		
 	}
 	
+	function GetAllSubscriptionsForExpiring() {
+		$this->db->join('client_gateways', 'subscriptions.gateway_id = client_gateways.client_gateway_id', 'inner');
+		$this->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
+		$this->db->where('end_date <= NOW()');
+		$this->db->where('subscriptions.active', 1);
+		$query = $this->db->get('subscriptions');
+		
+		if($query->num_rows > 0) {
+			return $query->result_array();
+		} else {
+			return FALSE;
+		}
+	}
+	
 	function GetAllSubscriptionsByDate($date_type = FALSE, $date = FALSE)
 	{
 		if(!$date) {
@@ -666,8 +684,7 @@ class Subscription_model extends Model
 			return $query->result_array();
 		} else {
 			return FALSE;
-		}
-		
+		}		
 	}
 	
 	function GetNextChargeDate($subscription_id, $from_date = FALSE)
@@ -726,7 +743,7 @@ class Subscription_model extends Model
 	}
 
 
-/**
+	/**
 	* Get Details of the last order for a customer.
 	*
 	* Returns array of order details for a specific order_id.

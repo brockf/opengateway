@@ -326,6 +326,7 @@ class Plan_model extends Model
 		$this->db->select('plan_types.*');
 		$this->db->select('count(subscriptions.subscription_id) as `num_customers`',false);
 		$this->db->join('subscriptions','subscriptions.plan_id = plans.plan_id','left');
+		$this->db->where('subscriptions.active','1');
 		$this->db->join('plan_types', 'plans.plan_type_id = plan_types.plan_type_id', 'inner');
 		$this->db->group_by('plans.plan_id');
 		

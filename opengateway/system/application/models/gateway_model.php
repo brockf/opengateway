@@ -482,8 +482,8 @@ class Gateway_model extends Model
 			$response['customer_id'] = $customer['customer_id'];
 		}
 		
-		if ($response['response_code'] == '1') {
-			TriggerTrip('new_recurring', $client_id, $response['charge_id'], $response['subscription_id']);
+		if ($response['response_code'] == '100') {
+			TriggerTrip('new_recurring', $client_id, $response['charge_id'], $response['recurring_id']);
 		}
 		
 		return $response;
@@ -511,7 +511,7 @@ class Gateway_model extends Model
 		// Get the gateway info to load the proper library
 		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
 		
-		if ($gateway['enabled'] == '0') {
+		if (!$gateway or $gateway['enabled'] == '0') {
 			return FALSE;
 		}
 		
@@ -543,7 +543,7 @@ class Gateway_model extends Model
 			
 			$this->order_model->SetStatus($order_id, 1);
 			
-			TriggerTrip('recurring_charge', $client_id, $order_id);
+			TriggerTrip('recurring_charge', $client_id, $order_id, $params['subscription_id']);
 		} else {
 			// Check the number of failures allowed
 			$num_allowed = $this->config->item('recurring_charge_failures_allowed');
