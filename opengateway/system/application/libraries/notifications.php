@@ -18,7 +18,7 @@ class Notifications {
 	function ProcessQueue () {
 		$CI =& get_instance();
 		
-		$CI->db->limit(10);
+		$CI->db->limit(20);
 		$result = $CI->db->get('notifications');
 		
 		$count = 0;

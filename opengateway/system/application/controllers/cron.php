@@ -5,6 +5,8 @@ class Cron extends Controller {
 	function Cron()
 	{
 		parent::Controller();	
+		
+		set_time_limit(300);
 	}
 	
 	function SendNotifications ($key) {

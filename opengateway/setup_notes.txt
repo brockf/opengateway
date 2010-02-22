@@ -4,6 +4,7 @@
 - Edit /system/applications/config/config.php to set "key"
 - Setup SSL and edit config.php to turn SSL on
 - Edit /system/applications/config/database.php for database info
-- Setup:
-	- /cron/subscriptionmaintenance/[key] every 1 day
-	- /cron/sendnotifications/[key] every 5 minutes
+- Setup cronjob
+	
+5  	5  	*  	*  	*	wget http://platform.opengateway.net/cron/subscriptionmaintenance/f39g8gjfdg848g92 >/dev/null 2>&1
+*/5 * 	* 	* 	*	wget http://platform.opengateway.net/cron/sendnotifications/f39g8gjfdg848g92 >/dev/null 2>&1
