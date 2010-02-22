@@ -333,7 +333,7 @@ class Transactions extends Controller {
 		$data = $charge;
 		
 		$this->load->model('gateway_model');
-		$gateway = $this->gateway_model->GetGatewayDetails($this->user->Get('client_id'),$charge['gateway_id']);
+		$gateway = $this->gateway_model->GetGatewayDetails($this->user->Get('client_id'),$charge['gateway_id'],TRUE);
 		
 		$data['gateway'] = $gateway;
 		
@@ -361,7 +361,7 @@ class Transactions extends Controller {
 		$data = $recurring;
 		
 		$this->load->model('gateway_model');
-		$gateway = $this->gateway_model->GetGatewayDetails($this->user->Get('client_id'),$recurring['gateway_id']);
+		$gateway = $this->gateway_model->GetGatewayDetails($this->user->Get('client_id'),$recurring['gateway_id'],TRUE);
 		
 		$data['gateway'] = $gateway;
 		

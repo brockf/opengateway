@@ -799,7 +799,7 @@ class Gateway_model extends Model
 	* @return array All gateway details
 	*/
 	
-	function GetGatewayDetails($client_id, $gateway_id = FALSE)
+	function GetGatewayDetails($client_id, $gateway_id = FALSE, $deleted_ok = FALSE)
 	{
 		$CI =& get_instance();
 		$CI->load->model('client_model');
@@ -816,7 +816,9 @@ class Gateway_model extends Model
 		
 		$this->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
 		$this->db->where('client_gateways.client_id', $client_id);
-		$this->db->where('deleted', 0);
+		if ($deleted_ok == FALSE) {
+			$this->db->where('deleted', 0);
+		}
 		$this->db->limit(1);
 		$query = $this->db->get('client_gateways');
 		if($query->num_rows > 0) {
