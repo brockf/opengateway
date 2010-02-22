@@ -5,7 +5,7 @@
 * Contains all the methods used to create, update, and delete client Emails.
 *
 * @version 1.0
-* @author Brock Ferguson
+* @author Electric Function, Inc.
 * @package OpenGateway
 
 */

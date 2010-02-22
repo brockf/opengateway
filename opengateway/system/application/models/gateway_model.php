@@ -682,8 +682,10 @@ class Gateway_model extends Model
 		// cancel all subscriptions related to it
 		$CI->load->model('subscription_model');
 		$subscriptions = $CI->subscription_model->GetAllSubscriptionsByGatewayID($gateway_id);
-		foreach ($subscriptions as $subscription) {
-			$CI->subscription_model->CancelRecurring($subscription['client_id'],$subscription['subscription_id']);
+		if (is_array($subscriptions)) {
+			foreach ($subscriptions as $subscription) {
+				$CI->subscription_model->CancelRecurring($subscription['client_id'],$subscription['subscription_id']);
+			}
 		}
 		
 		// Mark as deleted

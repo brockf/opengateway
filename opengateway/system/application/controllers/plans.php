@@ -5,7 +5,7 @@
 * Manage plans, create new plans, edit plans
 *
 * @version 1.0
-* @author Brock Ferguson
+* @author Electric Function, Inc.
 * @package OpenGateway
 
 */

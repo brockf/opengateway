@@ -6,7 +6,7 @@
 *
 * @version 1.0
 * @author Electric Function, Inc.
-* @author Brock Ferguson
+* @author Electric Function, Inc.
 * @package OpenGateway
 
 */

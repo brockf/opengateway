@@ -5,7 +5,7 @@
 * Update account details, logout
 *
 * @version 1.0
-* @author Brock Ferguson
+* @author Electric Function, Inc.
 * @package OpenGateway
 
 */

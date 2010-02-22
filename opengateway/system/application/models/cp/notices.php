@@ -5,7 +5,7 @@
 * Set and retrieve the notices and errors that appear at the top of the control panel
 *
 * @version 1.0
-* @author Brock Ferguson
+* @author Electric Function, Inc.
 * @package OpenGateway
 
 */

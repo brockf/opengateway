@@ -619,7 +619,7 @@ class Subscription_model extends Model
 		$this->db->join('client_gateways', 'subscriptions.gateway_id = client_gateways.client_gateway_id', 'inner');
 		$this->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
 		$this->db->where('subscriptions.gateway_id', $gateway_id);
-		$this->db->where('active', 1);
+		$this->db->where('subscriptions.active', 1);
 		$query = $this->db->get('subscriptions');
 		
 		if($query->num_rows > 0) {
@@ -639,7 +639,7 @@ class Subscription_model extends Model
 		$this->db->join('client_gateways', 'subscriptions.gateway_id = client_gateways.client_gateway_id', 'inner');
 		$this->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
 		$this->db->where('next_charge', $date);
-		$this->db->where('active', 1);
+		$this->db->where('subscriptions.active', 1);
 		$query = $this->db->get('subscriptions');
 		
 		if($query->num_rows > 0) {

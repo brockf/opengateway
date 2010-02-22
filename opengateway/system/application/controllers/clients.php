@@ -5,7 +5,7 @@
 * Manage clients (for Service Providers and Administrators, only)
 *
 * @version 1.0
-* @author Brock Ferguson
+* @author Electric Function, Inc.
 * @package OpenGateway
 
 */

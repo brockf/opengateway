@@ -5,7 +5,7 @@
 * Dynamically generates the navigation, pagetitle, and sidebar elements of the page
 *
 * @version 1.0
-* @author Brock Ferguson
+* @author Electric Function, Inc.
 * @package OpenGateway
 
 */
