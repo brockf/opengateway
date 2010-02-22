@@ -1,0 +1,9 @@
+- Upload all files/folders
+- CHMOD /writeable 0777
+- Execute /sql/fresh_install.sql
+- Edit /system/applications/config/config.php to set "key"
+- Setup SSL and edit config.php to turn SSL on
+- Edit /system/applications/config/database.php for database info
+- Setup:
+	- /cron/subscriptionmaintenance/[key] every 1 day
+	- /cron/sendnotifications/[key] every 5 minutes
