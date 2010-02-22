@@ -324,14 +324,13 @@ class Plan_model extends Model
 		
 		$this->db->select('plans.*');
 		$this->db->select('plan_types.*');
-		$this->db->select('count(subscriptions.subscription_id) as `num_customers`',false);
+		$this->db->select('SUM(subscriptions.active) as `num_customers`',false);
 		$this->db->join('subscriptions','subscriptions.plan_id = plans.plan_id','left');
-		$this->db->where('subscriptions.active','1');
 		$this->db->join('plan_types', 'plans.plan_type_id = plan_types.plan_type_id', 'inner');
 		$this->db->group_by('plans.plan_id');
-		
 		$this->db->where('plans.client_id', $client_id);
 		$query = $this->db->get('plans');
+		
 		$data = array();
 		if($query->num_rows() > 0) {
 			foreach($query->result() as $row)
@@ -344,7 +343,7 @@ class Plan_model extends Model
 								'interval' => $row->interval,
 								'notification_url' => $row->notification_url,
 								'free_trial' => $row->free_trial,
-								'num_customers' => $row->num_customers
+								'num_customers' => (empty($row->num_customers)) ? '0' : $row->num_customers
 								);
 			}
 			
