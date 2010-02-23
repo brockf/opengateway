@@ -135,12 +135,12 @@ class Plan_model extends Model
 		
 		$this->load->library('field_validation');
 		
-		if(isset($plan['type'])) {
-			$plan_type_id = $this->GetPlanTypeId($plan['type']);
+		if (isset($plan['plan_type'])) {
+			$plan_type_id = $this->GetPlanTypeId($plan['plan_type']);
 			$update_data['plan_type_id'] = $plan_type_id;
 		}
 		
-		if($plan['type'] == 'free') {
+		if (isset($plan['plan_type']) and $plan['type'] == 'free') {
 			$update_data['amount'] = 0;
 		} else {
 			if(isset($plan['amount'])) {
@@ -148,8 +148,6 @@ class Plan_model extends Model
 					die($this->response->Error(5009));	
 				}
 				$update_data['amount'] = $plan['amount'];
-			} else {
-				die($this->response->Error(1004));
 			}
 		}
 		
@@ -208,27 +206,33 @@ class Plan_model extends Model
 	*/
 	function GetPlan($client_id, $plan_id)
 	{
-		// Get the plan details
-		$plan_details = $this->GetPlanDetails($client_id, $plan_id);
+		$this->db->select('plans.*');
+		$this->db->select('plan_types.*');
+		$this->db->select('SUM(subscriptions.active) as `num_customers`',false);
+		$this->db->join('subscriptions','subscriptions.plan_id = plans.plan_id','left');
+		$this->db->join('plan_types', 'plans.plan_type_id = plan_types.plan_type_id', 'inner');
+		$this->db->group_by('plans.plan_id');
+		$this->db->where('plans.client_id', $client_id);
+		$this->db->where('plans.plan_id',$plan_id);
+		$query = $this->db->get('plans');
 		
-		$plan_type = $this->GetPlanType($plan_details->plan_type_id);
-		
-		unset($plan_details->client_id);
-		unset($plan_details->plan_type_id);
-		
-		$plan_details->type = $plan_type;
-		
-		foreach($plan_details as $key => $value)
-		{
-			if ($key == 'plan_id') {
-				$data['id'] = $value;
-			}
-			elseif ($key == 'amount') {
-				$data['amount'] = money_format("%!i",$value);
-			}
-			else {	
-				$data[$key] = $value;
-			}
+		if($query->num_rows() > 0) {
+			$row = $query->row();
+			
+			$data = array(
+							'id' => $row->plan_id,
+							'type' => $row->type,
+							'name' => $row->name,
+							'amount' => money_format("%!i",$row->amount),
+							'interval' => $row->interval,
+							'notification_url' => $row->notification_url,
+							'occurrences' => $row->occurrences,
+							'free_trial' => $row->free_trial,
+							'num_customers' => (empty($row->num_customers)) ? '0' : $row->num_customers
+							);
+		}
+		else {
+			return FALSE;
 		}
 		
 		return $data;
@@ -343,6 +347,7 @@ class Plan_model extends Model
 								'interval' => $row->interval,
 								'notification_url' => $row->notification_url,
 								'free_trial' => $row->free_trial,
+								'occurrences' => $row->occurrences,
 								'num_customers' => (empty($row->num_customers)) ? '0' : $row->num_customers
 								);
 			}
