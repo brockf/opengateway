@@ -140,7 +140,7 @@ class Plan_model extends Model
 			$update_data['plan_type_id'] = $plan_type_id;
 		}
 		
-		if (isset($plan['plan_type']) and $plan['type'] == 'free') {
+		if (isset($plan['plan_type']) and $plan['plan_type'] == 'free') {
 			$update_data['amount'] = 0;
 		} else {
 			if(isset($plan['amount'])) {
