@@ -368,6 +368,9 @@ class Gateway_model extends Model
 			$free_trial 		= $plan_details->free_trial;
 			$occurrences		= $plan_details->occurrences;
 			
+			// use plan amount if a different first amount was not given
+			$params['amount'] = (isset($params['amount'])) ? $params['amount'] : $amount;
+			
 			$plan_id = $plan_details->plan_id;
 		
 			// if there are specified occurrences, we should create an end-date that works with it

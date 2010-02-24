@@ -773,7 +773,7 @@ class Subscription_model extends Model
 		}
 	}
 	
-/**
+	/**
 	* Get Details of the last order for a customer.
 	*
 	* Returns array of order details for a specific order_id.
