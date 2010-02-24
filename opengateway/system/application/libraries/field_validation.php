@@ -65,6 +65,8 @@ class Field_validation
 		$CI =& get_instance();
 		
 		$CI->db->where('iso2', $country_code);
+		$CI->db->or_where('iso3', $country_code);
+		$CI->db->or_where('name', $country_code);
 		$query = $CI->db->get('countries');
 		if($query->num_rows() > 0) {
 			return $query->row()->country_id;

@@ -327,6 +327,8 @@ class Transactions extends Controller {
 	*
 	*/
 	function charge ($id) {
+		$this->navigation->PageTitle('Charge #' . $id);
+	
 		$this->load->model('order_model');
 		$charge = $this->order_model->GetCharge($this->user->Get('client_id'),$id);
 		
@@ -354,6 +356,8 @@ class Transactions extends Controller {
 			// pass to recurring index
 			return $this->all_recurring();
 		}
+		
+		$this->navigation->PageTitle('Recurring Charge #' . $id);
 		
 		$this->load->model('subscription_model');
 		$recurring = $this->subscription_model->GetRecurring($this->user->Get('client_id'),$id);

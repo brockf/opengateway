@@ -439,10 +439,12 @@ class API extends Controller {
 		$data = array();
 		if ($customer = $this->customer_model->GetCustomer($client_id, $params['customer_id'])) {	
 			// sort through plans, first
-			$customer_plans = $customer['plans'];
+			$customer_plans = isset($customer['plans']) ? $customer['plans'] : '';
 			unset($customer['plans']);
-			while (list(, $plan) = each($customer_plans)) {
-				$customer['plans']['plan'][] = $plan;
+			if (is_array($customer_plans)) {
+				while (list(, $plan) = each($customer_plans)) {
+					$customer['plans']['plan'][] = $plan;
+				}
 			}
 			
 			$data['customer'] = $customer;
