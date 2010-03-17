@@ -144,7 +144,9 @@ class OpenGateway
 		}
 		else {
 			curl_close($ch);
-			$this->params = array();	
+			
+			// empty parameters
+			$this->params = new stdClass;	
 				
 			$xml = $this->toArray($data);
 		    return $xml;
