@@ -143,7 +143,8 @@ class OpenGateway
 		    print curl_error($ch);
 		}
 		else {
-			curl_close($ch);	
+			curl_close($ch);
+			$this->params = array();	
 				
 			$xml = $this->toArray($data);
 		    return $xml;

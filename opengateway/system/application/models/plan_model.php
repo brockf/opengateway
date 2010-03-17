@@ -46,7 +46,7 @@ class Plan_model extends Model
 			die($this->response->Error(1004));
 		}
 		
-		if($plan['plan_type'] == 'free') {
+		if(isset($plan['plan_type']) and $plan['plan_type'] == 'free') {
 			$insert_data['amount'] = 0;
 		} else {
 			if(isset($plan['amount'])) {
