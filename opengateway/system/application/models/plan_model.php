@@ -228,7 +228,8 @@ class Plan_model extends Model
 							'notification_url' => $row->notification_url,
 							'occurrences' => $row->occurrences,
 							'free_trial' => $row->free_trial,
-							'num_customers' => (empty($row->num_customers)) ? '0' : $row->num_customers
+							'num_customers' => (empty($row->num_customers)) ? '0' : $row->num_customers,
+							'status' => ($row->deleted == '0') ? 'active' : 'deleted'
 							);
 		}
 		else {
@@ -348,7 +349,8 @@ class Plan_model extends Model
 								'notification_url' => $row->notification_url,
 								'free_trial' => $row->free_trial,
 								'occurrences' => $row->occurrences,
-								'num_customers' => (empty($row->num_customers)) ? '0' : $row->num_customers
+								'num_customers' => (empty($row->num_customers)) ? '0' : $row->num_customers,
+								'status' => ($row->deleted == '0') ? 'active' : 'deleted'
 								);
 			}
 			
