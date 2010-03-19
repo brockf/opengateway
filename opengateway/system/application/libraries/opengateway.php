@@ -146,7 +146,16 @@ class OpenGateway
 			curl_close($ch);
 			
 			// empty parameters
-			$this->params = new stdClass;	
+			$this->params = new stdClass;
+			
+			// check for a system error
+			if (strpos($data, '<div') === 0) {
+				// this isn't XML, it's an error
+				$error = strip_tags($data);
+				
+				echo 'A system error was incurred in the process of the ' . $this->method . ' call: ' . $error;
+				return FALSE;
+			}	
 				
 			$xml = $this->toArray($data);
 		    return $xml;
