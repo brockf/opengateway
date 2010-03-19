@@ -56,7 +56,6 @@ class Order_model extends Model
 		elseif(isset($params['customer_id'])) {
 			$insert_data['customer_id'] = $params['customer_id'];
 		}
-		
 							
 		$this->db->insert('orders', $insert_data);
 		

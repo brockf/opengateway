@@ -252,7 +252,6 @@ class authnet
 		
 		// If a payment is to be made today, process it.
 		if(date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
-			
 			// Create an order for today's payment
 			$CI->load->model('order_model');
 			$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;

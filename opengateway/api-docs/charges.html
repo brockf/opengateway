@@ -58,6 +58,10 @@
 			<p>Charge requests can be linked to customers via either a <span class="request">customer_id</span> or an embedded <span class="request">customer</span>
 			node embedded within this request to the API.  For more information on embedding customer data in a Charge request, see the <a href="customers.html">customers</a>
 			page.</p>
+			<p><b>How to add a free charge to a customer (e.g., for records purposes):</b><br />
+			Pass <span class="request">amount</span> as "0".  Complete dummy credit card
+			information with "0000000000000000" as the credit card number and any future expire date.  Your gateway will not be passed
+			this charge.</p>
 			<p>Request data:</p>
 			<table class="data" cellpadding="0" cellspacing="0">
 				<thead>

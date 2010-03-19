@@ -189,10 +189,18 @@ class Gateway_model extends Model
 		$passed_customer = (isset($customer['customer_id'])) ? $customer['customer_id'] : false;
 		$order_id = $CI->order_model->CreateNewOrder($client_id, $params, false, $passed_customer);
 		
-		// Load the proper library
-		$gateway_name = $gateway['name'];
-		$this->load->library('payment/'.$gateway_name);
-		$response = $this->$gateway_name->Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card);	
+		// if amount is greater than $0, we require a gateway
+		if ($params['amount'] > 0) {
+			// Load the proper library
+			$gateway_name = $gateway['name'];
+			$this->load->library('payment/'.$gateway_name);
+			$response = $this->$gateway_name->Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card);	
+		}
+		else {
+			// it's a charge of $0, it's ok
+			$response_array = array('charge_id' => $order_id);
+			$response = $CI->response->TransactionResponse(1, $response_array);
+		}
 		
 		if (isset($created_customer) and $created_customer == true and ($response['response_code'] != 1)) {
 			$CI->customer_model->DeleteCustomer($client_id, $customer['customer_id']);
@@ -214,7 +222,6 @@ class Gateway_model extends Model
 	
 	function Refund($client_id, $params)
 	{
-
 		// Make sure it came from a secure connection
 		if(empty($_SERVER["HTTPS"])) {
 			die($this->response->Error(1010));
@@ -362,11 +369,11 @@ class Gateway_model extends Model
 			$CI->load->model('plan_model');
 			$plan_details = $CI->plan_model->GetPlanDetails($client_id, $recur['plan_id']);
 			
-			$interval 			= $plan_details->interval;
-			$notification_url 	= $plan_details->notification_url;
-			$amount 			= $plan_details->amount;
-			$free_trial 		= $plan_details->free_trial;
-			$occurrences		= $plan_details->occurrences;
+			$interval 			= (isset($recur['interval'])) ? $recur['interval'] : $plan_details->interval;
+			$notification_url 	= (isset($recur['notification_url'])) ? $recur['notification_url'] : $plan_details->notification_url;
+			$amount 			= (isset($recur['amount'])) ? $recur['amount'] : $plan_details->amount;
+			$free_trial 		= (isset($recur['free_trial'])) ? $recur['free_trial'] : $plan_details->free_trial;
+			$occurrences		= (isset($recur['occurrences'])) ? $recur['occurrences'] : $plan_details->occurrences;
 			
 			// use plan amount if a different first amount was not given
 			$params['amount'] = (isset($params['amount'])) ? $params['amount'] : $amount;
@@ -473,10 +480,29 @@ class Gateway_model extends Model
 			$CI->subscription_model->SetChargeDates($subscription_id, date('Y-m-d'), $next_charge_date);
 		}
 		
-		// Load the proper library
-		$gateway_name = $gateway['name'];
-		$this->load->library('payment/'.$gateway_name);
-		$response = $this->$gateway_name->Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences);
+		// if amount is greater than 0, we require a gateway
+		if ($params['amount'] > 0) {
+			// load the proper library
+			$gateway_name = $gateway['name'];
+			$this->load->library('payment/'.$gateway_name);
+			$response = $this->$gateway_name->Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences);
+		}
+		else {
+			// this is a free subscription
+			if(date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
+				// Create an order for today's payment
+				$CI->load->model('order_model');
+				$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
+				$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $subscription_id, $customer['customer_id']);
+				$CI->order_model->SetStatus($order_id, 1);
+				$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
+			}
+			else {
+				$response_array = array('recurring_id' => $subscription_id);
+			}
+			
+			$response = $CI->response->TransactionResponse(100, $response_array);
+		}
 		
 		if (isset($created_customer) and $created_customer == true and $response['response_code'] != 100) {
 			$CI->customer_model->DeleteCustomer($client_id, $customer['customer_id']);
@@ -531,10 +557,15 @@ class Gateway_model extends Model
 		$CI->load->model('order_model');
 		$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $params['subscription_id'], $params['customer_id']);
 		
-		// Load the proper library
-		$gateway_name = $gateway['name'];
-		$this->load->library('payment/'.$gateway_name);
-		$response = $this->$gateway_name->AutoRecurringCharge($client_id, $order_id, $gateway, $params);	
+		if ($params['amount'] > 0) {
+			// Load the proper library
+			$gateway_name = $gateway['name'];
+			$this->load->library('payment/'.$gateway_name);
+			$response = $this->$gateway_name->AutoRecurringCharge($client_id, $order_id, $gateway, $params);
+		}
+		else {
+			$response['success'] = TRUE;
+		}	
 
 		$this->load->model('subscription_model');
 		if($response['success'] == TRUE) {
@@ -548,6 +579,8 @@ class Gateway_model extends Model
 			
 			TriggerTrip('recurring_charge', $client_id, $order_id, $params['subscription_id']);
 		} else {
+			$response = FALSE;
+			
 			// Check the number of failures allowed
 			$num_allowed = $this->config->item('recurring_charge_failures_allowed');
 			$failures = $params['number_charge_failures'];
@@ -560,7 +593,6 @@ class Gateway_model extends Model
 			if($failures >= $num_allowed) {	
 				$this->subscription_model->CancelRecurring($client_id, $params['subscription_id']);
 			}
-
 		}
 		
 		return $response;

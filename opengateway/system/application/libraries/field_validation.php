@@ -84,6 +84,10 @@ class Field_validation
 	{	
 		$patterns = array();
 		
+		if (str_replace(' ','',$card_number) == '0000000000000000') {
+			return 'dummy';
+		}
+		
 		if($gateway['accept_amex'] == 1) {
 			$patterns['amex'] = "/^([34|37]{2})([0-9]{13})$/";
 		}

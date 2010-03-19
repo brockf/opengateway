@@ -30,8 +30,24 @@ class Cron extends Controller {
 			echo 'Invalid key.';
 			return FALSE;
 		}
-	
-		// get all the subscriptions with a next_charge date of today\
+		
+		// Expire subscription if the end date is today or before
+		$cancelled = array();
+		$subscriptions = $this->subscription_model->GetAllSubscriptionsForExpiring();
+		if($subscriptions) {
+			$this->load->model('gateway_model');
+		
+			foreach($subscriptions as $subscription) {
+				// Try and make the charge
+				$response = $this->subscription_model->CancelRecurring($subscription['client_id'], $subscription['subscription_id'], TRUE);
+				if($response) {
+					TriggerTrip('recurring_expire', $subscription['client_id'], FALSE, $subscription['subscription_id']);
+					$cancelled[] = $subscription['subscription_id'];
+				}
+			}
+		}
+		
+		// get all the subscriptions with a next_charge date of today for the next charge
 		$today = date('Y-m-d');
 		$this->load->model('subscription_model');
 		$subscriptions = $this->subscription_model->GetAllSubscriptionsByDate('next_charge', $today);
@@ -51,23 +67,6 @@ class Cron extends Controller {
 				}
 			}
 		}
-		
-		// Expire subscription if the end date is today or before
-		$cancelled = array();
-		$subscriptions = $this->subscription_model->GetAllSubscriptionsForExpiring();
-		if($subscriptions) {
-			$this->load->model('gateway_model');
-		
-			foreach($subscriptions as $subscription) {
-				// Try and make the charge
-				$response = $this->subscription_model->CancelRecurring($subscription['client_id'], $subscription['subscription_id'], TRUE);
-				if($response) {
-					TriggerTrip('recurring_expire', $subscription['client_id'], FALSE, $subscription['subscription_id']);
-					$cancelled[] = $subscription['subscription_id'];
-				}
-			}
-		}
-		
 		
 		// Check for emails to send
 		// Get all the recurring charge emails to send in one week

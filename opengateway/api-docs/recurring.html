@@ -82,6 +82,14 @@
 			page.  If neither a <span class="request">customer_id</span> or <span class="request">customer</span> node are included in the request,
 			a customer record will be created automatically from the included <span class="request">credit_card > name</span> variable.  Because
 			of this procedure, <i>all recurring charges are linked to a customer record</i>.</p>
+			<p><b>How to charge a different fee for the first interval (e.g. charge $2.99 up-front but $9.99 per month afterwards):</b><br />
+			To charge a different fee for the first interval than subsequent intervals, specify a different value for the parent
+			<span class="request">amount</span> parameter.  Then, if you aren't using a plan, specify the recurring fee in
+			<span class="request">recur > amount</span>.  If you are using a plan, the latter parameter is not required.</p>
+			<p><b>How to add a free recurring charge to an account (e.g., to link a customer to a plan):</b><br />
+			Pass <span class="request">amount</span> and <span class="request">recur > amount</span> as "0".  Complete dummy credit card
+			information with "0000000000000000" as the credit card number and any future expire date.  Your gateway will not be passed
+			this charge.</p>
 			<p>Request data:</p>
 			<table class="data" cellpadding="0" cellspacing="0">
 				<thead>
@@ -97,7 +105,7 @@
 						<td><span class="request">amount</span></td>
 						<td><a href="datatypes.html#money">money</a></td>
 						<td class="yes">yes</td>
-						<td>e.g. "45.67".  This amount is charged upon creation of the subscription.  For a differently price first interval (e.g. a trial period), set this amount differently.</td>
+						<td>e.g. "45.67".  This amount is charged upon creation of the subscription.  This price will be charged for the first recurring interval.</td>
 					</tr>
 					<tr>
 						<td><span class="request">credit_card</span></td>
@@ -175,7 +183,11 @@
 						<td>To use a set of pre-determined and shared characteristics for a subscription payment, it can be linked to a <span class="request">plan_id</span>.
 						This gives the added ability to check which plans a customer is currently subscribed to with
 						<a href="customers.html#getcustomer">GetCustomer</a>, or pull all customers who are currently
-						subscribed to a plan with <a href="customers.html#getcustomers">GetCustomers</a> and the optional <span class="request">plan_id</span> filter.</td>
+						subscribed to a plan with <a href="customers.html#getcustomers">GetCustomers</a> and the optional <span class="request">plan_id</span> filter.<br /><br />
+						If a <span class="request">plan_id</span> is given, no other parameters are required in the <span class="request">recur</span> node.
+						However, if you pass any other parameters, they will override the plan's default values.  For example, passing an
+						<span class="request">amount</span> parameter in the <span class="request">recur</span> node will change the subscription
+						fee altogether.</td>
 					</tr>
 					<tr>
 						<td class="subnode"><span class="request">interval</span></td>
@@ -189,7 +201,9 @@
 						<td class="subnode"><span class="request">amount</span></td>
 						<td><a href="datatypes.html#money">money</a></td>
 						<td></td>
-						<td>Required if no <span class="request">plan_id</span> is passed.  The amount to charge the user every "interval" days.</td>
+						<td>The amount to charge the user every "interval" days.  If not included in the request, it will default to the plan's amount (if a
+						<span class="request">plan_id</span> is passed) and, if not linked to plan, the main <span class="request">amount</span> parameter
+						will be used.</td>
 					</tr>
 					<tr>
 						<td class="subnode"><span class="request">free_trial</span></td>
@@ -219,7 +233,7 @@
 			</table>
 			<p>Response data:</p>
 			<ul>
-				<li><span class="response">response_code</span> - "1" upon success, "2" upon failure.</li>
+				<li><span class="response">response_code</span> - "100" upon success, "2" upon failure.</li>
 				<li><span class="response">response_text</span> - A verbose description of the response_code.</li>
 				<li><span class="response">recurring_id</span> - The ID of the recurring charge.</li>
 				<li><span class="response">charge_id</span> - The ID of the charge record, if the a charge was made immediately.  Recurring
