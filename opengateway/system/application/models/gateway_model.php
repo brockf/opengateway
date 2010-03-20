@@ -564,11 +564,12 @@ class Gateway_model extends Model
 			$response = $this->$gateway_name->AutoRecurringCharge($client_id, $order_id, $gateway, $params);
 		}
 		else {
+			$response = array();
 			$response['success'] = TRUE;
 		}	
 
 		$CI->load->model('subscription_model');
-		if($response['success'] == TRUE) {
+		if ($response['success'] == TRUE) {
 			// Save the last_charge and next_charge
 			$last_charge = date('Y-m-d');
 			$next_charge = $CI->subscription_model->GetNextChargeDate($params['subscription_id']);
