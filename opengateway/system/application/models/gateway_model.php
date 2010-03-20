@@ -567,15 +567,15 @@ class Gateway_model extends Model
 			$response['success'] = TRUE;
 		}	
 
-		$this->load->model('subscription_model');
+		$CI->load->model('subscription_model');
 		if($response['success'] == TRUE) {
 			// Save the last_charge and next_charge
 			$last_charge = date('Y-m-d');
-			$next_charge = $this->subscription_model->GetNextChargeDate($params['subscription_id']);
+			$next_charge = $CI->subscription_model->GetNextChargeDate($params['subscription_id']);
 			
-			$this->subscription_model->SetChargeDates($params['subscription_id'], $last_charge, $next_charge);
+			$CI->subscription_model->SetChargeDates($params['subscription_id'], $last_charge, $next_charge);
 			
-			$this->order_model->SetStatus($order_id, 1);
+			$CI->order_model->SetStatus($order_id, 1);
 			
 			TriggerTrip('recurring_charge', $client_id, $order_id, $params['subscription_id']);
 		} else {
@@ -585,13 +585,13 @@ class Gateway_model extends Model
 			$num_allowed = $this->config->item('recurring_charge_failures_allowed');
 			$failures = $params['number_charge_failures'];
 			
-			$this->order_model->SetStatus($order_id, 0);
+			$CI->order_model->SetStatus($order_id, 0);
 			
 			$failures++;
-			$this->subscription_model->AddFailure($params['subscription_id'], $failures);
+			$CI->subscription_model->AddFailure($params['subscription_id'], $failures);
 			
 			if($failures >= $num_allowed) {	
-				$this->subscription_model->CancelRecurring($client_id, $params['subscription_id']);
+				$CI->subscription_model->CancelRecurring($client_id, $params['subscription_id']);
 			}
 		}
 		
