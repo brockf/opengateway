@@ -31,6 +31,8 @@ class Cron extends Controller {
 			return FALSE;
 		}
 		
+		$this->load->model('subscription_model');
+		
 		// Expire subscription if the end date is today or before
 		$cancelled = array();
 		$subscriptions = $this->subscription_model->GetAllSubscriptionsForExpiring();
@@ -49,7 +51,6 @@ class Cron extends Controller {
 		
 		// get all the subscriptions with a next_charge date of today for the next charge
 		$today = date('Y-m-d');
-		$this->load->model('subscription_model');
 		$subscriptions = $this->subscription_model->GetAllSubscriptionsByDate('next_charge', $today);
 		
 		$charge_success = array();
