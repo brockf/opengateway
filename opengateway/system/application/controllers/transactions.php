@@ -79,10 +79,19 @@ class Transactions extends Controller {
 		
 		$this->dataset->Initialize('order_model','GetCharges',$columns);
 		
+		$this->load->model('order_model');
+		
+		// get total charges
+		$total_amount = $this->order_model->GetTotalAmount($this->user->Get('client_id'),$this->dataset->params);
+		
 		// sidebar
 		$this->navigation->SidebarButton('New Charge','transactions/create');
 		
-		$this->load->view('cp/transactions.php');
+		$data = array(
+					'total_amount' => $total_amount
+					);
+		
+		$this->load->view('cp/transactions.php', $data);
 	}
 	
 	function all_recurring ()

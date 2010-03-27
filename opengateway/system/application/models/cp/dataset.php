@@ -22,6 +22,7 @@ class Dataset extends Model {
 	var $offset;
 	var $data;
 	var $actions;
+	var $params;
 
     function Dataset() {
         parent::Model();
@@ -153,6 +154,9 @@ class Dataset extends Model {
     	$params = array();
     	
 		$params = (!empty($filter_params)) ? array_merge($params, $filter_params) : $params;
+		
+		// store in a public variable
+		$this->params = $params;
     	
     	$total_rows = count($CI->data_model->$data_function($CI->user->Get('client_id'),$params));
     	

@@ -89,6 +89,109 @@ class Order_model extends Model
 	}
 	
 	/**
+	* Get total matchin revenue
+	*
+	* Returns the total matching revenue with the relevant filters (same as GetCharges)
+	*
+	* @param int $client_id The client ID.
+	* @param int $params['gateway_id'] The gateway ID used for the order. Optional.
+	* @param date $params['start_date'] Only orders after or on this date will be returned. Optional.
+	* @param date $params['end_date'] Only orders before or on this date will be returned. Optional.
+	* @param int $params['customer_id'] The customer id associated with the order. Optional.
+	* @param string $params['customer_internal_id'] The customer's internal id associated with the order. Optional.
+	* @param int $params['id'] The charge ID.  Optional.
+	* @param string $params['amount'] The amount of the charge.  Optional.
+	* @param string $params['customer_last_name'] The last name of the customer.  Optional.
+	* @param int $params['status'] Set to ok/failed to filter results.  Optional.
+	* @param boolean $params['recurring_only'] Returns only orders that are part of a recurring subscription. Optional.
+	* 
+	* @return string|bool Total amount
+	*/
+	
+	function GetTotalAmount($client_id, $params)
+	{
+		// Make sure they only get their own charges
+		$this->db->where('orders.client_id', $client_id);
+		
+		// Check which search paramaters are set
+		
+		if(isset($params['gateway_id'])) {
+			$this->db->where('gateway_id', $params['gateway_id']);
+		}
+		
+		$this->load->library('field_validation');
+		
+		if(isset($params['start_date'])) {
+			$valid_date = $this->field_validation->ValidateDate($params['start_date']);
+			if(!$valid_date) {
+				die($this->response->Error(5007));
+			}
+			
+			$start_date = date('Y-m-d H:i:s', strtotime($params['start_date']));
+			$this->db->where('timestamp >=', $start_date);
+		}
+		
+		if(isset($params['end_date'])) {
+			$valid_date = $this->field_validation->ValidateDate($params['start_date']);
+			if(!$valid_date) {
+				die($this->response->Error(5007));
+			}
+			
+			$end_date = date('Y-m-d H:i:s', strtotime($params['end_date']));
+			$this->db->where('timestamp <=', $end_date);
+		}
+		
+		if(isset($params['customer_id'])) {
+			$this->db->where('orders.customer_id', $params['customer_id']);
+		}
+		
+		if(isset($params['amount'])) {
+			$this->db->where('orders.amount', $params['amount']);
+		}
+		
+		if(isset($params['id'])) {
+			$this->db->where('orders.order_id', $params['id']);
+		}
+		
+		if(isset($params['customer_id'])) {
+			$this->db->where('orders.customer_id', $params['customer_id']);
+		}
+		
+		if(isset($params['customer_last_name'])) {
+			$this->db->like('customers.last_name',$params['customer_last_name']);
+		}
+		
+		if(isset($params['customer_internal_id'])) {
+			$this->db->where('customers.internal_id', $params['customer_internal_id']);
+		}
+		
+		if(isset($params['recurring_only']) && $params['recurring_only'] == 1) {
+			$this->db->where('orders.subscription_id <>', 0);
+		}
+		
+		if (isset($params['recurring_id'])) {
+			$this->db->where('orders.subscription_id', $params['recurring_id']);
+		}
+		
+		if (isset($params['status'])) {
+			$status = ($params['status'] == '1' or $params['status'] == 'ok') ? '1' : '0';
+			$this->db->where('orders.status',$status);
+		}	
+		
+		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
+		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
+		
+		$this->db->select_sum('amount','total_amount');
+		$query = $this->db->get('orders');
+		
+		$array = $query->result_array();
+		
+		$total = $array[0]['total_amount'];
+				
+		return $total;
+	}
+	
+	/**
 	* Search Orders.
 	*
 	* Returns an array of results based on submitted search criteria.  All fields are optional.

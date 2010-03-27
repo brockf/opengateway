@@ -708,7 +708,7 @@ ul.dashboard {
 ul.dashboard li a {
 	display: block;
 	float: left;
-	width: 20%;
+	width: 15%;
 	height: 70px;
 	font-weight: bold;
 	padding-left: 80px;
@@ -716,7 +716,7 @@ ul.dashboard li a {
 	margin-top: 10px;
 	font-size: 14pt;
 	background-repeat: no-repeat;
-	background-position: top left;
+	/*background-position: top left;*/
 	text-decoration: none;
 }
 
@@ -730,4 +730,31 @@ a.dash_records {
 
 a.dash_settings {
 	background-image: url(../images/dash_settings.png);
+}
+
+a.dash_emails {
+	background-image: url(../images/dash_email.png);
+	background-position: 0px 7px;
+}
+
+div.total {
+	background-color: #fcfbe2;
+	border: 1px solid #dad8a3;
+	padding: 10px;
+	text-align: right;
+}
+
+div.total h2 {
+	display: inline;
+	font-size: 14pt;
+	font-weight: bold;
+	color: #333;
+}
+
+div.total p {
+	font-size: 16pt;
+	font-weight: bold;
+	padding-left: 10px;
+	display: inline;
+	color: #000;
 }

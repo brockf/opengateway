@@ -25,4 +25,9 @@ else {
 }	
 ?>
 <?=$this->dataset->TableClose();?>
+
+<div class="total">
+	<h2>Total Amount</h2>
+	<p><?=money_format("%i",$total_amount);?></p>
+</div>
 <?=$this->load->view('cp/footer');?>

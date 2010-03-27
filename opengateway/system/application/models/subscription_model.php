@@ -274,7 +274,10 @@ class Subscription_model extends Model
 	* @param int $params['amount'] Only subscriptions for this amount will be returned. Optional.
 	* @param boolean $params['active'] Returns only active subscriptions. Optional.
 	* @param int $params['plan_id'] Only return subscriptions link to this plan ID
+	* @param int $params['offset'] Offsets the database query.
 	* @param int $params['limit'] Limits the number of results returned. Optional.
+	* @param string $params['sort'] Variable used to sort the results.  Possible values are date, customer_first_name, customer_last_name, amount. Optional
+	* @param string $params['sort_dir'] Used when a sort param is supplied.  Possible values are asc and desc. Optional.
 	* 
 	* @return mixed Array containing results
 	*/

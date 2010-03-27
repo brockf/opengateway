@@ -8,7 +8,10 @@
 		<a class="dash_records" href="<?=site_url('transactions');?>">Records</a>
 	</li>
 	<li>
-		<a class="dash_settings" href="<?=site_url('settings');?>">Settings</a>
+		<a class="dash_emails" href="<?=site_url('settings/emails');?>">Emails</a>
+	</li>
+	<li>
+		<a class="dash_settings" href="<?=site_url('settings/gateways');?>">Gateways</a>
 	</li>
 </ul>
 <div style="clear:both"></div>
