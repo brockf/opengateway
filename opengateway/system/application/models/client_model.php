@@ -672,7 +672,9 @@ class Client_model extends Model
 				$this->db->where('parent_client_id', $client_id);
 			break;
 			case 2:
-				die($this->response->Error(1002));
+				if ($real_client_id != $client_id) {
+					die($this->response->Error(1002));
+				}
 			break;		
 		}
 		

@@ -68,9 +68,9 @@ class Settings extends Controller {
 		$this->load->model('plan_model');
 		$plans = $this->plan_model->GetPlans($this->user->Get('client_id'),array());
 		
+		$options = array();
 		if ($plans) {
 			// build $options
-			$options = array();
 			$options['-1'] = 'No plans.';
 			$options['0'] = 'All plans.';
 			while (list(,$plan) = each($plans)) {
