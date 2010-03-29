@@ -274,7 +274,7 @@ class Plan_model extends Model
 		}
 		
 		if(isset($params['amount'])) {
-			$this->db->where('amount', $params['amount']);
+			$this->db->where('plans.amount', $params['amount']);
 		}
 		
 		if(isset($params['interval'])) {
