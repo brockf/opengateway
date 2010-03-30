@@ -3,12 +3,12 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title><?=$this->navigation->PageTitle();?></title>
-	<link href="<?=base_url();?>css/universal.css" rel="stylesheet" type="text/css" media="screen" />
-	<link href="<?=base_url();?>css/datepicker.css" rel="stylesheet" type="text/css" media="screen" />
-	<script type="text/javascript" src="<?=base_url();?>js/jquery-1.3.2.js"></script>
-	<script type="text/javascript" src="<?=base_url();?>js/date.js"></script>
-	<script type="text/javascript" src="<?=base_url();?>js/datePicker.js"></script>
-	<script type="text/javascript" src="<?=base_url();?>js/universal.js"></script>
+	<link href="<?=branded_include('css/universal.css');?>" rel="stylesheet" type="text/css" media="screen" />
+	<link href="<?=branded_include('css/datepicker.css');?>" rel="stylesheet" type="text/css" media="screen" />
+	<script type="text/javascript" src="<?=branded_include('js/jquery-1.3.2.js');?>"></script>
+	<script type="text/javascript" src="<?=branded_include('js/date.js');?>"></script>
+	<script type="text/javascript" src="<?=branded_include('js/datePicker.js');?>"></script>
+	<script type="text/javascript" src="<?=branded_include('js/universal.js');?>"></script>
 	<? if (isset($head_files)) { ?><?=$head_files;?><? } ?>
 </head>
 <body>

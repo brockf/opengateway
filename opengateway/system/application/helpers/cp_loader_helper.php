@@ -44,3 +44,22 @@ function CPLoader () {
 	// Set default page title
 	$CI->navigation->PageTitle('Control Panel');
 }
+
+// branding functions
+function branded_include ($file) {
+	if (file_exists(BASEPATH . 'branding/custom/' . $file)) {
+		return site_url('branding/custom/' . $file);
+	}
+	else {
+		return site_url('branding/default/' . $file);
+	}
+}
+
+function branded_view ($file) {
+	if (file_exists(BASEPATH . 'branding/views/' . $file)) {
+		return BASEPATH . 'branding/view/' . $file;
+	}
+	else {
+		return $file;
+	}
+}

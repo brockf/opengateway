@@ -16,7 +16,7 @@ if (!isset($form)) {
 			);
 
 } ?>
-<?=$this->load->view('cp/header', array('head_files' => '<link type="text/css" rel="stylesheet" href="' . site_url('js/jwysiwyg/jquery.wysiwyg.css') . '" />
+<?=$this->load->view('cp/header', array('head_files' => '<link type="text/css" rel="stylesheet" href="' . branded_include('js/jwysiwyg/jquery.wysiwyg.css') . '" />
 <script type="text/javascript" src="' . site_url('js/jwysiwyg/jquery.wysiwyg.js') . '"></script>
 <script type="text/javascript" src="' . site_url('js/form.email.js') . '"></script>'));?>
 <h1><?=$form_title;?></h1>

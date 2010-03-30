@@ -2,16 +2,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>Control Panel | Login</title>
-	<link href="<?=base_url();?>css/universal.css" rel="stylesheet" type="text/css" media="screen" />
-	<link href="<?=base_url();?>css/login.css" rel="stylesheet" type="text/css" media="screen" />
-	<script type="text/javascript" src="<?=base_url();?>js/jquery-1.3.2.js"></script>
-	<script type="text/javascript" src="<?=base_url();?>js/universal.js"></script>
+	<title><?=$this->config->line('server_name');?> | Login</title>
+	<link href="<?=branded_include('css/universal.css');?>" rel="stylesheet" type="text/css" media="screen" />
+	<link href="<?=branded_include('css/login.css');?>" rel="stylesheet" type="text/css" media="screen" />
+	<script type="text/javascript" src="<?=branded_include('js/jquery-1.3.2.js');?>"></script>
+	<script type="text/javascript" src="<?=branded_include('js/universal.js');?>"></script>
 </head>
 <body>
 	<div id="notices"><?=get_notices();?></div>
 	<div id="login_form">
 		<h1>Control Panel</h1>
+		<h2><?=$this->config->line('server_name');?></h2>
 		<form method="post" action="<?=site_url('dashboard/do_login');?>">
 			<ul>
 				<li>
