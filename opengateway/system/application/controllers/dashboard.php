@@ -73,14 +73,14 @@ class Dashboard extends Controller {
 			$data['no_revenue'] = 'true';
 		}
 		
-		$this->load->view('cp/dashboard', $data);
+		$this->load->view(branded_view('cp/dashboard'), $data);
 	}
 
 	/**
 	* Show login screen
 	*/
 	function login() {
-		$this->load->view('cp/login');
+		$this->load->view(branded_view('cp/login'));
 	}
 	
 	/**

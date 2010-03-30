@@ -109,7 +109,7 @@ class Navigation extends Model {
     		return $this->pagetitle;
     	}
     	else {
-    		$this->pagetitle = $set . ' | ' . $this->config->line('server_name');
+    		$this->pagetitle = $set . ' | ' . $this->config->item('server_name');
     		return $this->pagetitle;
     	}
     }

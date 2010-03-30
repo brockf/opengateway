@@ -44,7 +44,7 @@ class Account extends Controller {
 					'form' => $client
 					);
 				
-		$this->load->view('cp/account_form.php',$data);
+		$this->load->view(branded_view('cp/account_form.php'),$data);
 	}
 	
 	/**

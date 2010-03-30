@@ -91,7 +91,7 @@ class Transactions extends Controller {
 					'total_amount' => $total_amount
 					);
 		
-		$this->load->view('cp/transactions.php', $data);
+		$this->load->view(branded_view('cp/transactions.php'), $data);
 	}
 	
 	function all_recurring ()
@@ -175,7 +175,7 @@ class Transactions extends Controller {
 		// sidebar
 		$this->navigation->SidebarButton('New Charge','transactions/create');
 		
-		$this->load->view('cp/recurrings.php');
+		$this->load->view(branded_view('cp/recurrings.php'));
 	}
 	
 	/**
@@ -212,7 +212,7 @@ class Transactions extends Controller {
 					'gateways' => $gateways
 					);
 					
-		$this->load->view('cp/new_transaction.php', $data);
+		$this->load->view(branded_view('cp/new_transaction.php'), $data);
 		return true;
 	}
 	
@@ -352,7 +352,7 @@ class Transactions extends Controller {
 		
 		$data['details'] = $details;
 		 
-		$this->load->view('cp/charge', $data);
+		$this->load->view(branded_view('cp/charge'), $data);
 		
 		return true;
 	}
@@ -378,7 +378,7 @@ class Transactions extends Controller {
 		
 		$data['gateway'] = $gateway;
 		
-		$this->load->view('cp/recurring', $data);
+		$this->load->view(branded_view('cp/recurring'), $data);
 	}
 	
 	/**

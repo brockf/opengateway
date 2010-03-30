@@ -1,4 +1,4 @@
-<?=$this->load->view('cp/header', array('head_files' => '<script type="text/javascript" src="' . branded_include('js/form.address.js') . '"></script>'));?>
+<?=$this->load->view(branded_view('cp/header'), array('head_files' => '<script type="text/javascript" src="' . branded_include('js/form.address.js') . '"></script>'));?>
 <h1><?=$form_title;?></h1>
 <form class="form" id="form_account" method="post" action="<?=site_url($form_action);?>">
 <fieldset>
@@ -73,4 +73,4 @@
 	<input type="submit" name="go_account" value="<?=ucfirst($form_title);?>" />
 </div>
 </form>
-<?=$this->load->view('cp/footer');?>
+<?=$this->load->view(branded_view('cp/footer'));?>

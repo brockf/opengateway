@@ -1,9 +1,9 @@
-<?php  $this->load->view('header');  ?>
+<?php  $this->load->view(branded_view('header');  ?>
 
 <p><?php echo $message; ?></p>
 
 <p><?php echo $no; ?>&nbsp;&nbsp;|&nbsp;&nbsp;<?php echo $yes; ?>
 
-<?php $this->load->view('footer'); 
+<?php $this->load->view(branded_view('footer'); 
 /* End of file delete.php */
 /* Location: ./system/scaffolding/views/delete.php */

@@ -1,4 +1,4 @@
-<?=$this->load->view('cp/header');?>
+<?=$this->load->view(branded_view('cp/header'));?>
 <h1>Clients</h1>
 <? if ($this->user->Get('client_type_id') == '1') { ?>
 <p class="warning"><span>As a <b><?=$this->user->Get('client_type');?></b>, you have the ability to Create, Update, Suspend, Unsuspend, and Delete client accounts.  Please do
@@ -33,4 +33,4 @@ else {
 }	
 ?>
 <?=$this->dataset->TableClose();?>
-<?=$this->load->view('cp/footer');?>
+<?=$this->load->view(branded_view('cp/footer'));?>

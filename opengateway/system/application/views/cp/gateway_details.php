@@ -1,4 +1,4 @@
-<?=$this->load->view('cp/header');?>
+<?=$this->load->view(branded_view('cp/header'));?>
 <h1><?=$form_title;?></h1>
 <form class="form" id="form_plan" method="post" action="<?=$form_action;?>">
 <input type="hidden" name="external_api" value="<?=$external_api;?>" />
@@ -29,4 +29,4 @@
 	<input type="submit" name="go_gateway" value="Save Gateway" />
 </div>
 </form>
-<?=$this->load->view('cp/footer');?>
+<?=$this->load->view(branded_view('cp/footer'));?>

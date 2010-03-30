@@ -51,7 +51,7 @@ $autoload['libraries'] = array('database', 'response', 'email');
 |	$autoload['helper'] = array('url', 'file');
 */
 
-$autoload['helper'] = array('triggertrip','date','cp_loader','local_time');
+$autoload['helper'] = array('auto_updater','triggertrip','date','cp_loader','local_time');
 
 
 /*
@@ -79,7 +79,7 @@ $autoload['plugin'] = array();
 |
 */
 
-$autoload['config'] = array();
+$autoload['config'] = array('version');
 
 
 /*

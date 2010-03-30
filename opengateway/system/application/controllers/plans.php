@@ -74,7 +74,7 @@ class Plans extends Controller {
 		// sidebar
 		$this->navigation->SidebarButton('Create a plan','plans/new_plan');
 		
-		$this->load->view('cp/plans.php');
+		$this->load->view(branded_view('cp/plans.php'));
 	}
 	
 	/**
@@ -125,7 +125,7 @@ class Plans extends Controller {
 					'form_action' => 'plans/post/new'
 					);
 				
-		$this->load->view('cp/plan_form.php',$data);
+		$this->load->view(branded_view('cp/plan_form.php'),$data);
 	}
 	
 	/**
@@ -237,6 +237,6 @@ class Plans extends Controller {
 					'triggers' => $triggers
 				);
 				
-		$this->load->view('cp/plan_form.php',$data);
+		$this->load->view(branded_view('cp/plan_form.php'),$data);
 	}
 }

@@ -93,7 +93,7 @@ class Customers extends Controller {
 		// add actions
 		$this->dataset->Action('Delete','customers/delete');
 		
-		$this->load->view('cp/customers.php');
+		$this->load->view(branded_view('cp/customers.php'));
 	}
 	
 	/**
@@ -149,7 +149,7 @@ class Customers extends Controller {
 					'form' => $customer
 					);
 				
-		$this->load->view('cp/customer_form.php',$data);
+		$this->load->view(branded_view('cp/customer_form.php'),$data);
 	}
 	
 	/**

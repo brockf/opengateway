@@ -105,7 +105,7 @@ class Settings extends Controller {
 		// sidebar
 		$this->navigation->SidebarButton('New Email','settings/new_email');
 		
-		$this->load->view('cp/emails.php', array('plans' => $options));
+		$this->load->view(branded_view('cp/emails.php'), array('plans' => $options));
 	}
 	
 	/**
@@ -159,7 +159,7 @@ class Settings extends Controller {
 					'form_action' => 'settings/post_email/new'
 					);
 				
-		$this->load->view('cp/email_form.php',$data);
+		$this->load->view(branded_view('cp/email_form.php'),$data);
 	}
 	
 	/**
@@ -249,7 +249,7 @@ class Settings extends Controller {
 					'form_action' => 'settings/post_email/edit/' . $email['id']
 					);
 				
-		$this->load->view('cp/email_form.php',$data);
+		$this->load->view(branded_view('cp/email_form.php'),$data);
 	}
 	
 	/**
@@ -320,7 +320,7 @@ class Settings extends Controller {
 		// sidebar
 		$this->navigation->SidebarButton('Setup New Gateway','settings/new_gateway');
 		
-		$this->load->view('cp/gateways.php');
+		$this->load->view(branded_view('cp/gateways.php'));
 	}
 	
 	/**
@@ -368,7 +368,7 @@ class Settings extends Controller {
 					'gateways' => $gateways
 					);
 		
-		$this->load->view('cp/new_gateway_type.php',$data);
+		$this->load->view(branded_view('cp/new_gateway_type.php'),$data);
 	}
 	
 	/**
@@ -398,7 +398,7 @@ class Settings extends Controller {
 					'fields' => $settings['field_details']
 					);
 		
-		$this->load->view('cp/gateway_details.php',$data);
+		$this->load->view(branded_view('cp/gateway_details.php'),$data);
 	}
 	
 	/**
@@ -485,7 +485,7 @@ class Settings extends Controller {
 					'values' => $gateway
 					);
 		
-		$this->load->view('cp/gateway_details.php',$data);
+		$this->load->view(branded_view('cp/gateway_details.php'),$data);
 	}
 	
 	/**
@@ -512,7 +512,7 @@ class Settings extends Controller {
 					'secret_key' => $this->user->Get('secret_key')
 					);	
 					
-		$this->load->view('cp/api_key.php',$data);
+		$this->load->view(branded_view('cp/api_key.php'),$data);
 	}
 	
 	/**

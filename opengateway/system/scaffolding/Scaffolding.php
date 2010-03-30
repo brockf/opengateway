@@ -102,7 +102,7 @@ class Scaffolding {
 						'action' => $this->base_uri.'/insert'
 					);
 	
-		$this->CI->load->view('add', $data);
+		$this->CI->load->view(branded_view('add', $data);
 	}
 	
 	// --------------------------------------------------------------------
@@ -143,7 +143,7 @@ class Scaffolding {
 		
 		if ($total_rows < 1)
 		{
-			return $this->CI->load->view('no_data');
+			return $this->CI->load->view(branded_view('no_data');
 		}
 		
 		// Set the query limit/offset
@@ -179,7 +179,7 @@ class Scaffolding {
 						'paginate'	=> $this->CI->pagination->create_links()
 					);
 						
-		$this->CI->load->view('view', $data);
+		$this->CI->load->view(branded_view('view', $data);
 	}
 	
 	// --------------------------------------------------------------------
@@ -213,7 +213,7 @@ class Scaffolding {
 						'action'	=> $this->base_uri.'/update/'.$this->CI->uri->segment(4)
 					);
 	
-		$this->CI->load->view('edit', $data);
+		$this->CI->load->view(branded_view('edit', $data);
 	}
 	
 	// --------------------------------------------------------------------
@@ -261,7 +261,7 @@ class Scaffolding {
 						'yes'		=> anchor(array($this->base_uri, 'do_delete', $this->CI->uri->segment(4)), ( ! isset($this->lang['scaff_yes'])) ? 'Yes' : $this->lang['scaff_yes'])
 					);
 	
-		$this->CI->load->view('delete', $data);
+		$this->CI->load->view(branded_view('delete', $data);
 	}
 	
 	// --------------------------------------------------------------------

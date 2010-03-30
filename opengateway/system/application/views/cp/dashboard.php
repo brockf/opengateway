@@ -1,4 +1,4 @@
-<?=$this->load->view('cp/header');?>
+<?=$this->load->view(branded_view('cp/header'));?>
 <h1>Dashboard</h1>
 <ul class="dashboard">
 	<li>
@@ -20,4 +20,4 @@
 <? } else { ?>
 <img src="<?=site_url('writeable/rev_chart_' . $this->user->Get('client_id') . '.png');?>" alt="Revenue Chart" style="width:100%; height: 260px" />
 <? } ?>
-<?=$this->load->view('cp/footer');?>
+<?=$this->load->view(branded_view('cp/footer'));?>

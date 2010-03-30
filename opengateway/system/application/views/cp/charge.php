@@ -1,4 +1,4 @@
-<?=$this->load->view('cp/header');?>
+<?=$this->load->view(branded_view('cp/header'));?>
 <h1>Charge Details</h1>
 <? if (isset($recurring_id)) { ?>
 <div id="charge_recurring">
@@ -56,4 +56,4 @@ This charge is related to recurring charge #<a href="<?=site_url('transactions/r
 </div>
 
 <? } ?>
-<?=$this->load->view('cp/footer');?>
+<?=$this->load->view(branded_view('cp/footer'));?>

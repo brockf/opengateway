@@ -1,4 +1,4 @@
-<?php  $this->load->view('header');  ?>
+<?php  $this->load->view(branded_view('header');  ?>
 
 <table border="0" cellpadding="0" cellspacing="1" style="width:100%">
  <tr>
@@ -22,6 +22,6 @@
 
 <?php echo $paginate; ?>
 
-<?php $this->load->view('footer'); 
+<?php $this->load->view(branded_view('footer'); 
 /* End of file view.php */
 /* Location: ./system/scaffolding/views/view.php */

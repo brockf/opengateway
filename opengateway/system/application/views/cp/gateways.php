@@ -1,4 +1,4 @@
-<?=$this->load->view('cp/header');?>
+<?=$this->load->view(branded_view('cp/header'));?>
 <h1>Manage Gateways</h1>
 <?=$this->dataset->TableHead();?>
 <?
@@ -24,4 +24,4 @@ else {
 }	
 ?>
 <?=$this->dataset->TableClose();?>
-<?=$this->load->view('cp/footer');?>
+<?=$this->load->view(branded_view('cp/footer'));?>

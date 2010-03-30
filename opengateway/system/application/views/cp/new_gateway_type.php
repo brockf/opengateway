@@ -1,4 +1,4 @@
-<?=$this->load->view('cp/header'); ?>
+<?=$this->load->view(branded_view('cp/header'); ?>
 <h1>Setup New Gateway</h1>
 <form class="form" id="form_email" method="post" action="<?=site_url('settings/new_gateway_details');?>">
 <fieldset>
@@ -20,4 +20,4 @@
 	<input type="submit" name="go_gateway" value="Continue setting up gateway" />
 </div>
 </form>
-<?=$this->load->view('cp/footer');?>
+<?=$this->load->view(branded_view('cp/footer'));?>

@@ -1,4 +1,4 @@
-<?=$this->load->view('cp/header');?>
+<?=$this->load->view(branded_view('cp/header'));?>
 <h1>Recurring Details</h1>
 <div id="recurring_info">
 <p><b>Recurring ID</b><br />
@@ -52,4 +52,4 @@
 </div>
 
 <? } ?>
-<?=$this->load->view('cp/footer');?>
+<?=$this->load->view(branded_view('cp/footer'));?>

@@ -5,7 +5,9 @@
 - Setup SSL and edit config.php to turn SSL on
 - Rename and edit /system/applications/config/database.php for database info
 - Setup cronjob
-- To brand, create your own "css", "js" and "views" directories in /branding/custom - these will not be overwritten in future pushes
+- To brand, create your own "css", "js", "images", and "views/cp" directories in /branding/custom - these will not be overwritten in future pushes
+
+- TODO: HANDLE VIEWS
 	
 5  	5  	*  	*  	*	wget http://platform.opengateway.net/cron/subscriptionmaintenance/f39g8gjfdg848g92 >/dev/null 2>&1
 */5 * 	* 	* 	*	wget http://platform.opengateway.net/cron/sendnotifications/f39g8gjfdg848g92 >/dev/null 2>&1

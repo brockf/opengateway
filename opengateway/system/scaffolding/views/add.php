@@ -1,4 +1,4 @@
-<?php  $this->load->view('header');  ?>
+<?php  $this->load->view(branded_view('header');  ?>
 
 <p><?php echo anchor(array($base_uri, 'view'), '&lt; '.$scaff_view_all); ?></p>
 
@@ -27,6 +27,6 @@
 
 </form>
 
-<?php $this->load->view('footer'); 
+<?php $this->load->view(branded_view('footer'); 
 /* End of file add.php */
 /* Location: ./system/scaffolding/views/add.php */

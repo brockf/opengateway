@@ -1,4 +1,4 @@
-<?=$this->load->view('cp/header');?>
+<?=$this->load->view(branded_view('cp/header'));?>
 <h1>Latest transactions</h1>
 <?=$this->dataset->TableHead();?>
 <?
@@ -30,4 +30,4 @@ else {
 	<h2>Total Amount</h2>
 	<p><?=money_format("%i",$total_amount);?></p>
 </div>
-<?=$this->load->view('cp/footer');?>
+<?=$this->load->view(branded_view('cp/footer'));?>

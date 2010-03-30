@@ -174,7 +174,7 @@ class Response
 			
 			$CI->navigation->PageTitle('System Error');
 			
-			$view = $CI->load->view('cp/error.php', $error_array, true);
+			$view = $CI->load->view(branded_view('cp/error.php'), $error_array, true);
 			
 			return $view;
 		}

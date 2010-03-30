@@ -77,7 +77,7 @@ class Clients extends Controller {
 		// sidebar
 		$this->navigation->SidebarButton('New Client','clients/create');
 		
-		$this->load->view('cp/clients.php');
+		$this->load->view(branded_view('cp/clients.php'));
 	}
 	
 	/**
@@ -156,7 +156,7 @@ class Clients extends Controller {
 					'countries' => $countries
 					);
 				
-		$this->load->view('cp/client_form.php',$data);
+		$this->load->view(branded_view('cp/client_form.php'),$data);
 	}
 	
 	/**
@@ -186,7 +186,7 @@ class Clients extends Controller {
 					'form' => $client
 					);
 				
-		$this->load->view('cp/client_form.php',$data);
+		$this->load->view(branded_view('cp/client_form.php'),$data);
 	}
 	
 	/**

@@ -60,7 +60,7 @@ CREATE TABLE `authnet_log` (
   `card_code_response` varchar(1) default NULL,
   `cardholder_authentication_verification_response` varchar(1) default NULL,
   PRIMARY KEY  (`response_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=155 DEFAULT CHARSET=latin1 AUTO_INCREMENT=155 ;
+) ENGINE=MyISAM AUTO_INCREMENT=155 DEFAULT CHARSET=utf8 AUTO_INCREMENT=155 ;
 
 -- 
 -- Dumping data for table `authnet_log`
@@ -88,7 +88,7 @@ CREATE TABLE `client_emails` (
   `bcc_client` tinyint(1) NOT NULL,
   `active` tinyint(1) NOT NULL,
   PRIMARY KEY  (`client_email_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `client_emails`
@@ -107,7 +107,7 @@ CREATE TABLE `client_gateway_params` (
   `field` varchar(255) NOT NULL,
   `value` varchar(255) NOT NULL,
   PRIMARY KEY  (`client_gateway_params_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `client_gateway_params`
@@ -128,7 +128,7 @@ CREATE TABLE `client_gateways` (
   `deleted` int(11) NOT NULL default '0',
   `create_date` date NOT NULL,
   PRIMARY KEY  (`client_gateway_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `client_gateways`
@@ -145,7 +145,7 @@ CREATE TABLE `client_types` (
   `client_type_id` int(11) NOT NULL,
   `description` varchar(20) NOT NULL,
   PRIMARY KEY  (`client_type_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- 
 -- Dumping data for table `client_types`
@@ -185,7 +185,7 @@ CREATE TABLE `clients` (
   `suspended` int(11) NOT NULL default '0',
   `deleted` int(11) NOT NULL default '0',
   PRIMARY KEY  (`client_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
 -- 
 -- Dumping data for table `clients`
@@ -205,7 +205,7 @@ CREATE TABLE `countries` (
   `iso3` varchar(3) NOT NULL,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY  (`country_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- 
 -- Dumping data for table `countries`
@@ -482,7 +482,7 @@ CREATE TABLE `customers` (
   `active` tinyint(4) NOT NULL,
   `date_created` datetime NOT NULL,
   PRIMARY KEY  (`customer_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `customers`
@@ -503,7 +503,7 @@ CREATE TABLE `email_triggers` (
   `available_variables` text NOT NULL,
   `active` tinyint(1) NOT NULL,
   PRIMARY KEY  (`email_trigger_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=latin1 AUTO_INCREMENT=10 ;
+) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 AUTO_INCREMENT=10 ;
 
 -- 
 -- Dumping data for table `email_triggers`
@@ -562,7 +562,7 @@ CREATE TABLE `exact_log` (
   `MerchantURL` varchar(255) NOT NULL,
   `CTR` text NOT NULL,
   PRIMARY KEY  (`response_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `exact_log`
@@ -586,7 +586,7 @@ CREATE TABLE `external_apis` (
   `arb_test_url` varchar(255) NOT NULL,
   `arb_dev_url` varchar(255) NOT NULL,
   PRIMARY KEY  (`external_api_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
 
 -- 
 -- Dumping data for table `external_apis`
@@ -618,7 +618,7 @@ CREATE TABLE `order_authorizations` (
   `tran_id` varchar(255) NOT NULL,
   `authorization_code` varchar(20) NOT NULL,
   PRIMARY KEY  (`order_authorization_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `order_authorizations`
@@ -643,7 +643,7 @@ CREATE TABLE `orders` (
   `status` tinyint(1) NOT NULL default '0',
   `timestamp` datetime NOT NULL,
   PRIMARY KEY  (`order_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `orders`
@@ -660,7 +660,7 @@ CREATE TABLE `plan_types` (
   `plan_type_id` int(11) NOT NULL,
   `type` varchar(20) NOT NULL,
   PRIMARY KEY  (`plan_type_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- 
 -- Dumping data for table `plan_types`
@@ -687,7 +687,7 @@ CREATE TABLE `plans` (
   `notification_url` varchar(255) NOT NULL,
   `deleted` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`plan_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `plans`
@@ -706,7 +706,7 @@ CREATE TABLE `request_log` (
   `remote_ip` varchar(11) NOT NULL,
   `request` text NOT NULL,
   PRIMARY KEY  (`request_log_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `request_log`
@@ -724,7 +724,7 @@ CREATE TABLE `request_types` (
   `name` varchar(20) NOT NULL,
   `model` varchar(20) NOT NULL,
   PRIMARY KEY  (`request_type_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- 
 -- Dumping data for table `request_types`
@@ -782,7 +782,7 @@ CREATE TABLE `required_fields` (
   `request_type_id` int(11) NOT NULL,
   `field_name` varchar(20) NOT NULL,
   PRIMARY KEY  (`required_field_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=55 DEFAULT CHARSET=latin1 AUTO_INCREMENT=55 ;
+) ENGINE=MyISAM AUTO_INCREMENT=55 DEFAULT CHARSET=utf8 AUTO_INCREMENT=55 ;
 
 -- 
 -- Dumping data for table `required_fields`
@@ -841,7 +841,7 @@ CREATE TABLE `states` (
   `name_short` char(2) NOT NULL default '' COMMENT 'USPS Abbreviation',
   PRIMARY KEY  (`state_id`),
   UNIQUE KEY `name_long` (`name_long`)
-) ENGINE=MyISAM AUTO_INCREMENT=64 DEFAULT CHARSET=latin1 COMMENT='US States' AUTO_INCREMENT=64 ;
+) ENGINE=MyISAM AUTO_INCREMENT=64 DEFAULT CHARSET=utf8 COMMENT='US States' AUTO_INCREMENT=64 ;
 
 -- 
 -- Dumping data for table `states`
@@ -939,7 +939,7 @@ CREATE TABLE `subscriptions` (
   `cancel_date` datetime NOT NULL,
   `timestamp` date NOT NULL,
   PRIMARY KEY  (`subscription_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `subscriptions`

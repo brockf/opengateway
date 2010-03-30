@@ -1,4 +1,4 @@
-<?=$this->load->view('cp/header', array('head_files' => '<script type="text/javascript" src="' . branded_include('js/form.address.js') . '"></script>
+<?=$this->load->view(branded_view('cp/header', array('head_files' => '<script type="text/javascript" src="' . branded_include('js/form.address.js') . '"></script>
 <script type="text/javascript" src="' . site_url('js/form.transaction.js') . '"></script>')); ?>
 <h1>New Transaction</h1>
 <form class="form" id="form_transaction" method="post" action="<?=site_url('transactions/post');?>">
@@ -275,4 +275,4 @@ begin processing transactions, you should <a href="<?=site_url('settings/new_gat
 	<input type="submit" name="go_transation" value="Submit Transaction" />
 </div>
 </form>
-<?=$this->load->view('cp/footer');?>
+<?=$this->load->view(branded_view('cp/footer'));?>
