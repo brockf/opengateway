@@ -378,13 +378,7 @@ class Gateway_model extends Model
 			// use plan amount if a different first amount was not given
 			$params['amount'] = (isset($params['amount'])) ? $params['amount'] : $amount;
 			
-			$plan_id = $plan_details->plan_id;
-		
-			// if there are specified occurrences, we should create an end-date that works with it
-			if ($occurrences != 0) {
-				$total = $occurrences * ($interval * 86400);
-				$recur['end_date'] = date('Y-m-d',time() + $total - $interval);
-			}	
+			$plan_id = $plan_details->plan_id;	
 		} else {	
 			if(!isset($recur['interval'])) {
 				die($this->response->Error(5011));
@@ -444,7 +438,7 @@ class Gateway_model extends Model
 		// If an end date was passed, make sure it's valid
 		if(isset($recur['end_date'])) {
 			// adjust to server time
-			$recur['end_date'] = server_time($recur['end_date']);
+			$recur['end_date'] = (!isset($end_date_set_by_server)) ? server_time($recur['end_date']) : $recur['end_date'];
 			
 			if(strtotime($recur['end_date']) < time()) {
 				die($this->response->Error(5002));
@@ -453,6 +447,8 @@ class Gateway_model extends Model
 			} else {
 				$end_date = date('Y-m-d', strtotime($recur['end_date']));
 			}
+		} elseif (isset($occurrences) and !empty($occurrences)) {
+			$end_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400 * $occurrences));
 		} elseif (isset($recur['occurrences'])) {
 			$end_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400 * $recur['occurrences']));
 		} else {
