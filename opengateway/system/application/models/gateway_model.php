@@ -382,8 +382,8 @@ class Gateway_model extends Model
 		
 			// if there are specified occurrences, we should create an end-date that works with it
 			if ($occurrences != 0) {
-				$total = $occurrences * ($interval*86400);
-				$recur['end_date'] = date('Y-m-d',time() + ($interval*86400));
+				$total = $occurrences * ($interval * 86400);
+				$recur['end_date'] = date('Y-m-d',time() + $total - $interval);
 			}	
 		} else {	
 			if(!isset($recur['interval'])) {
@@ -454,7 +454,7 @@ class Gateway_model extends Model
 				$end_date = date('Y-m-d', strtotime($recur['end_date']));
 			}
 		} elseif (isset($recur['occurrences'])) {
-			$end_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400 * ($recur['occurrences']-1)) + 86400);
+			$end_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400 * $recur['occurrences']));
 		} else {
 			// Find the end date based on the max end date
 			$end_date = date('Y-m-d', strtotime($start_date) + ($this->config->item('max_recurring_days_from_today') * 86400));
