@@ -512,6 +512,9 @@ class Gateway_model extends Model
 		}
 		
 		if ($response['response_code'] == '100') {
+			// delayed recurrings don't have a charge ID
+			$response['charge_id'] = (isset($response['charge_id'])) ? $response['charge_id'] : FALSE;
+			
 			TriggerTrip('new_recurring', $client_id, $response['charge_id'], $response['recurring_id']);
 		}
 		
