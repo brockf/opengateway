@@ -1,4 +1,4 @@
-<?=$this->load->view(branded_view('cp/header'); ?>
+<?=$this->load->view(branded_view('cp/header')); ?>
 <h1>Setup New Gateway</h1>
 <form class="form" id="form_email" method="post" action="<?=site_url('settings/new_gateway_details');?>">
 <fieldset>
