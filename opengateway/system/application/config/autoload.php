@@ -39,7 +39,7 @@
 |	$autoload['libraries'] = array('database', 'session', 'xmlrpc');
 */
 
-$autoload['libraries'] = array('database', 'response', 'email');
+$autoload['libraries'] = array('database', 'auto_updater', 'response', 'email');
 
 
 /*
@@ -51,7 +51,7 @@ $autoload['libraries'] = array('database', 'response', 'email');
 |	$autoload['helper'] = array('url', 'file');
 */
 
-$autoload['helper'] = array('auto_updater','triggertrip','date','cp_loader','local_time');
+$autoload['helper'] = array('triggertrip','date','cp_loader','local_time');
 
 
 /*
