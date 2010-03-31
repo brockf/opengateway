@@ -27,9 +27,8 @@ class Auto_updater {
 		$run_updates = array();
 		
 		// now let's check the DB version (if it exists)
-		if ($software_version == '1.0') {
+		if (!$CI->db->table_exists('version')) {
 			// no DB version tracker
-			$run_updates[] = '1.0';
 			$db_version = '0';
 		}
 		else {
@@ -41,7 +40,7 @@ class Auto_updater {
 		}
 		
 		// are we up-to-date?
-		if ($software_version > $db_version and $software_version != '1.0') {
+		if ($software_version > $db_version) {
 			// check for update files to run
 			$CI->load->helper('directory');
 			
