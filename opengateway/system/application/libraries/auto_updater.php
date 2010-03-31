@@ -41,7 +41,7 @@ class Auto_updater {
 		}
 		
 		// are we up-to-date?
-		if ($software_version != $db_version and $software_version != '1.0') {
+		if ($software_version > $db_version and $software_version != '1.0') {
 			// check for update files to run
 			$CI->load->helper('directory');
 			
@@ -50,7 +50,7 @@ class Auto_updater {
 			foreach ($files as $file) {
 				$file_version = str_replace('.php','',$file);
 				
-				if ($file_version > $software_version) {
+				if ($file_version > $db_version) {
 					$run_updates[] = $file_version;
 				}
 			}
@@ -64,9 +64,9 @@ class Auto_updater {
 			foreach ($run_updates as $update) {
 				include(APPPATH . 'updates/' . $update . '.php');
 			}
-			
-			// update database version
-			$CI->db->query('UPDATE `version` SET `db_version`=\'' . $software_version . '\'');
 		}
+		
+		// update database version
+		$CI->db->query('UPDATE `version` SET `db_version`=\'' . $software_version . '\'');
 	}
 }
