@@ -15,13 +15,7 @@ class Auto_updater {
 	function Auto_updater () {
 		$CI =& get_instance();
 		
-		// if no version exists, it's version 1.0 (we introduced versions post-release)
-		if (!$CI->config->item('opengateway_version','version')) {
-			$software_version = '1.0';
-		}
-		else {
-			$software_version = $CI->config->item('opengateway_version','version');
-		}
+		$software_version = $CI->config->item('opengateway_version');
 		
 		// track the update files to run
 		$run_updates = array();
@@ -33,9 +27,10 @@ class Auto_updater {
 		}
 		else {
 			// get DB version
-			$CI->db->get('version');
+			$query = $CI->db->get('version');
 			$version = $query->row();
-			$db_version = $version['db_version'];
+			
+			$db_version = $version->db_version;
 			unset($version);
 		}
 		
