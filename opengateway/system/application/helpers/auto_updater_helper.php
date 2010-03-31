@@ -28,6 +28,7 @@ $run_updates = array();
 if ($software_version == '1.0') {
 	// no DB version tracker
 	$run_updates[] = '1.0';
+	$db_version = '0';
 }
 else {
 	// get DB version
@@ -38,11 +39,11 @@ else {
 }
 
 // are we up-to-date?
-if ($software_version != $version) {
+if ($software_version != $db_version and $software_version != '1.0') {
 	// check for update files to run
 	$CI->load->helper('directory');
 	
-	$files = directory_map($CI->config->system_folder() . '/updates');
+	$files = directory_map(APPPATH . 'updates');
 	
 	foreach ($files as $file) {
 		$file_version = str_replace('.php','',$file);
@@ -56,9 +57,9 @@ if ($software_version != $version) {
 // run updates?
 if (!empty($run_updates)) {
 	// make sure we run the earlier updates first
-	$run_updates = sort($run_updates);
+	sort($run_updates);
 	
 	foreach ($run_updates as $update) {
-		include($CI->config->system_folder() . 'updates/' . $update . '.php');
+		include(APPPATH . 'updates/' . $update . '.php');
 	}
 }
