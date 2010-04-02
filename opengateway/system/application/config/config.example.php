@@ -338,5 +338,10 @@ $config['support_url'] = 'http://www.opengateway.net/support/';
 $config['ssl_active'] = false;
 $config['cron_key'] = '0000000000000000';
 
+// rewrite base URL to SSL if accessed via SSL
+if ($_SERVER["SERVER_PORT"] == "443") {
+	$config['base_url'] = str_replace('http://','https://',$config['base_url']);
+}
+
 /* End of file config.php */
 /* Location: ./system/application/config/config.php */
