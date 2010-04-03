@@ -6,6 +6,12 @@ function CPLoader () {
 	// define active Control Panel
 	define("_CONTROLPANEL","1");
 	
+	// redirect to SSL?
+	if ($CI->config->item('ssl_active') == TRUE and $_SERVER["REQUEST_PORT"] != "443") {
+		header('Location: ' . base_url());
+		die();
+	}	
+	
 	$CI->load->library('session');
 	$CI->load->model('cp/user','user');
 	$CI->load->helper('url');
