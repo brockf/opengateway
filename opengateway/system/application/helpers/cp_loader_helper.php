@@ -8,7 +8,7 @@ function CPLoader () {
 	
 	// redirect to SSL?
 	if ($CI->config->item('ssl_active') == TRUE and $_SERVER["SERVER_PORT"] != "443") {
-		header('Location: ' . str_replace('https://','http://',$CI->config->item('base_url')));
+		header('Location: ' . str_replace('http://','https://',$CI->config->item('base_url')));
 		die();
 	}	
 	
