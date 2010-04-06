@@ -118,6 +118,9 @@ class Client_model extends Model
 			die($this->response->Error(2003));
 		}
 		
+		// handle empty phone
+		$params['phone'] = (isset($params['phone'])) ? $params['phone'] : '000-000-0000';
+		
 		// Generate an API ID and Secret Key
 		$this->load->library('key');
 		$api_id = strtoupper($this->key->GenerateKey(20));
