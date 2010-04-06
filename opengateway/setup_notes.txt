@@ -11,3 +11,5 @@
 	
 5  	5  	*  	*  	*	wget http://platform.opengateway.net/cron/subscriptionmaintenance/f39g8gjfdg848g92 >/dev/null 2>&1
 */5 * 	* 	* 	*	wget http://platform.opengateway.net/cron/sendnotifications/f39g8gjfdg848g92 >/dev/null 2>&1
+
+wget -O /dev/null http://opengateway.eeweb.com/cron/sendnotifications/7huwuG4Y
