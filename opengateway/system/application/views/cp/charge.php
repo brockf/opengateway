@@ -25,7 +25,7 @@ This charge is related to recurring charge #<a href="<?=site_url('transactions/r
 <p><b>Credit Card</b><br />
 **** <?=$card_last_four;?></p>
 <p><b>Status</b><br />
-<?=$status;?> <img src="<?=site_url('images/' . $status . '.png');?>" alt="<?=$status;?>" /></p>
+<?=$status;?> <img src="<?=branded_include('images/' . $status . '.png');?>" alt="<?=$status;?>" /></p>
 <p><b>Gateway</b><br />
 <a href="<?=site_url('settings/edit_gateway/' . $gateway['gateway_id']);?>"><?=$gateway['name'];?></a></p>
 </div>

@@ -230,37 +230,55 @@ class authnet
 		$CI->db->select('api_customer_reference');
 		$CI->db->join('client_gateways', 'subscriptions.gateway_id = client_gateways.client_gateway_id', 'inner');
 		$CI->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
+		$CI->db->where('api_customer_reference !=','');
+		$CI->db->where('subscriptions.gateway_id',$gateway['gateway_id']);
 		$CI->db->where('subscriptions.active', 1);
 		$CI->db->where('subscriptions.customer_id',$customer['customer_id']);
 		$current_profile = $CI->db->get('subscriptions');
-		
+				
 		if ($current_profile->num_rows() > 0) {
+			// save the profile ID
 			$current_profile = $current_profile->row_array();
 			$profile_id = $current_profile['api_customer_reference'];
+			
+			// get payment profile to see if a matching one exists
+			$payment_profiles = $this->GetCustomerProfile($profile_id, $gateway);
+			
+			if (isset($payment_profiles->profile->paymentProfiles)) {
+				foreach ($payment_profiles->profile->paymentProfiles as $payment_profile) {
+					$card_number = (string)$payment_profile->payment->creditCard->cardNumber;
+					
+					if (substr($card_number, -4, 4) == substr($credit_card['card_num'],-4,4)) {
+						$payment_profile_id = (string)$payment_profile->customerPaymentProfileId;
+					}
+				}
+			}
 		}
 		else {
 			$response = $this->CreateProfile($gateway, $subscription_id);
 			
 			if(isset($response) and !empty($response['success'])) {
 				$profile_id = $response['profile_id'];	
-			} else {
-				die($CI->response->Error(5005));
 			}
 		}
 		
 		if (empty($profile_id)) {
 			die($CI->response->Error(5005));
 		}
-		
+
 		// save the api_customer_reference
 		$CI->load->model('subscription_model');
 		$CI->subscription_model->SaveApiCustomerReference($subscription_id, $profile_id);
 		
-		// Create the payment profile
-		$response = $this->CreatePaymentProfile($profile_id, $gateway, $credit_card, $customer);
-		if($response) {
-			$payment_profile_id = $response['payment_profile_id'];	
-		} else {
+		if (!isset($payment_profile_id) or empty($payment_profile_id)) {
+			// Create the payment profile
+			$response = $this->CreatePaymentProfile($profile_id, $gateway, $credit_card, $customer);
+			if(isset($response) and is_array($response) and isset($response['payment_profile_id'])) {
+				$payment_profile_id = $response['payment_profile_id'];	
+			}
+		}
+		
+		if (empty($payment_profile_id)) {
 			die($CI->response->Error(5006));
 		}
 		
@@ -341,16 +359,17 @@ class authnet
 		
 		@$response = simplexml_load_string($post_response);
 		
+		$return = array();
+		
 		if($response->messages->resultCode == 'Ok') {
-			$response['success'] = TRUE;
-			$response['profile_id'] = (string)$response->customerProfileId;
+			$return['success'] = TRUE;
+			$return['profile_id'] = (string)$response->customerProfileId;
 		} else {
-			$response['success'] = FALSE;
-			$response['reason'] = (string)$response->messages->message->text;
+			$return['success'] = FALSE;
+			$return['reason'] = (string)$response->messages->message->text;
 		}
 		
-		return $response;
-		
+		return $return;		
 	}
 	
 	function CreatePaymentProfile($profile_id, $gateway, $credit_card, $customer)
@@ -418,13 +437,57 @@ class authnet
 		
 		@$response = simplexml_load_string($post_response);
 		
+		$return = array();
+		
 		if($response->messages->resultCode == 'Ok') {
-			$response['success'] = TRUE;
-			$response['payment_profile_id'] = (string)$response->customerPaymentProfileId;
+			$return['success'] = TRUE;
+			$return['payment_profile_id'] = (string)$response->customerPaymentProfileId;
 		} else {
-			$response['success'] = FALSE;
-			$response['reason'] = (string)$response->messages->message->text;
+			$return['success'] = FALSE;
+			$return['reason'] = (string)$response->messages->message->text;
 		}
+		
+		return $return;
+	}
+	
+	function GetCustomerProfile ($profile_id, $gateway) {
+		$CI =& get_instance();
+		
+		// Get the proper URL
+		switch($gateway['mode'])
+		{
+			case 'live':
+				$post_url = $gateway['arb_url_live'];
+			break;
+			case 'test':
+				$post_url = $gateway['arb_url_test'];
+			break;
+			case 'dev':
+				$post_url = $gateway['arb_url_dev'];
+			break;
+		}
+		
+		$content = '<?xml version="1.0" encoding="utf-8"?>
+					<getCustomerProfileRequest
+					xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd">
+					<merchantAuthentication>
+						<name>' . $gateway['login_id'] . '</name>
+						<transactionKey>' . $gateway['transaction_key'] . '</transactionKey>
+					</merchantAuthentication>
+					<customerProfileId>' . $profile_id . '</customerProfileId>
+					</getCustomerProfileRequest>';
+		
+		$request = curl_init($post_url); // initiate curl object
+		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
+		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
+		curl_setopt($request, CURLOPT_HTTPHEADER, Array("Content-Type: text/xml"));
+		curl_setopt($request, CURLOPT_POSTFIELDS, $content); // use HTTP POST to send form data
+		curl_setopt($request, CURLOPT_SSL_VERIFYPEER, FALSE); // uncomment this line if you get no gateway response.
+		$post_response = curl_exec($request); // execute curl post and store results in $post_response
+		
+		curl_close($request); // close curl object
+		
+		@$response = simplexml_load_string($post_response);
 		
 		return $response;
 	}

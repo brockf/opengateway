@@ -137,7 +137,7 @@ class OpenGateway
 		curl_setopt($ch, CURLOPT_TIMEOUT, 60);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $xml); 
 		
-		$data = curl_exec($ch); 
+		$data = curl_exec($ch);
 		
 		if (curl_errno($ch)) {
 		    print curl_error($ch);

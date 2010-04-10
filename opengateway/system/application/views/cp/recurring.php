@@ -20,8 +20,8 @@
 <? } ?>
 <p><b>Status</b><br />
 <?=$status;?>&nbsp;
-<? if ($status == 'active') { ?><img src="<?=site_url('images/ok.png');?>" alt="active" /><? } ?>
-<? if ($status == 'inactive') { ?><img src="<?=site_url('images/failed.png');?>" alt="inactive" /><? } ?></p>
+<? if ($status == 'active') { ?><img src="<?=branded_include('images/ok.png');?>" alt="active" /><? } ?>
+<? if ($status == 'inactive') { ?><img src="<?=branded_include('images/failed.png');?>" alt="inactive" /><? } ?></p>
 <p><b>Gateway</b><br />
 <a href="<?=site_url('settings/edit_gateway/' . $gateway['gateway_id']);?>"><?=$gateway['name'];?></a></p>
 </div>
