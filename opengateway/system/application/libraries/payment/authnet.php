@@ -226,12 +226,29 @@ class authnet
 	{		
 		$CI =& get_instance();
 		
-		// Create a new authnet profile
-		$response = $this->CreateProfile($gateway, $subscription_id);
+		// Create a new authnet profile if one doesn't exist
+		$CI->db->select('api_customer_reference');
+		$CI->db->join('client_gateways', 'subscriptions.gateway_id = client_gateways.client_gateway_id', 'inner');
+		$CI->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
+		$CI->db->where('subscriptions.active', 1);
+		$CI->db->where('subscriptions.customer_id',$customer['customer_id']);
+		$current_profile = $CI->db->get('subscriptions');
 		
-		if(isset($response) and !empty($response['success'])) {
-			$profile_id = $response['profile_id'];	
-		} else {
+		if ($current_profile->num_rows() > 0) {
+			$current_profile = $current_profile->row_array();
+			$profile_id = $current_profile['api_customer_reference'];
+		}
+		else {
+			$response = $this->CreateProfile($gateway, $subscription_id);
+			
+			if(isset($response) and !empty($response['success'])) {
+				$profile_id = $response['profile_id'];	
+			} else {
+				die($CI->response->Error(5005));
+			}
+		}
+		
+		if (empty($profile_id)) {
 			die($CI->response->Error(5005));
 		}
 		
@@ -254,7 +271,6 @@ class authnet
 		if(date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
 			// Create an order for today's payment
 			$CI->load->model('order_model');
-			$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
 			$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $subscription_id, $customer['customer_id']);
 			
 			$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $profile_id, $payment_profile_id, $params);
