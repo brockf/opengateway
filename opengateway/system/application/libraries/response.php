@@ -164,7 +164,7 @@ class Response
 							);
 							
 		if ($additional_text != FALSE) {
-			$error_array['error_text'] . '  ' . $additional_text;
+			$error_array['error_text'] .= '  ' . $additional_text;
 		}
 						
 		// if this isn't a control panel call, it's an API call
