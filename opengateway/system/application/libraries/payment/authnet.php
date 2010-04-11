@@ -263,7 +263,8 @@ class authnet
 		}
 		
 		if (empty($profile_id)) {
-			die($CI->response->Error(5005));
+			$add_text = (isset($response['reason'])) ? $response['reason'] : FALSE;
+			die($CI->response->Error(5005, $add_text));
 		}
 
 		// save the api_customer_reference
@@ -279,7 +280,8 @@ class authnet
 		}
 		
 		if (empty($payment_profile_id)) {
-			die($CI->response->Error(5006));
+			$add_text = (isset($response['reason'])) ? $response['reason'] : FALSE;
+			die($CI->response->Error(5006, $add_text));
 		}
 		
 		// Save the api_payment_reference

@@ -93,7 +93,7 @@ class Response
 	}
 	
 	// return a formatted error response to the client
-	function Error ($code) {
+	function Error ($code, $additional_text = FALSE) {
 		if (!$code) {
 			$this->SystemError('Error code not passed to function.');
 		}
@@ -162,6 +162,10 @@ class Response
 							'error' => $code,
 							'error_text' => $errors[$code]
 							);
+							
+		if ($additional_text != FALSE) {
+			$error_array['error_text'] . ' - ' . $additional_text;
+		}
 						
 		// if this isn't a control panel call, it's an API call
 		// and we must report the error as such
