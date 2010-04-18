@@ -2,8 +2,16 @@
 
 class authnet
 {
+	var $settings;
+	
+	function authnet() {
+		$this->settings = $this->Settings();
+	}
+
 	function Settings()
 	{
+		$settings = array();
+		
 		$settings['name'] = 'Authorize.net';
 		$settings['class_name'] = 'authnet';
 		$settings['description'] = 'Authorize.net is the USA\'s premier gateway.  Coupled with the powerful Customer Information Manager (CIM), this gateway is an affordable and powerful gateway for any American merchant.';
@@ -418,7 +426,7 @@ class authnet
 		"<payment>".
 		 "<creditCard>".
 		  "<cardNumber>".$credit_card['card_num']."</cardNumber>".
-		  "<expirationDate>".$credit_card['exp_year']."-".$credit_card['exp_month']."</expirationDate>". // required format for API is YYYY-MM
+		  "<expirationDate>".$credit_card['exp_year']."-".str_pad($credit_card['exp_month'], 2, "0", STR_PAD_LEFT)."</expirationDate>". // required format for API is YYYY-MM
 		 "</creditCard>".
 		"</payment>".
 		"</paymentProfile>\n";

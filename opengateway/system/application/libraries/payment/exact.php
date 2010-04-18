@@ -2,8 +2,16 @@
 
 class exact
 {
+	var $settings;
+	
+	function exact() {
+		$this->settings = $this->Settings();
+	}
+
 	function Settings()
 	{
+		$settings = array();
+		
 		$settings['name'] = 'E-xact';
 		$settings['class_name'] = 'exact';
 		$settings['description'] = 'E-xact from VersaPay is the perfect gateway for both Canadian and American merchants.';
