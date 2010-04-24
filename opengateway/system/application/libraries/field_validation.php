@@ -120,11 +120,11 @@ class Field_validation
 	
 	function ValidateAmount($amount)
 	{
-		if(!is_numeric($amount)) {
+		if (!is_numeric($amount)) {
 			return FALSE;
 		}
 		
-		if($amount < 0) {
+		if ($amount < 0) {
 			return FALSE;
 		}
 		

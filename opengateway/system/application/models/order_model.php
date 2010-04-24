@@ -22,39 +22,36 @@ class Order_model extends Model
 	* Creates a new order.
 	*
 	* @param int $client_id The client ID of the gateway client.
-	* @param int $subscription_id If this order is part of a recurring subscription. Optional.
-	* @param string $params['gateway_id'] The gateway ID used for the order.
-	* @param string $params['credit_card']['card_num'] The card number used to save the last 4 digits.
-	* @param string $params['amount'] The amount of the order.
-	* @param string $params['customer_id'] The customer id associated with the order. Optional.
-	* @param string $params['customer_ip_address'] Customer's IP address. Optional.
+	* @param int $gateway_id The gateway to process this charge with.
+	* @param float $amount The amount of the order
+	* @param array $credit_card The credit card information
+	* @param int $subscription_id The ID # of the recurring charge
+	* @param int $customer_id The customer ID to link this order to
+	* @param float $customer_ip The IP address of the purchasing customer
 	* 
 	* @return int $order_id The new order id
 	*/
-	function CreateNewOrder($client_id, $params, $subscription_id = 0, $customer_id = FALSE)
+	function CreateNewOrder($client_id, $gateway_id, $amount, $credit_card = array(), $subscription_id = 0, $customer_id = FALSE, $customer_ip = FALSE)
 	{
 		$timestamp = date('Y-m-d H:i:s');
 		$insert_data = array(
 							'client_id' 	  => $client_id,
-							'gateway_id' 	  => $params['gateway_id'],
+							'gateway_id' 	  => $gateway_id,
 							'subscription_id' => $subscription_id,
-							'amount'		  => $params['amount'],
+							'amount'		  => $amount,
 							'timestamp'		  => $timestamp
 							);	
 		
-		if(isset($params['credit_card']['card_num'])) {
-			$insert_data['card_last_four']  = substr($params['credit_card']['card_num'],-4,4);
+		if (isset($credit_card['card_num'])) {
+			$insert_data['card_last_four']  = substr($credit_card['card_num'],-4,4);
 		}					
 							
-		if(isset($params['customer_ip_address'])) {
-			$insert_data['customer_ip_address'] = $params['customer_ip_address'];
+		if (isset($customer_ip) and !empty($customer_ip)) {
+			$insert_data['customer_ip_address'] = $customer_ip;
 		}
 
 		if (isset($customer_id)) {
 			$insert_data['customer_id'] = $customer_id;
-		}
-		elseif(isset($params['customer_id'])) {
-			$insert_data['customer_id'] = $params['customer_id'];
 		}
 							
 		$this->db->insert('orders', $insert_data);
@@ -89,7 +86,7 @@ class Order_model extends Model
 	}
 	
 	/**
-	* Get total matchin revenue
+	* Get total matching revenue
 	*
 	* Returns the total matching revenue with the relevant filters (same as GetCharges)
 	*

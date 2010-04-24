@@ -17,7 +17,6 @@ class Gateway_model extends Model
 		parent::Model();
 	}
 	
-	
 	/**
 	* Create a new gateway instance
 	*
@@ -110,107 +109,125 @@ class Gateway_model extends Model
 	* Returns an array response from the appropriate payment library
 	*
 	* @param int $client_id	The Client ID
-	* @param int $params['gateway_id'] The client_gateway used to process the charge
-	* @param int $params['customer_id'] The customer ID.  Required only if a cardholder name is not supplied
-	* @param int $params['credit_card']['card_num'] The credit card number
-	* @param int $params['credit_card']['exp_month'] The credit card expiration month in 2 digit format (01 - 12)
-	* @param int $params['credit_card']['exp_year'] The credit card expiration year (YYYY)
-	* @param int $params['credit_card']['name'] The credit card cardholder name.  Required only is customer ID is not supplied.
-	* @param int $params['credit_card']['cvv'] The Card Verification Value.  Optional
-	* @param int $params['amount'] The amount to be charged.  
-	* 
+	* @param int $gateway_id The gateway ID to process this charge with
+	* @param float $amount The amount to charge (e.g., "50.00")
+	* @param array $credit_card The credit card information
+	* @param int $credit_card['card_num'] The credit card number
+	* @param int $credit_card['exp_month'] The credit card expiration month in 2 digit format (01 - 12)
+	* @param int $credit_card['exp_year'] The credit card expiration year (YYYY)
+	* @param string $credit_card['name'] The credit card cardholder name.  Required only is customer ID is not supplied.
+	* @param int $credit_card['cvv'] The Card Verification Value.  Optional
+	* @param int $customer_id The ID of the customer to link the charge to
+	* @param array $customer An array of customer data to create a new customer with, if no customer_id
+	* @param float $customer_ip The optional IP address of the customer
+	*
 	* @return mixed Array with response_code and response_text
 	*/
-	function Charge($client_id, $params)
+	
+	function Charge($client_id, $gateway_id, $amount, $credit_card = array(), $customer_id = FALSE, $customer = array(), $customer_ip = FALSE)
 	{
-		// Make sure it came from a secure connection
-		if(empty($_SERVER["HTTPS"]) and $this->config->item('ssl_active') == TRUE) {
-			die($this->response->Error(1010));
-		}
-		
-		if(isset($params['gateway_id'])) {
-			$gateway_id = $params['gateway_id'];
-		} else {
-			$gateway_id = FALSE;
-		}
-		
 		$CI =& get_instance();
 		
-		// Validate the required fields
-		$this->load->library('field_validation');
-		$this->field_validation->ValidateRequiredFields('Charge', $params);
-		
-		// Get the credit card object
-		$credit_card = $params['credit_card'];
+		// validate function arguments
+		if (empty($gateway_id) or empty($amount) or empty($credit_card)) {
+			die($CI->response->Error(1003));
+		}
 		
 		// Get the gateway info to load the proper library
 		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
 		
-		$params['gateway_id'] = $gateway['gateway_id'];
-		
+		// is gateway enabled?
 		if ($gateway['enabled'] == '0') {
 			die($this->response->Error(5017));
 		}
 		
-		// Validate the Credit Card number
-		$params['card_type'] = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
+		// load the gateway
+		$gateway_name = $gateway['name'];
+		$this->load->library('payment/'.$gateway_name);
+		$gateway_settings = $this->$gateway_name->Settings();
 		
-		if(!$params['card_type']) {
+		// validate the Credit Card number
+		$credit_card['card_type'] = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
+		
+		if (!$credit_card['card_type']) {
 			die($this->response->Error(5008));
 		}
 		
 		// Validate the amount
-		$valid_amount = $this->field_validation->ValidateAmount($params['amount']);
+		$valid_amount = $this->field_validation->ValidateAmount($amount);
 		
 		if(!$valid_amount) {
 			die($this->response->Error(5009));
 		}
 		
 		// Get the customer details if a customer id was included
-		if(isset($params['customer_id'])) {
+		if (isset($customer_id)) {
 			$CI->load->model('customer_model');
-			$customer = $CI->customer_model->GetCustomer($client_id, $params['customer_id']);
+			$customer = $CI->customer_model->GetCustomer($client_id, $customer_id);
 			$customer['customer_id'] = $customer['id'];
-			$created_customer = false;
+			$created_customer = FALSE;
 		}
-		elseif (isset($params['customer']) and is_array($params['customer'])) {
+		elseif (!empty($customer)) {
 			$CI->load->model('customer_model');
-			// look for embedded customer information
-			$customer = $params['customer'];
-			$customer['customer_id'] = $CI->customer_model->NewCustomer($client_id, $customer);
-			$created_customer = true;
+			// create customer record from attached information
+			// by Getting the customer after it's creation, we get a nice clean ISO2 code for the country
+			$customer_id = $CI->customer_model->NewCustomer($client_id, $customer);
+			$customer = $CI->customer_model->GetCustomer($client_id, $customer_id);
+			$customer['customer_id'] = $customer_id;
+			unset($customer_id);
+			
+			$created_customer = TRUE;
 		}
 		else {
+			// no customer_id or customer information - is this a problem?
+			// we'll check if this gateway required customer information
+			if ($gateway_settings['requires_customer_information'] == 1) {
+				die($this->response->Error(5018));
+			}
+			
 			$customer = array();
+		}
+		
+		// some gateways require a customer IP address
+		if ($gateway_settings['required_customer_ip'] == 1 and !$customer_ip) {
+			die($this->response->Error(5019));
+		}
+		elseif (!empty($customer_ip)) {
+			// place it in $customer array
+			$customer['ip_address'] = $customer_ip;
+		}
+		else {
+			$customer['ip_address'] = '';
 		}
 		
 		// Create a new order
 		$CI->load->model('order_model');
-		$passed_customer = (isset($customer['customer_id'])) ? $customer['customer_id'] : false;
-		$order_id = $CI->order_model->CreateNewOrder($client_id, $params, false, $passed_customer);
+		$passed_customer = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
+		$order_id = $CI->order_model->CreateNewOrder($client_id, $gateway_id, $amount, $credit_card, 0, $passed_customer, $customer_ip);
 		
 		// if amount is greater than $0, we require a gateway
-		if ($params['amount'] > 0) {
-			// Load the proper library
-			$gateway_name = $gateway['name'];
-			$this->load->library('payment/'.$gateway_name);
-			$response = $this->$gateway_name->Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card);	
+		if ($amount > 0) {
+			// make the charge
+			
+			$response = $this->$gateway_name->Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card);	
 		}
 		else {
-			// it's a charge of $0, it's ok
+			// it's a free charge of $0, it's ok
 			$response_array = array('charge_id' => $order_id);
 			$response = $CI->response->TransactionResponse(1, $response_array);
 		}
 		
-		if (isset($created_customer) and $created_customer == true and ($response['response_code'] != 1)) {
+		if (isset($created_customer) and $created_customer == TRUE and ($response['response_code'] != 1)) {
+			// the charge failed, so delete the customer we just created
 			$CI->customer_model->DeleteCustomer($client_id, $customer['customer_id']);
 		}
 		elseif (isset($created_customer)) {
+			// charge is OK and we created a new customer, we'll include it in the response
 			$response['customer_id'] = $customer['customer_id'];
 		}
 		
-		// If it was successful, send an email
-		if($response['response_code'] == 1) {
+		// if it was successful, send an email
+		if ($response['response_code'] == 1) {
 			$this->order_model->SetStatus($order_id, 1);
 			TriggerTrip('charge', $client_id, $response['charge_id']);
 		} else {
@@ -219,6 +236,264 @@ class Gateway_model extends Model
 		
 		return $response;
 	}
+		
+	/**
+	* Create a new recurring subscription.
+	*
+	* Creates a new recurring subscription and processes a charge for today.
+	*
+	* @param int $client_id	The Client ID
+	* @param int $gateway_id The gateway ID to process this charge with
+	* @param float $amount The amount to charge (e.g., "50.00")
+	* @param array $credit_card The credit card information
+	* @param int $credit_card['card_num'] The credit card number
+	* @param int $credit_card['exp_month'] The credit card expiration month in 2 digit format (01 - 12)
+	* @param int $credit_card['exp_year'] The credit card expiration year (YYYY)
+	* @param string $credit_card['name'] The credit card cardholder name.  Required only is customer ID is not supplied.
+	* @param int $credit_card['cvv'] The Card Verification Value.  Optional
+	* @param int $customer_id The ID of the customer to link the charge to
+	* @param array $customer An array of customer data to create a new customer with, if no customer_id
+	* @param float $customer_ip The optional IP address of the customer
+	* @param array $recur The details for a recurring charge
+	* @param int $recur['plan_id'] The ID of the plan to pull recurring details from (Optional)
+	* @param string $recur['start_date'] The start date of the subscription
+	* @param string $recur['end_date'] The end date of the subscription
+	* @param int $recur['free_trial'] The number of days to give a free trial before.  Will combine with start_date if that is also set. (Optional)
+	* @param float $recur['amount'] The amount to charge every INTERVAL days.  If not there, the main $amount will be used.
+	* @param int $recur['occurrences'] The total number of occurrences (Optional, if end_date doesn't exist).
+	* @param string $recur['notification_url'] The URL to send POST updates to for notices re: this subscription.
+	*
+	* @return mixed Array with response_code and response_text
+	*/
+	
+	function Recur($client_id, $gateway_id, $amount = FALSE, $credit_card = array(), $customer_id = FALSE, $customer = array(), $customer_ip = FALSE, $recur = array())
+	{		
+		$CI =& get_instance();
+		
+		// Get the gateway info to load the proper library
+		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
+		
+		if ($gateway['enabled'] == '0') {
+			die($this->response->Error(5017));
+		}
+		
+		$this->load->library('field_validation');
+		
+		// Validate the Credit Card number
+		$credit_card['card_type'] = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
+		
+		if (!$credit_card['card_type']) {
+			die($this->response->Error(5008));
+		}
+		
+		// Get the customer details if a customer id was included
+		$this->load->model('customer_model');
+		
+		if (isset($customer_id)) {
+			$customer = $CI->customer_model->GetCustomer($client_id, $customer_id);
+			$customer['customer_id'] = $customer['id'];
+			$created_customer = FALSE;
+		}
+		elseif (isset($customer) and !empty($customer)) {
+			// look for embedded customer information
+			// by Getting the customer after it's creation, we get a nice clean ISO2 code for the country
+			$customer_id = $CI->customer_model->NewCustomer($client_id, $customer);
+			$customer = $CI->customer_model->GetCustomer($client_id, $customer_id);
+			$customer['customer_id'] = $customer_id;
+			unset($customer_id);
+			$created_customer = TRUE;
+		}
+		else {
+			// no customer_id or customer information - is this a problem?
+			// we'll check if this gateway required customer information
+			if ($gateway_settings['requires_customer_information'] == 1) {
+				die($this->response->Error(5018));
+			}
+			
+			// no customer information was passed but this gateway is OK with that, let's just get the customer first/last name
+			// from the credit card name for our records
+			if (!isset($credit_card['name'])) {
+				die($this->response->Error(5004));
+			} else {
+				$name = explode(' ', $credit_card['name']);
+				$customer['first_name'] = $name[0];
+				$customer['last_name'] = $name[count($name) - 1];
+				$customer['customer_id'] = $CI->customer_model->SaveNewCustomer($client_id, $customer['first_name'], $customer['last_name']);
+			}
+		}
+		
+		// some gateways require a customer IP address
+		if ($gateway_settings['required_customer_ip'] == 1 and !$customer_ip) {
+			die($this->response->Error(5019));
+		}
+		elseif (!empty($customer_ip)) {
+			// place it in $customer array
+			$customer['ip_address'] = $customer_ip;
+		}
+		else {
+			$customer['ip_address'] = '';
+		}
+		
+		if (isset($recur['plan_id'])) {
+			// we have a linked plan, let's load that information
+			$CI->load->model('plan_model');
+			$plan_details = $CI->plan_model->GetPlanDetails($client_id, $recur['plan_id']);
+			
+			$interval 			= (isset($recur['interval'])) ? $recur['interval'] : $plan_details->interval;
+			$notification_url 	= (isset($recur['notification_url'])) ? $recur['notification_url'] : $plan_details->notification_url;
+			$free_trial 		= (isset($recur['free_trial'])) ? $recur['free_trial'] : $plan_details->free_trial;
+			$occurrences		= (isset($recur['occurrences'])) ? $recur['occurrences'] : $plan_details->occurrences;
+			
+			// calculate amount:
+			//	  1) First charge is main $amount if given
+			//	  2) If no $recur['amount'], use plan amount
+			//	  3) Else use $recur['amount']
+			if (isset($amount)) {
+				$amount = $amount;
+			}
+			elseif (isset($recur['amount'])) {
+				$amount = $recur['amount'];
+			}
+			elseif (isset($plan_details->amount)) {
+				$amount = $plan_details->amount;
+			}
+			
+			// store plan ID
+			$plan_id = $plan_details->plan_id;	
+		} else {	
+			if (!isset($recur['interval']) or !is_numeric($recur['interval'])) {
+				die($this->response->Error(5011));
+			}
+			else {
+				$interval = $recur['interval'];
+			}
+			
+			// Check for a notification URL
+			$notification_url = (isset($recur['notification_url'])) ? $recur['notification_url'] : '';
+			
+			// Validate the amount
+			if (!$this->field_validation->ValidateAmount($amount)) {
+				die($this->response->Error(5009));
+			}
+			
+			$plan_id = 0;
+			$free_trial = (isset($recur['free_trial']) and is_numeric($recur['free_trial'])) ? $recur['free_trial'] : FALSE;
+		}
+		
+		// Validate the start date to make sure it is in the future
+		if (isset($recur['start_date'])) {
+			// adjust to server time
+			$recur['start_date'] = server_time($recur['start_date'], 'Y-m-d', true);
+		
+			if (!$this->field_validation->ValidateDate($recur['start_date']) or $recur['start_date'] < date('Y-m-d')) {
+				die($this->response->Error(5001));
+			} else {
+				$start_date = date('Y-m-d', strtotime($recur['start_date']));
+			}
+		} else {
+			$start_date = date('Y-m-d');
+		}
+		
+		// do we have to adjust the start_date for a free trial?
+		if ($free_trial) {
+			$start_date = date('Y-m-d', strtotime($start_date) + ($free_trial * 86400));
+		}
+		
+		// get the next payment date
+		if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
+			$next_charge_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400));
+		}
+		else {
+			$next_charge_date = date('Y-m-d', strtotime($start_date));
+		}
+		
+		// if an end date was passed, make sure it's valid
+		if (isset($recur['end_date'])) {
+			// adjust to server time
+			$recur['end_date'] = (!isset($end_date_set_by_server)) ? server_time($recur['end_date']) : $recur['end_date'];
+			
+			if(strtotime($recur['end_date']) < time()) {
+				die($this->response->Error(5002));
+			} elseif(strtotime($recur['end_date']) < strtotime($start_date)) {
+				die($this->response->Error(5003));
+			} else {
+				$end_date = date('Y-m-d', strtotime($recur['end_date']));
+			}
+		} elseif (isset($occurrences) and !empty($occurrences)) {
+			$end_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400 * $occurrences));
+		} elseif (isset($recur['occurrences'])) {
+			$end_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400 * $recur['occurrences']));
+		} else {
+			// Find the end date based on the max end date
+			$end_date = date('Y-m-d', strtotime($start_date) + ($this->config->item('max_recurring_days_from_today') * 86400));
+		}
+		
+		// if the credit card expiration date is before the end date, we need to set the end date to one day before the expiration
+		$expiry = mktime(0,0,0, $credit_card['exp_month'], days_in_month($credit_card['exp_month'], $credit_card['exp_year']), $credit_card['exp_year']);
+		
+		if ($expiry < strtotime($end_date)) {
+			// make the adjustment, this card will expire
+			$end_date = mktime(0,0,0, $credit_card['exp_month'], (days_in_month($credit_card['exp_month'], $credit_card['exp_year']) - 1), $credit_card['exp_year']);
+			$end_date = date('Y-m-d', $end_date);
+		}
+		
+		// figure the total number of occurrences
+		$total_occurrences = round((strtotime($end_date) - strtotime($start_date)) / ($interval * 86400), 0);
+		
+		// Save the subscription info
+		$CI->load->model('subscription_model');
+		$subscription_id = $CI->subscription_model->SaveSubscription($client_id, $gateway_id, $customer['customer_id'], $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id);
+		
+		// set last_charge as today, if today was a charge
+		if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
+			$CI->subscription_model->SetChargeDates($subscription_id, date('Y-m-d'), $next_charge_date);
+		}
+		
+		// if amount is greater than 0, we require a gateway
+		if ($amount > 0) {
+			// load the proper library
+			$gateway_name = $gateway['name'];
+			$this->load->library('payment/'.$gateway_name);
+			$response = $this->$gateway_name->Recur($client_id, $gateway, $customer, $amount, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences);
+		}
+		else {
+			// this is a free subscription
+			if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
+				// Create an order for today's payment
+				$CI->load->model('order_model');
+				$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
+				$order_id = $CI->order_model->CreateNewOrder($client_id, $gateway_id, $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer_ip);
+				$CI->order_model->SetStatus($order_id, 1);
+				$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
+			}
+			else {
+				$response_array = array('recurring_id' => $subscription_id);
+			}
+			
+			$response = $CI->response->TransactionResponse(100, $response_array);
+		}
+		
+		if (isset($created_customer) and $created_customer == TRUE and $response['response_code'] != 100) {
+			// charge was rejected, so let's delete the customer record we just created
+			$CI->customer_model->DeleteCustomer($client_id, $customer['customer_id']);
+		}
+		elseif (isset($created_customer) and $created_customer == TRUE) {
+			$response['customer_id'] = $customer['customer_id'];
+		}
+		
+		if ($response['response_code'] == '100') {
+			// delayed recurrings don't have a charge ID
+			$response['charge_id'] = (isset($response['charge_id'])) ? $response['charge_id'] : FALSE;
+			
+			// trip it - were golden!
+			TriggerTrip('new_recurring', $client_id, $response['charge_id'], $response['recurring_id']);
+		}
+		
+		return $response;
+	}
+	
+	/*
+	* REFUND: To be implemented later
 	
 	function Refund($client_id, $params)
 	{
@@ -270,252 +545,7 @@ class Gateway_model extends Model
 		$gateway_name = $gateway['name'];
 		$this->load->library('payment/'.$gateway_name);
 		return $this->$gateway_name->Refund($client_id, $order_id, $gateway, $customer, $params, $credit_card);
-	}
-	
-	
-	/**
-	* Create a new recurring subscription.
-	*
-	* Creates a new recurring subscription and processes a charge for today.
-	*
-	* @param int $client_id	The Client ID
-	* @param int $params['gateway_id'] The gateway_id to be used for creating the subscription.
-	* @param int $params['credit_card']['card_num'] The credit card number
-	* @param int $params['credit_card']['exp_month'] The credit card expiration month in 2 digit format (01 - 12)
-	* @param int $params['credit_card']['exp_year'] The credit card expiration year (YYYY)
-	* @param int $params['credit_card']['name'] The credit card cardholder name.  Required only is customer ID is not supplied.
-	* @param int $params['credit_card']['cvv'] The Card Verification Value.  Optional
-	* @param date $params['recur']['start_date'] The date the subscription should start. If no start_date is supplied, today's date will be used.  Optional.
-	* @param date $params['recur']['end_date'] The date the subscription should end. If no start_date is supplied, the end_date is calculated based on a config item.  Optional.
-	* @param int $params['recur']['interval'] The number of days between subscription charges.
-	* @param int $params['amount'] The amount to be charged on each subscription date.
-	* 
-	* @return mixed Array with subscription_id
-	*/
-	
-	function Recur($client_id, $params)
-	{		
-		// Make sure it came from a secure connection
-		if(empty($_SERVER["HTTPS"]) and $this->config->item('ssl_active') == TRUE) {
-			die($this->response->Error(1010));
-		}
-		
-		$CI =& get_instance();
-		
-		if(isset($params['gateway_id'])) {
-			$gateway_id = $params['gateway_id'];
-		} else {
-			$gateway_id = FALSE;
-		}
-		
-		// Get the credit card object
-		$credit_card = $params['credit_card'];
-		
-		// Get the gateway info to load the proper library
-		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
-		
-		$params['gateway_id'] = $gateway['gateway_id'];
-		
-		if ($gateway['enabled'] == '0') {
-			die($this->response->Error(5017));
-		}
-		
-		$this->load->library('field_validation');
-		
-		// Validate the Credit Card number
-		$params['card_type'] = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
-		
-		if(!$params['card_type']) {
-			die($this->response->Error(5008));
-		}
-		
-		// Validate the required fields
-		$this->load->library('field_validation');
-		$this->field_validation->ValidateRequiredFields('Recur', $params);
-		
-		// Get the customer details if a customer id was included
-		$this->load->model('customer_model');
-		
-		if(isset($params['customer_id'])) {
-			$customer = $CI->customer_model->GetCustomer($client_id, $params['customer_id']);
-			$customer['customer_id'] = $customer['id'];
-		}
-		elseif (isset($params['customer']) and is_array($params['customer'])) {
-			// look for embedded customer information
-			$customer = $params['customer'];
-			$customer['customer_id'] = $CI->customer_model->NewCustomer($client_id, $customer);
-			$created_customer = true;
-		}
-		else {
-			// If a customer ID was not passed we need to make sure that a cardholder name was
-			if(!isset($credit_card['name'])) {
-				die($this->response->Error(5004));
-			} else {
-				$name = explode(' ', $credit_card['name']);
-				$customer['first_name'] = $name[0];
-				$customer['last_name'] = $name[count($name) - 1];
-				$customer['customer_id'] = $CI->customer_model->SaveNewCustomer($client_id, $customer['first_name'], $customer['last_name']);
-			}
-		}
-		
-		// Get the subscription details
-		if(!isset($params['recur'])) {
-			die($this->response->Error(5004));
-		}
-		
-		$recur = $params['recur'];
-		
-		if(isset($recur['plan_id'])) {
-			$CI->load->model('plan_model');
-			$plan_details = $CI->plan_model->GetPlanDetails($client_id, $recur['plan_id']);
-			
-			$interval 			= (isset($recur['interval'])) ? $recur['interval'] : $plan_details->interval;
-			$notification_url 	= (isset($recur['notification_url'])) ? $recur['notification_url'] : $plan_details->notification_url;
-			$amount 			= (isset($recur['amount'])) ? $recur['amount'] : $plan_details->amount;
-			$free_trial 		= (isset($recur['free_trial'])) ? $recur['free_trial'] : $plan_details->free_trial;
-			$occurrences		= (isset($recur['occurrences'])) ? $recur['occurrences'] : $plan_details->occurrences;
-			
-			// use plan amount if a different first amount was not given
-			$params['amount'] = (isset($params['amount'])) ? $params['amount'] : $amount;
-			
-			$plan_id = $plan_details->plan_id;	
-		} else {	
-			if(!isset($recur['interval'])) {
-				die($this->response->Error(5011));
-			}
-			
-			if(!is_numeric($recur['interval'])) {
-				die($this->response->Error(5011));
-			} else {
-				$interval = $recur['interval'];
-			}
-			
-			// Check for a notification URL
-			if(isset($recur['notification_url'])) {
-				$notification_url = $recur['notification_url'];
-			} else {
-				$notification_url = '';
-			}
-			
-			// Validate the amount
-			$amount = $params['amount'];
-			$valid_amount = $this->field_validation->ValidateAmount($amount);
-			
-			if(!$valid_amount) {
-				die($this->response->Error(5009));
-			}
-			
-			$plan_id = 0;
-			$free_trial = (isset($recur['free_trial']) and is_numeric($recur['free_trial'])) ? $recur['free_trial'] : FALSE;
-		}
-		
-		// Validate the start date to make sure it is in the future
-		if(isset($recur['start_date'])) {
-			// adjust to server time
-			$recur['start_date'] = server_time($recur['start_date'], 'Y-m-d', true);
-		
-			if(!$this->field_validation->ValidateDate($recur['start_date']) or $recur['start_date'] < date('Y-m-d')) {
-				die($this->response->Error(5001));
-			} else {
-				$start_date = date('Y-m-d', strtotime($recur['start_date']));
-			}
-		} else {
-			$start_date = date('Y-m-d');
-		}
-		
-		if($free_trial) {
-			$start_date = date('Y-m-d', strtotime($start_date) + ($free_trial * 86400));
-		}
-		
-		// Get the next payment date
-		if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
-			$next_charge_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400));
-		}
-		else {
-			$next_charge_date = date('Y-m-d', strtotime($start_date));
-		}
-		
-		// If an end date was passed, make sure it's valid
-		if(isset($recur['end_date'])) {
-			// adjust to server time
-			$recur['end_date'] = (!isset($end_date_set_by_server)) ? server_time($recur['end_date']) : $recur['end_date'];
-			
-			if(strtotime($recur['end_date']) < time()) {
-				die($this->response->Error(5002));
-			} elseif(strtotime($recur['end_date']) < strtotime($start_date)) {
-				die($this->response->Error(5003));
-			} else {
-				$end_date = date('Y-m-d', strtotime($recur['end_date']));
-			}
-		} elseif (isset($occurrences) and !empty($occurrences)) {
-			$end_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400 * $occurrences));
-		} elseif (isset($recur['occurrences'])) {
-			$end_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400 * $recur['occurrences']));
-		} else {
-			// Find the end date based on the max end date
-			$end_date = date('Y-m-d', strtotime($start_date) + ($this->config->item('max_recurring_days_from_today') * 86400));
-		}
-		
-		// If the credit card expiration date is before the end date, we need to set the end date to one day before the expiration
-		$expiry = mktime(0,0,0, $params['credit_card']['exp_month'], days_in_month($params['credit_card']['exp_month'], $params['credit_card']['exp_year']), $params['credit_card']['exp_year']);
-		
-		if($expiry < strtotime($end_date)) {
-			$end_date = mktime(0,0,0, $params['credit_card']['exp_month'], (days_in_month($params['credit_card']['exp_month'], $params['credit_card']['exp_year']) - 1), $params['credit_card']['exp_year']);
-			$end_date = date('Y-m-d', $end_date);
-		}
-		
-		// Figure the total number of occurrences
-		$total_occurrences = round((strtotime($end_date) - strtotime($start_date)) / ($interval * 86400), 0);
-		
-		// Save the subscription info
-		$CI->load->model('subscription_model');
-		$subscription_id = $CI->subscription_model->SaveSubscription($client_id, $params['gateway_id'], $customer['customer_id'], $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id);
-		
-		// set last_charge as today, if today was a charge
-		if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
-			$CI->subscription_model->SetChargeDates($subscription_id, date('Y-m-d'), $next_charge_date);
-		}
-		
-		// if amount is greater than 0, we require a gateway
-		if ($params['amount'] > 0) {
-			// load the proper library
-			$gateway_name = $gateway['name'];
-			$this->load->library('payment/'.$gateway_name);
-			$response = $this->$gateway_name->Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences);
-		}
-		else {
-			// this is a free subscription
-			if(date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
-				// Create an order for today's payment
-				$CI->load->model('order_model');
-				$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
-				$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $subscription_id, $customer['customer_id']);
-				$CI->order_model->SetStatus($order_id, 1);
-				$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
-			}
-			else {
-				$response_array = array('recurring_id' => $subscription_id);
-			}
-			
-			$response = $CI->response->TransactionResponse(100, $response_array);
-		}
-		
-		if (isset($created_customer) and $created_customer == true and $response['response_code'] != 100) {
-			$CI->customer_model->DeleteCustomer($client_id, $customer['customer_id']);
-		}
-		elseif (isset($created_customer) and $created_customer == true) {
-			$response['customer_id'] = $customer['customer_id'];
-		}
-		
-		if ($response['response_code'] == '100') {
-			// delayed recurrings don't have a charge ID
-			$response['charge_id'] = (isset($response['charge_id'])) ? $response['charge_id'] : FALSE;
-			
-			TriggerTrip('new_recurring', $client_id, $response['charge_id'], $response['recurring_id']);
-		}
-		
-		return $response;
-	}
+	}*/
 	
 	/**
 	* Process a credit card recurring charge
@@ -524,8 +554,7 @@ class Gateway_model extends Model
 	* Returns an array response from the appropriate payment library
 	*
 	* @param int $client_id	The Client ID
-	* @param int $params['gateway_id'] The client_gateway used to process the charge
-	* @param int $params['subscription_id']  The subscription_id to charge 
+	* @param array $params The subscription array, from GetSubscription, for the recurring charge
 	* 
 	* @return mixed Array with response_code and response_text
 	*/
@@ -554,7 +583,7 @@ class Gateway_model extends Model
 		
 		// Create a new order
 		$CI->load->model('order_model');
-		$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $params['subscription_id'], $params['customer_id']);
+		$order_id = $CI->order_model->CreateNewOrder($client_id, $params['gateway_id'], $params['amount'], $params['credit_card'], $params['subscription_id'], $params['customer_id']);
 		
 		if ($params['amount'] > 0) {
 			// Load the proper library

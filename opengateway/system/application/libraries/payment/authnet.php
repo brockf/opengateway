@@ -22,6 +22,8 @@ class authnet
 		$settings['purchase_link'] = 'http://www.opengateway.net/gateways/authnet';
 		$settings['allows_updates'] = 1;
 		$settings['allows_refunds'] = 1;
+		$settings['requires_customer_information'] = 0;
+		$settings['requires_customer_ip'] = 0;
 		$settings['required_fields'] = array(
 										'enabled',
 										'mode', 
@@ -155,12 +157,12 @@ class authnet
 		
 	}
 	
-	function Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card)
-	{			
-		
+	function Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card)
+	{	
+		$CI =& get_instance();
+					
 		// Get the proper URL
-		switch($gateway['mode'])
-		{
+		switch($gateway['mode']) {
 			case 'live':
 				$post_url = $gateway['url_live'];
 			break;
@@ -182,9 +184,9 @@ class authnet
 			"x_type"			=> "AUTH_CAPTURE",
 			"x_method"			=> "CC",
 			"x_card_num"		=> $credit_card['card_num'],
-			"x_exp_date"		=> $credit_card['exp_month'].'/'.$credit_card['exp_year'],
-			"x_amount"			=> $params['amount']
-			);
+			"x_exp_date"		=> $credit_card['exp_month'] . '/' . substr($credit_card['exp_year'],-2,2),
+			"x_amount"			=> $amount
+		);
 			
 		if ($gateway['mode'] == 'test') {
 			$post_values['x_test_request'] = 'TRUE';
@@ -194,7 +196,7 @@ class authnet
 			$post_values['x_card_code'] = $credit_card['cvv'];
 		}	
 		
-		if(isset($customer['customer_id'])) {
+		if (isset($customer['customer_id'])) {
 			$post_values['x_first_name'] = $customer['first_name'];
 			$post_values['x_last_name'] = $customer['last_name'];
 			$post_values['x_address'] = $customer['address_1'];
@@ -205,19 +207,15 @@ class authnet
 			$post_values['x_zip'] = $customer['postal_code'];
 			$post_values['x_country'] = $customer['country'];
 		}
-		
-		if(isset($params['description'])) {
-			$post_values['x_description'] = $params['description'];
-		}
 			
+		// build NVP post string
 		$post_string = "";
-		foreach( $post_values as $key => $value )
-			{ $post_string .= "$key=" . urlencode( $value ) . "&"; }
-		$post_string = rtrim( $post_string, "& " );
+		foreach($post_values as $key => $value) {
+			$post_string .= "$key=" . urlencode( $value ) . "&";
+		}
+		$post_string = rtrim($post_string, "& ");
 		
 		$response = $this->Process($order_id, $post_url, $post_string);
-		
-		$CI =& get_instance();
 		
 		if($response['success']){
 			$response_array = array('charge_id' => $order_id);
@@ -230,7 +228,7 @@ class authnet
 		return $response;
 	}
 	
-	function Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $interval, $credit_card, $subscription_id)
+	function Recur ($client_id, $gateway, $customer, $amount, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences = FALSE)
 	{		
 		$CI =& get_instance();
 		
@@ -296,12 +294,12 @@ class authnet
 		$CI->subscription_model->SaveApiPaymentReference($subscription_id, $payment_profile_id);
 		
 		// If a payment is to be made today, process it.
-		if(date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
+		if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
 			// Create an order for today's payment
 			$CI->load->model('order_model');
-			$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $subscription_id, $customer['customer_id']);
+			$order_id = $CI->order_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
 			
-			$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $profile_id, $payment_profile_id, $params);
+			$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $profile_id, $payment_profile_id, $amount);
 			
 			if($response['success'] == TRUE){
 				$CI->order_model->SetStatus($order_id, 1);
@@ -387,8 +385,7 @@ class authnet
 		$CI =& get_instance();
 		
 		// Get the proper URL
-		switch($gateway['mode'])
-		{
+		switch($gateway['mode']) {
 			case 'live':
 				$post_url = $gateway['arb_url_live'];
 			break;
@@ -400,14 +397,8 @@ class authnet
 			break;
 		}
 		
-		if(isset($customer['first_name'])) {
-			$first_name = $customer['first_name'];
-			$last_name = $customer['last_name'];
-		} else {
-			$name = explode(' ', $credit_card['name']);
-			$first_name = $name[0];
-			$last_name = $name[count($name) - 1];
-		}
+		$first_name = $customer['first_name'];
+		$last_name = $customer['last_name'];
 		
 		$content =
 		"<?xml version=\"1.0\" encoding=\"utf-8\"?>" .
@@ -503,10 +494,10 @@ class authnet
 	}
 	
 	function AutoRecurringCharge ($client_id, $order_id, $gateway, $params) {
-		return $this->ChargeRecurring($client_id, $gateway, $order_id, $params['api_customer_reference'], $params['api_payment_reference'], $params);
+		return $this->ChargeRecurring($client_id, $gateway, $order_id, $params['api_customer_reference'], $params['api_payment_reference'], $params['amount']);
 	}
 	
-	function ChargeRecurring($client_id, $gateway, $order_id, $profile_id, $payment_profile_id, $params)
+	function ChargeRecurring($client_id, $gateway, $order_id, $profile_id, $payment_profile_id, $amount)
 	{		
 		$CI =& get_instance();
 		
@@ -529,11 +520,11 @@ class authnet
 		"<createCustomerProfileTransactionRequest xmlns=\"AnetApi/xml/v1/schema/AnetApiSchema.xsd\">" .
 		 "<merchantAuthentication>
 	        <name>".$gateway['login_id']."</name>
-	        <transactionKey>".$gateway['transaction_key']."</transactionKey>
+	        <transactionKey>" . $gateway['transaction_key'] . "</transactionKey>
 	    </merchantAuthentication>".
 		"<transaction>".
 		"<profileTransAuthCapture>".
-		"<amount>" . $params['amount']. "</amount>". 
+		"<amount>" . $amount . "</amount>". 
 		"<customerProfileId>" . $profile_id . "</customerProfileId>".
 		"<customerPaymentProfileId>" . $payment_profile_id . "</customerPaymentProfileId>".
 		"<order>".
@@ -605,7 +596,6 @@ class authnet
 				$response['success'] = TRUE;
 			} else {
 				$response['success'] = FALSE;
-	
 			}
 	
 			return $response;

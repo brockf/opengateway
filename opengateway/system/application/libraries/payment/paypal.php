@@ -22,6 +22,8 @@ class paypal
 		$settings['purchase_link'] = 'http://www.opengateway.net/gateways/paypal';
 		$settings['allows_updates'] = 0;
 		$settings['allows_refunds'] = 1;
+		$settings['requires_customer_information'] = 1;
+		$settings['requires_customer_ip'] = 1;
 		$settings['required_fields'] = array('enabled',
 											 'mode',
 											 'user',
@@ -152,12 +154,12 @@ class paypal
 		}
 	}
 	
-	function Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card)
+	function Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card)
 	{
 		$CI =& get_instance();
 		
-		switch($params['card_type'])
-		{
+		// get card type in proper format
+		switch($credit_card['card_type']) {
 			case 'visa';
 				$card_type = 'Visa';
 			break;
@@ -173,8 +175,7 @@ class paypal
 		}
 		
 		// Get the proper URL
-		switch($gateway['mode'])
-		{
+		switch($gateway['mode']) {
 			case 'live':
 				$post_url = $gateway['url_live'];
 			break;
@@ -190,18 +191,19 @@ class paypal
 		$post['user'] = $gateway['user'];
 		$post['pwd'] = $gateway['pwd'];
 		$post['signature'] = $gateway['signature'];
-		$post['amt'] = $params['amount']; 
+		$post['amt'] = $amount; 
 		$post['acct'] = $credit_card['card_num'];
 		$post['creditcardtype'] = $card_type;
-		$post['expdate'] = $credit_card['exp_month'].$credit_card['exp_year'];
+		$post['expdate'] = $credit_card['exp_month'] . $credit_card['exp_year'];
 		$post['invnum'] = $order_id;
 		$post['currencycode'] = $gateway['currency'];
+		$post['ipaddress'] = $customer['ip_address'];
 		
-		if(isset($credit_card['cvv'])) {
+		if (isset($credit_card['cvv'])) {
 			$post['cvv2'] = $credit_card['cvv'];
 		}
 		
-		if(isset($params['customer_id'])) {
+		if (isset($customer['customer_id'])) {
 			$post['firstname'] = $customer['first_name'];
 			$post['lastname'] = $customer['last_name'];
 			$post['street'] = $customer['address_1'].$customer['address_2'];
@@ -216,22 +218,73 @@ class paypal
 		
 		$response = $this->response_to_array($response);
 		
-		if($response['ACK'] == 'Success') {
+		if ($response['ACK'] == 'Success') {
 			$CI->load->model('order_authorization_model');
-			if($order_id) {
-				$CI->order_authorization_model->SaveAuthorization($order_id, $response['TRANSACTIONID']);
-			}
+			$CI->order_authorization_model->SaveAuthorization($order_id, $response['TRANSACTIONID']);
 			
 			$response_array = array('charge_id' => $order_id);
 			$response = $CI->response->TransactionResponse(1, $response_array);
-		} else {
-
-			
+		}
+		else {
 			$response_array = array('reason' => $response['L_LONGMESSAGE0']);
 			$response = $CI->response->TransactionResponse(2, $response_array);
 		}
 		
 		return $response;	
+	}
+	
+	function Recur($client_id, $gateway, $customer, $amount, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences)
+	{		
+		$CI =& get_instance();
+		
+		// If the start date is today, we'll do the first one manually
+		if (strtotime($start_date) == strtotime(date('Y-m-d'))) {
+			// Create an order
+			$CI->load->model('order_model');
+			
+			$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
+			$order_id = $CI->order_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
+			$response = $this->Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card);
+			
+			if ($response['response_code'] == 1) {
+				$response_array['charge_id'] = $response['charge_id'];
+				$start_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400));
+				$CI->order_model->SetStatus($order_id, 1);
+			} else {
+				$CI->load->model('subscription_model');
+				$CI->subscription_model->MakeInactive($subscription_id);
+				$response_array = array('reason' => $response['reason']);
+				$response = $CI->response->TransactionResponse(2, $response_array);
+				
+				return $response;
+			}
+		}
+		
+		// Create a new PayPal profile
+		$response = $this->CreateProfile($client_id, $gateway, $customer, $amount, $credit_card, $start_date, $subscription_id, $total_occurrences, $interval);
+		
+		if ($response) {
+			$profile_id = $response['profile_id'];	
+		} else {
+			die($CI->response->Error(5005));
+		}
+		
+		// save the api_customer_reference
+		
+		$CI->subscription_model->SaveApiCustomerReference($subscription_id, $profile_id);
+		
+		if($response['success'] == TRUE){
+				$response_array['recurring_id'] = $subscription_id;
+				$response = $CI->response->TransactionResponse(100, $response_array);
+			} else {
+				// Make the subscription inactive
+				$CI->subscription_model->MakeInactive($subscription_id);
+				
+				$response_array = array('reason' => $response['reason']);
+				$response = $CI->response->TransactionResponse(2, $response_array);
+			}
+		
+		return $response;
 	}
 	
 	function Refund($client_id, $order_id, $gateway, $customer, $params, $credit_card)
@@ -321,66 +374,11 @@ class paypal
 		
 	}
 	
-	function Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences)
-	{		
-		$CI =& get_instance();
-		
-		// If the start date is today, we'll do the first one manually
-		if(strtotime($start_date) == strtotime(date('Y-m-d'))) {
-			// Create an order
-			$CI->load->model('order_model');
-			
-			$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
-			$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $subscription_id, $customer['customer_id']);
-			$response = $this->Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card);
-			
-			if($response['response_code'] == 1) {
-				$response_array['charge_id'] = $response['charge_id'];
-				$start_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400));
-				$CI->order_model->SetStatus($order_id, 1);
-			} else {
-				$CI->load->model('subscription_model');
-				$CI->subscription_model->MakeInactive($subscription_id);
-				$response_array = array('reason' => $response['reason']);
-				$response = $CI->response->TransactionResponse(2, $response_array);
-				return $response;
-				exit;
-			}
-		}
-		
-		// Create a new paypal profile
-		$response = $this->CreateProfile($client_id, $gateway, $customer, $params, $start_date, $subscription_id, $total_occurrences, $interval);
-		
-		if($response) {
-			$profile_id = $response['profile_id'];	
-		} else {
-			die($CI->response->Error(5005));
-		}
-		
-		// save the api_customer_reference
-		
-		$CI->subscription_model->SaveApiCustomerReference($subscription_id, $profile_id);
-		
-		if($response['success'] == TRUE){
-				$response_array['recurring_id'] = $subscription_id;
-				$response = $CI->response->TransactionResponse(100, $response_array);
-			} else {
-				// Make the subscription inactive
-				$CI->subscription_model->MakeInactive($subscription_id);
-				
-				$response_array = array('reason' => $response['reason']);
-				$response = $CI->response->TransactionResponse(2, $response_array);
-			}
-		
-		return $response;
-	}
-	
-	function CreateProfile($client_id, $gateway, $customer, $params, $start_date, $subscription_id, $total_occurrences, $interval)
+	function CreateProfile($client_id, $gateway, $customer, $amount, $start_date, $credit_card, $subscription_id, $total_occurrences, $interval)
 	{
 		$CI =& get_instance();
 		
-		switch($params['card_type'])
-		{
+		switch($credit_card['card_type']) {
 			case 'visa';
 				$card_type = 'Visa';
 			break;
@@ -416,66 +414,29 @@ class paypal
 		$post['acct'] = $params['credit_card']['card_num'];
 		$post['currencycode'] = $gateway['currency'];
 		$post['creditcardtype'] = $card_type;
-		$post['expdate'] = $params['credit_card']['exp_month'].$params['credit_card']['exp_year'];
+		$post['expdate'] = $credit_card['exp_month'] . $credit_card['exp_year'];
 		$post['billingperiod'] = 'Day';
 		$post['billingfrequency'] = $interval;
 		$post['profilestartdate'] = date('c', strtotime($start_date));
 		$post['totalbillingcycles'] = $total_occurrences;
+		$post['ipaddress'] = $customer['ip_address'];
 		
-		if(isset($params['credit_card']['cvv'])) {
-			$post['cvv2'] = $params['credit_card']['cvv'];
+		if(isset($credit_card['cvv'])) {
+			$post['cvv2'] = $credit_card['cvv'];
 		}
 		
-		if(isset($params['customer_id'])) {
-			$post['firstname'] = $customer['first_name'];
-			$post['lastname'] = $customer['last_name'];
-			$post['street'] = $customer['address_1'].$customer['address_2'];
-			$post['city'] = $customer['city'];
-			$post['state'] = $customer['state'];
-			$post['zip'] = $customer['postal_code'];
-			$post['email'] = $customer['email'];
-		} else {
-			$error = FALSE;
-			if(!isset($params['customer']['first_name'])) {
-				$error = TRUE;
-			}
-			if(!isset($params['customer']['last_name'])) {
-				$error = TRUE;
-			}
-			if(!isset($params['customer']['address_1'])) {
-				$error = TRUE;
-			}
-			if(!isset($params['customer']['city'])) {
-				$error = TRUE;
-			}
-			if(!isset($params['customer']['state'])) {
-				$error = TRUE;
-			}
-			if(!isset($params['customer']['postal_code'])) {
-				$error = TRUE;
-			}
-			
-			if($error) {
-				die($CI->response->Error(5013));
-			}
-			
-			
-			$post['firstname'] = $params['customer']['first_name'];
-			$post['lastname'] = $params['customer']['last_name'];
-			$post['street'] = $params['customer']['address_1'];
-			
-			if(isset($params['customer']['address_2'])) {
-				$post['street'] .= ' '.$params['customer']['address_2'];
-			}
-			
-			$post['city'] = $params['customer']['city'];
-			$post['state'] = $params['customer']['state'];
-			$post['zip'] = $params['customer']['postal_code'];
-			
-			if(isset($params['customer']['email'])) {
-				$post['email'] = $params['customer']['email'];
-			}
+		// build customer address
+		$post['firstname'] = (isset($customer['first_name'])) ? $customer['first_name'] : '';
+		$post['lastname'] = (isset($customer['last_name'])) ? $customer['last_name'] : '';
+		$post['street'] = (isset($customer['address_1'])) ? $customer['address_1'] : '';
+		if (isset($customer['address_2'])) {
+			$post['street'] .= ' ' . $customer['address_2'];
 		}
+		$post['city'] = (isset($customer['city'])) ? $customer['city'] : '';
+		$post['state'] = (isset($customer['state'])) ? $customer['state'] : '';
+		$post['countrycode'] = (isset($customer['country'])) ? $customer['country'] : '';
+		$post['zip'] = (isset($customer['postal_code'])) ? $customer['postal_code'] : '';
+		$post['email'] = (isset($customer['email'])) ? $customer['email'] : '';
 		
 		// Get the company name
 		$CI->load->model('client_model');

@@ -92,6 +92,65 @@ class API extends Controller {
 		echo $this->response->FormatResponse($response, $format);		
 	}
 	
+	function Charge($client_id, $params) {
+		$this->load->model('gateway_model');
+		
+		// Make sure it came from a secure connection if SSL is active
+		if (empty($_SERVER["HTTPS"]) and $this->config->item('ssl_active') == TRUE) {
+			die($this->response->Error(1010));
+		}
+		
+		// check gateway
+		if (!isset($params['gateway_id'])) {
+			// die with gateway error
+			die($this->response->Error(3000));
+		}
+		
+		// validate required fields
+		$this->load->library('field_validation');
+		$this->field_validation->ValidateRequiredFields('Charge', $params);
+		
+		// take XML params and put them in variables
+		$credit_card = isset($params['credit_card']) ? $params['credit_card'] : FALSE;
+		$customer_id = isset($params['customer_id']) ? $params['customer_id'] : FALSE;
+		$customer = isset($params['customer']) ? $params['customer'] : FALSE;
+		$amount = isset($params['amount']) ? $params['amount'] : FALSE;
+		$gateway_id = isset($params['gateway_id']) ? $params['gateway_id'] : FALSE;
+		$customer_ip = isset($params['customer_ip_address']) ? $params['customer_ip_address'] : FALSE;
+		
+		return $this->gateway_model->Charge($client_id, $gateway_id, $amount, $credit_card, $customer_id, $customer, $customer_ip);
+	}
+	
+	function Recur($client_id, $params) {
+		$this->load->model('gateway_model');
+		
+		// Make sure it came from a secure connection if SSL is active
+		if (empty($_SERVER["HTTPS"]) and $this->config->item('ssl_active') == TRUE) {
+			die($this->response->Error(1010));
+		}
+		
+		// check gateway
+		if (!isset($params['gateway_id'])) {
+			// die with gateway error
+			die($this->response->Error(3000));
+		}
+		
+		// validate required fields
+		$this->load->library('field_validation');
+		$this->field_validation->ValidateRequiredFields('Recur', $params);
+		
+		// take XML params and put them in variables
+		$credit_card = isset($params['credit_card']) ? $params['credit_card'] : FALSE;
+		$customer_id = isset($params['customer_id']) ? $params['customer_id'] : FALSE;
+		$customer = isset($params['customer']) ? $params['customer'] : FALSE;
+		$amount = isset($params['amount']) ? $params['amount'] : FALSE;
+		$gateway_id = isset($params['gateway_id']) ? $params['gateway_id'] : FALSE;
+		$customer_ip = isset($params['customer_ip_address']) ? $params['customer_ip_address'] : FALSE;
+		$recur = isset($params['recur']) ? $params['recur'] : FALSE;
+		
+		return $this->gateway_model->Recur($client_id, $gateway_id, $amount, $credit_card, $customer_id, $customer, $customer_ip, $recur);
+	}
+	
 	function DeletePlan($client_id, $params)
 	{
 		$this->load->model('plan_model');

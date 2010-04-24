@@ -22,6 +22,8 @@ class exact
 		$settings['purchase_link'] = 'http://www.opengateway.net/gateways/exact';
 		$settings['allows_updates'] = 1;
 		$settings['allows_refunds'] = 1;
+		$settings['requires_customer_information'] = 0;
+		$settings['requires_customer_ip'] = 0;
 		$settings['required_fields'] = array('enabled',
 											 'terminal_id',
 											 'password',
@@ -118,13 +120,13 @@ class exact
 		
 	}
 	
-	function Charge($client_id, $order_id, $gateway, $customer, $params, $credit_card)
+	function Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card)
 	{			
 		$CI =& get_instance();
 		
 		$post_url = $gateway['url_live'];
 			
-		$trxnProperties = array(
+		$transaction = array(
 					'ExactID'			=> $gateway['terminal_id'],	
 			  		'Password'			=> $gateway['password'],
 					'Transaction_Type'  => '00',
@@ -132,38 +134,79 @@ class exact
 					'Expiry_Date'		=> $credit_card['exp_month'] . substr($credit_card['exp_year'],-2,2),
 					'CVD_Presence_Ind' 	=> (empty($credit_card['cvv'])) ? '9' : '1',
 					'Customer_Ref' 		=> $order_id,
-					'DollarAmount' 		=> $params['amount']
+					'DollarAmount' 		=> $amount
 		  		);
 		
-		if(isset($credit_card->cvv)) {
-			$trxnProperties['VerificationStr1'] = $credit_card['cvv'];
+		if (isset($credit_card['cvv'])) {
+			$transaction['VerificationStr1'] = $credit_card['cvv'];
 		}  
 		
-		if(isset($customer['customer_id'])) {
-			$trxnProperties['CardHoldersName'] = $customer['first_name'].' '.$customer['last_name'];
-		} else {
+		if (isset($customer['customer_id'])) {
+			// build customer's name from customer array
+			$transaction['CardHoldersName'] = $customer['first_name'].' '.$customer['last_name'];
+		}
+		else {
+			// automatically get customer's name from credit card
 			$name = explode(' ', $credit_card['card_name']);
-			$trxnProperties['CardHoldersName'] = $name[0].' '.$name[1];
-			
+			$transaction['CardHoldersName'] = $name[0] . ' ' . $name[1];
+		}
+		
+		if (isset($customer['ip_address']) and !empty($customer['ip_address'])) {
+			$transaction['Client_IP'] = $customer['ip_address'];
 		}
 		  
-		$trxnProperties = $this->CompleteArray($trxnProperties); 
+		$transaction = $this->CompleteArray($transaction); 
 		  
-		$trxnResult = $this->Process($trxnProperties, $post_url, $order_id);
+		$transaction_result = $this->Process($transaction, $post_url, $order_id);
 		
-		if($trxnResult->EXact_Resp_Code == '00'){
+		if($transaction_result->EXact_Resp_Code == '00'){
 			$CI->load->model('order_authorization_model');
-			$CI->order_authorization_model->SaveAuthorization($order_id, $trxnResult->Transaction_Tag);
+			$CI->order_authorization_model->SaveAuthorization($order_id, $transaction_result->Transaction_Tag);
 			$response_array = array('charge_id' => $order_id);
 			$response = $CI->response->TransactionResponse(1, $response_array);
 		} else {
-			$response_array = array('reason' => $trxnResult->EXact_Message);
+			$response_array = array('reason' => $transaction_result->EXact_Message);
 			$response = $CI->response->TransactionResponse(2, $response_array);
 		}
 		
 		return $response;
-
 	}
+	
+	function Recur ($client_id, $gateway, $customer, $amount, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences = FALSE)
+	{
+		$CI =& get_instance();
+		
+		// Create an order for today's payment
+		$CI->load->model('order_model');
+		$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
+		$order_id = $CI->order_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
+		
+		// Create the recurring seed
+		$response = $this->CreateProfile($client_id, $gateway, $customer, $credit_card, $subscription_id, $amount, $order_id);
+		  
+		// Process today's payment
+		if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
+			$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $response['transaction_tag'], $response['auth_num'], $amount);
+		
+			if($response['success'] == TRUE){
+				$CI->order_model->SetStatus($order_id, 1);
+				$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
+				$response = $CI->response->TransactionResponse(100, $response_array);
+			} else {
+				// Make the subscription inactive
+				$CI->subscription_model->MakeInactive($subscription_id);
+				$CI->order_model->SetStatus($order_id, 0);
+				
+				$response_array = array('reason' => $response['reason']);
+				$response = $CI->response->TransactionResponse(2, $response_array);
+			}
+		} else {
+			$response = $CI->response->TransactionResponse(100, array('recurring_id' => $subscription_id));
+		}
+		
+		return $response;
+	}
+	
 	
 	function Refund($client_id, $order_id, $gateway, $customer, $params, $credit_card)
 	{			
@@ -212,42 +255,7 @@ class exact
 
 	}
 	
-	function Recur($client_id, $gateway, $customer, $params, $start_date, $end_date, $interval, $credit_card, $subscription_id)
-	{
-		$CI =& get_instance();
-		
-		// Create an order for today's payment
-		$CI->load->model('order_model');
-		$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
-		$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $subscription_id, $customer['customer_id']);
-		
-		// Create the recurring seed
-		$response = $this->CreateProfile($client_id, $gateway, $customer, $credit_card, $subscription_id, $params, $order_id);
-		  
-		// Process today's payment
-		if(date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
-			$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $response['transaction_tag'], $response['auth_num'], $params);
-		
-			if($response['success'] == TRUE){
-				$CI->order_model->SetStatus($order_id, 1);
-				$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
-				$response = $CI->response->TransactionResponse(100, $response_array);
-			} else {
-				// Make the subscription inactive
-				$CI->subscription_model->MakeInactive($subscription_id);
-				$CI->order_model->SetStatus($order_id, 0);
-				
-				$response_array = array('reason' => $response['reason']);
-				$response = $CI->response->TransactionResponse(2, $response_array);
-			}
-		} else {
-			$response = $CI->response->TransactionResponse(100, array('recurring_id' => $subscription_id));
-		}
-		
-		return $response;
-	}
-	
-	function CreateProfile($client_id, $gateway, $customer, $credit_card, $subscription_id, $params, $order_id)
+	function CreateProfile($client_id, $gateway, $customer, $credit_card, $subscription_id, $amount, $order_id)
 	{
 		$CI =& get_instance();
 		
@@ -255,7 +263,7 @@ class exact
 
 		// Create the recurring seed
 		
-		$trxnProperties = array(
+		$transaction = array(
 		'ExactID'			=> $gateway['terminal_id'],	
   		'Password'			=> $gateway['password'],
 		'Transaction_Type'  => '00',
@@ -263,24 +271,27 @@ class exact
 		'Expiry_Date'		=> $credit_card['exp_month'] . substr($credit_card['exp_year'],-2,2),
 		'CVD_Presence_Ind' 	=> (empty($credit_card['cvv'])) ? '9' : '1',
 		'Customer_Ref' 		=> $order_id,
-		'DollarAmount' 		=> $params['amount']
-		  );
+		'DollarAmount' 		=> $amount
+	    );
 		
-		if(isset($credit_card->cvv)) {
-			$trxnProperties['VerificationStr1'] = $credit_card['cvv'];
+		if (isset($credit_card['cvv'])) {
+			$transaction['VerificationStr1'] = $credit_card['cvv'];
 		}  
 		
-		if(isset($customer['customer_id'])) {
-			$trxnProperties['CardHoldersName'] = $customer['first_name'].' '.$customer['last_name'];
+		if (isset($customer['customer_id'])) {
+			$transaction['CardHoldersName'] = $customer['first_name'] . ' ' . $customer['last_name'];
 		} else {
 			$name = explode(' ', $credit_card['card_name']);
-			$trxnProperties['CardHoldersName'] = $name[0].' '.$name[1];
-			
+			$transaction['CardHoldersName'] = $name[0] . ' ' . $name[1];
 		}
 		
-		$trxnProperties = $this->CompleteArray($trxnProperties);
+		if (isset($customer['ip_address']) and !empty($customer['ip_address'])) {
+			$transaction['Client_IP'] = $customer['ip_address'];
+		}
 		
-		$post_response = $this->Process($trxnProperties, $post_url, $order_id);
+		$transaction = $this->CompleteArray($transaction);
+		
+		$post_response = $this->Process($transaction, $post_url, $order_id);
 		
 		if($post_response->EXact_Resp_Code == '00') {
 			$response['success'] = TRUE;
@@ -299,10 +310,10 @@ class exact
 	}
 	
 	function AutoRecurringCharge ($client_id, $order_id, $gateway, $params) {
-		return $this->ChargeRecurring($client_id, $gateway, $order_id, $params['api_customer_reference'], $params['api_payment_reference'], $params);
+		return $this->ChargeRecurring($client_id, $gateway, $order_id, $params['api_customer_reference'], $params['api_payment_reference'], $params['amount']);
 	}
 	
-	function ChargeRecurring($client_id, $gateway, $order_id, $transaction_tag, $auth_num, $params)
+	function ChargeRecurring($client_id, $gateway, $order_id, $transaction_tag, $auth_num, $amount)
 	{
 		$CI =& get_instance();
 		
@@ -317,8 +328,8 @@ class exact
 	 	'Transaction_Tag'	=> $transaction_tag,
 		'Authorization_Num'	=> $auth_num,
 		'Customer_Ref' 		=> $order_id,
-		'DollarAmount' 		=> $params['amount']
-		  );
+		'DollarAmount' 		=> $amount
+        );
 		
 		$trxnProperties = $this->CompleteArray($trxnProperties); 
 		
@@ -333,7 +344,6 @@ class exact
 			$response['success'] = FALSE;
 			$response['reason'] = $post_response->EXact_Message;
 		}
-		
 		
 		return $response;
 	}

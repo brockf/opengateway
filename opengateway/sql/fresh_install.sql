@@ -586,7 +586,7 @@ CREATE TABLE `external_apis` (
   `arb_test_url` varchar(255) NOT NULL,
   `arb_dev_url` varchar(255) NOT NULL,
   PRIMARY KEY  (`external_api_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 -- 
 -- Dumping data for table `external_apis`
@@ -594,7 +594,7 @@ CREATE TABLE `external_apis` (
 
 INSERT INTO `external_apis` (`external_api_id`, `name`, `display_name`, `prod_url`, `test_url`, `dev_url`, `arb_prod_url`, `arb_test_url`, `arb_dev_url`) VALUES (1, 'authnet', 'Authorize.net', 'https://secure.authorize.net/gateway/transact.dll', 'https://secure.authorize.net/gateway/transact.dll', 'https://test.authorize.net/gateway/transact.dll', 'https://api.authorize.net/xml/v1/request.api', 'https://api.authorize.net/xml/v1/request.api', 'https://apitest.authorize.net/xml/v1/request.api'),
 (2, 'exact', 'E-xact', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl', 'https://secure2.e-xact.com/vplug-in/transaction/rpc-enc/service.asmx?wsdl'),
-(6, 'paypal', 'PayPal Pro', 'https://api-3t.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp', 'https://api-3t.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp');
+(3, 'paypal', 'PayPal Pro', 'https://api-3t.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp', 'https://api-3t.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp', 'https://api-3t.sandbox.paypal.com/nvp');
 
 -- --------------------------------------------------------
 -- 
@@ -733,8 +733,8 @@ CREATE TABLE `request_types` (
 INSERT INTO `request_types` (`request_type_id`, `name`, `model`) VALUES (1, 'NewClient', ''),
 (2, 'NewGateway', ''),
 (4, 'NewCustomer', ''),
-(3, 'Charge', 'gateway_model'),
-(9, 'Recur', 'gateway_model'),
+(3, 'Charge', ''),
+(9, 'Recur', ''),
 (10, 'CancelRecurring', ''),
 (11, 'GetCharges', ''),
 (12, 'GetCharge', ''),
@@ -799,6 +799,8 @@ INSERT INTO `required_fields` (`required_field_id`, `request_type_id`, `field_na
 (10, 1, 'email'),
 (13, 3, 'amount'),
 (14, 3, 'credit_card'),
+(15, 9, 'recur'),
+(16, 9, 'credit_card'),
 (17, 5, 'gateway_id'),
 (18, 5, 'customer_id'),
 (19, 5, 'order_id'),
