@@ -7,7 +7,7 @@
 * @version 1.0
 * @author Electric Function, Inc.
 * @package OpenGateway
-
+*
 */
 
 class Gateway_model extends Model
@@ -412,19 +412,24 @@ class Gateway_model extends Model
 			// adjust to server time
 			$recur['end_date'] = (!isset($end_date_set_by_server)) ? server_time($recur['end_date']) : $recur['end_date'];
 			
-			if(strtotime($recur['end_date']) < time()) {
+			if (strtotime($recur['end_date']) < time()) {
+				// end_date is in the past
 				die($this->response->Error(5002));
 			} elseif(strtotime($recur['end_date']) < strtotime($start_date)) {
+				// end_date is before start_date
 				die($this->response->Error(5003));
 			} else {
+				// date is good
 				$end_date = date('Y-m-d', strtotime($recur['end_date']));
 			}
 		} elseif (isset($occurrences) and !empty($occurrences)) {
+			// calculate end_date from # of occurrences as defined by plan
 			$end_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400 * $occurrences));
 		} elseif (isset($recur['occurrences'])) {
+			// calculate end_date from # of occurrences from recur node
 			$end_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400 * $recur['occurrences']));
 		} else {
-			// Find the end date based on the max end date
+			// calculate the end_date based on the max end date setting
 			$end_date = date('Y-m-d', strtotime($start_date) + ($this->config->item('max_recurring_days_from_today') * 86400));
 		}
 		
@@ -449,7 +454,7 @@ class Gateway_model extends Model
 			$CI->subscription_model->SetChargeDates($subscription_id, date('Y-m-d'), $next_charge_date);
 		}
 		
-		// if amount is greater than 0, we require a gateway
+		// if amount is greater than 0, we require a gateway to process
 		if ($amount > 0) {
 			// load the proper library
 			$gateway_name = $gateway['name'];
@@ -459,10 +464,10 @@ class Gateway_model extends Model
 		else {
 			// this is a free subscription
 			if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
-				// Create an order for today's payment
+				// create a $0 order for today's payment
 				$CI->load->model('order_model');
 				$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
-				$order_id = $CI->order_model->CreateNewOrder($client_id, $gateway_id, $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer_ip);
+				$order_id = $CI->order_model->CreateNewOrder($client_id, $gateway_id, 0, $credit_card, $subscription_id, $customer['customer_id'], $customer_ip);
 				$CI->order_model->SetStatus($order_id, 1);
 				$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
 			}
@@ -1017,8 +1022,6 @@ class Gateway_model extends Model
 		$this->load->library('payment/'.$gateway_name);
 		return $this->$gateway_name->Capture($client_id, $order_id, $gateway, $customer, $params);
 	}
-	
-	
 	
 	function Void($client_id, $params)
 	{

@@ -386,49 +386,16 @@ class Order_model extends Model
 	
 	function GetCharge($client_id, $charge_id)
 	{
-		//$this->db->join('order_authorizations', 'order_authorizations.order_id = orders.order_id', 'inner');
-		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
-		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
-		$this->db->where('orders.client_id', $client_id);
-		$this->db->where('orders.order_id', $charge_id);
-		$this->db->limit(1);
-		$query = $this->db->get('orders');
-		if($query->num_rows() > 0) {
-			$row = $query->row();
-			$data['id'] = $row->order_id;
-			$data['gateway_id'] = $row->gateway_id;
-			$data['date'] = local_time($client_id, $row->timestamp);
-			$data['amount'] = money_format("%!i",$row->amount);
-			$data['card_last_four'] = $row->card_last_four;
-			$data['status'] = ($row->status == 1) ? 'ok' : 'failed';
-				
-			if($row->subscription_id != 0) {
-					$data['recurring_id'] = $row->subscription_id;
-				}
-				
-			if($row->customer_id != 0) {
-				$data['customer']['id'] = $row->customer_id;
-				$data['customer']['internal_id'] = $row->internal_id;
-				$data['customer']['first_name'] = $row->first_name;
-				$data['customer']['last_name'] = $row->last_name;
-				$data['customer']['company'] = $row->company;
-				$data['customer']['address_1'] = $row->address_1;
-				$data['customer']['address_2'] = $row->address_2;
-				$data['customer']['city'] = $row->city;
-				$data['customer']['state'] = $row->state;
-				$data['customer']['postal_code'] = $row->postal_code;
-				$data['customer']['country'] = $row->iso2;
-				$data['customer']['email'] = $row->email;
-				$data['customer']['phone'] = $row->phone;
-				$data['customer']['date_created'] = local_time($client_id, $row->date_created);
-				$data['customer']['status'] = ($row->active == 1) ? 'active' : 'deleted';
-			}
-				
-		} else {
+		$params = array('id' => $charge_id);
+		
+		$data = $this->GetCharges($client_id, $params);
+		
+		if (!empty($data)) {
+			return $data[0];
+		}
+		else {
 			return FALSE;
 		}
-		
-		return $data;
 	}
 	
 	/**
