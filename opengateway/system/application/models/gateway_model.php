@@ -129,7 +129,7 @@ class Gateway_model extends Model
 		$CI =& get_instance();
 		
 		// validate function arguments
-		if (empty($gateway_id) or empty($amount) or empty($credit_card)) {
+		if (empty($amount) or empty($credit_card)) {
 			die($CI->response->Error(1003));
 		}
 		
@@ -137,7 +137,7 @@ class Gateway_model extends Model
 		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
 		
 		// is gateway enabled?
-		if ($gateway['enabled'] == '0') {
+		if (!$gateway or $gateway['enabled'] == '0') {
 			die($this->response->Error(5017));
 		}
 		
@@ -189,7 +189,7 @@ class Gateway_model extends Model
 		}
 		
 		// some gateways require a customer IP address
-		if ($gateway_settings['required_customer_ip'] == 1 and !$customer_ip) {
+		if ($gateway_settings['requires_customer_ip'] == 1 and !$customer_ip) {
 			die($this->response->Error(5019));
 		}
 		elseif (!empty($customer_ip)) {
@@ -203,7 +203,7 @@ class Gateway_model extends Model
 		// Create a new order
 		$CI->load->model('order_model');
 		$passed_customer = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
-		$order_id = $CI->order_model->CreateNewOrder($client_id, $gateway_id, $amount, $credit_card, 0, $passed_customer, $customer_ip);
+		$order_id = $CI->order_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, 0, $passed_customer, $customer_ip);
 		
 		// if amount is greater than $0, we require a gateway
 		if ($amount > 0) {
@@ -221,17 +221,17 @@ class Gateway_model extends Model
 			// the charge failed, so delete the customer we just created
 			$CI->customer_model->DeleteCustomer($client_id, $customer['customer_id']);
 		}
-		elseif (isset($created_customer)) {
+		elseif (isset($created_customer) and $created_customer == TRUE) {
 			// charge is OK and we created a new customer, we'll include it in the response
 			$response['customer_id'] = $customer['customer_id'];
 		}
 		
 		// if it was successful, send an email
 		if ($response['response_code'] == 1) {
-			$this->order_model->SetStatus($order_id, 1);
+			$CI->order_model->SetStatus($order_id, 1);
 			TriggerTrip('charge', $client_id, $response['charge_id']);
 		} else {
-			$this->order_model->SetStatus($order_id, 0);
+			$CI->order_model->SetStatus($order_id, 0);
 		}
 		
 		return $response;
@@ -273,9 +273,14 @@ class Gateway_model extends Model
 		// Get the gateway info to load the proper library
 		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
 		
-		if ($gateway['enabled'] == '0') {
+		if (!$gateway or $gateway['enabled'] == '0') {
 			die($this->response->Error(5017));
 		}
+		
+		// load the gateway
+		$gateway_name = $gateway['name'];
+		$CI->load->library('payment/'.$gateway_name);
+		$gateway_settings = $this->$gateway_name->Settings();
 		
 		$this->load->library('field_validation');
 		
@@ -323,7 +328,7 @@ class Gateway_model extends Model
 		}
 		
 		// some gateways require a customer IP address
-		if ($gateway_settings['required_customer_ip'] == 1 and !$customer_ip) {
+		if ($gateway_settings['requires_customer_ip'] == 1 and !$customer_ip) {
 			die($this->response->Error(5019));
 		}
 		elseif (!empty($customer_ip)) {
@@ -447,7 +452,7 @@ class Gateway_model extends Model
 		
 		// Save the subscription info
 		$CI->load->model('subscription_model');
-		$subscription_id = $CI->subscription_model->SaveSubscription($client_id, $gateway_id, $customer['customer_id'], $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id);
+		$subscription_id = $CI->subscription_model->SaveSubscription($client_id, $gateway['gateway_id'], $customer['customer_id'], $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id);
 		
 		// set last_charge as today, if today was a charge
 		if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
@@ -456,10 +461,7 @@ class Gateway_model extends Model
 		
 		// if amount is greater than 0, we require a gateway to process
 		if ($amount > 0) {
-			// load the proper library
-			$gateway_name = $gateway['name'];
-			$this->load->library('payment/'.$gateway_name);
-			$response = $this->$gateway_name->Recur($client_id, $gateway, $customer, $amount, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences);
+			$response = $CI->$gateway_name->Recur($client_id, $gateway, $customer, $amount, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences);
 		}
 		else {
 			// this is a free subscription
@@ -467,7 +469,7 @@ class Gateway_model extends Model
 				// create a $0 order for today's payment
 				$CI->load->model('order_model');
 				$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
-				$order_id = $CI->order_model->CreateNewOrder($client_id, $gateway_id, 0, $credit_card, $subscription_id, $customer['customer_id'], $customer_ip);
+				$order_id = $CI->order_model->CreateNewOrder($client_id, $gateway['gateway_id'], 0, $credit_card, $subscription_id, $customer['customer_id'], $customer_ip);
 				$CI->order_model->SetStatus($order_id, 1);
 				$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
 			}
@@ -875,7 +877,7 @@ class Gateway_model extends Model
 		$client = $CI->client_model->GetClientDetails($client_id);
 		
 		// If they have not passed a gateway ID, we will choose the first one created.
-		if($gateway_id) {
+		if ($gateway_id) {
 			$this->db->where('client_gateways.client_gateway_id', $gateway_id);
 		} elseif (!empty($client->default_gateway_id)) {
 			$this->db->where('client_gateways.client_gateway_id', $client->default_gateway_id);

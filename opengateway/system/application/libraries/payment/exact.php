@@ -365,8 +365,6 @@ class exact
 		$client = new SoapClient($post_url);
 		$trxnResult = $client->__soapCall('SendAndCommit', $trxn);
 		
-		$this->LogResponse($order_id, $trxnResult);
-		
 		return $trxnResult;
 	}
 	
@@ -418,57 +416,5 @@ class exact
 		}
 		
 		return $array;
-	}
-	
-	function LogResponse($order_id, $response)
-	{		
-		$response_array = array(
-					'ExactID',
-					'Password',
-					'Transaction_Type',
-					'DollarAmount',
-					'SurchargeAmount',
-					'Transaction_Tag',
-					'PAN',
-					'Expiry_Date',
-					'CardHoldersName',
-					'VerificationStr1',
-					'CVD_Presence_Ind',
-					'Secure_AuthRequired',
-					'Secure_AuthResult',
-					'Ecommerce_Flag',
-					'CAVV_Algorithm',
-					'Customer_Ref',
-					'LogonMessage',
-					'Error_Number',
-					'Error_Description',
-					'Transaction_Error',
-					'Transaction_Approved',
-					'EXact_Resp_Code',
-					'EXact_Message',
-					'MerchantName',
-					'MerchantAddress',
-					'MerchantCity',
-					'MerchantProvince',
-					'MerchantCountry',
-					'MerchantPostal',
-					'MerchantURL',
-					'CTR'
-				);
-		
-		foreach($response_array as $item) {
-			if(isset($response->$item)) {
-				$insert_data[$item] = $response->$item;
-			} else {
-				$insert_data[$item] = '';
-			}
-		}
-		
-		$insert_data['order_id'] = $order_id;
-		$insert_data['Card_Number'] = substr($response->Card_Number,-4);
-		
-		$CI =& get_instance();
-		$CI->log_model->LogApiResponse('exact', $insert_data);
-		
 	}
 }

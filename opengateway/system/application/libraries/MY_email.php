@@ -7,7 +7,7 @@ class MY_Email extends CI_Email {
         parent::CI_Email();
     }
     
-    function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscription_id = false, $customer_id = false, $plan_id = false)
+    function TriggerTrip($trigger_type, $client_id, $charge_id = FALSE, $subscription_id = FALSE, $customer_id = FALSE, $plan_id = FALSE)
     {
     	$CI =& get_instance();
     	$CI->load->model('email_model');
@@ -96,7 +96,6 @@ class MY_Email extends CI_Email {
     		$variables['customer_email'] = $customer['email'];
     		$variables['customer_phone'] = $customer['phone'];
     	}
-    	
     	    	
     	// just in case, we'll grab the email of the client
     	$CI->load->model('client_model');

@@ -303,17 +303,14 @@ class Transactions extends Controller {
 		
 		$response = $charge->Charge();
 		
-		if (isset($response['response_code']) and ($response['response_code'] == '1' or $response['response_code'] == '100')) {
-			$this->notices->SetNotice($this->lang->line('transaction_ok'));
+		if (!is_array($response) or isset($response['error'])) {
+			$this->notices->SetError($this->lang->line('transaction_error') . $response['error_text'] . ' (#' . $response['error'] . ')');
 		}
-		elseif (isset($response['reason'])) {
-			$this->notices->SetError($this->lang->line('transaction_error') . $response['reason']);
-		}
-		elseif (isset($response['response_text'])) {
-			$this->notices->SetError($this->lang->line('transaction_error') . $response['response_text']);
+		elseif (isset($response['response_code']) and $response['response_code'] == '2') {
+			$this->notices->SetError($this->lang->line('transaction_error') . $response['response_text'] . '. ' . $response['reason'] . ' (#' . $response['response_code'] . ')');
 		}
 		else {
-			$this->notices->SetError($this->lang->line('transaction_error') . $response['error_text'] . ' (#' . $response['error'] . ')');
+			$this->notices->SetNotice($this->lang->line('transaction_ok'));
 		}
 		
 		if (isset($response['recurring_id'])) {

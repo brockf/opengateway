@@ -15,24 +15,22 @@ class Field_validation
 		
 		$param_keys = array_keys($params);
 		
-		if($required_fields) {
-			foreach($required_fields as $required_value)
-			{
-				foreach($required_value as $key => $value)
-				{
-					if(!in_array($value, $param_keys)) {
+		if ($required_fields) {
+			foreach($required_fields as $required_value) {
+				foreach($required_value as $key => $value) {
+					if (!in_array($value, $param_keys)) {
 						$error = TRUE;
 					}
 					
-					if(!isset($params[$value]) or $params[$value] == '') {
+					if (!isset($params[$value]) or $params[$value] == '') {
 						$error = TRUE;
 					}
 				}
 			}
 		}
 			 
-		if($error) {
-			die($CI->response->Error(1003));
+		if ($error) {
+			die($CI->response->Error(1004));
 		} else {
 			return TRUE;
 		}

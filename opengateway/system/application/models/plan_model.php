@@ -206,37 +206,16 @@ class Plan_model extends Model
 	*/
 	function GetPlan($client_id, $plan_id)
 	{
-		$this->db->select('plans.*');
-		$this->db->select('plan_types.*');
-		$this->db->select('SUM(subscriptions.active) as `num_customers`',false);
-		$this->db->join('subscriptions','subscriptions.plan_id = plans.plan_id','left');
-		$this->db->join('plan_types', 'plans.plan_type_id = plan_types.plan_type_id', 'inner');
-		$this->db->group_by('plans.plan_id');
-		$this->db->where('plans.client_id', $client_id);
-		$this->db->where('plans.plan_id',$plan_id);
-		$query = $this->db->get('plans');
+		$params = array('id' => $plan_id);
 		
-		if($query->num_rows() > 0) {
-			$row = $query->row();
-			
-			$data = array(
-							'id' => $row->plan_id,
-							'type' => $row->type,
-							'name' => $row->name,
-							'amount' => money_format("%!i",$row->amount),
-							'interval' => $row->interval,
-							'notification_url' => $row->notification_url,
-							'occurrences' => $row->occurrences,
-							'free_trial' => $row->free_trial,
-							'num_customers' => (empty($row->num_customers)) ? '0' : $row->num_customers,
-							'status' => ($row->deleted == '0') ? 'active' : 'deleted'
-							);
+		$data = $this->GetPlans($client_id, $params);
+		
+		if (!empty($data)) {
+			return $data[0];
 		}
 		else {
 			return FALSE;
 		}
-		
-		return $data;
 	}
 	
 	/*

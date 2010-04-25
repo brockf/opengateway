@@ -185,79 +185,23 @@ class Subscription_model extends Model
 	* Returns an array of data for the requested subscription.
 	*
 	* @param int $client_id The client ID.
-	* @param int $params['recurring_id'];
+	* @param int $recurring_id The ID # of the recurring transaction to pull;
 	* 
 	* @return array|bool Details for a specific subscription or FALSE upon failure
 	*/
 	
 	function GetRecurring ($client_id, $recurring_id)
 	{
-		// Make sure they only get their own charges
-		$this->db->where('subscriptions.client_id', $client_id);
+		$params = array('id' => $recurring_id);
 		
-		$this->db->where('subscriptions.subscription_id', $recurring_id);
+		$data = $this->GetRecurrings($client_id, $params, TRUE);
 		
-		$this->db->join('customers', 'customers.customer_id = subscriptions.customer_id', 'left');
-		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
-		$this->db->join('plans', 'plans.plan_id = subscriptions.plan_id', 'left');
-		$this->db->join('plan_types', 'plan_types.plan_type_id = plans.plan_type_id', 'left');
-		$this->db->select('subscriptions.*');
-		$this->db->select('subscriptions.active AS sub_active');
-		$this->db->select('customers.*');
-		$this->db->select('countries.*');
-		$this->db->select('plans.name');
-		$this->db->select('plan_types.type AS plan_type',false);
-		$this->db->select('plans.interval AS plan_interval',false);
-		$this->db->select('plans.amount AS plan_amount',false);
-		$this->db->select('plans.notification_url AS plan_notification_url',false);
-		$query = $this->db->get('subscriptions');
-		
-		if ($query->num_rows() == 0) {
-			 return FALSE;
+		if (!empty($data)) {
+			return $data[0];
 		}
-		
-		$row = $query->row();
-		
-		$data['id'] = $row->subscription_id;
-		$data['gateway_id'] = $row->gateway_id;
-		$data['date_created'] = local_time($client_id, $row->timestamp);
-		$data['amount'] = money_format("%!i",$row->amount);
-		$data['interval'] = $row->charge_interval;
-		$data['start_date'] = local_time($client_id, $row->start_date);
-		$data['end_date'] = local_time($client_id, $row->end_date);
-		$data['last_charge_date'] = local_time($client_id, $row->last_charge);
-		$data['next_charge_date'] = local_time($client_id, $row->next_charge);
-		if ($row->sub_active == '0') { $data['cancel_date'] = local_time($client_id, $row->cancel_date); }
-		$data['number_occurrences'] = $row->number_occurrences;
-		$data['notification_url'] = $row->notification_url;
-		$data['status'] = ($row->sub_active == '1') ? 'active' : 'inactive';
-		
-		if($row->customer_id !== 0) {
-			$data['customer']['id'] = $row->customer_id;
-			$data['customer']['internal_id'] = $row->internal_id;
-			$data['customer']['first_name'] = $row->first_name;
-			$data['customer']['last_name'] = $row->last_name;
-			$data['customer']['company'] = $row->company;
-			$data['customer']['address_1'] = $row->address_1;
-			$data['customer']['address_2'] = $row->address_2;
-			$data['customer']['city'] = $row->city;
-			$data['customer']['state'] = $row->state;
-			$data['customer']['postal_code'] = $row->postal_code;
-			$data['customer']['country'] = $row->iso2;
-			$data['customer']['email'] = $row->email;
-			$data['customer']['phone'] = $row->phone;
+		else {
+			return FALSE;
 		}
-		
-		if($row->plan_id != 0) {
-			$data['plan']['id'] = $row->plan_id;
-			$data['plan']['type'] = $row->plan_type;
-			$data['plan']['name'] = $row->name;
-			$data['plan']['amount'] = money_format("%!i",$row->plan_amount);
-			$data['plan']['interval'] = $row->plan_interval;
-			$data['plan']['notification_url'] = $row->plan_notification_url;
-		}
-		
-		return $data;
 	}
 	
 	/**
@@ -281,7 +225,7 @@ class Subscription_model extends Model
 	* 
 	* @return mixed Array containing results
 	*/
-	function GetRecurrings ($client_id, $params)
+	function GetRecurrings ($client_id, $params, $any_status = FALSE)
 	{
 		// Make sure they only get their own charges
 		$this->db->where('subscriptions.client_id', $client_id);
@@ -289,7 +233,7 @@ class Subscription_model extends Model
 		// Check which search paramaters are set
 		
 		if(isset($params['id'])) {
-			$this->db->where('recurring_id', $params['id']);
+			$this->db->where('subscription_id', $params['id']);
 		}
 		
 		if(isset($params['gateway_id'])) {
@@ -322,12 +266,12 @@ class Subscription_model extends Model
 			$this->db->where('amount', $params['amount']);
 		}
 		
-		if(isset($params['active'])) {
+		if (isset($params['active'])) {
 			if($params['active'] == '1' or $params['active'] == '0') {
 				$this->db->where('subscriptions.active', $params['active']);
 			}
 		}
-		else {
+		elseif ($any_status == FALSE) {
 			$this->db->where('subscriptions.active','1');
 		}
 		
@@ -397,7 +341,7 @@ class Subscription_model extends Model
 				$data[$i]['gateway_id'] = $row->gateway_id;
 				$data[$i]['date_created'] = local_time($client_id, $row->timestamp);
 				$data[$i]['amount'] = money_format("%!i",$row->amount);
-				$data[$i]['interval'] = local_time($client_id, $row->charge_interval);
+				$data[$i]['interval'] = $row->charge_interval;
 				$data[$i]['start_date'] = local_time($client_id, $row->start_date);
 				$data[$i]['end_date'] = local_time($client_id, $row->end_date);
 				$data[$i]['last_charge_date'] = local_time($client_id, $row->last_charge);

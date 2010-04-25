@@ -545,51 +545,16 @@ class Customer_model extends Model
 	
 	function GetCustomer($client_id, $customer_id)
 	{	
-		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
-		$this->db->where('customers.client_id', $client_id);
-		$this->db->where('customers.customer_id', $customer_id);
-		$this->db->limit(1);
-		$query = $this->db->get('customers');
-		if($query->num_rows() > 0) {
-			$row = $query->row();
-			
-			$data['id'] = $row->customer_id;
-			$data['internal_id'] = $row->internal_id;
-			$data['first_name'] = $row->first_name;
-			$data['last_name'] = $row->last_name;
-			$data['company'] = $row->company;
-			$data['address_1'] = $row->address_1;
-			$data['address_2'] = $row->address_2;
-			$data['city'] = $row->city;
-			$data['state'] = $row->state;
-			$data['postal_code'] = $row->postal_code;
-			$data['country'] = $row->iso2;
-			$data['email'] = $row->email;
-			$data['phone'] = $row->phone;
-			$data['date_created'] = local_time($client_id, $row->date_created);
-			$data['status'] = ($row->active == 1) ? 'active' : 'deleted';
-			
-			$plans = $this->GetPlansByCustomer($client_id, $row->customer_id);
-			
-			if($plans) {
-				$i=0;
-				foreach($plans as $plan) {
-					$data['plans'][$i]['id'] = $plan['id'];
-					$data['plans'][$i]['type'] = $plan['type'];
-					$data['plans'][$i]['name'] = $plan['name'];
-					$data['plans'][$i]['amount'] = $plan['amount'];
-					$data['plans'][$i]['interval'] = $plan['interval'];
-					$data['plans'][$i]['notification_url'] = $plan['notification_url'];
-					$data['plans'][$i]['status'] = $plan['active'];
-					$i++;
-				}
-			}
-				
-		} else {
+		$params = array('id' => $customer_id);
+		
+		$data = $this->GetCustomers($client_id, $params);
+		
+		if (!empty($data)) {
+			return $data[0];
+		}
+		else {
 			return FALSE;
 		}
-		
-		return $data;
 	}
 	
 	/**

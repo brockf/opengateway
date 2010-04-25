@@ -100,11 +100,8 @@ class API extends Controller {
 			die($this->response->Error(1010));
 		}
 		
-		// check gateway
-		if (!isset($params['gateway_id'])) {
-			// die with gateway error
-			die($this->response->Error(3000));
-		}
+		// we don't check the gateway here, because the GetGatewayDetails function will attempt
+		// to find the default gateway
 		
 		// validate required fields
 		$this->load->library('field_validation');
@@ -129,11 +126,8 @@ class API extends Controller {
 			die($this->response->Error(1010));
 		}
 		
-		// check gateway
-		if (!isset($params['gateway_id'])) {
-			// die with gateway error
-			die($this->response->Error(3000));
-		}
+		// we don't check the gateway here, because the GetGatewayDetails function will attempt
+		// to find the default gateway
 		
 		// validate required fields
 		$this->load->library('field_validation');

@@ -238,41 +238,14 @@ class Email_model extends Model
 	
 	function GetEmail($client_id, $email_id)
 	{
-		$this->db->join('email_triggers', 'email_triggers.email_trigger_id = client_emails.trigger_id', 'inner');
-		$this->db->join('plans', 'client_emails.plan_id = plans.plan_id', 'left');
-		$this->db->where('client_emails.client_id', $client_id);
-		$this->db->where('client_email_id', $email_id);
+		$params = array('id' => $email_id);
 		
-		$this->db->limit(1);
-
-		$this->db->select('client_emails.*');
-		$this->db->select('email_triggers.*');
-		$this->db->select('`plans`.`plan_id` AS `true_plan_id`',true);
-		$this->db->select('plans.name');
+		$data = $this->GetEmails($client_id, $params);
 		
-		$query = $this->db->get('client_emails');
-		if($query->num_rows() > 0) {
-			$row = $query->row_array();
-			
-			$array = array(
-							'id' => $row['client_email_id'],
-							'trigger' => $row['system_name'],
-							'email_subject' => $row['email_subject'],
-							'email_body' => $row['email_body'],
-							'from_name' => $row['from_name'],
-							'from_email' => $row['from_email'],
-							'is_html' => $row['is_html'],
-							'to_address' => $row['to_address'],
-							'bcc_address' => $row['bcc_address'],
-							'plan' => $row['plan_id'],
-							);
-							
-			if (isset($row['plan_name'])) {
-				$array['plan_name'] = $row['name'];
-			}
-							
-			return $array;
-		} else {
+		if (!empty($data)) {
+			return $data[0];
+		}
+		else {
 			return FALSE;
 		}
 	}
@@ -311,7 +284,7 @@ class Email_model extends Model
 		}
 				
 		if(isset($params['id'])) {
-			$this->db->where('client_emails.email_id', $params['id']);
+			$this->db->where('client_emails.client_email_id', $params['id']);
 		}
 		
 		if(isset($params['plan_id'])) {

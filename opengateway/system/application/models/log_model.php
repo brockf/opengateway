@@ -42,14 +42,9 @@ class Log_model extends Model
 		}
 	}
 	
-	function LogApiResponse($gateway_name, $insert_data)
-	{
-		$this->db->insert($gateway_name.'_log', $insert_data);
-	}
-	
 	function LogError($error = FALSE)
 	{
-		if($error) {
+		if ($error) {
 			$timestamp = date('Y-m-d H:i:s');
 			$insert_data = array('timestamp' 	=> $timestamp,
 								 'remote_ip' 	=> $_SERVER['REMOTE_ADDR'],
