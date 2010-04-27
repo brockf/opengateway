@@ -192,7 +192,7 @@ class authnet
 			$post_values['x_test_request'] = 'TRUE';
 		}
 
-		if(isset($credit_card->cvv)) {
+		if(isset($credit_card['cvv'])) {
 			$post_values['x_card_code'] = $credit_card['cvv'];
 		}	
 		
@@ -203,6 +203,7 @@ class authnet
 			if (isset($customer['address_2']) and !empty($customer['address_2'])) {
 				$post_values['x_address'] .= ' - '.$customer['address_2'];
 			}
+			$post_values['x_city'] = $customer['city'];
 			$post_values['x_state'] = $customer['state'];
 			$post_values['x_zip'] = $customer['postal_code'];
 			$post_values['x_country'] = $customer['country'];
