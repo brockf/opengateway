@@ -274,7 +274,8 @@ class sagepay
 			"RelatedVPSTxId" => $VPSTxId,
 			"RelatedVendorTxCode" => $VendorTxCode,
 			"RelatedTxAuthNo" => $VendorTxAuthNo,
-			"RelatedSecurityKey" => $SecurityKey
+			"RelatedSecurityKey" => $SecurityKey,
+			"AccountType" => "C"
 		);
 
 		$response = $this->Process($order_id, $post_url, $post_values);
