@@ -395,6 +395,7 @@ class Settings extends Controller {
 					'form_title' => $settings['name'] . ': Details',
 					'form_action' => site_url('settings/post_gateway/new'),
 					'external_api' => $this->input->post('external_api'),
+					'name' => $settings['name'],
 					'fields' => $settings['field_details']
 					);
 		
@@ -434,7 +435,8 @@ class Settings extends Controller {
 		}
 		
 		$params = array(
-						'gateway_type' => $this->input->post('external_api')
+						'gateway_type' => $this->input->post('external_api'),
+						'alias' => $this->input->post('alias')
 					);
 					
 		foreach ($settings['field_details'] as $name => $details) {
@@ -481,6 +483,7 @@ class Settings extends Controller {
 					'form_title' => $settings['name'] . ': Details',
 					'form_action' => site_url('settings/post_gateway/edit/' . $id),
 					'external_api' => $gateway['name'],
+					'name' => $gateway['alias'],
 					'fields' => $settings['field_details'],
 					'values' => $gateway
 					);

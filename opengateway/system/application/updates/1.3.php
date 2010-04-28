@@ -10,6 +10,7 @@ $sql[] = 'INSERT INTO `external_apis` (`external_api_id`, `name`, `display_name`
 $sql[] = 'ALTER TABLE `order_authorizations` MODIFY COLUMN `authorization_code` VARCHAR(200) NOT NULL';
 $sql[] = 'ALTER TABLE `order_authorizations` ADD COLUMN `security_key` VARCHAR(200) NOT NULL AFTER `authorization_code`';
 $sql[] = 'ALTER TABLE `order_authorizations` MODIFY COLUMN `order_id` VARCHAR(200) NOT NULL';
+$sql[] = 'ALTER TABLE `client_gateways` ADD COLUMN `alias` VARCHAR(200) NOT NULL AFTER `external_api_id`';
 
 foreach ($sql as $query) {
 	$CI->db->query($query);

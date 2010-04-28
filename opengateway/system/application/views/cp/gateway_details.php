@@ -5,6 +5,10 @@
 <fieldset>
 	<legend>Gateway Settings</legend>
 	<ul class="form">
+	<li>
+		<label for="alias">Gateway Alias</label>
+		<input type="text" class="text" name="alias" value="<?=$name;?>" />
+	</li>
 	<? foreach ($fields as $name => $field) { ?>
 	<? if (!isset($values[$name])) { $values[$name] = ''; } ?>
 		<li>

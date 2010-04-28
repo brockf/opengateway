@@ -31,6 +31,7 @@ class Gateway_model extends Model
 	* @param int $params['accept_discover'] Whether the gateway will accept Discover
 	* @param int $params['accept_dc'] Whether the gateway will accept Diner's Club
 	* @param int $params['enabled'] Whether the gateway is enabled or disabled
+	* @param string $params['alias'] The gateway's alias (optional)
 	* 
 	* @return int New Gateway ID
 	*/
@@ -61,6 +62,7 @@ class Gateway_model extends Model
 		$insert_data = array(
 							'client_id' 		=> $client_id,
 							'external_api_id' 	=> $external_api_id,
+							'alias'				=> (isset($params['alias']) and !empty($params['alias'])) ? $params['alias'] : $settings['name'],
 							'enabled'			=> $params['enabled'],
 							'create_date'		=> $create_date
 							);  
@@ -75,6 +77,7 @@ class Gateway_model extends Model
 		unset($params['gateway_type']);
 		unset($params['enabled']);
 		unset($params['type']);
+		unset($params['alias']);
 		
 		$this->load->library('encrypt');
 		
@@ -700,9 +703,16 @@ class Gateway_model extends Model
 				
 		$this->load->library('encrypt');
 		
-		// manually handle "enabled"
+		// manually handle "enabled" and "alias"
 		if (isset($params['enabled']) and ($params['enabled'] == '0' or $params['enabled'] == '1')) {
 			$update_data['enabled'] = $params['enabled'];
+			$this->db->where('client_gateway_id', $params['gateway_id']);
+			$this->db->update('client_gateways', $update_data);
+			unset($update_data);
+		}
+		
+		if (isset($params['alias']) and !empty($params['alias'])) {
+			$update_data['alias'] = $params['alias'];
 			$this->db->where('client_gateway_id', $params['gateway_id']);
 			$this->db->update('client_gateways', $update_data);
 			unset($update_data);
@@ -711,7 +721,7 @@ class Gateway_model extends Model
 		$i = 0;
 		foreach($required_fields as $field)
 		{
-			if(isset($params[$field]) and $params[$field] != '') {
+			if (isset($params[$field]) and $params[$field] != '') {
 				$update_data['value'] = $this->encrypt->encode($params[$field]);
 				$this->db->where('client_gateway_id', $params['gateway_id']);
 				$this->db->where('field', $field);
@@ -845,7 +855,7 @@ class Gateway_model extends Model
 			{
 				$array = array(
 								'id' => $row['client_gateway_id'],
-								'gateway' => $row['display_name'],
+								'gateway' => (!empty($row['alias'])) ? $row['alias'] : $row['display_name'],
 								'date_created' => $row['create_date']
 								);
 								
@@ -903,6 +913,7 @@ class Gateway_model extends Model
 			$data['arb_url_test'] = $row->arb_test_url;
 			$data['arb_url_dev'] = $row->arb_dev_url;
 			$data['name'] = $row->name;
+			$data['alias'] = $row->alias;
 			$data['enabled'] = $row->enabled;
 			$data['gateway_id'] = $row->client_gateway_id;
 			
