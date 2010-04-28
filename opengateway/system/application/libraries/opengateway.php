@@ -321,6 +321,9 @@ class Charge extends OpenGateway
 	* @return array Response array
 	*/ 
 	public function Charge($debug = FALSE)  {
+		// add IP address
+		$this->Param('customer_ip_address',$_SERVER["REMOTE_ADDR"]);
+		
 		$this->SetMethod('Charge');
 		return $this->Process($debug);
 	}
@@ -489,6 +492,8 @@ class Recur extends OpenGateway
 	* @return array Response array
 	*/ 
 	public function Charge($debug = FALSE)  {
+		$this->Param('customer_ip_address',$_SERVER["REMOTE_ADDR"]);
+		
 		$this->SetMethod('Recur');
 		return $this->Process($debug);
 	}

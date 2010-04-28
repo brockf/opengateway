@@ -373,8 +373,8 @@ class paypal
 		return $response;
 		
 	}
-	
-	function CreateProfile($client_id, $gateway, $customer, $amount, $start_date, $credit_card, $subscription_id, $total_occurrences, $interval)
+
+	function CreateProfile($client_id, $gateway, $customer, $amount, $credit_card, $start_date, $subscription_id, $total_occurrences, $interval)
 	{
 		$CI =& get_instance();
 		
@@ -410,8 +410,8 @@ class paypal
 		$post['user'] = $gateway['user'];
 		$post['pwd'] = $gateway['pwd'];
 		$post['signature'] = $gateway['signature'];
-		$post['amt'] = $params['amount']; 
-		$post['acct'] = $params['credit_card']['card_num'];
+		$post['amt'] = $amount; 
+		$post['acct'] = $credit_card['card_num'];
 		$post['currencycode'] = $gateway['currency'];
 		$post['creditcardtype'] = $card_type;
 		$post['expdate'] = $credit_card['exp_month'] . $credit_card['exp_year'];
