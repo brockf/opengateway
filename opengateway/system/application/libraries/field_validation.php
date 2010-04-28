@@ -86,23 +86,23 @@ class Field_validation
 			return 'dummy';
 		}
 		
-		if($gateway['accept_amex'] == 1) {
+		if (isset($gateway['accept_amex']) and $gateway['accept_amex'] == 1) {
 			$patterns['amex'] = "/^([34|37]{2})([0-9]{13})$/";
 		}
 		
-		if($gateway['accept_discover'] == 1) {
+		if (isset($gateway['accept_discover']) and $gateway['accept_discover'] == 1) {
 			$patterns['disc'] = "/^([6011]{4})([0-9]{12})$/";
 		}
 		
-		if($gateway['accept_visa'] == 1) {
+		if (isset($gateway['accept_visa']) and $gateway['accept_visa'] == 1) {
 			$patterns['visa'] = "/^([4]{1})([0-9]{12,15})$/";
 		}
 		
-		if($gateway['accept_mc'] == 1) {
+		if (isset($gateway['accept_mc']) and $gateway['accept_mc'] == 1) {
 			$patterns['mc'] = "/^([51|52|53|54|55]{2})([0-9]{14})$/";
 		}
 		
-		if($gateway['accept_dc'] == 1) {
+		if (isset($gateway['accept_dc']) and $gateway['accept_dc'] == 1) {
 			$patterns['dc'] = "/^([30|36|38]{2})([0-9]{12})$/";
 		}
 		

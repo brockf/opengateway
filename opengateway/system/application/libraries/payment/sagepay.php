@@ -16,8 +16,8 @@ class sagepay
 		$settings['class_name'] = 'sagepay';
 		$settings['description'] = 'SagePay is the premier merchant account provider for the United Kingdom.';
 		$settings['is_preferred'] = 1;
-		$settings['setup_fee'] = '£0';
-		$settings['monthly_fee'] = '£20';
+		$settings['setup_fee'] = '&pound;0';
+		$settings['monthly_fee'] = '&pound;20';
 		$settings['transaction_fee'] = '10p';
 		$settings['purchase_link'] = 'http://www.opengateway.net/gateways/sagepay';
 		$settings['allows_updates'] = 1;
@@ -28,7 +28,12 @@ class sagepay
 										'enabled',
 										'mode', 
 										'vendor',
-										'currency'
+										'currency',
+										'accept_visa',
+										'accept_mc',
+										'accept_discover',
+										'accept_dc',
+										'accept_amex'
 										);
 										
 		$settings['field_details'] = array(
@@ -44,7 +49,8 @@ class sagepay
 														'type' => 'select',
 														'options' => array(
 																		'live' => 'Live Mode',
-																		'test' => 'Test Mode'
+																		'test' => 'Test Mode',
+																		'simulator' => 'Simulator'
 																		)
 														),
 										'vendor' => array(
@@ -53,11 +59,64 @@ class sagepay
 														),
 										'currency' => array(
 														'text' => 'Currency',
+														'type' => 'select',
+														'options' => array(
+																		'GBP' => 'GBP - Pound Sterling',
+																		'EUR' => 'EUR - Euro',
+																		'USD' => 'USD - US Dollar',
+																		'AUD' => 'AUD - Australian Dollar',
+																		'CAD' => 'CAD - Canadian Dollar',
+																		'CHF' => 'CHF - Swiss Franc',
+																		'DKK' => 'DKK - Danish Krone',
+																		'HKD' => 'HKD - Hong Kong Dollar',
+																		'IDR' => 'IDR - Rupiah',
+																		'JPY' => 'JPY - Yen',
+																		'LUF' => 'LUF - Luxembourg Franc',
+																		'NOK' => 'NOK - Norwegian Krone',
+																		'NZD' => 'NZD - New Zealand Dollar',
+																		'SEK' => 'SEK - Swedish Krona',
+																		'SGD' => 'SGD - Singapore Dollar',
+																		'TRL' => 'TRL - Turkish Lira'
+																	)
+														),
+										'accept_visa' => array(
+														'text' => 'Accept VISA?',
 														'type' => 'radio',
 														'options' => array(
-																		'GBP' => 'GBP',
-																		'EUR' => 'EUR',
-																		'USD' => 'USD'
+																		'1' => 'Yes',
+																		'0' => 'No'
+																	)
+														),
+										'accept_mc' => array(
+														'text' => 'Accept MasterCard?',
+														'type' => 'radio',
+														'options' => array(
+																		'1' => 'Yes',
+																		'0' => 'No'
+																	)
+														),
+										'accept_discover' => array(
+														'text' => 'Accept Discover?',
+														'type' => 'radio',
+														'options' => array(
+																		'1' => 'Yes',
+																		'0' => 'No'
+																	)
+														),
+										'accept_dc' => array(
+														'text' => 'Accept Diner\'s Club?',
+														'type' => 'radio',
+														'options' => array(
+																		'1' => 'Yes',
+																		'0' => 'No'
+																	)
+														),
+										'accept_amex' => array(
+														'text' => 'Accept American Express?',
+														'type' => 'radio',
+														'options' => array(
+																		'1' => 'Yes',
+																		'0' => 'No'
 																	)
 														)
 											);
@@ -75,15 +134,7 @@ class sagepay
 	{	
 		$CI =& get_instance();
 					
-		// Get the proper URL
-		switch($gateway['mode']) {
-			case 'live':
-				$post_url = $gateway['url_live'];
-			break;
-			case 'test':
-				$post_url = $gateway['url_test'];
-			break;
-		}
+		$post_url = $this->GetAPIUrl($gateway);
 		
 		// get card type in proper format
 		switch($credit_card['card_type']) {
@@ -109,7 +160,8 @@ class sagepay
 			"Amount" => $amount,
 			"Currency" => $gateway['currency'],
 			"Description" => "API Payment at " . date('Y-m-d H:i:s') . " via " . $CI->config->item('server_name'),
-			"CardHolder" => $credit_card['card_num'],
+			"CardHolder" => $credit_card['name'],
+			"CardNumber" => $credit_card['card_num'],
 			"ExpiryDate" => $credit_card['exp_month'] . substr($credit_card['exp_year'],-2,2),
 			"CardType" => $card_type,
 			"Apply3DSecure" => "2" // No 3DSecure checks, ever
@@ -124,7 +176,7 @@ class sagepay
 			$post_values['BillingSurname'] = $customer['last_name'];
 			$post_values['BillingAddress1'] = $customer['address_1'];
 			if (isset($customer['address_2']) and !empty($customer['address_2'])) {
-				$post_values['BillingAddress2'] .= ' - '.$customer['address_2'];
+				$post_values['BillingAddress2'] = ' - '.$customer['address_2'];
 			}
 			$post_values['BillingCity'] = $customer['city'];
 			if (!empty($customer['state'])) {
@@ -150,7 +202,7 @@ class sagepay
 			$post_values['DeliverySurname'] = $customer['last_name'];
 			$post_values['DeliveryAddress1'] = $customer['address_1'];
 			if (isset($customer['address_2']) and !empty($customer['address_2'])) {
-				$post_values['DeliveryAddress2'] .= ' - '.$customer['address_2'];
+				$post_values['DeliveryAddress2'] = ' - '.$customer['address_2'];
 			}
 			$post_values['DeliveryCity'] = $customer['city'];
 			if (!empty($customer['state'])) {
@@ -208,20 +260,6 @@ class sagepay
 			$response = $this->Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card, 'AUTHENTICATE');
 			
 			if ($response['response_code'] == '1') {
-				// let's save the transaction details for future REPEATs
-				
-				// for SagePay:
-				//		api_customer_reference = VPSTxId
-				//		api_payment_reference = VendorTxCode|VendorTxAuthNo
-				//		api_auth_number = SecurityKey
-				
-				// these authorizations were saved during $this->Process()
-				$authorizations = $CI->order_authorization_model->getAuthorization('opengateway-' . $order_id);
-				
-				$CI->subscription_model->SaveApiCustomerReference($subscription_id, $authorizations['tran_id']);
-				$CI->subscription_model->SaveApiPaymentReference($subscription_id, $authorizations['order_id'] . '|' . $authorizations['authorization_code']);
-				$CI->subscription_model->SaveApiAuthNumber($subscription_id, $authorizations['security_key']);
-				
 				$response_array = array('recurring_id' => $subscription_id);
 				$response = $CI->response->TransactionResponse(100, $response_array);
 			} else {
@@ -235,6 +273,20 @@ class sagepay
 			$response = $CI->response->TransactionResponse(100, array('recurring_id' => $subscription_id));
 		}
 		
+		// let's save the transaction details for future REPEATs
+		
+		// for SagePay:
+		//		api_customer_reference = VPSTxId
+		//		api_payment_reference = VendorTxCode|VendorTxAuthNo
+		//		api_auth_number = SecurityKey
+		
+		// these authorizations were saved during $this->Process()
+		$authorizations = $CI->order_authorization_model->getAuthorization($order_id);
+		
+		$CI->subscription_model->SaveApiCustomerReference($subscription_id, $authorizations->tran_id);
+		$CI->subscription_model->SaveApiPaymentReference($subscription_id, $authorizations->order_id . '|' . $authorizations->authorization_code);
+		$CI->subscription_model->SaveApiAuthNumber($subscription_id, $authorizations->security_key);
+		
 		return $response;
 	}
 	
@@ -243,7 +295,7 @@ class sagepay
 		return TRUE;
 	}
 	
-	function AutoRecurringCharge ($client_id, $order_id, $gateway, $params) {
+	function AutoRecurringCharge ($client_id, $order_id, $gateway, $params) {		
 		return $this->ChargeRecurring($client_id, $gateway, $order_id, $params['api_customer_reference'], $params['api_payment_reference'], $params['api_auth_number'], $params['amount']);
 	}
 	
@@ -253,15 +305,7 @@ class sagepay
 		
 		list($VendorTxCode,$VendorTxAuthNo) = explode('|',$VendorTxCodeVendorTxAuthNo);
 		
-		// Get the proper URL
-		switch($gateway['mode']) {
-			case 'live':
-				$post_url = $gateway['arb_url_live'];
-			break;
-			case 'test':
-				$post_url = $gateway['arb_url_test'];
-			break;
-		}
+		$post_url = $this->GetAPIUrl($gateway, 'repeat');
 		
 		$post_values = array(
 			"VPSProtocol" => "2.23",
@@ -272,7 +316,7 @@ class sagepay
 			"Currency" => $gateway['currency'],
 			"Description" => "API Payment at " . date('Y-m-d H:i:s') . " via " . $CI->config->item('server_name'),
 			"RelatedVPSTxId" => $VPSTxId,
-			"RelatedVendorTxCode" => $VendorTxCode,
+			"RelatedVendorTxCode" => 'opengateway-' . $VendorTxCode,
 			"RelatedTxAuthNo" => $VendorTxAuthNo,
 			"RelatedSecurityKey" => $SecurityKey,
 			"AccountType" => "C"
@@ -284,7 +328,7 @@ class sagepay
 			return $response;
 		} else {
 			$response['success'] = FALSE;
-			$response['reason'] = $respnse['reason'];
+			$response['reason'] = $response['reason'];
 			
 			return $response;
 		}	
@@ -328,12 +372,25 @@ class sagepay
 		// put into array
 		$response = array();
 		foreach ($response_lines as $line) {
-			list($name,$value) = explode('=',$line);
-			$response[$name] = $value;
+			if (!empty($line)) {
+				list($name,$value) = explode('=',$line);
+				$response[$name] = $value;
+			}
+		}
+		
+		// the OK message changes depending on the type
+		if ($post_values['TxType'] == 'PAYMENT') {
+			$ok_message = 'OK';
+		}
+		elseif ($post_values['TxType'] == 'REPEAT') {
+			$ok_message = 'OK';
+		}
+		elseif ($post_values['TxType'] == 'AUTHENTICATE') {
+			$ok_message = 'REGISTERED';
 		}
 		
 		// did it process properly?
-		if($response['Status'] == 'OK') {
+		if($response['Status'] == $ok_message) {
 			$CI->load->model('order_authorization_model');
 			$CI->order_authorization_model->SaveAuthorization($order_id, $response['VPSTxId'], $response['TxAuthNo'], $response['SecurityKey']);
 			$CI->order_model->SetStatus($order_id, 1);
@@ -348,5 +405,36 @@ class sagepay
 		}
 
 		return $response;
+	}
+	
+	function GetAPIUrl($gateway, $mode = FALSE) {
+		if ($mode == FALSE) {
+			switch($gateway['mode']) {
+				case 'live':
+					$post_url = $gateway['url_live'];
+				break;
+				case 'test':
+					$post_url = $gateway['url_test'];
+				break;
+				case 'simulator':
+					$post_url = $gateway['url_dev'];
+				break;
+			}
+		}
+		elseif ($mode == 'repeat') {
+			switch($gateway['mode']) {
+				case 'live':
+					$post_url = $gateway['arb_url_live'];
+				break;
+				case 'test':
+					$post_url = $gateway['arb_url_test'];
+				break;
+				case 'simulator':
+					$post_url = $gateway['arb_url_dev'];
+				break;
+			}
+		}
+		
+		return $post_url;
 	}
 }

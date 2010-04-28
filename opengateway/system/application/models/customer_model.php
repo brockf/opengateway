@@ -371,6 +371,10 @@ class Customer_model extends Model
 			$this->db->where('internal_id', $params['internal_id']);
 		}
 		
+		if(isset($params['id'])) {
+			$this->db->where('customers.customer_id', $params['id']);
+		}
+		
 		if(isset($params['customer_id'])) {
 			$this->db->where('customers.customer_id', $params['customer_id']);
 		}
@@ -545,7 +549,7 @@ class Customer_model extends Model
 	
 	function GetCustomer($client_id, $customer_id)
 	{	
-		$params = array('id' => $customer_id);
+		$params = array('customer_id' => $customer_id);
 		
 		$data = $this->GetCustomers($client_id, $params);
 		

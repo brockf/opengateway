@@ -27,13 +27,13 @@ class Order_authorization_model extends Model
 	*
 	*/
 	
-	function SaveAuthorization($order_id, $tran_id = '', $authorization_code = '', $security_code = '')
+	function SaveAuthorization($order_id, $tran_id = '', $authorization_code = '', $security_key = '')
 	{
 		$insert_data = array(
 							'order_id' => $order_id,
 							'tran_id'	=> $tran_id,
 							'authorization_code' => $authorization_code,
-							'security_code' => $security_code
+							'security_key' => $security_key
 							);
 		
 		$this->db->insert('order_authorizations', $insert_data);

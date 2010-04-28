@@ -108,19 +108,7 @@ class authnet
 	
 	function TestConnection($client_id, $gateway) 
 	{
-		// Get the proper URL
-		switch($gateway['mode'])
-		{
-			case 'live':
-				$post_url = $gateway['url_live'];
-			break;
-			case 'test':
-				$post_url = $gateway['url_test'];
-			break;
-			case 'dev':
-				$post_url = $gateway['url_dev'];
-			break;
-		}
+		$post_url = $this->GetAPIUrl($gateway);
 		
 		$post_values = array(
 			"x_login"			=> $gateway['login_id'],
@@ -160,19 +148,8 @@ class authnet
 	function Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card)
 	{	
 		$CI =& get_instance();
-					
-		// Get the proper URL
-		switch($gateway['mode']) {
-			case 'live':
-				$post_url = $gateway['url_live'];
-			break;
-			case 'test':
-				$post_url = $gateway['url_test'];
-			break;
-			case 'dev':
-				$post_url = $gateway['url_dev'];
-			break;
-		}
+		
+		$post_url = $this->GetAPIUrl($gateway);
 		
 		$post_values = array(
 			"x_login"			=> $gateway['login_id'],
@@ -329,19 +306,7 @@ class authnet
 	{
 		$CI =& get_instance();
 		
-		// Get the proper URL
-		switch($gateway['mode'])
-		{
-			case 'live':
-				$post_url = $gateway['arb_url_live'];
-			break;
-			case 'test':
-				$post_url = $gateway['arb_url_test'];
-			break;
-			case 'dev':
-				$post_url = $gateway['arb_url_dev'];
-			break;
-		}
+		$post_url = $this->GetAPIUrl($gateway, 'arb');
 		
 		$content =
 		"<?xml version=\"1.0\" encoding=\"utf-8\"?>" .
@@ -385,18 +350,7 @@ class authnet
 	{
 		$CI =& get_instance();
 		
-		// Get the proper URL
-		switch($gateway['mode']) {
-			case 'live':
-				$post_url = $gateway['arb_url_live'];
-			break;
-			case 'test':
-				$post_url = $gateway['arb_url_test'];
-			break;
-			case 'dev':
-				$post_url = $gateway['arb_url_dev'];
-			break;
-		}
+		$post_url = $this->GetAPIUrl($gateway, 'arb');
 		
 		$first_name = $customer['first_name'];
 		$last_name = $customer['last_name'];
@@ -455,19 +409,7 @@ class authnet
 	function GetCustomerProfile ($profile_id, $gateway) {
 		$CI =& get_instance();
 		
-		// Get the proper URL
-		switch($gateway['mode'])
-		{
-			case 'live':
-				$post_url = $gateway['arb_url_live'];
-			break;
-			case 'test':
-				$post_url = $gateway['arb_url_test'];
-			break;
-			case 'dev':
-				$post_url = $gateway['arb_url_dev'];
-			break;
-		}
+		$post_url = $this->GetAPIUrl($gateway, 'arb');
 		
 		$content = '<?xml version="1.0" encoding="utf-8"?>
 					<getCustomerProfileRequest
@@ -502,19 +444,7 @@ class authnet
 	{		
 		$CI =& get_instance();
 		
-		// Get the proper URL
-		switch($gateway['mode'])
-		{
-			case 'live':
-				$post_url = $gateway['arb_url_live'];
-			break;
-			case 'test':
-				$post_url = $gateway['arb_url_test'];
-			break;
-			case 'dev':
-				$post_url = $gateway['arb_url_dev'];
-			break;
-		}
+		$post_url = $this->GetAPIUrl($gateway, 'arb');
 		
 		$content =
 		"<?xml version=\"1.0\" encoding=\"utf-8\"?>" .
@@ -616,6 +546,41 @@ class authnet
 
 		return $response;
 
+	}
+	
+	function GetAPIUrl ($gateway, $mode = FALSE) {
+		if ($mode == FALSE) {
+			// Get the proper URL
+			switch($gateway['mode'])
+			{
+				case 'live':
+					$post_url = $gateway['url_live'];
+				break;
+				case 'test':
+					$post_url = $gateway['url_test'];
+				break;
+				case 'dev':
+					$post_url = $gateway['url_dev'];
+				break;
+			}
+		}
+		elseif ($mode == 'arb') {
+			// Get the proper URL
+			switch($gateway['mode'])
+			{
+				case 'live':
+					$post_url = $gateway['arb_url_live'];
+				break;
+				case 'test':
+					$post_url = $gateway['arb_url_test'];
+				break;
+				case 'dev':
+					$post_url = $gateway['arb_url_dev'];
+				break;
+			}
+		}
+		
+		return $post_url;
 	}
 	
 	/*
