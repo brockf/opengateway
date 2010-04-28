@@ -191,11 +191,11 @@ class Gateway_model extends Model
 			$customer = array();
 		}
 		
-		// some gateways require a customer IP address
-		if ($gateway_settings['requires_customer_ip'] == 1 and !$customer_ip) {
-			die($this->response->Error(5019));
-		}
-		elseif (!empty($customer_ip)) {
+		// if we have an IP, we'll populate this field
+		// note, if we get an error later: the first thing we check is to see if an IP is required
+		// by checking this *after* an error, we give the gateway a chance to be flexible and, if not,
+		// we give the end-user the most likely error response
+		if (!empty($customer_ip)) {
 			// place it in $customer array
 			$customer['ip_address'] = $customer_ip;
 		}
@@ -235,6 +235,11 @@ class Gateway_model extends Model
 			TriggerTrip('charge', $client_id, $response['charge_id']);
 		} else {
 			$CI->order_model->SetStatus($order_id, 0);
+			
+			// did we require an IP address?
+			if ($gateway_settings['requires_customer_ip'] == 1 and !$customer_ip) {
+				die($this->response->Error(5019));
+			}
 		}
 		
 		return $response;
@@ -330,11 +335,11 @@ class Gateway_model extends Model
 			}
 		}
 		
-		// some gateways require a customer IP address
-		if ($gateway_settings['requires_customer_ip'] == 1 and !$customer_ip) {
-			die($this->response->Error(5019));
-		}
-		elseif (!empty($customer_ip)) {
+		// if we have an IP, we'll populate this field
+		// note, if we get an error later: the first thing we check is to see if an IP is required
+		// by checking this *after* an error, we give the gateway a chance to be flexible and, if not,
+		// we give the end-user the most likely error response
+		if (!empty($customer_ip)) {
 			// place it in $customer array
 			$customer['ip_address'] = $customer_ip;
 		}
@@ -497,6 +502,12 @@ class Gateway_model extends Model
 			
 			// trip it - were golden!
 			TriggerTrip('new_recurring', $client_id, $response['charge_id'], $response['recurring_id']);
+		}
+		else {
+			// did we require an IP address?
+			if ($gateway_settings['requires_customer_ip'] == 1 and !$customer_ip) {
+				die($this->response->Error(5019));
+			}
 		}
 		
 		return $response;
