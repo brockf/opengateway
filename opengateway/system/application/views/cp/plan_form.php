@@ -64,7 +64,7 @@ $this->navigation->SidebarNote($text, 'note help');
 			<input type="text" class="text required number" name="interval" id="interval" value="<?=$form['interval'];?>" />
 		</li>
 		<li>
-			<div class="help">The customer will be charged every <i>interval</i> days until the subscription expires or is cancelled.</span>
+			<div class="help">The customer will be charged every <i>interval</i> days until the subscription expires or is cancelled.</div>
 		</li>
 		<li>
 			<label for="occurrences">Total Occurrences</label>
