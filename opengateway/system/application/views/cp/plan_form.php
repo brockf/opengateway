@@ -72,7 +72,7 @@ $this->navigation->SidebarNote($text, 'note help');
 			<input <? if ($form['occurrences'] > '0') { ?>checked="checked" <? } ?> type="radio" name="occurrences_radio" id="occurrences_radio" value="1" />&nbsp;Enter # of Occurrences:&nbsp;<input type="text" class="text number" name="occurrences" id="occurrences" <? if ($form['occurrences'] != '0') { ?>value="<?=$form['occurrences'];?>"<? } ?> />
 		</li>
 		<li>
-			<div class="help">The customer will be charged the specified amount this many times.</span>
+			<div class="help">The customer will be charged the specified amount this many times.</div>
 		</li>
 		<li>
 			<label for="free_trial">Free Trial Period (days)</label>
