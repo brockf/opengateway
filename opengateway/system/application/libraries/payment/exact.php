@@ -19,7 +19,7 @@ class exact
 		$settings['setup_fee'] = '$149.99';
 		$settings['monthly_fee'] = '$29.99';
 		$settings['transaction_fee'] = '$0.25';
-		$settings['purchase_link'] = 'http://www.opengateway.net/gateways/exact';
+		$settings['purchase_link'] = 'http://ecommerce.versapay.com/';
 		$settings['allows_updates'] = 1;
 		$settings['allows_refunds'] = 1;
 		$settings['requires_customer_information'] = 0;

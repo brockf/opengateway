@@ -19,7 +19,7 @@ class authnet
 		$settings['setup_fee'] = '$99.00';
 		$settings['monthly_fee'] = '$40.00';
 		$settings['transaction_fee'] = '$0.10';
-		$settings['purchase_link'] = 'http://www.opengateway.net/gateways/authnet';
+		$settings['purchase_link'] = 'http://www.authorize.net';
 		$settings['allows_updates'] = 1;
 		$settings['allows_refunds'] = 1;
 		$settings['requires_customer_information'] = 0;

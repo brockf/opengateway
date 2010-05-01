@@ -19,7 +19,7 @@ class sagepay
 		$settings['setup_fee'] = '&pound;0';
 		$settings['monthly_fee'] = '&pound;20';
 		$settings['transaction_fee'] = '10p';
-		$settings['purchase_link'] = 'http://www.opengateway.net/gateways/sagepay';
+		$settings['purchase_link'] = 'https://support.protx.com/apply/default.aspx?PartnerID=D16D4B72-87D5-4E97-A743-B45078E146CB';
 		$settings['allows_updates'] = 1;
 		$settings['allows_refunds'] = 1;
 		$settings['requires_customer_information'] = 1;

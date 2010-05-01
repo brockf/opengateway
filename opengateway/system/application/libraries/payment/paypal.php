@@ -19,7 +19,7 @@ class paypal
 		$settings['setup_fee'] = '$0.00';
 		$settings['monthly_fee'] = '$30.00';
 		$settings['transaction_fee'] = '2.5% + $0.30';
-		$settings['purchase_link'] = 'http://www.opengateway.net/gateways/paypal';
+		$settings['purchase_link'] = 'https://www.paypal.com/ca/mrb/pal=Q4XUN8HMLDQ2N';
 		$settings['allows_updates'] = 0;
 		$settings['allows_refunds'] = 1;
 		$settings['requires_customer_information'] = 1;
