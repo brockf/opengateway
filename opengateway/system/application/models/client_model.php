@@ -699,8 +699,7 @@ class Client_model extends Model
 		$this->db->join('client_types','clients.client_type_id = client_types.client_type_id', 'left');
 		$query = $this->db->get('clients');
 		
-		if($query->num_rows() > 0) {
-
+		if ($query->num_rows() > 0) {
 			$row = $query->row();
 			$data['id'] = $row->client_id;
 			$data['client_type_id'] = $row->client_type_id;
