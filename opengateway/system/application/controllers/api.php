@@ -12,8 +12,8 @@ class API extends Controller {
 		// grab the request
 		$request = trim(file_get_contents('php://input'));
 
-		// Log the request
-		$this->log_model->LogRequest($request);
+		// Log the request - don't log the request so we don't store CC information
+		//$this->log_model->LogRequest($request);
 		
 		// find out if the request is valid XML
 		$xml = @simplexml_load_string($request);
