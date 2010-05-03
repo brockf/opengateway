@@ -57,20 +57,33 @@ class Client_model extends Model
 		// Validate the required fields
 		$this->load->library('field_validation');
 		$this->field_validation->ValidateRequiredFields('NewClient', $params);
+							
+		// fill empty fields
+		$params['address_1'] = isset($params['address_1']) ? $params['address_1'] : '';
+		$params['address_2'] = isset($params['address_2']) ? $params['address_2'] : '';
+		$params['city'] = isset($params['city']) ? $params['city'] : '';
+		$params['state'] = isset($params['state']) ? $params['state'] : '';
+		$params['country'] = isset($params['country']) ? $params['country'] : '';
+		$params['postal_code'] = isset($params['postal_code']) ? $params['postal_code'] : '';
 		
 		// Make sure the country is in the proper format
-		$country_id = $this->field_validation->ValidateCountry($params['country']);
-		
-		if(!$country_id) {
-			die($this->response->Error(1007));
+		if (!empty($params['country'])) {
+			$country_id = $this->field_validation->ValidateCountry($params['country']);
+			
+			if (!$country_id) {
+				die($this->response->Error(1007));
+			}
+		}
+		else {
+			$country_id = 0;
 		}
 		
 		// If the country is US or Canada, we need to validate and supply the 2 letter abbreviation
 		$this->load->helper('states_helper');
 		$country_array = array(124,840);
-		if(in_array($country_id, $country_array)) {
+		if (in_array($country_id, $country_array)) {
 			$state = GetState($params['state']);
-			if($state) {
+			if ($state) {
 				$params['state'] = $state;
 			} else {
 				die($this->response->Error(1012));
@@ -580,7 +593,7 @@ class Client_model extends Model
 			$dir = FALSE;
 		}
 		
-		if($sort) {
+		if ($sort) {
 			if($dir) {
 				$this->db->order_by($sort, $dir);
 			} else {
