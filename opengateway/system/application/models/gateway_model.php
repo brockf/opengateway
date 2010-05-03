@@ -133,7 +133,7 @@ class Gateway_model extends Model
 		
 		// validate function arguments
 		if (empty($amount) or empty($credit_card)) {
-			die($CI->response->Error(1003));
+			die($CI->response->Error(1004));
 		}
 		
 		// Get the gateway info to load the proper library
