@@ -43,7 +43,7 @@
 			<p>The <a href="http://www.opengateway.net/">OpenGateway Billing Engine</a> is multi-gateway single payment
 			and recurring billing payment engine built for web developers.  Through it's simple API and control panel
 			(optional, depending on how heavily you rely on the API), OpenGateway handles every aspect of accepting
-			payment online from subscription plans to billing records and billing-related emails.</p>
+			payments online from subscription plans to billing records and billing-related emails.</p>
 			<h2>Intended Audience</h2>
 			<p>This API documentation is intended for web developers who have access to the OpenGateway platform.  With
 			your <a href="glossary.html#api-identifier">API Identifier</a> and <a href="glossary.html#api-secret-key">API Secret Key</a>,
@@ -52,10 +52,10 @@
 			have knowledge of web service usage and how to create simple XML requests.</p>
 			<h2>What is the API for?</h2>
 			<p>With the API, you can access every functional aspect of the billing platform.  For those who want to use only
-			certain elements of the API (e.g. to <a href="charges.html">charge</a> credit cards, setup
+			certain elements of the API (e.g., to <a href="charges.html">charge</a> credit cards, setup
 			<a href="recurring.html">recurring charges</a>, or <a href="customers.html">create new customer records</a>),
-			there is an optional OpenGateway control panel (or equivalent control panel supplied by your Service Provider)
-			which allows you manage system administrative aspects of your billing setup such as payment gateways, email triggers,
+			the <a href="https://platform.opengateway.net">OpenGateway control panel</a>
+			can handle the less common administrative aspects of your billing setup such as payment gateways, email triggers,
 			and recurring plans.</p>
 			<p>An example usage of the API would be to:</p>
 			<ul>
@@ -71,7 +71,7 @@
 			<h2>Documentation Legend</h2>
 			<p>All request parameters will be highlighted like this: <span class="request">request_parameter</span>.</p>
 			<p>All response variables will be highlighted like this: <span class="response">response_variable</span>.</p>
-			<p>Example code will appear in similar boxes color-coded as either requests or responses.</p>
+			<p>Example code will appear in similar boxes colour-coded as either requests or responses.</p>
 			<h2>Authentication</h2>
 			<p>All API requests are authenticated with an <a href="glossary.html#api-identifier">API Identifier</a> and
 			<a href="glossary.html#api-secret-key">API Secret Key</a> passed in the request.</p>
@@ -146,7 +146,7 @@ if(curl_errno($ch))
 			<h2>Response Format</h2>
 			<p>Responses can be in XML, JSON, or serialized PHP format.  The default response format is XML.  To request another
 			format, send a <span class="request">format</span> parameter with a value of either "json" or "php".</p>
-			<p>Example response in XML format:</p>
+			<p>Example response in XML format (for a <b>GetCustomer</b> call):</p>
 			<pre class="response">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
 &lt;response&gt;
   &lt;customer&gt;

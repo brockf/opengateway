@@ -485,6 +485,8 @@
 			</ul>
 			<p>Response data:</p>
 			<ul>
+				<li><span class="response">results</span> - Number of records in this response</li>
+				<li><span class="response">total_results</span> - Total # of records to retrieve.  Use <span class="request">offset</span> to gather all records over multiple iterated requests.</li>
 				<li><span class="response">recurrings</span>
 				<ul>
 					<li>A <span class="response">recurring</span> node for each returned recurring charge
@@ -494,8 +496,6 @@
 					</li>
 				</ul></li>
 			</ul>
-			<p>Example response:</p>
-			<pre class="response">TODO</pre>
 		    <h2>Method: <a name="changerecurringplan">ChangeRecurringPlan</a></h2>
 			<p>Change the plan of a recurring charge.  This will update the interval, amount, notification_url, and plan_id of the recurring charge.  It will
 			not affect the start_date, end_date, date_created, or total_occurrences.</p>
