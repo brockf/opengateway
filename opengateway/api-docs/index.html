@@ -41,11 +41,11 @@
 		<div id="content">
 			<h1>Getting Started</h1>
 			<p>The <a href="http://www.opengateway.net/">OpenGateway Billing Engine</a> is multi-gateway single payment
-			and recurring billing payment engine built for web developers.  Through it's simple API and control panel
-			(optional, depending on how heavily you rely on the API), OpenGateway handles every aspect of accepting
+			and recurring billing payment engine built for integration by web developers.  Through it's simple API and control panel
+			(used optionally, depending on how heavily you rely on the API), OpenGateway handles every aspect of accepting
 			payments online from subscription plans to billing records and billing-related emails.</p>
 			<h2>Intended Audience</h2>
-			<p>This API documentation is intended for web developers who have access to the OpenGateway platform.  With
+			<p>This API documentation is intended for web developers who have access to an OpenGateway billing server.  With
 			your <a href="glossary.html#api-identifier">API Identifier</a> and <a href="glossary.html#api-secret-key">API Secret Key</a>,
 			you have permission to submit requests.</p>
 			<p>Developers should have knowledge in a programming language such as PHP, .NET, Python, Perl, or Ruby and
@@ -54,7 +54,7 @@
 			<p>With the API, you can access every functional aspect of the billing platform.  For those who want to use only
 			certain elements of the API (e.g., to <a href="charges.html">charge</a> credit cards, setup
 			<a href="recurring.html">recurring charges</a>, or <a href="customers.html">create new customer records</a>),
-			the <a href="https://platform.opengateway.net">OpenGateway control panel</a>
+			the OpenGateway control panel (located at your <a href="glossary.html#root-installation-folder">root installation folder</a>)
 			can handle the less common administrative aspects of your billing setup such as payment gateways, email triggers,
 			and recurring plans.</p>
 			<p>An example usage of the API would be to:</p>
@@ -83,12 +83,11 @@
 &lt;/request&gt;</pre>
 			<h2>Request Format</h2>
 			<p>Requests must be made in XML format and sent via an HTTP POST call to the OpenGateway platform server.  A secure (https://)
-			connection is required for requests that contain Credit Card information.  If you are
-			using <a href="http://www.opengateway.net">OpenGateway.net</a>, API requests should be POST'ed to:</p>
-			<pre class="request">https://platform.opengateway.net/api // Requests containing CC Info
-http://platform.opengateway.net/api // All other requests</pre>
-			<p>If you were issued an API ID using another Service Provider or operating an OpenGateway Enterprise server, you should post your
-			request to their specified API access URL.</p>
+			connection is required (as per the recommended configuration) for requests that contain credit card information.  Requests should be
+			posted to the API URL.  This located at your <a href="glossary.html#root-installation-folder">root installation folder</a>/api.  So, if
+			you have OpenGateway installed at http://opengateway.example.com, you would use the following URL's:
+			<pre>http://opengateway.example.com/api // URL for non-credit card requests
+https://opengateway.example.com/api // URL for credit card requests</pre>
 			<p>Each request must be accompanied by an <span class="request">authentication</span> node with an <span class="request">api_id</span>
 			and <span class="request">secret_key</span> as well as a <span class="request">type</span> value which specifies the API
 			method to be called (e.g. "NewCustomer", "Charge", or "GetPlan").  All other request parameters vary depending on the API method.</p>
@@ -97,7 +96,7 @@ http://platform.opengateway.net/api // All other requests</pre>
 			<p>Using PHP, an API request might look like this:</p>
 			<pre class="request">&lt;?php
 
-$post_url = 'https://platform.opengateway.net/api';
+$post_url = 'https://opengateway.example.com/api';
 
 $poststring = '&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;request&gt;
