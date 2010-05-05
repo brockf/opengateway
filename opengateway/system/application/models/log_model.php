@@ -152,7 +152,7 @@ class Log_model extends Model
 				$line .= '\'s customer profile was created ' . $date_line; 
 			}
 			elseif ($row['trigger_id'] == '10') {
-				$line .= ' began a new <a href="' . site_url('transactions/recurring/' . $variables['recurring_id']) . '">recurring charge #' . $variables['recurring_id'] . '</a>' . $date_line; 
+				$line .= ' began a new <a href="' . site_url('transactions/recurring/' . $variables['recurring_id']) . '">recurring charge #' . $variables['recurring_id'] . '</a> ' . $date_line; 
 			}
 			
 			$return[] = $line;		
