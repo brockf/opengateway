@@ -51,7 +51,7 @@ $autoload['libraries'] = array('database', 'auto_updater', 'response', 'email');
 |	$autoload['helper'] = array('url', 'file');
 */
 
-$autoload['helper'] = array('triggertrip','date','cp_loader','local_time');
+$autoload['helper'] = array('triggertrip','date','cp_loader','local_time','money_format');
 
 
 /*
