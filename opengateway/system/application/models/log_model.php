@@ -125,10 +125,10 @@ class Log_model extends Model
 					$line .= 'Customer #' . $variables['customer_id'];
 				}
 				
-				$line .= '</a> ';
+				$line .= '</a>';
 			}
 			else {
-				$line .= 'A customer ';
+				$line .= 'A customer';
 			}
 			
 			// generate date
