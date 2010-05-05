@@ -119,7 +119,7 @@ class Log_model extends Model
 				// do we have a name?
 				if (!empty($variables['customer_first_name'])) {
 					$line .= $variables['customer_first_name'] . ' ' . $variables['customer_last_name'];
-				)
+				}
 				else {
 					$line .= 'Customer #' . $variables['customer_id'];
 				}
@@ -135,19 +135,19 @@ class Log_model extends Model
 			
 			if ($row['trigger_id'] == '1') {
 				// charge
-				$line .= ' was charged ' . $variables['amount'] . ' <a href="' . site_url('transactions/charge/' . $variables['charge_id']); . '">' . $date_line . '</a>';
+				$line .= ' was charged ' . $variables['amount'] . ' <a href="' . site_url('transactions/charge/' . $variables['charge_id']) . '">' . $date_line . '</a>';
 			}
 			elseif ($row['trigger_id'] == '2') {
 				// recurring charge
-				$line .= ' was charged ' . $variables['amount'] . ' for <a href="' . site_url('transactions/recurring/' . $variables['recurring_id']); . '">recurring charge #' . $variables['recurring_id'] . '</a> <a href="' . site_url('transactions/charge/' . $variables['charge_id']) . '">' . $date_line . '</a>';
+				$line .= ' was charged ' . $variables['amount'] . ' for <a href="' . site_url('transactions/recurring/' . $variables['recurring_id']) . '">recurring charge #' . $variables['recurring_id'] . '</a> <a href="' . site_url('transactions/charge/' . $variables['charge_id']) . '">' . $date_line . '</a>';
 			}
-			elseif {$row['trigger_id'] == '3') {
+			elseif ($row['trigger_id'] == '3') {
 				$line .= '\'s <a href="' . site_url('transactions/recurring/' . $variables['recurring_id']) . '">recurring charge #' . $variables['recurring_id'] . '</a> expired ' . $date_line; 
 			}
-			elseif {$row['trigger_id'] == '4') {
+			elseif ($row['trigger_id'] == '4') {
 				$line .= '\'s <a href="' . site_url('transactions/recurring/' . $variables['recurring_id']) . '">recurring charge #' . $variables['recurring_id'] . '</a> was cancelled ' . $date_line; 
 			}	
-			elseif {$row['trigger_id'] == '9') {
+			elseif ($row['trigger_id'] == '9') {
 				$line .= '\'s customer profile was created ' . $date_line; 
 			}
 			
