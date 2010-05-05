@@ -1,5 +1,7 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/* BEGIN MANDATORY CONFIGURATION */
+
 /*
 |--------------------------------------------------------------------------
 | Base Site URL
@@ -12,6 +14,38 @@
 |
 */
 $config['base_url']	= "http://platform.opengateway.net/";
+
+/*
+|--------------------------------------------------------------------------
+| OpenGateway Config
+|--------------------------------------------------------------------------
+|
+*/
+$config['server_name'] = 'OpenGateway';
+$config['max_recurring_days_from_today'] = 730;
+$config['query_result_default_limit'] = 100;
+$config['recurring_charge_failures_allowed'] = 1;
+$config['support_url'] = 'http://www.opengateway.net/support/';
+$config['ssl_active'] = false;
+$config['cron_key'] = '0000000000000000';
+
+// rewrite base URL to SSL if accessed via SSL
+if ($_SERVER["SERVER_PORT"] == "443") {
+	$config['base_url'] = str_replace('http://','https://',$config['base_url']);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Encryption Key
+|--------------------------------------------------------------------------
+|
+| If you use the Encryption class or the Sessions class with encryption
+| enabled you MUST set an encryption key.  See the user guide for info.
+|
+*/
+$config['encryption_key'] = "10101010101010101010101010";
+
+/* END MANDATORY CONFIGURATION */
 
 /*
 |--------------------------------------------------------------------------
@@ -210,17 +244,6 @@ $config['cache_path'] = '';
 
 /*
 |--------------------------------------------------------------------------
-| Encryption Key
-|--------------------------------------------------------------------------
-|
-| If you use the Encryption class or the Sessions class with encryption
-| enabled you MUST set an encryption key.  See the user guide for info.
-|
-*/
-$config['encryption_key'] = "s_iUfie&-?amI*d6u7&ux4azlu#3Ab&i";
-
-/*
-|--------------------------------------------------------------------------
 | Session Variables
 |--------------------------------------------------------------------------
 |
@@ -251,7 +274,7 @@ $config['sess_time_to_update'] 	= 300;
 |
 */
 $config['cookie_prefix']	= "";
-$config['cookie_domain']	= "platform.opengateway.net";
+$config['cookie_domain']	= str_replace('http://','',$config['base_url']);
 $config['cookie_path']		= "/";
 
 /*
@@ -323,25 +346,6 @@ $config['rewrite_short_tags'] = FALSE;
 |
 */
 $config['proxy_ips'] = '';
-
-/*
-|--------------------------------------------------------------------------
-| OpenGateway Config
-|--------------------------------------------------------------------------
-|
-*/
-$config['server_name'] = 'OpenGateway';
-$config['max_recurring_days_from_today'] = 730;
-$config['query_result_default_limit'] = 100;
-$config['recurring_charge_failures_allowed'] = 1;
-$config['support_url'] = 'http://www.opengateway.net/support/';
-$config['ssl_active'] = false;
-$config['cron_key'] = '0000000000000000';
-
-// rewrite base URL to SSL if accessed via SSL
-if ($_SERVER["SERVER_PORT"] == "443") {
-	$config['base_url'] = str_replace('http://','https://',$config['base_url']);
-}
 
 /* End of file config.php */
 /* Location: ./system/application/config/config.php */
