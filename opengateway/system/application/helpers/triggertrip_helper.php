@@ -88,7 +88,7 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 	}
 	
 	// which events should go in the client log?
-	$loggable = array(1,2,3,4,9);
+	$loggable = array(1,2,3,4,9,10);
 	
 	// log for the client if it's loggable
 	if (in_array($trigger_type_id,$loggable)) {
