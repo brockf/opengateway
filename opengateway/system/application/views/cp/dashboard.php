@@ -1,5 +1,10 @@
 <?=$this->load->view(branded_view('cp/header'));?>
 <h1>Dashboard</h1>
+<? if (!empty($log)) { ?>
+	<? foreach ($log as $line) { ?>
+		<p><?=$line;?></p>
+	<? } ?>
+<? } ?>
 <ul class="dashboard">
 	<li>
 		<a class="dash_charge" href="<?=site_url('transactions/create');?>">New Charge</a>

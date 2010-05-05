@@ -73,6 +73,12 @@ class Dashboard extends Controller {
 			$data['no_revenue'] = 'true';
 		}
 		
+		// get log
+		$this->load->model('log_model');
+		$log = $this->log_model->GetClientLog($this->user->Get('client_id'));
+		
+		$data['log'] = $log;
+		
 		$this->load->view(branded_view('cp/dashboard'), $data);
 	}
 

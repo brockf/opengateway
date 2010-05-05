@@ -86,6 +86,15 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 		$variables['customer_email'] = $customer['email'];
 		$variables['customer_phone'] = $customer['phone'];
 	}
+	
+	// which events should go in the client log?
+	$loggable = array(1,2,3,4,9);
+	
+	// log for the client if it's loggable
+	if (in_array($trigger_type_id,$loggable)) {
+	    $CI->load->model('log_model');
+	    $CI->log_model->ClientLog($client_id, $trigger_type_id, $variables);
+	}
 	    	
 	// just in case, we'll grab the email of the client
 	$CI->load->model('client_model');
