@@ -1,3 +1,6 @@
+OpenGateway is a multi-gateway, independent online payment platform
+Copyright (C) 2010 Electric Function, Inc.  ALL RIGHTS RESERVED.
+
 GNU LESSER GENERAL PUBLIC LICENSE
 
 Version 3, 29 June 2007
