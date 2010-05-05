@@ -143,22 +143,6 @@ $(document).ready(function() {
 	});
 	
 	// universal forms
-	
-	// fill in "blank" entry text for emails
-	$('form.form input.email').each(function() {
-		if ($(this).val() == '' || $(this).val() == 'email@example.com') {
-			$(this).val('email@example.com');
-			$(this).addClass('emptyfield');
-		}
-		
-		$('form.form input.emptyfield').focus(function () {
-			if ($(this).val() == 'email@example.com') {
-				$(this).val('');
-				$(this).removeClass('emptyfield');
-			}
-		});
-	});
-	
 	$('form.form').submit(function() {
 		var errors_in_form = false;
 		
@@ -212,6 +196,8 @@ $(document).ready(function() {
 		}
 	});
 	
+	// mark empty fields with text and a class
+	MarkEmpty();
 });
 
 // form functions
@@ -251,4 +237,32 @@ function isNumeric(sText) {
       }
    }
    return IsNumber;
+}
+
+function MarkEmpty () {
+	$('.mark_empty').each(function () {
+		var field_name = $(this).attr('rel');
+		
+		if ($(this).val() == '') {
+			$(this).val(field_name);
+			$(this).addClass('emptyfield');
+		}
+		else if ($(this).val() == field_name) {
+			$(this).addClass('emptyfield');
+		}
+		
+		$(this).focus(function () {
+			if ($(this).val() == field_name) {
+				$(this).removeClass('emptyfield');
+				$(this).val('');
+			}
+		});
+		
+		$(this).blur(function () {
+			if ($(this).val() == '') {
+				$(this).val(field_name);
+				$(this).addClass('emptyfield');
+			}
+		});
+	});
 }

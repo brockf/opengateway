@@ -205,7 +205,7 @@ begin processing transactions, you should <a href="<?=site_url('settings/new_gat
 		<ul class="form">
 			<li>
 				<label for="first_name">Name</label>
-				<input class="text" type="text" id="first_name" name="first_name" />&nbsp;&nbsp;<label style="display:none" for="last_name">Last Name</label><input class="text" type="text" id="last_name" name="last_name" />
+				<input class="text mark_empty" rel="First Name" type="text" id="first_name" name="first_name" />&nbsp;&nbsp;<label style="display:none" for="last_name">Last Name</label><input class="text mark_empty" rel="Last Name" type="text" id="last_name" name="last_name" />
 			</li>
 			<li>
 				<label for="company">Company</label>
@@ -241,7 +241,7 @@ begin processing transactions, you should <a href="<?=site_url('settings/new_gat
 			</li>
 			<li>
 				<label for="email">Email</label>
-				<input type="text" class="text email" id="email" name="email" />
+				<input type="text" class="text email mark_empty" rel="email@example.com" id="email" name="email" />
 			</li>
 		</ul>
 	</fieldset>

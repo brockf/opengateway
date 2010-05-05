@@ -9,7 +9,7 @@
 		</li>
 		<li>
 			<label for="email">Email Address</label>
-			<input type="text" autocomplete="off" class="text required email" id="email" name="email" value="<?=$form['email'];?>" />
+			<input type="text" autocomplete="off" class="text required email mark_empty" rel="email@example.com" id="email" name="email" value="<?=$form['email'];?>" />
 		</li>
 		<li>
 			<label for="password">Password</label>
@@ -29,7 +29,7 @@
 	<ul class="form">
 		<li>
 			<label for="first_name">Name</label>
-			<input class="text required" type="text" id="first_name" name="first_name" value="<?=$form['first_name'];?>" />&nbsp;&nbsp;<label style="display:none" for="last_name">Last Name</label><input class="text required" type="text" id="last_name" name="last_name" value="<?=$form['last_name'];?>" />
+			<input class="text required mark_empty" class="First Name" type="text" id="first_name" name="first_name" value="<?=$form['first_name'];?>" />&nbsp;&nbsp;<label style="display:none" for="last_name">Last Name</label><input class="text required mark_empty" rel="Last Name" type="text" id="last_name" name="last_name" value="<?=$form['last_name'];?>" />
 		</li>
 		<li>
 			<label for="company">Company</label>
