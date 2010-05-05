@@ -70,6 +70,7 @@ class Log_model extends Model
 	*/
 	function ClientLog ($client_id, $trigger_id, $variables) {
 		$insert_array = array(
+							'client_id' => $client_id,
 							'trigger_id' => $trigger_id,
 							'client_log_date' => date('Y-m-d H:i:s'),
 							'variables' => serialize($variables)
@@ -135,11 +136,11 @@ class Log_model extends Model
 			
 			if ($row['trigger_id'] == '1') {
 				// charge
-				$line .= ' was charged ' . $variables['amount'] . ' <a href="' . site_url('transactions/charge/' . $variables['charge_id']) . '">' . $date_line . '</a>';
+				$line .= ' was <a href="' . site_url('transactions/charge/' . $variables['charge_id']) . '">charged ' . $variables['amount'] . '</a> ' . $date_line;
 			}
 			elseif ($row['trigger_id'] == '2') {
 				// recurring charge
-				$line .= ' was charged ' . $variables['amount'] . ' for <a href="' . site_url('transactions/recurring/' . $variables['recurring_id']) . '">recurring charge #' . $variables['recurring_id'] . '</a> <a href="' . site_url('transactions/charge/' . $variables['charge_id']) . '">' . $date_line . '</a>';
+				$line .= ' was <a href="' . site_url('transactions/charge/' . $variables['charge_id']) . '">charged ' . $variables['amount'] . '</a> for <a href="' . site_url('transactions/recurring/' . $variables['recurring_id']) . '">recurring charge #' . $variables['recurring_id'] . '</a> ' . $date_line;
 			}
 			elseif ($row['trigger_id'] == '3') {
 				$line .= '\'s <a href="' . site_url('transactions/recurring/' . $variables['recurring_id']) . '">recurring charge #' . $variables['recurring_id'] . '</a> expired ' . $date_line; 

@@ -32,7 +32,8 @@ function time_since($client_id, $time, $now = FALSE, $date_format = 'M d, Y @ h:
 	        }
 	    }
 	
-	    $return = ($count == 1) ? '1 '.$name : "$count {$name}s ago";
+	    $return = ($count == 1) ? '1 '.$name : "$count {$name}s";
+	    $return .= ' ago';
     }
     
     return $return;
