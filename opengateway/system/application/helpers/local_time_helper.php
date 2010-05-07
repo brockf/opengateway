@@ -1,12 +1,12 @@
 <?php
 
-function local_time ($client_id, $time) {
+function local_time ($client_id, $time) {	
 	$CI =& get_instance();
 	
 	$CI->load->model('client_model');
 	$client = $CI->client_model->GetClientDetails($client_id);
 	
-	$timestamp = strtotime($time);
+	$timestamp = (!is_numeric($time)) ? strtotime($time) : $time;
 	$timestamp = $timestamp - date("Z");
 	
 	$timezone = $client->gmt_offset;

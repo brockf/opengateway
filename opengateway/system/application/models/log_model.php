@@ -130,7 +130,7 @@ class Log_model extends Model
 			else {
 				$line .= 'A customer';
 			}
-			
+
 			// generate date
 			$date_line = time_since($client_id, $row['client_log_date']);
 			

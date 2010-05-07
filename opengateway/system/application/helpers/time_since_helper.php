@@ -15,7 +15,7 @@ function time_since($client_id, $time, $now = FALSE, $date_format = 'M d, Y @ h:
 	// greater than a day?
 	if ($since > (60*60*24)) {
 		// it's more than a day ago, let's just return the data
-		$return = 'on ' . local_time($client_id,date($date_format, $time));
+		$return = 'on ' . local_time($client_id,$time);
 	}
 	else {
 	    $chunks = array(
