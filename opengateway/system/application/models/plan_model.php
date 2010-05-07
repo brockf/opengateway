@@ -206,7 +206,7 @@ class Plan_model extends Model
 	*/
 	function GetPlan($client_id, $plan_id)
 	{
-		$params = array('id' => $plan_id);
+		$params = array('plan_id' => $plan_id);
 		
 		$data = $this->GetPlans($client_id, $params);
 		
