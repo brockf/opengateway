@@ -110,7 +110,7 @@ class exact
 
 		$trxnProperties = $this->CompleteArray($trxnProperties);   		
 		  		
-		$trxnResult = $this->Process($trxnProperties, $post_url, 0);
+		$trxnResult = $this->Process($trxnProperties, $post_url);
 		
 		if($trxnResult->EXact_Resp_Code == '00'){
 			return TRUE;
@@ -157,7 +157,7 @@ class exact
 		  
 		$transaction = $this->CompleteArray($transaction); 
 		  
-		$transaction_result = $this->Process($transaction, $post_url, $order_id);
+		$transaction_result = $this->Process($transaction, $post_url);
 		
 		if($transaction_result->EXact_Resp_Code == '00'){
 			$CI->load->model('order_authorization_model');
@@ -223,7 +223,7 @@ class exact
 						'DollarAmount' 		=> $charge['amount']
 			        );
 		
-		$post_response = $this->Process($trxnProperties, $post_url, $order_id);
+		$post_response = $this->Process($trxnProperties, $post_url);
 		
 		if ($post_response->EXact_Resp_Code == '00') {
 			return TRUE;
@@ -335,7 +335,7 @@ class exact
 		return TRUE;
 	}
 	
-	function Process($trxnProperties, $post_url, $order_id) 
+	function Process($trxnProperties, $post_url) 
 	{
 		$trxn = array("Transaction"=>$trxnProperties);
 		
