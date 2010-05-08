@@ -302,6 +302,8 @@ class Gateway_model extends Model
 		// Get the customer details if a customer id was included
 		$this->load->model('customer_model');
 		
+		die(print_r($customer));
+		
 		if (isset($customer_id)) {
 			$customer = $CI->customer_model->GetCustomer($client_id, $customer_id);
 			$customer['customer_id'] = $customer['id'];
@@ -312,7 +314,6 @@ class Gateway_model extends Model
 			// by Getting the customer after it's creation, we get a nice clean ISO2 code for the country
 			$customer_id = $CI->customer_model->NewCustomer($client_id, $customer);
 			$customer = $CI->customer_model->GetCustomer($client_id, $customer_id);
-			die(print_r($customer));
 			$customer['customer_id'] = $customer_id;
 			unset($customer_id);
 			$created_customer = TRUE;
