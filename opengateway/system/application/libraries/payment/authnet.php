@@ -312,7 +312,7 @@ class authnet
 			"x_relay_response"	=> "FALSE",
 			"x_type"			=> "CREDIT",
 			"x_method"			=> "CC",
-			"x_trans_id"		=> $authorization['tran_id'],
+			"x_trans_id"		=> $authorization->tran_id,
 			"x_amount"			=> $charge['amount'],
 			"x_card_num"		=> $charge['card_last_four'],
 			"x_exp_date"		=> date('m') . substr((date('Y')+1),-2,2)
@@ -335,6 +335,7 @@ class authnet
 		$response = explode('|',$post_response);
 
 		if (!isset($response[1])) {
+			// the array is malformed
 			return FALSE;
 		}
 		
@@ -342,7 +343,51 @@ class authnet
 			return TRUE;
 		}
 		else {
-			return FALSE;
+			// let's try a VOID - this may be unsettled
+			$post_values = array(
+				"x_login"			=> $gateway['login_id'],
+				"x_tran_key"		=> $gateway['transaction_key'],
+				"x_version"			=> "3.1",
+				"x_delim_data"		=> "TRUE",
+				"x_delim_char"		=> "|",
+				"x_relay_response"	=> "FALSE",
+				"x_type"			=> "VOID",
+				"x_method"			=> "CC",
+				"x_trans_id"		=> $authorization->tran_id,
+				"x_amount"			=> $charge['amount'],
+				"x_card_num"		=> $charge['card_last_four'],
+				"x_exp_date"		=> date('m') . substr((date('Y')+1),-2,2)
+				);
+				
+			$post_string = "";
+			foreach( $post_values as $key => $value ) {
+				$post_string .= "$key=" . urlencode( $value ) . "&";
+			}
+			
+			$post_string = rtrim( $post_string, "& " );
+			
+			$request = curl_init($post_url); // initiate curl object
+			curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
+			curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
+			curl_setopt($request, CURLOPT_POSTFIELDS, $post_string); // use HTTP POST to send form data
+			$post_response = curl_exec($request); // execute curl post and store results in $post_response
+			curl_close ($request); // close curl object
+			
+			$response = explode('|',$post_response);
+			
+			if (!isset($response[1])) {
+				// array is malford
+				return FALSE;
+			}
+			else {
+				if ($response[1] == '1') {
+					// it was voided successfully
+					return TRUE;
+				}
+				else {
+					return FALSE;
+				}
+			}
 		}
 	}
 	
@@ -742,61 +787,5 @@ class authnet
 		}
 		
 		return $response;
-	}
-	
-	function Void($client_id, $order_id, $gateway, $customer, $params)
-	{	
-		$CI =& get_instance();
-		
-		// Get the proper URL
-		switch($gateway['mode'])
-		{
-			case 'live':
-				$post_url = $gateway['url_live'];
-			break;
-			case 'test':
-				$post_url = $gateway['url_test'];
-			break;
-			case 'dev':
-				$post_url = $gateway['url_dev'];
-			break;
-		}
-		
-		// Get the tran id
-		$CI->load->model('charge_model');
-		$order = $CI->charge_model->GetOrder($client_id, $order_id);
-		
-		$post_values = array(
-			"x_login"			=> $gateway['login_id'],
-			"x_tran_key"		=> $gateway['transaction_key'],
-		
-			"x_version"			=> "3.1",
-			"x_delim_data"		=> "TRUE",
-			"x_delim_char"		=> "|",
-			"x_relay_response"	=> "FALSE",
-		
-			"x_type"			=> "VOID",
-			"x_method"			=> "CC",
-			"x_tran_id"			=> $order->tran_id,
-			);
-			
-		$post_string = "";
-		foreach( $post_values as $key => $value )
-			{ $post_string .= "$key=" . urlencode( $value ) . "&"; }
-		$post_string = rtrim( $post_string, "& " );
-		
-		$response = $this->Process($order_id, $post_url, $post_string);
-		
-		if($response['success']){
-			$response_array = array('charge_id' => $order_id);
-			$response = $CI->response->TransactionResponse(1, $response_array);
-		} else {
-			$response_array = array('reason' => $response['reason']);
-			$response = $CI->response->TransactionResponse(2, $response_array);
-		}
-		
-		return $response;
-	}
-	*/
-	
+	}*/
 }

@@ -7,7 +7,7 @@ if (!empty($this->dataset->data)) {
 	?>
 		<tr>
 			<td><?=$row['id'];?></td>
-			<td class="<?=$row['status'];?>">&nbsp;</td>
+			<td class="<? if ($row['refunded'] == '1') { ?>failed<? } else { ?><?=$row['status'];?><? } ?>">&nbsp;</td>
 			<td><?=$row['date'];?></td>
 			<td><?=$row['amount'];?></td>
 			<td><? if (isset($row['customer'])) { ?><?=$row['customer']['last_name'];?>, <?=$row['customer']['first_name'];?><? } ?></td>

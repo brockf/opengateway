@@ -77,7 +77,7 @@ class Charge_model extends Model
 							'refund_date' => date('Y-m-d H:i:s')
 							);
 							
-		$this->db->update('orders', $update_array, array('order_id' => $charge_id));
+		$this->db->update('orders', $update_data, array('order_id' => $charge_id));
 	}
 	
 	/**
@@ -364,7 +364,7 @@ class Charge_model extends Model
 				$data[$i]['status'] = ($row->status == '1') ? 'ok' : 'failed';
 				$data[$i]['refunded'] = $row->refunded;
 				if ($row->refunded == '1') {
-					$data['refund_date'] = local_time($client_id, $row->refund_date);
+					$data[$i]['refund_date'] = local_time($client_id, $row->refund_date);
 				}
 				
 				if($row->subscription_id != 0) {
