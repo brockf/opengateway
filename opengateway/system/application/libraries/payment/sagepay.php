@@ -21,7 +21,7 @@ class sagepay
 		$settings['transaction_fee'] = '10p';
 		$settings['purchase_link'] = 'https://support.protx.com/apply/default.aspx?PartnerID=D16D4B72-87D5-4E97-A743-B45078E146CB';
 		$settings['allows_updates'] = 1;
-		$settings['allows_refunds'] = 1;
+		$settings['allows_refunds'] = 0;
 		$settings['requires_customer_information'] = 1;
 		$settings['requires_customer_ip'] = 0;
 		$settings['required_fields'] = array(
