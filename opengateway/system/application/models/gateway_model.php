@@ -302,6 +302,8 @@ class Gateway_model extends Model
 		// Get the customer details if a customer id was included
 		$this->load->model('customer_model');
 		
+		die(print_r($customer) . '|' . $customer_id . '|test');
+		
 		if (isset($customer_id)) {
 			$customer = $CI->customer_model->GetCustomer($client_id, $customer_id);
 			$customer['customer_id'] = $customer['id'];
@@ -335,8 +337,6 @@ class Gateway_model extends Model
 				$created_customer = TRUE;
 			}
 		}
-		
-		die(print_r($customer));
 		
 		// if we have an IP, we'll populate this field
 		// note, if we get an error later: the first thing we check is to see if an IP is required
