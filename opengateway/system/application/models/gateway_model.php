@@ -164,7 +164,7 @@ class Gateway_model extends Model
 		}
 		
 		// Get the customer details if a customer id was included
-		if (isset($customer_id)) {
+		if (!empty($customer_id)) {
 			$CI->load->model('customer_model');
 			$customer = $CI->customer_model->GetCustomer($client_id, $customer_id);
 			$customer['customer_id'] = $customer['id'];
