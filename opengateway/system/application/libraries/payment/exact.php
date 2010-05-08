@@ -161,7 +161,7 @@ class exact
 		
 		if($transaction_result->EXact_Resp_Code == '00'){
 			$CI->load->model('order_authorization_model');
-			$CI->order_authorization_model->SaveAuthorization($order_id, $transaction_result->Transaction_Tag);
+			$CI->order_authorization_model->SaveAuthorization($order_id, $transaction_result->Transaction_Tag, $transaction_result->Authorization_Num);
 			$response_array = array('charge_id' => $order_id);
 			$response = $CI->response->TransactionResponse(1, $response_array);
 		} else {
@@ -207,52 +207,29 @@ class exact
 		return $response;
 	}
 	
-	
-	function Refund($client_id, $order_id, $gateway, $customer, $params, $credit_card)
-	{			
+	function Refund ($client_id, $gateway, $charge, $authorization)
+	{		
 		$CI =& get_instance();
-		
+			
 		$post_url = $gateway['url_live'];
-			
+		
 		$trxnProperties = array(
-					'ExactID'			=> $gateway['terminal_id'],	
-			  		'Password'			=> $gateway['password'],
-					'Transaction_Type'  => '04',
-				 	'Card_Number' 		=> $credit_card['card_num'],
-					'Expiry_Date'		=> $credit_card['exp_month'] . substr($credit_card['exp_year'],-2,2),
-					'CVD_Presence_Ind' 	=> (empty($credit_card['cvv'])) ? '9' : '1',
-					'Customer_Ref' 		=> $order_id,
-					'DollarAmount' 		=> $params['amount']
-		  		);
+						'ExactID'			=> $gateway['terminal_id'],	
+				  		'Password'			=> $gateway['password'],
+						'Transaction_Type'  => '34',
+					 	'Transaction_Tag'	=> $authorization->tran_id,
+						'Authorization_Num'	=> $authorization->authorization_code,
+						'Customer_Ref' 		=> $charge['id'],
+						'DollarAmount' 		=> $charge['amount']
+			        );
 		
-		if(isset($credit_card->cvv)) {
-			$trxnProperties['VerificationStr1'] = $credit_card['cvv'];
-		}  
+		$post_response = $this->Process($trxnProperties, $post_url, $order_id);
 		
-		if(isset($customer['customer_id'])) {
-			$trxnProperties['CardHoldersName'] = $customer['first_name'].' '.$customer['last_name'];
+		if ($post_response->EXact_Resp_Code == '00') {
+			return TRUE;
 		} else {
-			$name = explode(' ', $credit_card['card_name']);
-			$trxnProperties['CardHoldersName'] = $name[0].' '.$name[1];
-			
+			return FALSE;
 		}
-		  
-		$trxnProperties = $this->CompleteArray($trxnProperties); 
-		  
-		$trxnResult = $this->Process($trxnProperties, $post_url, $order_id);
-		
-		if($trxnResult->EXact_Resp_Code == '00'){
-			$CI->load->model('order_authorization_model');
-			$CI->order_authorization_model->SaveAuthorization($order_id, $trxnResult->Transaction_Tag);
-			$response_array = array('charge_id' => $order_id);
-			$response = $CI->response->TransactionResponse(1, $response_array);
-		} else {
-			$response_array = array('reason' => $trxnResult->EXact_Message);
-			$response = $CI->response->TransactionResponse(2, $response_array);
-		}
-		
-		return $response;
-
 	}
 	
 	function CreateProfile($client_id, $gateway, $customer, $credit_card, $subscription_id, $amount, $order_id)
@@ -339,7 +316,7 @@ class exact
 			$response['success'] = TRUE;
 			// Save the Auth information
 			$CI->load->model('order_authorization_model');
-			$CI->order_authorization_model->SaveAuthorization($order_id, $post_response->Authorization_Num);
+			$CI->order_authorization_model->SaveAuthorization($order_id, $post_response->Transaction_Tag, $post_response->Authorization_Num);
 		} else {
 			$response['success'] = FALSE;
 			$response['reason'] = $post_response->EXact_Message;
