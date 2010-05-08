@@ -1,9 +1,9 @@
 <?php
 
 /**
-* Subscription Model 
+* Recurring Model 
 *
-* Contains all the methods used to create, update, and search subscriptions.
+* Contains all the methods used to create, update, and search recurring charges.
 *
 * @version 1.0
 * @author Electric Function, Inc.
@@ -11,9 +11,9 @@
 
 */
 
-class Subscription_model extends Model
+class Recurring_model extends Model
 {
-	function Subscription_model()
+	function Recurring_model()
 	{
 		parent::Model();
 	}
@@ -37,7 +37,7 @@ class Subscription_model extends Model
 	* @return int The new subscription ID
 	*/
 	
-	function SaveSubscription($client_id, $gateway_id, $customer_id, $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id = 0)
+	function SaveRecurring($client_id, $gateway_id, $customer_id, $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id = 0)
 	{
 		$timestamp = date('Y-m-d H:i:s');
 		$insert_data = array(
@@ -522,8 +522,8 @@ class Subscription_model extends Model
 	function CancelRecurring($client_id, $recurring_id, $expiring = FALSE)
 	{
 		// Get the subscription information
-		$this->load->model('subscription_model');
-		$subscription = $this->subscription_model->GetSubscriptionDetails($client_id, $recurring_id);
+		$this->load->model('recurring_model');
+		$subscription = $this->recurring_model->GetSubscriptionDetails($client_id, $recurring_id);
 		
 		// Get the gateway info to load the proper library
 		$CI =& get_instance();

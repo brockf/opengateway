@@ -14,13 +14,13 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 	
 	// load all available data
     if ($subscription_id) {
-    	$CI->load->model('subscription_model');
-    	$subscription = $CI->subscription_model->GetRecurring($client_id, $subscription_id);
+    	$CI->load->model('recurring_model');
+    	$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
     }
     
     if ($charge_id) {
-    	$CI->load->model('order_model');
-    	$charge = $CI->order_model->GetCharge($client_id, $charge_id);
+    	$CI->load->model('charge_model');
+    	$charge = $CI->charge_model->GetCharge($client_id, $charge_id);
     }
     
     if ($customer_id) {

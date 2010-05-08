@@ -252,8 +252,8 @@ class authnet
 		}
 
 		// save the api_customer_reference
-		$CI->load->model('subscription_model');
-		$CI->subscription_model->SaveApiCustomerReference($subscription_id, $profile_id);
+		$CI->load->model('recurring_model');
+		$CI->recurring_model->SaveApiCustomerReference($subscription_id, $profile_id);
 		
 		if (!isset($payment_profile_id) or empty($payment_profile_id)) {
 			// Create the payment profile
@@ -269,23 +269,23 @@ class authnet
 		}
 		
 		// Save the api_payment_reference
-		$CI->subscription_model->SaveApiPaymentReference($subscription_id, $payment_profile_id);
+		$CI->recurring_model->SaveApiPaymentReference($subscription_id, $payment_profile_id);
 		
 		// If a payment is to be made today, process it.
 		if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
 			// Create an order for today's payment
-			$CI->load->model('order_model');
-			$order_id = $CI->order_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
+			$CI->load->model('charge_model');
+			$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
 			
 			$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $profile_id, $payment_profile_id, $amount);
 			
 			if($response['success'] == TRUE){
-				$CI->order_model->SetStatus($order_id, 1);
+				$CI->charge_model->SetStatus($order_id, 1);
 				$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
 				$response = $CI->response->TransactionResponse(100, $response_array);
 			} else {
 				// Make the subscription inactive
-				$CI->subscription_model->MakeInactive($subscription_id);
+				$CI->recurring_model->MakeInactive($subscription_id);
 				
 				$response_array = array('reason' => $response['reason']);
 				$response = $CI->response->TransactionResponse(2, $response_array);
@@ -295,6 +295,55 @@ class authnet
 		}
 		
 		return $response;
+	}
+	
+	function Refund ($client_id, $gateway, $charge, $authorization)
+	{	
+		$CI =& get_instance();
+		
+		$post_url = $this->GetAPIUrl($gateway);
+		
+		$post_values = array(
+			"x_login"			=> $gateway['login_id'],
+			"x_tran_key"		=> $gateway['transaction_key'],
+			"x_version"			=> "3.1",
+			"x_delim_data"		=> "TRUE",
+			"x_delim_char"		=> "|",
+			"x_relay_response"	=> "FALSE",
+			"x_type"			=> "CREDIT",
+			"x_method"			=> "CC",
+			"x_trans_id"		=> $authorization['tran_id'],
+			"x_amount"			=> $charge['amount'],
+			"x_card_num"		=> $charge['card_last_four'],
+			"x_exp_date"		=> date('m') . substr((date('Y')+1),-2,2)
+			);
+			
+		$post_string = "";
+		foreach( $post_values as $key => $value ) {
+			$post_string .= "$key=" . urlencode( $value ) . "&";
+		}
+		
+		$post_string = rtrim( $post_string, "& " );
+		
+		$request = curl_init($post_url); // initiate curl object
+		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
+		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
+		curl_setopt($request, CURLOPT_POSTFIELDS, $post_string); // use HTTP POST to send form data
+		$post_response = curl_exec($request); // execute curl post and store results in $post_response
+		curl_close ($request); // close curl object
+		
+		$response = explode('|',$post_response);
+
+		if (!isset($response[1])) {
+			return FALSE;
+		}
+		
+		if ($response[0] == '1') {
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
 	}
 	
 	function CancelRecurring($client_id, $subscription)
@@ -326,7 +375,6 @@ class authnet
 		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
 		curl_setopt($request, CURLOPT_HTTPHEADER, Array("Content-Type: text/xml"));
 		curl_setopt($request, CURLOPT_POSTFIELDS, $content); // use HTTP POST to send form data
-		curl_setopt($request, CURLOPT_SSL_VERIFYPEER, FALSE); // uncomment this line if you get no gateway response.
 		$post_response = curl_exec($request); // execute curl post and store results in $post_response
 		
 		curl_close($request); // close curl object
@@ -386,7 +434,6 @@ class authnet
 		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
 		curl_setopt($request, CURLOPT_HTTPHEADER, Array("Content-Type: text/xml"));
 		curl_setopt($request, CURLOPT_POSTFIELDS, $content); // use HTTP POST to send form data
-		curl_setopt($request, CURLOPT_SSL_VERIFYPEER, FALSE); // uncomment this line if you get no gateway response.
 		$post_response = curl_exec($request); // execute curl post and store results in $post_response
 		
 		curl_close($request); // close curl object
@@ -426,7 +473,6 @@ class authnet
 		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
 		curl_setopt($request, CURLOPT_HTTPHEADER, Array("Content-Type: text/xml"));
 		curl_setopt($request, CURLOPT_POSTFIELDS, $content); // use HTTP POST to send form data
-		curl_setopt($request, CURLOPT_SSL_VERIFYPEER, FALSE); // uncomment this line if you get no gateway response.
 		$post_response = curl_exec($request); // execute curl post and store results in $post_response
 		
 		curl_close($request); // close curl object
@@ -470,7 +516,6 @@ class authnet
 		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
 		curl_setopt($request, CURLOPT_HTTPHEADER, Array("Content-Type: text/xml"));
 		curl_setopt($request, CURLOPT_POSTFIELDS, $content); // use HTTP POST to send form data
-		curl_setopt($request, CURLOPT_SSL_VERIFYPEER, FALSE); // uncomment this line if you get no gateway response.
 		$post_response = curl_exec($request); // execute curl post and store results in $post_response
 		
 		curl_close($request); // close curl object
@@ -478,10 +523,6 @@ class authnet
 		@$response = simplexml_load_string($post_response);
 		
 		if($response->messages->resultCode == 'Ok') {
-			// Send a notification to the notification URL
-			// $CI->load->library('notify');
-			// $CI->notify->SendNotification($subscription_id);
-			
 			// Get the auth code
 			$post_response = explode(',', $response->directResponse);
 			$CI->load->model('order_authorization_model');
@@ -508,7 +549,6 @@ class authnet
 		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
 		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
 		curl_setopt($request, CURLOPT_POSTFIELDS, $post_string); // use HTTP POST to send form data
-		curl_setopt($request, CURLOPT_SSL_VERIFYPEER, FALSE); // uncomment this line if you get no gateway response.
 		$post_response = curl_exec($request); // execute curl post and store results in $post_response
 		
 		curl_close ($request); // close curl object
@@ -530,15 +570,15 @@ class authnet
 			return $response;
 		}
 		// Get the response.  1 for the first part meant that it was successful.  Anything else and it failed
-		if($response[0] == 1) {
+		if ($response[0] == 1) {
 			$CI->load->model('order_authorization_model');
 			$CI->order_authorization_model->SaveAuthorization($order_id, $response[6], $response[4]);
-			$CI->order_model->SetStatus($order_id, 1);
+			$CI->charge_model->SetStatus($order_id, 1);
 			
 			$response['success'] = TRUE;
 		} else {
-			$CI->load->model('order_model');
-			$CI->order_model->SetStatus($order_id, 0);
+			$CI->load->model('charge_model');
+			$CI->charge_model->SetStatus($order_id, 0);
 			
 			$response['success'] = FALSE;
 			$response['reason'] = $response[3];
@@ -704,65 +744,6 @@ class authnet
 		return $response;
 	}
 	
-	
-	function Refund($client_id, $order_id, $gateway, $customer, $params)
-	{	
-		$CI =& get_instance();
-		
-		// Get the proper URL
-		switch($gateway['mode'])
-		{
-			case 'live':
-				$post_url = $gateway['url_live'];
-			break;
-			case 'test':
-				$post_url = $gateway['url_test'];
-			break;
-			case 'dev':
-				$post_url = $gateway['url_dev'];
-			break;
-		}
-		
-		// Get the tran id
-		$CI->load->model('order_model');
-		$order = $CI->order_model->GetCharge($client_id, $order_id);
-		
-		$post_values = array(
-			"x_login"			=> $gateway['login_id'],
-			"x_tran_key"		=> $gateway['transaction_key'],
-		
-			"x_version"			=> "3.1",
-			"x_delim_data"		=> "TRUE",
-			"x_delim_char"		=> "|",
-			"x_relay_response"	=> "FALSE",
-		
-			"x_type"			=> "CREDIT",
-			"x_method"			=> "CC",
-			"x_tran_id"			=> $order['id'],
-			"x_amount"			=> $params['amount'],
-			"x_card_num"		=> $params['card_num'],
-			"x_exp_date"		=> $params['exp_month'].$params['exp_year']
-			);
-			
-		$post_string = "";
-		foreach( $post_values as $key => $value )
-			{ $post_string .= "$key=" . urlencode( $value ) . "&"; }
-		$post_string = rtrim( $post_string, "& " );
-		
-		$response = $this->Process($order_id, $post_url, $post_string);
-		
-		if($response['success']){
-			$response_array = array('charge_id' => $order_id);
-			$response = $CI->response->TransactionResponse(1, $response_array);
-		} else {
-			$response_array = array('reason' => $response['reason']);
-			$response = $CI->response->TransactionResponse(2, $response_array);
-		}
-		
-		return $response;
-	}
-	
-	
 	function Void($client_id, $order_id, $gateway, $customer, $params)
 	{	
 		$CI =& get_instance();
@@ -782,8 +763,8 @@ class authnet
 		}
 		
 		// Get the tran id
-		$CI->load->model('order_model');
-		$order = $CI->order_model->GetOrder($client_id, $order_id);
+		$CI->load->model('charge_model');
+		$order = $CI->charge_model->GetOrder($client_id, $order_id);
 		
 		$post_values = array(
 			"x_login"			=> $gateway['login_id'],

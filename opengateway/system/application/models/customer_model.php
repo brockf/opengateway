@@ -573,11 +573,11 @@ class Customer_model extends Model
 	*/
 	function GetPlansByCustomer ($client_id, $customer_id) {
 		$CI =& get_instance();
-		$CI->load->model('subscription_model');
+		$CI->load->model('recurring_model');
 		$params = array(
 						'customer_id' => $customer_id
 						);
-		$recurrings = $CI->subscription_model->GetRecurrings($client_id, $params);
+		$recurrings = $CI->recurring_model->GetRecurrings($client_id, $params);
 		
 		$plans = array();
 		

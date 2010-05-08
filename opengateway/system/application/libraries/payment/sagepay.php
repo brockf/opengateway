@@ -236,18 +236,18 @@ class sagepay
 		// if a payment is to be made today, process it.
 		if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
 			// Create an order for today's payment
-			$CI->load->model('order_model');
-			$order_id = $CI->order_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
+			$CI->load->model('charge_model');
+			$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
 			
 			$response = $this->Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card);
 			
 			if ($response['response_code'] == '1') {
-				$CI->order_model->SetStatus($order_id, 1);
+				$CI->charge_model->SetStatus($order_id, 1);
 				$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
 				$response = $CI->response->TransactionResponse(100, $response_array);
 			} else {
 				// Make the subscription inactive
-				$CI->subscription_model->MakeInactive($subscription_id);
+				$CI->recurring_model->MakeInactive($subscription_id);
 				
 				$response_array = array('reason' => $response['reason']);
 				$response = $CI->response->TransactionResponse(2, $response_array);
@@ -264,7 +264,7 @@ class sagepay
 				$response = $CI->response->TransactionResponse(100, $response_array);
 			} else {
 				// Make the subscription inactive
-				$CI->subscription_model->MakeInactive($subscription_id);
+				$CI->recurring_model->MakeInactive($subscription_id);
 				
 				$response_array = array('reason' => $response['reason']);
 				$response = $CI->response->TransactionResponse(2, $response_array);
@@ -281,11 +281,11 @@ class sagepay
 		//		api_auth_number = SecurityKey
 		
 		// these authorizations were saved during $this->Process()
-		$authorizations = $CI->order_authorization_model->getAuthorization($order_id);
+		$authorizations = $CI->order_authorization_model->GetAuthorization($order_id);
 		
-		$CI->subscription_model->SaveApiCustomerReference($subscription_id, $authorizations->tran_id);
-		$CI->subscription_model->SaveApiPaymentReference($subscription_id, $authorizations->order_id . '|' . $authorizations->authorization_code);
-		$CI->subscription_model->SaveApiAuthNumber($subscription_id, $authorizations->security_key);
+		$CI->recurring_model->SaveApiCustomerReference($subscription_id, $authorizations->tran_id);
+		$CI->recurring_model->SaveApiPaymentReference($subscription_id, $authorizations->order_id . '|' . $authorizations->authorization_code);
+		$CI->recurring_model->SaveApiAuthNumber($subscription_id, $authorizations->security_key);
 		
 		return $response;
 	}
@@ -393,12 +393,12 @@ class sagepay
 		if($response['Status'] == $ok_message) {
 			$CI->load->model('order_authorization_model');
 			$CI->order_authorization_model->SaveAuthorization($order_id, $response['VPSTxId'], $response['TxAuthNo'], $response['SecurityKey']);
-			$CI->order_model->SetStatus($order_id, 1);
+			$CI->charge_model->SetStatus($order_id, 1);
 			
 			$response['success'] = TRUE;
 		} else {
-			$CI->load->model('order_model');
-			$CI->order_model->SetStatus($order_id, 0);
+			$CI->load->model('charge_model');
+			$CI->charge_model->SetStatus($order_id, 0);
 			
 			$response['success'] = FALSE;
 			$response['reason'] = $response['StatusDetail'];

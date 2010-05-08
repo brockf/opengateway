@@ -645,7 +645,7 @@ INSERT INTO `request_types` (`request_type_id`, `name`, `model`) VALUES (1, 'New
 (25, 'DeleteGateway', ''),
 (26, 'UpdateGateway', ''),
 (27, 'GetCustomer', ''),
-(28, 'CancelRecurringByCus', 'subscription_model'),
+(28, 'CancelRecurringByCus', 'recurring_model'),
 (29, 'GetRecurring', ''),
 (30, 'NewPlan', ''),
 (31, 'UpdatePlan', ''),

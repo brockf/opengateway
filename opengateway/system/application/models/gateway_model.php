@@ -204,9 +204,9 @@ class Gateway_model extends Model
 		}
 		
 		// Create a new order
-		$CI->load->model('order_model');
+		$CI->load->model('charge_model');
 		$passed_customer = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
-		$order_id = $CI->order_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, 0, $passed_customer, $customer_ip);
+		$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, 0, $passed_customer, $customer_ip);
 		
 		// if amount is greater than $0, we require a gateway
 		if ($amount > 0) {
@@ -231,10 +231,10 @@ class Gateway_model extends Model
 		
 		// if it was successful, send an email
 		if ($response['response_code'] == 1) {
-			$CI->order_model->SetStatus($order_id, 1);
+			$CI->charge_model->SetStatus($order_id, 1);
 			TriggerTrip('charge', $client_id, $response['charge_id']);
 		} else {
-			$CI->order_model->SetStatus($order_id, 0);
+			$CI->charge_model->SetStatus($order_id, 0);
 			
 			// did we require an IP address?
 			if ($gateway_settings['requires_customer_ip'] == 1 and !$customer_ip) {
@@ -460,12 +460,12 @@ class Gateway_model extends Model
 		$total_occurrences = round((strtotime($end_date) - strtotime($start_date)) / ($interval * 86400), 0);
 		
 		// Save the subscription info
-		$CI->load->model('subscription_model');
-		$subscription_id = $CI->subscription_model->SaveSubscription($client_id, $gateway['gateway_id'], $customer['customer_id'], $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id);
+		$CI->load->model('recurring_model');
+		$subscription_id = $CI->recurring_model->SaveRecurring($client_id, $gateway['gateway_id'], $customer['customer_id'], $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id);
 		
 		// set last_charge as today, if today was a charge
 		if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
-			$CI->subscription_model->SetChargeDates($subscription_id, date('Y-m-d'), $next_charge_date);
+			$CI->recurring_model->SetChargeDates($subscription_id, date('Y-m-d'), $next_charge_date);
 		}
 		
 		// if amount is greater than 0, we require a gateway to process
@@ -476,10 +476,10 @@ class Gateway_model extends Model
 			// this is a free subscription
 			if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
 				// create a $0 order for today's payment
-				$CI->load->model('order_model');
+				$CI->load->model('charge_model');
 				$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
-				$order_id = $CI->order_model->CreateNewOrder($client_id, $gateway['gateway_id'], 0, $credit_card, $subscription_id, $customer['customer_id'], $customer_ip);
-				$CI->order_model->SetStatus($order_id, 1);
+				$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], 0, $credit_card, $subscription_id, $customer['customer_id'], $customer_ip);
+				$CI->charge_model->SetStatus($order_id, 1);
 				$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
 			}
 			else {
@@ -514,60 +514,62 @@ class Gateway_model extends Model
 		return $response;
 	}
 	
-	/*
-	* REFUND: To be implemented later
-	
-	function Refund($client_id, $params)
+	/**
+	* Refund
+	*
+	* Refund a charge via the gateway
+	*
+	* @param $client_id The Client ID
+	* @param $charge_id The Charge ID to refund
+	*
+	* @return boolean TRUE upon success
+	*/
+	function Refund ($client_id, $charge_id)
 	{
-		// Make sure it came from a secure connection
-		if(empty($_SERVER["HTTPS"])) {
-			die($this->response->Error(1010));
-		}
-		
-		if(!isset($params['gateway_id'])) {
-			die($this->response->Error(3001));
-		}
-		
 		$CI =& get_instance();
 		
 		// Get the order details
-		$CI->load->model('order_model');
-		$order = $CI->order_model->GetCharge($client_id, $params['order_id']);
-		$order_id = $order['id'];
+		$CI->load->model('charge_model');
+		$charge = $CI->charge_model->GetCharge($client_id, $charge_id);
 		
-		$params['order'] = $order;
-		
-		// Get the credit card object
-		if(isset($params['credit_card'])) {
-			$credit_card = $params['credit_card']; 
-		} else {
-			$credit_card = FALSE;
+		// does the order exist?
+		if (!$charge) {
+			die($this->response->Error(4001));
 		}
-			
-		
-		// Validate the required fields
-		$this->load->library('field_validation');
-		$this->field_validation->ValidateRequiredFields('Refund', $params);
 		
 		// Get the gateway info to load the proper library
-		$gateway_id = $params['gateway_id'];
 		$CI->load->model('gateway_model');
-		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $gateway_id);
+		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $charge['gateway_id']);
 		
-		// Get the customer details
-		$CI->load->model('customer_model');
-		$customer = $CI->customer_model->GetCustomer($client_id, $params['customer_id']);
-		$customer['customer_id'] = $customer;
+		// does the gateway exist?
+		if (!$gateway or $gateway['enabled'] == '0') {
+			die($this->response->Error(5017));
+		}
+		
+		// load the gateway
+		$gateway_name = $gateway['name'];
+		$this->load->library('payment/'.$gateway_name);
+		$gateway_settings = $this->$gateway_name->Settings();
+		
+		// does the gateway allow refunds?
+		if ($gateway_settings['allows_refunds'] == 0) {
+			die($this->response->Error(5020));
+		}
 		
 		// Get the order authorization
 		$CI->load->model('order_authorization_model');
-		$params['authorization'] = $CI->order_authorization_model->getAuthorization($order_id);
+		$authorization = $CI->order_authorization_model->GetAuthorization($charge['id']);
 		
-		// Load the proper library
-		$gateway_name = $gateway['name'];
-		$this->load->library('payment/'.$gateway_name);
-		return $this->$gateway_name->Refund($client_id, $order_id, $gateway, $customer, $params, $credit_card);
-	}*/
+		// Pass to Gateway
+		$response = $this->$gateway_name->Refund($client_id, $gateway, $charge, $authorization);
+		
+		if ($response === TRUE) {
+			// update charge as being refunded
+			$CI->charge_model->MarkRefunded($charge_id);
+		}
+		
+		return $response; // either TRUE or FALSE
+	}
 	
 	/**
 	* Process a credit card recurring charge
@@ -604,8 +606,8 @@ class Gateway_model extends Model
 		$params['credit_card']['card_num'] = $row[0]['card_last_four'];
 		
 		// Create a new order
-		$CI->load->model('order_model');
-		$order_id = $CI->order_model->CreateNewOrder($client_id, $params['gateway_id'], $params['amount'], $params['credit_card'], $params['subscription_id'], $params['customer_id']);
+		$CI->load->model('charge_model');
+		$order_id = $CI->charge_model->CreateNewOrder($client_id, $params['gateway_id'], $params['amount'], $params['credit_card'], $params['subscription_id'], $params['customer_id']);
 		
 		if ($params['amount'] > 0) {
 			// Load the proper library
@@ -618,15 +620,15 @@ class Gateway_model extends Model
 			$response['success'] = TRUE;
 		}	
 
-		$CI->load->model('subscription_model');
+		$CI->load->model('recurring_model');
 		if ($response['success'] == TRUE) {
 			// Save the last_charge and next_charge
 			$last_charge = date('Y-m-d');
-			$next_charge = $CI->subscription_model->GetNextChargeDate($params['subscription_id']);
+			$next_charge = $CI->recurring_model->GetNextChargeDate($params['subscription_id']);
 			
-			$CI->subscription_model->SetChargeDates($params['subscription_id'], $last_charge, $next_charge);
+			$CI->recurring_model->SetChargeDates($params['subscription_id'], $last_charge, $next_charge);
 			
-			$CI->order_model->SetStatus($order_id, 1);
+			$CI->charge_model->SetStatus($order_id, 1);
 			
 			TriggerTrip('recurring_charge', $client_id, $order_id, $params['subscription_id']);
 		} else {
@@ -636,13 +638,13 @@ class Gateway_model extends Model
 			$num_allowed = $this->config->item('recurring_charge_failures_allowed');
 			$failures = $params['number_charge_failures'];
 			
-			$CI->order_model->SetStatus($order_id, 0);
+			$CI->charge_model->SetStatus($order_id, 0);
 			
 			$failures++;
-			$CI->subscription_model->AddFailure($params['subscription_id'], $failures);
+			$CI->recurring_model->AddFailure($params['subscription_id'], $failures);
 			
 			if($failures >= $num_allowed) {	
-				$CI->subscription_model->CancelRecurring($client_id, $params['subscription_id']);
+				$CI->recurring_model->CancelRecurring($client_id, $params['subscription_id']);
 			}
 		}
 		
@@ -773,11 +775,11 @@ class Gateway_model extends Model
 		}
 		
 		// cancel all subscriptions related to it
-		$CI->load->model('subscription_model');
-		$subscriptions = $CI->subscription_model->GetAllSubscriptionsByGatewayID($gateway_id);
+		$CI->load->model('recurring_model');
+		$subscriptions = $CI->recurring_model->GetAllSubscriptionsByGatewayID($gateway_id);
 		if (is_array($subscriptions)) {
 			foreach ($subscriptions as $subscription) {
-				$CI->subscription_model->CancelRecurring($subscription['client_id'],$subscription['subscription_id']);
+				$CI->recurring_model->CancelRecurring($subscription['client_id'],$subscription['subscription_id']);
 			}
 		}
 		
@@ -993,8 +995,8 @@ class Gateway_model extends Model
 		$credit_card = $xml->credit_card;
 		
 		// Create a new order
-		$CI->load->model('order_model');
-		$order_id = $CI->order_model->CreateNewOrder($client_id, $params, $credit_card);
+		$CI->load->model('charge_model');
+		$order_id = $CI->charge_model->CreateNewOrder($client_id, $params, $credit_card);
 		
 		// Get the gateway info to load the proper library
 		$gateway_id = $params['gateway_id'];
@@ -1024,8 +1026,8 @@ class Gateway_model extends Model
 		$CI =& get_instance();
 		
 		// Get the order details
-		$CI->load->model('order_model');
-		$order = $CI->order_model->GetOrder($client_id, $params['order_id']);
+		$CI->load->model('charge_model');
+		$order = $CI->charge_model->GetOrder($client_id, $params['order_id']);
 		$order_id = $order->order_id;
 		
 		
@@ -1057,8 +1059,8 @@ class Gateway_model extends Model
 		$CI =& get_instance();
 		
 		// Get the order details
-		$CI->load->model('order_model');
-		$order = $CI->order_model->GetOrder($client_id, $params['order_id']);
+		$CI->load->model('charge_model');
+		$order = $CI->charge_model->GetOrder($client_id, $params['order_id']);
 		$order_id = $order->order_id;
 		
 		// Validate the required fields

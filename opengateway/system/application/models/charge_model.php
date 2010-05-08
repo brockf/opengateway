@@ -1,6 +1,6 @@
 <?php
 /**
-* Order Model 
+* Charge Model 
 *
 * Contains all the methods used to create and search orders.
 *
@@ -9,9 +9,9 @@
 * @package OpenGateway
 
 */
-class Order_model extends Model
+class Charge_model extends Model
 {
-	function Order_Model()
+	function Charge_model()
 	{
 		parent::Model();
 	}
@@ -39,7 +39,9 @@ class Order_model extends Model
 							'gateway_id' 	  => $gateway_id,
 							'subscription_id' => $subscription_id,
 							'amount'		  => $amount,
-							'timestamp'		  => $timestamp
+							'timestamp'		  => $timestamp,
+							'refunded' 		  => '0',
+							'refund_date'	  => '0000-00-00 00:00:00'
 							);	
 		
 		if (isset($credit_card['card_num'])) {
@@ -57,6 +59,25 @@ class Order_model extends Model
 		$this->db->insert('orders', $insert_data);
 		
 		return $this->db->insert_id();	
+	}
+	
+	/**
+	* Mark Refunded
+	*
+	* Marks a charge as refunded now
+	*
+	* @param $client_id The client ID
+	* @param $charge_id The charge ID to mark refunded
+	*
+	* @return boolean TRUE upon success
+	*/
+	function MarkRefunded ($charge_id) {
+		$update_data = array(
+							'refunded' => '1',
+							'refund_date' => date('Y-m-d H:i:s')
+							);
+							
+		$this->db->update('orders', $update_array, array('order_id' => $charge_id));
 	}
 	
 	/**
@@ -341,6 +362,10 @@ class Order_model extends Model
 				$data[$i]['amount'] = money_format("%!i",$row->amount);
 				$data[$i]['card_last_four'] = $row->card_last_four;
 				$data[$i]['status'] = ($row->status == '1') ? 'ok' : 'failed';
+				$data[$i]['refunded'] = $row->refunded;
+				if ($row->refunded == '1') {
+					$data['refund_date'] = local_time($client_id, $row->refund_date);
+				}
 				
 				if($row->subscription_id != 0) {
 					$data[$i]['recurring_id'] = $row->subscription_id;

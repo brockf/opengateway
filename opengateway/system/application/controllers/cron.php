@@ -31,17 +31,17 @@ class Cron extends Controller {
 			return FALSE;
 		}
 		
-		$this->load->model('subscription_model');
+		$this->load->model('recurring_model');
 		$this->load->model('gateway_model');
 		$this->load->library('email');
 		
 		// Expire subscription if the end date is today or before
 		$cancelled = array();
-		$subscriptions = $this->subscription_model->GetAllSubscriptionsForExpiring();
+		$subscriptions = $this->recurring_model->GetAllSubscriptionsForExpiring();
 		if($subscriptions) {
 			foreach($subscriptions as $subscription) {
 				// Try and make the charge
-				$response = $this->subscription_model->CancelRecurring($subscription['client_id'], $subscription['subscription_id'], TRUE);
+				$response = $this->recurring_model->CancelRecurring($subscription['client_id'], $subscription['subscription_id'], TRUE);
 				if($response) {
 					TriggerTrip('recurring_expire', $subscription['client_id'], FALSE, $subscription['subscription_id']);
 					$cancelled[] = $subscription['subscription_id'];
@@ -51,7 +51,7 @@ class Cron extends Controller {
 		
 		// get all the subscriptions with a next_charge date of today for the next charge
 		$today = date('Y-m-d');
-		$subscriptions = $this->subscription_model->GetAllSubscriptionsByDate('next_charge', $today);
+		$subscriptions = $this->recurring_model->GetAllSubscriptionsByDate('next_charge', $today);
 		
 		$charge_success = array();
 		$charge_failure = array();
@@ -71,7 +71,7 @@ class Cron extends Controller {
 		// Get all the recurring charge emails to send in one week
 		$sent_emails['recurring_autorecur_in_week'] = array();
 		$next_week = mktime(0,0,0, date('m'), date('d') + 7, date('Y'));
-		$charges = $this->subscription_model->GetChargesByDate($next_week);
+		$charges = $this->recurring_model->GetChargesByDate($next_week);
 		if($charges) {
 			foreach($charges as $charge) {
 				if (TriggerTrip('recurring_autorecur_in_week', $charge['client_id'], false, $charge['subscription_id'])) {
@@ -83,7 +83,7 @@ class Cron extends Controller {
 		// Get all the recurring charge emails to send in one month
 		$sent_emails['recurring_autorecur_in_month'] = array();
 		$next_month = mktime(0,0,0, date('m') + 1, date('d'), date('Y'));
-		$charges = $this->subscription_model->GetChargesByDate($next_month);
+		$charges = $this->recurring_model->GetChargesByDate($next_month);
 		if($charges) {
 			foreach($charges as $charge) {
 				if (TriggerTrip('recurring_autorecur_in_month', $charge['client_id'], false, $charge['subscription_id'])) {
@@ -94,7 +94,7 @@ class Cron extends Controller {
 
 		// Get all the recurring expiration emails to send in one week
 		$sent_emails['recurring_expiring_in_week'] = array();
-		$charges = $this->subscription_model->GetChargesByExpiryDate($next_week);
+		$charges = $this->recurring_model->GetChargesByExpiryDate($next_week);
 		if($charges) {
 			foreach($charges as $charge) {
 				if (TriggerTrip('recurring_expiring_in_week', $charge['client_id'], false, $charge['subscription_id'])) {
@@ -105,7 +105,7 @@ class Cron extends Controller {
 		
 		// Get all the recurring expiration emails to send in one month
 		$sent_emails['recurring_expiring_in_month'] = array();
-		$charges = $this->subscription_model->GetChargesByExpiryDate($next_month);
+		$charges = $this->recurring_model->GetChargesByExpiryDate($next_month);
 		if($charges) {
 			foreach($charges as $charge) {
 				if (TriggerTrip('recurring_expiring_in_month', $charge['client_id'], false, $charge['subscription_id'])) {

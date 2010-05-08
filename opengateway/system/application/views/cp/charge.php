@@ -17,7 +17,7 @@ This charge is related to recurring charge #<a href="<?=site_url('transactions/r
 	</div>
 	<? } ?>
 <p><b>Charge ID</b><br />
-<?=$id;?></p>
+<?=$id;?> (<a href="<?=site_url('transactions/refund/' . $id);?>">refund charge</a>)</p>
 <p><b>Timestamp</b><br />
 <?=$date;?></p>
 <p><b>Amount</b><br />

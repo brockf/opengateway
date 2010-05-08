@@ -240,19 +240,19 @@ class paypal
 		// If the start date is today, we'll do the first one manually
 		if (strtotime($start_date) == strtotime(date('Y-m-d'))) {
 			// Create an order
-			$CI->load->model('order_model');
+			$CI->load->model('charge_model');
 			
 			$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
-			$order_id = $CI->order_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
+			$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
 			$response = $this->Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card);
 			
 			if ($response['response_code'] == 1) {
 				$response_array['charge_id'] = $response['charge_id'];
 				$start_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400));
-				$CI->order_model->SetStatus($order_id, 1);
+				$CI->charge_model->SetStatus($order_id, 1);
 			} else {
-				$CI->load->model('subscription_model');
-				$CI->subscription_model->MakeInactive($subscription_id);
+				$CI->load->model('recurring_model');
+				$CI->recurring_model->MakeInactive($subscription_id);
 				$response_array = array('reason' => $response['reason']);
 				$response = $CI->response->TransactionResponse(2, $response_array);
 				
@@ -271,14 +271,14 @@ class paypal
 		
 		// save the api_customer_reference
 		
-		$CI->subscription_model->SaveApiCustomerReference($subscription_id, $profile_id);
+		$CI->recurring_model->SaveApiCustomerReference($subscription_id, $profile_id);
 		
 		if($response['success'] == TRUE){
 				$response_array['recurring_id'] = $subscription_id;
 				$response = $CI->response->TransactionResponse(100, $response_array);
 			} else {
 				// Make the subscription inactive
-				$CI->subscription_model->MakeInactive($subscription_id);
+				$CI->recurring_model->MakeInactive($subscription_id);
 				
 				$response_array = array('reason' => $response['reason']);
 				$response = $CI->response->TransactionResponse(2, $response_array);
@@ -463,7 +463,7 @@ class paypal
 	function CancelRecurring($client_id, $subscription, $gateway)
 	{
 		$CI =& get_instance();
-		$CI->load->model('subscription_model');
+		$CI->load->model('recurring_model');
 		
 		switch($gateway['mode'])
 		{
@@ -503,7 +503,7 @@ class paypal
 	function UpdateRecurring($client_id, $gateway, $subscription, $customer, $params)
 	{
 		$CI =& get_instance();
-		$CI->load->model('subscription_model');
+		$CI->load->model('recurring_model');
 		
 		switch($gateway['mode'])
 		{
@@ -593,7 +593,7 @@ class paypal
 	function GetProfileDetails($client_id, $gateway, $params)
 	{
 		$CI =& get_instance();
-		$CI->load->model('subscription_model');
+		$CI->load->model('recurring_model');
 		
 		switch($gateway['mode'])
 		{

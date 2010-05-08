@@ -49,7 +49,7 @@ class Order_authorization_model extends Model
 	* @return mixed Array containg authorization details
 	*/
 	
-	function getAuthorization($order_id)
+	function GetAuthorization($order_id)
 	{
 		$this->db->where('order_id', $order_id);
 		$query = $this->db->get('order_authorizations');

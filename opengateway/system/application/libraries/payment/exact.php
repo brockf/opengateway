@@ -177,9 +177,9 @@ class exact
 		$CI =& get_instance();
 		
 		// Create an order for today's payment
-		$CI->load->model('order_model');
+		$CI->load->model('charge_model');
 		$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
-		$order_id = $CI->order_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
+		$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
 		
 		// Create the recurring seed
 		$response = $this->CreateProfile($client_id, $gateway, $customer, $credit_card, $subscription_id, $amount, $order_id);
@@ -189,13 +189,13 @@ class exact
 			$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $response['transaction_tag'], $response['auth_num'], $amount);
 		
 			if($response['success'] == TRUE){
-				$CI->order_model->SetStatus($order_id, 1);
+				$CI->charge_model->SetStatus($order_id, 1);
 				$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
 				$response = $CI->response->TransactionResponse(100, $response_array);
 			} else {
 				// Make the subscription inactive
-				$CI->subscription_model->MakeInactive($subscription_id);
-				$CI->order_model->SetStatus($order_id, 0);
+				$CI->recurring_model->MakeInactive($subscription_id);
+				$CI->charge_model->SetStatus($order_id, 0);
 				
 				$response_array = array('reason' => $response['reason']);
 				$response = $CI->response->TransactionResponse(2, $response_array);
@@ -296,9 +296,9 @@ class exact
 		if($post_response->EXact_Resp_Code == '00') {
 			$response['success'] = TRUE;
 			// Save the Auth information
-			$CI->load->model('subscription_model');
-			$CI->subscription_model->SaveApiCustomerReference($subscription_id, $post_response->Transaction_Tag);
-			$CI->subscription_model->SaveApiAuthNumber($subscription_id, $post_response->Authorization_Num);
+			$CI->load->model('recurring_model');
+			$CI->recurring_model->SaveApiCustomerReference($subscription_id, $post_response->Transaction_Tag);
+			$CI->recurring_model->SaveApiAuthNumber($subscription_id, $post_response->Authorization_Num);
 			$response['transaction_tag'] = $post_response->Transaction_Tag;
 			$response['auth_num'] = $post_response->Authorization_Num;
 		} else {

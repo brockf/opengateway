@@ -77,12 +77,12 @@ class Transactions extends Controller {
 							)
 					);
 		
-		$this->dataset->Initialize('order_model','GetCharges',$columns);
+		$this->dataset->Initialize('charge_model','GetCharges',$columns);
 		
-		$this->load->model('order_model');
+		$this->load->model('charge_model');
 		
 		// get total charges
-		$total_amount = $this->order_model->GetTotalAmount($this->user->Get('client_id'),$this->dataset->params);
+		$total_amount = $this->charge_model->GetTotalAmount($this->user->Get('client_id'),$this->dataset->params);
 		
 		// sidebar
 		$this->navigation->SidebarButton('New Charge','transactions/create');
@@ -170,7 +170,7 @@ class Transactions extends Controller {
 							'width' => '10%'
 							);
 		
-		$this->dataset->Initialize('subscription_model','GetRecurrings',$columns);
+		$this->dataset->Initialize('recurring_model','GetRecurrings',$columns);
 		
 		// sidebar
 		$this->navigation->SidebarButton('New Charge','transactions/create');
@@ -335,8 +335,8 @@ class Transactions extends Controller {
 	function charge ($id) {
 		$this->navigation->PageTitle('Charge #' . $id);
 	
-		$this->load->model('order_model');
-		$charge = $this->order_model->GetCharge($this->user->Get('client_id'),$id);
+		$this->load->model('charge_model');
+		$charge = $this->charge_model->GetCharge($this->user->Get('client_id'),$id);
 		
 		$data = $charge;
 		
@@ -345,7 +345,7 @@ class Transactions extends Controller {
 		
 		$data['gateway'] = $gateway;
 		
-		$details = $this->order_model->GetChargeGatewayInfo($id);
+		$details = $this->charge_model->GetChargeGatewayInfo($id);
 		
 		$data['details'] = $details;
 		 
@@ -365,8 +365,8 @@ class Transactions extends Controller {
 		
 		$this->navigation->PageTitle('Recurring Charge #' . $id);
 		
-		$this->load->model('subscription_model');
-		$recurring = $this->subscription_model->GetRecurring($this->user->Get('client_id'),$id);
+		$this->load->model('recurring_model');
+		$recurring = $this->recurring_model->GetRecurring($this->user->Get('client_id'),$id);
 		
 		$data = $recurring;
 		
@@ -382,11 +382,26 @@ class Transactions extends Controller {
 	* Cancel Recurring
 	*/
 	function cancel_recurring ($id) {
-		$this->load->model('subscription_model');
-		$this->subscription_model->CancelRecurring($this->user->Get('client_id'),$id);
+		$this->load->model('recurring_model');
+		$this->recurring_model->CancelRecurring($this->user->Get('client_id'),$id);
 		
 		$this->notices->SetNotice('Recurring charge #' . $id . ' cancelled');
 		
 		redirect(site_url('transactions/recurring/' . $id));
+	}
+	
+	/**
+	* Refund a Charge
+	*/
+	function refund ($charge_id) {
+		$this->load->model('gateway_model');
+		if ($this->gateway_model->Refund($this->user->Get('client_id'),$charge_id)) {
+			$this->notices->SetNotice('Charge #' . $charge_id . ' refunded.');
+		}
+		else {
+			$this->notices->SetError('Charge #' . $charge_id . ' could not be refunded.');
+		}
+		
+		redirect(site_url('transactions/charge/' . $charge_id));
 	}
 }

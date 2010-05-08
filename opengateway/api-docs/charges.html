@@ -152,6 +152,19 @@
 				<li><span class="response">customer_id</span> - The ID of the new customer, if a <span class="request">customer</span> node was embedded
 				in the request.</li>
 			</ul>
+			<h2>Method: <a name="refund">Refund</a></h2>
+			<p>Refunds a successful charge.</p>
+			<p><b>Note:</b> Not all gateways allow refunds via their API.  This method will return an error (code = 5020) if this is the case.  It
+			will also return an error if the charging gateway was disabled/deleted, or if the charge cannot be found in the database.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">charge_id</span>- The ID of the charge to refund.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> - "50" upon success, "51" upon failure.</li>
+				<li><span class="response">response_text</span> - A verbose description of the response_code.</li>
+			</ul>
 			<h2>Method: <a name="getcharge">GetCharge</a></h2>
 			<p>Retrieves available information about a previous charge.</p>
 			<p>Required data:</p>
@@ -241,6 +254,7 @@
     &lt;card_last_four&gt;5467&lt;/card_last_four&gt;
     &lt;recurring_id&gt;192824&lt;/recurring_id&gt;
     &lt;status&gt;ok&lt;/status&gt;
+    &lt;refunded&gt;0&lt;/refunded&gt;
     &lt;customer&gt;
 	    &lt;id&gt;140&lt;/id&gt;
 	    &lt;internal_id/&gt;
@@ -308,6 +322,8 @@
        &lt;date&gt;2009-05-29 22:11:44&lt;/date&gt;
        &lt;card_last_four&gt;9876&lt;/card_last_four&gt;
        &lt;status&gt;ok&lt;/status&gt;
+       &lt;refunded&gt;1&lt;/refunded&gt;
+       &lt;refund_date&gt;2009-06-14 12:11:09&lt;/refund_date&gt;
      &lt;/charge&gt;
      &lt;charge&gt;
        &lt;id&gt;140&lt;/id&gt;

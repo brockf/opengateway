@@ -21,9 +21,9 @@ class Dashboard extends Controller {
 	
 	function index()
 	{		
-		$this->load->model('order_model');
+		$this->load->model('charge_model');
 		
-		$revenue = $this->order_model->GetRevenueByDay($this->user->Get('client_id'));
+		$revenue = $this->charge_model->GetRevenueByDay($this->user->Get('client_id'));
 		
 		$data = array();
 		

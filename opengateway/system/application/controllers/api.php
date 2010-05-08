@@ -145,6 +145,17 @@ class API extends Controller {
 		return $this->gateway_model->Recur($client_id, $gateway_id, $amount, $credit_card, $customer_id, $customer, $customer_ip, $recur);
 	}
 	
+	function Refund ($client_id, $params) {
+		$this->load->model('gateway_model');
+		
+		if ($this->gateway_model->Refund($client_id, $params['charge_id'])) {
+			return $this->response->TransactionResponse(50, array());
+		}
+		else {
+			return $this->response->TransactionResponse(51, array());
+		}
+	}
+	
 	function DeletePlan($client_id, $params)
 	{
 		$this->load->model('plan_model');
@@ -304,8 +315,8 @@ class API extends Controller {
 		$this->load->model('gateway_model');
 		if ($this->gateway_model->DeleteGateway($client_id, $params['gateway_id'])) {
 			// End all the subscriptions.
-			$this->load->model('subscription_model');
-			$data = $this->subscription_model->CancelRecurringByGateway($client_id, $params['gateway_id']);
+			$this->load->model('recurring_model');
+			$data = $this->recurring_model->CancelRecurringByGateway($client_id, $params['gateway_id']);
 
 			$response = $this->response->TransactionResponse(402,array());
 			
@@ -322,8 +333,8 @@ class API extends Controller {
 		$this->load->library('field_validation');
 		$this->field_validation->ValidateRequiredFields('GetRecurring', $params);
 	
-		$this->load->model('subscription_model');
-		if (!$recurring = $this->subscription_model->GetRecurring($client_id, $params['recurring_id'])) {
+		$this->load->model('recurring_model');
+		if (!$recurring = $this->recurring_model->GetRecurring($client_id, $params['recurring_id'])) {
 			 die($this->response->Error(6002));
 		} else {
 			$data = array();
@@ -334,17 +345,17 @@ class API extends Controller {
 	
 	function GetRecurrings($client_id, $params)
 	{
-		$this->load->model('subscription_model');
+		$this->load->model('recurring_model');
 		
 		if (!isset($params['limit']) or $params['limit'] > $this->config->item('query_result_default_limit')) {
 			$params['limit'] = $this->config->item('query_result_default_limit');
 		}
 		
 		$data = array();
-		if ($recurrings = $this->subscription_model->GetRecurrings($client_id, $params)) {
+		if ($recurrings = $this->recurring_model->GetRecurrings($client_id, $params)) {
 			unset($params['limit']);
 			$data['results'] = count($recurrings);
-			$data['total_results'] = count($this->subscription_model->GetRecurrings($client_id, $params));
+			$data['total_results'] = count($this->recurring_model->GetRecurrings($client_id, $params));
 			
 			while (list(,$recurring) = each($recurrings)) {
 				$data['recurrings']['recurring'][] = $recurring;
@@ -368,8 +379,8 @@ class API extends Controller {
 			 die($this->response->Error(6002));
 		}
 	
-		$this->load->model('subscription_model');
-		if ($this->subscription_model->UpdateRecurring($client_id, $params)) {
+		$this->load->model('recurring_model');
+		if ($this->recurring_model->UpdateRecurring($client_id, $params)) {
 			$response = $this->response->TransactionResponse(102,array());
 			
 			return $response;
@@ -385,9 +396,9 @@ class API extends Controller {
 			die($this->response->Error(6002));
 		}
 		
-		$this->load->model('subscription_model');
+		$this->load->model('recurring_model');
 		
-		if ($this->subscription_model->CancelRecurring($client_id, $params['recurring_id'])) {
+		if ($this->recurring_model->CancelRecurring($client_id, $params['recurring_id'])) {
 			return $this->response->TransactionResponse(101,array());
 		}
 		else {
@@ -511,17 +522,17 @@ class API extends Controller {
 	
 	function GetCharges($client_id, $params)
 	{
-		$this->load->model('order_model');
+		$this->load->model('charge_model');
 		
 		if (!isset($params['limit']) or $params['limit'] > $this->config->item('query_result_default_limit')) {
 			$params['limit'] = $this->config->item('query_result_default_limit');
 		}
 		
 		$data = array();
-		if ($charges = $this->order_model->GetCharges($client_id, $params)) {
+		if ($charges = $this->charge_model->GetCharges($client_id, $params)) {
 			unset($params['limit']);
 			$data['results'] = count($charges);
-			$data['total_results'] = count($this->order_model->GetCharges($client_id, $params));
+			$data['total_results'] = count($this->charge_model->GetCharges($client_id, $params));
 			
 			while (list(,$charge) = each($charges)) {
 				$data['charges']['charge'][] = $charge;
@@ -542,10 +553,10 @@ class API extends Controller {
 			die($this->response->Error(6000));
 		}
 		
-		$this->load->model('order_model');
+		$this->load->model('charge_model');
 		
 		$data = array();
-		if ($charge = $this->order_model->GetCharge($client_id, $params['charge_id'])) {	
+		if ($charge = $this->charge_model->GetCharge($client_id, $params['charge_id'])) {	
 			$data['charge'] = $charge;
 			
 			return $data;
@@ -561,10 +572,10 @@ class API extends Controller {
 			die($this->response->Error(6001));
 		}
 		
-		$this->load->model('order_model');
+		$this->load->model('charge_model');
 		
 		$data = array();
-		if ($charge = $this->order_model->GetLatestCharge($client_id, $params['customer_id'])) {	
+		if ($charge = $this->charge_model->GetLatestCharge($client_id, $params['customer_id'])) {	
 			$data['charge'] = $charge;
 			
 			return $data;
