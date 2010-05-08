@@ -287,13 +287,12 @@ class paypal
 		return $response;
 	}
 	
-	function Refund($client_id, $order_id, $gateway, $customer, $params, $credit_card)
+	function Refund ($client_id, $gateway, $charge, $authorization)
 	{
 		$CI =& get_instance();
 		
 		// Get the proper URL
-		switch($gateway['mode'])
-		{
+		switch($gateway['mode']) {
 			case 'live':
 				$post_url = $gateway['url_live'];
 			break;
@@ -304,34 +303,21 @@ class paypal
 		
 		$post = array();
 		$post['version'] = '56.0';
-		$post['paymentaction'] = 'sale';
 		$post['method'] = 'RefundTransaction';
 		$post['user'] = $gateway['user'];
 		$post['pwd'] = $gateway['pwd'];
 		$post['signature'] = $gateway['signature'];
-		$post['transactionid'] = $params['authorization']->tran_id;
-		$post['currencycode'] = $gateway['currency'];
-		
-		if($params['amount'] == $params['order']['amount']) {
-			$post['refundtype'] = 'FULL'; 
-		} else {
-			$post['refundtype'] = 'PARTIAL';
-			$post['amt'] = $params['amount'];
-		}
+		$post['transactionid'] = $authorization->tran_id;
+		$post['refundtype'] = 'FULL';
 	
-		
-		$response = $this->Process($post_url, $post, $order_id);
-		
+		$response = $this->Process($post_url, $post);
 		$response = $this->response_to_array($response);
 		
-		if($response['ACK'] == 'Success') {
-			$response = $CI->response->TransactionResponse(1, array());
+		if ($response['ACK'] == 'Success') {
+			return TRUE;
 		} else {
-			$response_array = array('reason' => $response['L_LONGMESSAGE0']);
-			$response = $CI->response->TransactionResponse(2, $response_array);
+			return FALSE;
 		}
-		
-		return $response;	
 	}
 	
 	function Process($url, $post_data, $order_id = FALSE)

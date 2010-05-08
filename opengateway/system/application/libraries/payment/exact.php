@@ -42,7 +42,7 @@ class exact
 																		'0' => 'Disabled')
 														),
 										'terminal_id' => array(
-														'text' => 'Terminal ID',
+														'text' => 'Gateway ID',
 														'type' => 'text'
 														),
 										'password' => array(
@@ -147,7 +147,7 @@ class exact
 		}
 		else {
 			// automatically get customer's name from credit card
-			$name = explode(' ', $credit_card['card_name']);
+			$name = explode(' ', $credit_card['name']);
 			$transaction['CardHoldersName'] = $name[0] . ' ' . $name[1];
 		}
 		
@@ -222,6 +222,8 @@ class exact
 						'Customer_Ref' 		=> $charge['id'],
 						'DollarAmount' 		=> $charge['amount']
 			        );
+		
+		$trxnProperties = $this->CompleteArray($trxnProperties);
 		
 		$post_response = $this->Process($trxnProperties, $post_url);
 		
