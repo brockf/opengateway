@@ -332,8 +332,11 @@ class Gateway_model extends Model
 				$customer['first_name'] = $name[0];
 				$customer['last_name'] = $name[count($name) - 1];
 				$customer['customer_id'] = $CI->customer_model->SaveNewCustomer($client_id, $customer['first_name'], $customer['last_name']);
+				$created_customer = TRUE;
 			}
 		}
+		
+		die(print_r($customer));
 		
 		// if we have an IP, we'll populate this field
 		// note, if we get an error later: the first thing we check is to see if an IP is required
