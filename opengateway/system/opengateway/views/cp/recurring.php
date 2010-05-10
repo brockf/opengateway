@@ -1,4 +1,4 @@
-<?=$this->load->view(branded_view('cp/header'));?>
+<?=$this->load->view(branded_view('cp/header'), array('head_files' => '<script type="text/javascript" src="' . branded_include('js/recurring.js') . '"></script>'));?>
 <table class="dataset" cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
@@ -6,6 +6,22 @@
 		</tr>
 	</thead>
 	<tbody>
+		<? if (isset($plan) and !empty($plan)) { ?>
+		<tr>
+			<td style="width: 25%" class="label">Recurring Plan</td>
+			<td style="width: 75%"><?=$plan['name'];?><span id="plan_updater_link"> (<a href="#">change plan</a>)</span>
+				<span id="plan_updater">
+					<form method="post" action="<?=site_url('transactions/change_plan/' . $id);?>">
+					<select name="plan">
+					<? foreach ($plans as $plan2) { ?>
+						<option value="<?=$plan2['id'];?>"><?=$plan2['name'];?></option>
+					<? } ?>
+					</select>&nbsp;<input type="submit" name="submit2" value="Update" />
+					</form>
+				</span>
+			</td>
+		</tr>
+		<? } ?>
 		<tr>
 			<td style="width: 25%" class="label">Amount</td>
 			<td style="width: 75%"><?=$this->config->item('currency_symbol');?><?=$amount;?></td>

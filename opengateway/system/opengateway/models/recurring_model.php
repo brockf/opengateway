@@ -398,12 +398,16 @@ class Recurring_model extends Model
 	*
 	*/
 	function ChangeRecurringPlan ($client_id, $recurring_id, $new_plan_id) {
-		$plan_details = $this->plan_model->GetPlanDetails($client_id, $new_plan_id);
+		$CI =& get_instance();
+		
+		$CI->load->model('plan_model');
+		
+		$plan_details = $CI->plan_model->GetPlanDetails($client_id, $new_plan_id);
 		
 		$update = array(
 					'plan_id' => $plan_details->plan_id,
 					'amount' => $plan_details->amount,
-					'interval' => $plan_details->interval,
+					'recur' => array('interval' => $plan_details->interval),
 					'notification_url' => $plan_details->notification_url,
 					'recurring_id' => $recurring_id
 					);
@@ -467,6 +471,7 @@ class Recurring_model extends Model
 		$subscription = $this->GetSubscriptionDetails($client_id, $params['recurring_id']);
 		//print_r($subscription);
 		if(isset($params['recur']['interval'])) {
+			$update_data['charge_interval'] = $params['recur']['interval'];
 			// Get the subcription details
 			
 			$start_date = $subscription['start_date'];
@@ -496,6 +501,7 @@ class Recurring_model extends Model
 		
 		// get the settings for the gateway
 		$settings = $this->$gateway_type->Settings();
+		
 		if($settings['allows_updates'] === 0) {
 			die($this->response->Error(5016));
 		}

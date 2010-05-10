@@ -375,7 +375,32 @@ class Transactions extends Controller {
 		
 		$data['gateway'] = $gateway;
 		
+		// they may need to change plans
+		if (isset($data['plan'])) {
+			// load plans
+			$this->load->model('plan_model');
+			
+			$plans = $this->plan_model->GetPlans($this->user->Get('client_id'),array());
+			
+			$data['plans'] = $plans;
+		}
+		
 		$this->load->view(branded_view('cp/recurring'), $data);
+	}
+	
+	/**
+	* Change Recurring Plan
+	*/
+	function change_plan ($id) {
+		$this->load->model('recurring_model');
+		if ($this->recurring_model->ChangeRecurringPlan($this->user->Get('client_id'),$id,$this->input->post('plan'))) {
+			$this->notices->SetNotice('Recurring charge #' . $id . ' updated to a new plan successfully.');
+		}
+		else {
+			$this->notices->SetError('Recurring charge #' . $id . ' could not be updated.');
+		}
+		
+		redirect(site_url('transactions/recurring/' . $id));
 	}
 	
 	/**
