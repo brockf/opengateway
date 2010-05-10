@@ -175,6 +175,10 @@ class Response
 		if (!defined("_CONTROLPANEL")) {			
 			return $this->FormatResponse($error_array);
 		}
+		elseif (defined("_INSTALLER")) {
+			show_error($error_array['error_text']);
+			die();
+		}
 		else {
 			// let's format the error slightly
 			$CI =& get_instance();

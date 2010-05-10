@@ -73,7 +73,7 @@ fieldset {
 	margin-bottom: 10px;
 }
 
-legend {
+legend, h2 {
 	font-weight: bold;
 	font-size: 12pt;
 	margin: 0;
@@ -145,4 +145,17 @@ div.submit {
 #notices div.notice {
 	background-color: #52ad40;
 	color: #fff;
+}
+
+#first_name, #last_name {
+	width: 200px;
+}
+
+#postal_code {
+	width: 150px;
+}
+
+div.help {
+	color: #666;
+	font-size: 9pt;
 }

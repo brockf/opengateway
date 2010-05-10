@@ -16,20 +16,12 @@ class Install extends Controller {
 		parent::Controller();
 		
 		define("_CONTROLPANEL","1");
+		define("_INSTALLER","1");
 				
-		// no one should access this if OpenGateway is installed, unless they are looking at the completion page
-		if ($this->router->fetch_method() != 'complete') {
-			if (file_exists(APPPATH . 'config/database.php')) {
-				// the database file exists, but is there an admin user?
-				$this->db->select('client_id');
-				$clients = $this->db->get('clients');
-				if ($clients->num_rows() > 0) {
-					// yes there's an admin user
-					// we're setup!
-					show_error('This OpenGateway server has already been installed.  This file, /system/opengateway/controllers/install.php, can be deleted.');
-					die();
-				}
-			}
+		// no one should access this if OpenGateway is installed
+		if (file_exists(APPPATH . 'config/installed.php')) {
+			show_error('This OpenGateway server has already been installed.  This file, /system/opengateway/controllers/install.php, can be deleted.');
+			die();
 		}
 	}
 	
@@ -192,9 +184,102 @@ class Install extends Controller {
 	}
 	
 	function admin () {
+		if ($this->input->post('username')) {
+			if ($this->input->post('password') != $this->input->post('password2')) {
+				$error_password = 'Your passwords do not match.';
+			}
+			elseif (strlen($this->input->post('password')) < 6) {
+				$error_password = 'Your password is less than 6 characters in length.  It must be longer.';
+			}
+		
+			if (!isset($error_password)) {
+				// form submission
+				$params = array(
+								'client_type' => '3',
+								'username' => $this->input->post('username'),
+								'password' => $this->input->post('password'),
+								'first_name' => $this->input->post('first_name'),
+								'last_name' => $this->input->post('last_name'),
+								'company' => $this->input->post('company'),
+								'address_1' => $this->input->post('address_1'),
+								'address_2' => $this->input->post('address_2'),
+								'city' => $this->input->post('city'),
+								'state' => ($this->input->post('country') == 'US' or $this->input->post('country') == 'CA') ? $this->input->post('state_select') : $this->input->post('state'),
+								'country' => $this->input->post('country'),
+								'postal_code' => $this->input->post('postal_code'),
+								'phone' => $this->input->post('phone'),
+								'email' => $this->input->post('email'),
+								'timezone' => $this->input->post('timezones')
+								);
+				
+				$this->load->model('client_model');
+				$client = $this->client_model->NewClient(1000, $params, TRUE);
+				
+				if (isset($client['client_id'])) {
+					// success!
+					return $this->complete($client['client_id'], $this->input->post('password'));
+				}
+			}
+		}
+	
+		// default values
+		$username = ($this->input->post('username')) ? $this->input->post('username') : 'admin';
+		$email = ($this->input->post('email')) ? $this->input->post('email') : '';
+		$first_name = ($this->input->post('first_name')) ? $this->input->post('first_name') : '';
+		$last_name = ($this->input->post('last_name')) ? $this->input->post('last_name') : '';
+		$company = ($this->input->post('company')) ? $this->input->post('company') : '';
+		$address_1 = ($this->input->post('address_1')) ? $this->input->post('address_1') : '';
+		$address_2 = ($this->input->post('address_2')) ? $this->input->post('address_2') : '';
+		$city = ($this->input->post('city')) ? $this->input->post('city') : '';
+		$state = ($this->input->post('state')) ? $this->input->post('state') : '';
+		$country = ($this->input->post('country')) ? $this->input->post('country') : 'US';
+		$postal_code = ($this->input->post('postal_code')) ? $this->input->post('postal_code') : '';
+		$gmt_offset = ($this->input->post('gmt_offset')) ? $this->input->post('gmt_offset') : 'UM5';
+		
+		$this->load->model('states_model');
+		$countries = $this->states_model->GetCountries();
+		$states = $this->states_model->GetStates();
+		
 		$vars = array(
+				'username' => $username,
+				'email' => $email,
+				'first_name' => $first_name,
+				'last_name' => $last_name,
+				'company' => $company,
+				'address_1' => $address_1,
+				'address_2' => $address_2,
+				'city' => $city,
+				'state' => $state,
+				'country' => $country,
+				'postal_code' => $postal_code,
+				'gmt_offset' => $gmt_offset,
+				'countries' => $countries,
+				'states' => $states,
+				'error_password' => (isset($error_password)) ? $error_password : FALSE
 				);
 		
 		$this->load->view(branded_view('install/admin.php'), $vars);
+	}
+	
+	function complete ($client_id, $password) {
+		$this->load->model('client_model');
+		$this->load->helper('url');
+		$this->load->helper('file');
+		
+		// get admin client
+		$client = $this->client_model->GetClient($client_id, $client_id);
+		
+		// write the file that disables the installer - they can't even refresh this page now
+		write_file(APPPATH . 'config/installed.php', '<?php /* OpenGateway is installed */ ?>','w');
+		
+		$vars = array(
+				'client' => $client,
+				'password' => $password,
+				'cron_key' => $this->config->item('cron_key'),
+				'cp_link' => site_url(),
+				'api_link' => site_url('api')
+				);
+		
+		$this->load->view(branded_view('install/complete.php'), $vars);
 	}
 }

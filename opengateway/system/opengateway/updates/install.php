@@ -19,7 +19,7 @@ CREATE TABLE `client_emails` (
   `bcc_client` tinyint(1) NOT NULL,
   `active` tinyint(1) NOT NULL,
   PRIMARY KEY  (`client_email_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000 ;
 
 -- 
 -- Dumping data for table `client_emails`
@@ -116,7 +116,7 @@ CREATE TABLE `clients` (
   `suspended` int(11) NOT NULL default '0',
   `deleted` int(11) NOT NULL default '0',
   PRIMARY KEY  (`client_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000 ;
 
 -- 
 -- Dumping data for table `clients`
@@ -411,7 +411,7 @@ CREATE TABLE `customers` (
   `active` tinyint(4) NOT NULL,
   `date_created` datetime NOT NULL,
   PRIMARY KEY  (`customer_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000 ;
 
 -- 
 -- Dumping data for table `customers`
@@ -521,7 +521,7 @@ CREATE TABLE `orders` (
   `status` tinyint(1) NOT NULL default '0',
   `timestamp` datetime NOT NULL,
   PRIMARY KEY  (`order_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000 ;
 
 -- 
 -- Dumping data for table `orders`
@@ -565,7 +565,7 @@ CREATE TABLE `plans` (
   `notification_url` varchar(255) NOT NULL,
   `deleted` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`plan_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000 ;
 
 -- 
 -- Dumping data for table `plans`
@@ -814,4 +814,4 @@ CREATE TABLE `subscriptions` (
   `cancel_date` datetime NOT NULL,
   `timestamp` date NOT NULL,
   PRIMARY KEY  (`subscription_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=1000 ;

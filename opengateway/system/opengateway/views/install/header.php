@@ -6,6 +6,7 @@
 	<link href="../branding/default/css/installer.css" rel="stylesheet" type="text/css" media="screen" />
 	<script type="text/javascript" src="../branding/default/js/jquery-1.4.2.js"></script>
 	<script type="text/javascript" src="../branding/default/js/universal.js"></script>
+	<script type="text/javascript" src="../branding/default/js/form.address.js"></script>
 </head>
 <body>
 	<div id="notices"></div>
@@ -14,8 +15,8 @@
 			<div id="nav">
 				<ol>
 					<li<? if ($this->router->fetch_method() == 'index') { ?> class="active"<? } ?>>Configuration</li>
-					<li<? if ($this->router->fetch_method() == 'admin') { ?> class="active"<? } ?>>Administrator</li>
-					<li<? if ($this->router->fetch_method() == 'complete') { ?> class="active"<? } ?>>Install Complete</li>
+					<li<? if ($this->router->fetch_method() == 'admin' and !isset($complete)) { ?> class="active"<? } ?>>Administrator</li>
+					<li<? if (isset($complete) and $complete == TRUE) { ?> class="active"<? } ?>>Install Complete</li>
 				</ol>
 			</div>
 		</div>

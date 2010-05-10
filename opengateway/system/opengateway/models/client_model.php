@@ -40,13 +40,14 @@ class Client_model extends Model
 	* @param string $params['email'] Client's email
 	* @param string $params['username'] Client's username
 	* @param string $params['password'] Client's password
+	* @param boolean $first_client If this is the first client, it is not required to be created by a parent client
 	* 
 	* @return array Containing new User ID, API ID and Secret Key
 	*/
-	function NewClient($client_id, $params)
+	function NewClient($client_id, $params, $first_client = FALSE)
 	{
 		// Make sure this client is authorized to create a child client
-		if($client_id) {
+		if ($client_id and $first_client == FALSE) {
 			$client = $this->GetClientDetails($client_id);
 			$array = array(1,3);
 			if(!in_array($client->client_type_id, $array)) {
@@ -116,7 +117,7 @@ class Client_model extends Model
 				// only Administrators can make Service Providers
 				die($this->response->Error(2006));
 			}
-			elseif ($params['client_type'] < 1 or $params['client_type'] > 2 or !is_numeric($params['client_type'])) {
+			elseif ($params['client_type'] < 1 or ($params['client_type'] > 2 and $first_client == FALSE) or !is_numeric($params['client_type'])) {
 				die($this->response->Error(2007));
 			}
 		}
@@ -680,6 +681,10 @@ class Client_model extends Model
 	{
 		// get the user type
 		$client = $this->GetClientDetails($client_id);
+		if (!$client) {
+			die($this->response->Error(2004));
+		}
+		
 		$client_type = $client->client_type_id;
 		
 		switch($client_type)
