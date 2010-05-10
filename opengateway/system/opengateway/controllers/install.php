@@ -114,7 +114,7 @@ class Install extends Controller {
 		
 		// which folders/files should be writeable?
 		$file_permissions = array(
-							BASEPATH . '../writeable',
+							str_replace('system/','',BASEPATH) . 'writeable',
 							APPPATH . 'config',
 							APPPATH . 'config/config.php'
 							);

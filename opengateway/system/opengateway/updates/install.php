@@ -1,3 +1,5 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
+
 -- 
 -- Table structure for table `client_emails`
 -- 
@@ -193,7 +195,7 @@ INSERT INTO `countries` (`country_id`, `iso2`, `iso3`, `name`) VALUES (4, 'AF', 
 (180, 'CD', 'COD', 'Congo, Democratic Republic of the'),
 (184, 'CK', 'COK', 'Cook Islands'),
 (188, 'CR', 'CRI', 'Costa Rica'),
-(384, 'CI', 'CIV', 'C√¥te d''Ivoire'),
+(384, 'CI', 'CIV', 'Côte d''Ivoire'),
 (191, 'HR', 'HRV', 'Croatia'),
 (192, 'CU', 'CUB', 'Cuba'),
 (196, 'CY', 'CYP', 'Cyprus'),
@@ -319,11 +321,11 @@ INSERT INTO `countries` (`country_id`, `iso2`, `iso3`, `name`) VALUES (4, 'AF', 
 (620, 'PT', 'PRT', 'Portugal'),
 (630, 'PR', 'PRI', 'Puerto Rico'),
 (634, 'QA', 'QAT', 'Qatar'),
-(638, 'RE', 'REU', 'R√©union'),
+(638, 'RE', 'REU', 'Réunion'),
 (642, 'RO', 'ROU', 'Romania'),
 (643, 'RU', 'RUS', 'Russian Federation'),
 (646, 'RW', 'RWA', 'Rwanda'),
-(652, 'BL', 'BLM', 'Saint Barth√©lemy'),
+(652, 'BL', 'BLM', 'Saint Barthélemy'),
 (654, 'SH', 'SHN', 'Saint Helena'),
 (659, 'KN', 'KNA', 'Saint Kitts and Nevis'),
 (662, 'LC', 'LCA', 'Saint Lucia'),
