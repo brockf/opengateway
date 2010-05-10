@@ -5,7 +5,7 @@
 	<title><?=$this->navigation->PageTitle();?></title>
 	<link href="<?=branded_include('css/universal.css');?>" rel="stylesheet" type="text/css" media="screen" />
 	<link href="<?=branded_include('css/datepicker.css');?>" rel="stylesheet" type="text/css" media="screen" />
-	<script type="text/javascript" src="<?=branded_include('js/jquery-1.3.2.js');?>"></script>
+	<script type="text/javascript" src="<?=branded_include('js/jquery-1.4.2.js');?>"></script>
 	<script type="text/javascript" src="<?=branded_include('js/date.js');?>"></script>
 	<script type="text/javascript" src="<?=branded_include('js/datePicker.js');?>"></script>
 	<script type="text/javascript" src="<?=branded_include('js/universal.js');?>"></script>
