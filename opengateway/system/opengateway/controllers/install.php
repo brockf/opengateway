@@ -76,9 +76,9 @@ class Install extends Controller {
 				$config_file = read_file(APPPATH . 'config/config.php');
 				
 				// swap in variables
-				$config_file = preg_replace('/\$config\[\'base_url\'\](.*?)\=(.*?)\"(.*?)\"/s','$config[\'base_url\'] = "' . $base_url . '"',$config_file);
-				$config_file = preg_replace('/\$config\[\'cron_key\'\](.*?)\=(.*?)\'(.*?)\'/s','$config[\'cron_key\'] = \'' . $cron_key . '\'',$config_file);
-				$config_file = preg_replace('/\$config\[\'encryption_key\'\](.*?)\=(.*?)\"(.*?)\"/s','$config[\'encryption_key\'] = "' . $encryption_key . '"',$config_file);
+				$config_file = preg_replace('/\$config\[\'base_url\'\](.*?)\=(.*?)\"(.*?)\"/','$config[\'base_url\'] = "' . $base_url . '"',$config_file);
+				$config_file = preg_replace('/\$config\[\'cron_key\'\](.*?)\=(.*?)\'(.*?)\'/','$config[\'cron_key\'] = \'' . $cron_key . '\'',$config_file);
+				$config_file = preg_replace('/\$config\[\'encryption_key\'\](.*?)\=(.*?)\"(.*?)\"/','$config[\'encryption_key\'] = "' . $encryption_key . '"',$config_file);
 				
 				if ($this->input->post('ssl_cert') == '1') {
 					$config_file = str_ireplace('$config[\'ssl_active\'] = FALSE;','$config[\'ssl_active\'] = TRUE;',$config_file);
@@ -90,13 +90,45 @@ class Install extends Controller {
 				// create database file
 				$database_file = read_file(APPPATH . 'config/database.format.php');
 				
-				$database_file = preg_replace('/\$db\[\'default\'\]\[\'hostname\'\](.*?)\=(.*?)\"(.*?)\"/s','$db[\'default\'][\'hostname\'] = "' . $this->input->post('db_host') . '"',$database_file);
-				$database_file = preg_replace('/\$db\[\'default\'\]\[\'username\'\](.*?)\=(.*?)\"(.*?)\"/s','$db[\'default\'][\'username\'] = "' . $this->input->post('db_user') . '"',$database_file);
-				$database_file = preg_replace('/\$db\[\'default\'\]\[\'password\'\](.*?)\=(.*?)\"(.*?)\"/s','$db[\'default\'][\'password\'] = "' . $this->input->post('db_pass') . '"',$database_file);
-				$database_file = preg_replace('/\$db\[\'default\'\]\[\'database\'\](.*?)\=(.*?)\"(.*?)\"/s','$db[\'default\'][\'database\'] = "' . $this->input->post('db_name') . '"',$database_file);
+				$database_file = preg_replace('/\$db\[\'default\'\]\[\'hostname\'\](.*?)\=(.*?)\"(.*?)\"/','$db[\'default\'][\'hostname\'] = "' . $this->input->post('db_host') . '"',$database_file);
+				$database_file = preg_replace('/\$db\[\'default\'\]\[\'username\'\](.*?)\=(.*?)\"(.*?)\"/','$db[\'default\'][\'username\'] = "' . $this->input->post('db_user') . '"',$database_file);
+				$database_file = preg_replace('/\$db\[\'default\'\]\[\'password\'\](.*?)\=(.*?)\"(.*?)\"/','$db[\'default\'][\'password\'] = "' . $this->input->post('db_pass') . '"',$database_file);
+				$database_file = preg_replace('/\$db\[\'default\'\]\[\'database\'\](.*?)\=(.*?)\"(.*?)\"/','$db[\'default\'][\'database\'] = "' . $this->input->post('db_name') . '"',$database_file);
 				
 				// write database file
 				write_file(APPPATH . 'config/database.php',$database_file,'w');
+				
+				// import initial database structure
+				// note - all update files will be run before the next step loads (because auto_updater will be invoked)
+				$structure = read_file(APPPATH . 'updates/install.php');
+				$structure = str_replace('<?php if (!defined(\'BASEPATH\')) exit(\'No direct script access allowed\'); ?>','',$structure);
+				
+				// break into newlines
+				$structure = explode("\n",$structure);
+				
+				// run mysql queries
+				$query = "";
+				$querycount++;
+				foreach ($structure as $sql_line)
+				{
+					if (trim($sql_line) != "" and substr($sql_line,0,2) != "--")
+					{
+						$query .= $sql_line;
+						if (substr(trim($query), -1, 1) == ";")
+						{
+							// this query is finished, execute it
+						    if (@mysql_query($query, $dbh))
+						    {
+						    	$query = "";
+						    	$querycount++;
+						    }
+						    else {
+						    	show_error('There was a critical error importing the initial database structure.  Please contact support.<br /><br />Query:<br /><br />' . $query);
+						    	die();
+						    }
+						}
+					}
+				}
 				
 				// send to administrator account setup
 				if (strstr(current_url(),'/index')) {

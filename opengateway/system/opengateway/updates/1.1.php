@@ -8,12 +8,6 @@ $sql = array();
 		
 $sql[] = 'UPDATE `request_types` SET `model`=\'\' WHERE `model`=\'gateway_model\'';
 
-// Insert required fields for Recur
-
-$sql[] = 'INSERT INTO `required_fields` VALUES (\'15\', \'9\', \'recur\');';
-
-$sql[] = 'INSERT INTO `required_fields` VALUES (\'16\', \'9\', \'credit_card\');';
-
 foreach ($sql as $query) {
 	$CI->db->query($query);
 }

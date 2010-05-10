@@ -42,10 +42,12 @@ class Auto_updater {
 			$files = directory_map(APPPATH . 'updates');
 			
 			foreach ($files as $file) {
-				$file_version = str_replace('.php','',$file);
-				
-				if ($file_version > $db_version) {
-					$run_updates[] = $file_version;
+				if ($file != 'install.php') {
+					$file_version = str_replace('.php','',$file);
+					
+					if ($file_version > $db_version) {
+						$run_updates[] = $file_version;
+					}
 				}
 			}
 		}

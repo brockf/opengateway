@@ -27,5 +27,4 @@
 	</fieldset>
 	<div class="submit"><input type="submit" name="continue" id="continue" value="Create Account" /></div>
 </form>
-<? } ?>
 <?=$this->load->view(branded_view('install/footer'));?>
