@@ -1,4 +1,4 @@
-<?php if (!is_defined("_CONTROLPANEL")) { ?>
+<?php if (!defined("_CONTROLPANEL")) { ?>
 <?php echo "<?xml version='1.0' encoding='utf-8'?>"; ?>
 <response>
 	<error>00</error>
