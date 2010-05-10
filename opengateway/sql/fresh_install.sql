@@ -1,17 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 2.8.2.4
--- http://www.phpmyadmin.net
--- 
--- Host: localhost:3306
--- Generation Time: Feb 17, 2010 at 01:56 PM
--- Server version: 5.0.45
--- PHP Version: 5.2.6
--- 
--- Database: `opengateway_db`
---
-
--- --------------------------------------------------------
-
 -- 
 -- Table structure for table `client_emails`
 -- 
@@ -829,8 +815,3 @@ CREATE TABLE `subscriptions` (
   `timestamp` date NOT NULL,
   PRIMARY KEY  (`subscription_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=1 ;
-
--- 
--- Dumping data for table `subscriptions`
--- 
-
