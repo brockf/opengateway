@@ -79,33 +79,35 @@ $(document).ready(function() {
 		}
 	});
 	
-	Date.format = 'yyyy-mm-dd';
-	$('#dataset_form input.date_start').datePicker({clickInput:true,startDate:'2009-01-01'});
-	$('#dataset_form input.date_end').datePicker({clickInput:true,startDate:'2009-01-01'});
-	
-	$('#dataset_form input.date_start').bind(
-		'dpClosed',
-		function(e, selectedDates)
-		{
-			var d = selectedDates[0];
-			if (d) {
-				d = new Date(d);
-				$('#dataset_form input.date_end').dpSetStartDate(d.addDays(1).asString());
-			}
-		}
+	if (typeof datePicker == 'function') {
+		Date.format = 'yyyy-mm-dd';
+		$('#dataset_form input.date_start').datePicker({clickInput:true,startDate:'2009-01-01'});
+		$('#dataset_form input.date_end').datePicker({clickInput:true,startDate:'2009-01-01'});
 		
-	);
-	$('#dataset_form input.date_end').bind(
-		'dpClosed',
-		function(e, selectedDates)
-		{
-			var d = selectedDates[0];
-			if (d) {
-				d = new Date(d);
-				$('#dataset_form input.date_start').dpSetEndDate(d.addDays(-1).asString());
+		$('#dataset_form input.date_start').bind(
+			'dpClosed',
+			function(e, selectedDates)
+			{
+				var d = selectedDates[0];
+				if (d) {
+					d = new Date(d);
+					$('#dataset_form input.date_end').dpSetStartDate(d.addDays(1).asString());
+				}
 			}
-		}
-	);
+			
+		);
+		$('#dataset_form input.date_end').bind(
+			'dpClosed',
+			function(e, selectedDates)
+			{
+				var d = selectedDates[0];
+				if (d) {
+					d = new Date(d);
+					$('#dataset_form input.date_start').dpSetEndDate(d.addDays(-1).asString());
+				}
+			}
+		);
+	}
 	
 	$('#dataset_form').submit(function () {
 		var serialized_filters = $('#dataset_form tr.filters input.text, tr.filters select').serialize();

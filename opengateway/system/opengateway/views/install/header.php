@@ -3,11 +3,20 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>OpenGateway Installer</title>
-	<link href="<?=branded_include('css/installer.css');?>" rel="stylesheet" type="text/css" media="screen" />
-	<script type="text/javascript" src="<?=branded_include('js/jquery-1.4.2.js');?>"></script>
-	<script type="text/javascript" src="<?=branded_include('js/universal.js');?>"></script>
+	<link href="../branding/default/css/installer.css" rel="stylesheet" type="text/css" media="screen" />
+	<script type="text/javascript" src="../branding/default/js/jquery-1.4.2.js"></script>
+	<script type="text/javascript" src="../branding/default/js/universal.js"></script>
 </head>
 <body>
-	<div id="notices"><?=get_notices();?></div>
+	<div id="notices"></div>
 	<div id="wrapper">
+		<div id="header">
+			<div id="nav">
+				<ol>
+					<li<? if ($this->router->fetch_method() == 'index') { ?> class="active"<? } ?>>Configuration</li>
+					<li<? if ($this->router->fetch_method() == 'admin') { ?> class="active"<? } ?>>Administrator</li>
+					<li<? if ($this->router->fetch_method() == 'complete') { ?> class="active"<? } ?>>Install Complete</li>
+				</ol>
+			</div>
+		</div>
 		
