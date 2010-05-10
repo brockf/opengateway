@@ -10,7 +10,7 @@
 |
 */
 
-$hook['pre_controller'] = array(
+$hook['post_controller_constructor'] = array(
                                 'class'    => '',
                                 'function' => 'install_redirect',
                                 'filename' => 'install_redirect_helper.php',

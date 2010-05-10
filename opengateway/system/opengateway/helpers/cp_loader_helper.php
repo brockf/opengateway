@@ -3,13 +3,13 @@
 function CPLoader () {
 	$CI =& get_instance();
 	
+	// define active Control Panel
+	define("_CONTROLPANEL","1");
+	
 	// don't load this if OpenGateway isn't installed
 	if (!file_exists(APPPATH . 'config/database.php')) {
 		return TRUE;
 	}
-	
-	// define active Control Panel
-	define("_CONTROLPANEL","1");
 	
 	// redirect to SSL?
 	if ($CI->config->item('ssl_active') == TRUE and $_SERVER["SERVER_PORT"] != "443") {

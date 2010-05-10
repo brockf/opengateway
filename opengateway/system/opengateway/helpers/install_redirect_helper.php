@@ -17,8 +17,10 @@ function install_redirect () {
 	}
 	
 	if ($not_installed == TRUE) {
-		if ($this->router->fetch_class() != 'install') {
-			show_error('Your OpenGateway is not installed.  Visit yourdomain.com/install to install the server.');
+		$CI =& get_instance();
+		
+		if ($CI->router->fetch_class() != 'install') {
+			show_error('Your OpenGateway server has not been installed.  Visit yourdomain.com/install to install the server.');
 			die();
 		}
 	}
