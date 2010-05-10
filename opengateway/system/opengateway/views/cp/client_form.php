@@ -12,7 +12,7 @@ if (!isset($form)) {
 				'city' => '',
 				'state' => '',
 				'postal_code' => '',
-				'country' => '840',
+				'country' => 'US',
 				'suspended' => '0',
 				'gmt_offset' => 'UM5',
 				'phone' => '',
