@@ -3,6 +3,11 @@
 function CPLoader () {
 	$CI =& get_instance();
 	
+	// don't load this if OpenGateway isn't installed
+	if (!file_exists(APPPATH . 'config/database.php')) {
+		return TRUE;
+	}
+	
 	// define active Control Panel
 	define("_CONTROLPANEL","1");
 	

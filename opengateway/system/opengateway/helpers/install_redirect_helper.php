@@ -22,4 +22,6 @@ function install_redirect () {
 			die();
 		}
 	}
+	
+	return TRUE;
 }
