@@ -97,7 +97,7 @@ class Log_model extends Model
 	
 		$this->db->where('client_id',$client_id);
 		$this->db->limit(10);
-		$this->db->order_by('client_log_date','desc');
+		$this->db->order_by('client_log_date desc, client_log_id desc');
 		$log = $this->db->get('client_log');
 		
 		if ($log->num_rows() == 0) {
@@ -133,6 +133,11 @@ class Log_model extends Model
 
 			// generate date
 			$date_line = time_since($client_id, $row['client_log_date']);
+			
+			// prepend currency symbol
+			if (isset($variables['amount'])) {
+				$variables['amount'] = $this->config->item('currency_symbol') . $variables['amount'];
+			}
 			
 			if ($row['trigger_id'] == '1') {
 				// charge

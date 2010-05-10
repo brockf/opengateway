@@ -9,7 +9,7 @@ if (!empty($this->dataset->data)) {
 			<td><?=$row['id'];?></td>
 			<td class="<? if ($row['refunded'] == '1') { ?>failed<? } else { ?><?=$row['status'];?><? } ?>">&nbsp;</td>
 			<td><?=$row['date'];?></td>
-			<td><?=$row['amount'];?></td>
+			<td><?=$this->config->item('currency_symbol');?><?=$row['amount'];?></td>
 			<td><? if (isset($row['customer'])) { ?><?=$row['customer']['last_name'];?>, <?=$row['customer']['first_name'];?><? } ?></td>
 			<td>****<?=$row['card_last_four'];?></td>
 			<td class="options"><? if (isset($row['recurring_id'])) { ?><a href="<?=site_url('transactions/recurring/' . $row['recurring_id']);?>"><?=$row['recurring_id'];?></a><? } ?></td>
@@ -28,6 +28,6 @@ else {
 
 <div class="total">
 	<h2>Total Amount</h2>
-	<p><?=money_format("%i",$total_amount);?></p>
+	<p><?=$this->config->item('currency_symbol');?><?=money_format("%i",$total_amount);?></p>
 </div>
 <?=$this->load->view(branded_view('cp/footer'));?>

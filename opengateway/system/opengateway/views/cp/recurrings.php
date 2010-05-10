@@ -11,7 +11,7 @@ if (!empty($this->dataset->data)) {
 			<td><?=$row['start_date'];?></td>
 			<td><?=$row['last_charge_date'];?></td>
 			<td><?=$row['next_charge_date'];?></td>
-			<td><?=$row['amount'];?></td>
+			<td><?=$this->config->item('currency_symbol');?><?=$row['amount'];?></td>
 			<td><? if (isset($row['customer'])) { ?><?=$row['customer']['last_name'];?>, <?=$row['customer']['first_name'];?><? } ?></td>
 			<td><? if (isset($row['plan']['name'])) { ?><?=$row['plan']['name'];?><? } ?></td>
 			<td class="options"><a href="<?=site_url('transactions/recurring/' . $row['id']);?>">details</a></td>

@@ -16,6 +16,8 @@
 */
 class Client_model extends Model
 {
+	var $cache;
+	
 	function Client_model()
 	{
 		parent::Model();
@@ -496,18 +498,25 @@ class Client_model extends Model
 	*/
 	function GetClientDetails($client_id)
 	{
-		$this->db->select('clients.*');
-		$this->db->select('countries.iso2 as country');
-		$this->db->select('client_types.description AS client_type');
-		$this->db->join('countries', 'countries.country_id = clients.country', 'left');
-		$this->db->join('client_types','clients.client_type_id = client_types.client_type_id', 'left');
-		$this->db->where('client_id', $client_id);
-		$this->db->limit(1);
-		$query = $this->db->get('clients');
-		if($query->num_rows() > 0) {
-			return $query->row();
-		} else {
-			return FALSE;
+		if (!isset($this->cache[$client_id])) {
+			$this->db->select('clients.*');
+			$this->db->select('countries.iso2 as country');
+			$this->db->select('client_types.description AS client_type');
+			$this->db->join('countries', 'countries.country_id = clients.country', 'left');
+			$this->db->join('client_types','clients.client_type_id = client_types.client_type_id', 'left');
+			$this->db->where('client_id', $client_id);
+			$this->db->limit(1);
+			$query = $this->db->get('clients');
+			if($query->num_rows() > 0) {
+				$this->cache[$client_id] = $query->row();
+				
+				return $this->cache[$client_id];
+			} else {
+				return FALSE;
+			}
+		}
+		else {
+			return $this->cache[$client_id];
 		}
 	}
 	

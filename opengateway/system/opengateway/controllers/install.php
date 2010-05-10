@@ -100,7 +100,7 @@ class Install extends Controller {
 				
 				// run mysql queries
 				$query = "";
-				$querycount++;
+				$querycount = 0;
 				foreach ($structure as $sql_line)
 				{
 					if (trim($sql_line) != "" and substr($sql_line,0,2) != "--")
@@ -184,6 +184,9 @@ class Install extends Controller {
 	}
 	
 	function admin () {
+		$this->load->library('session');
+		$this->load->helper('url');
+		
 		if ($this->input->post('username')) {
 			if ($this->input->post('password') != $this->input->post('password2')) {
 				$error_password = 'Your passwords do not match.';
@@ -217,7 +220,11 @@ class Install extends Controller {
 				
 				if (isset($client['client_id'])) {
 					// success!
-					return $this->complete($client['client_id'], $this->input->post('password'));
+					$this->session->set_userdata('client_id',$client['client_id']);
+					$this->session->set_userdata('client_password',$this->input->post('password'));
+					
+					header('Location: ' . site_url('install/complete'));
+					die();
 				}
 			}
 		}
@@ -261,10 +268,13 @@ class Install extends Controller {
 		$this->load->view(branded_view('install/admin.php'), $vars);
 	}
 	
-	function complete ($client_id, $password) {
+	function complete () {
 		$this->load->model('client_model');
+		$this->load->library('session');
 		$this->load->helper('url');
 		$this->load->helper('file');
+		
+		$client_id = $this->session->userdata('client_id');
 		
 		// get admin client
 		$client = $this->client_model->GetClient($client_id, $client_id);
@@ -274,7 +284,7 @@ class Install extends Controller {
 		
 		$vars = array(
 				'client' => $client,
-				'password' => $password,
+				'password' => $this->session->userdata('client_password'),
 				'cron_key' => $this->config->item('cron_key'),
 				'cp_link' => site_url(),
 				'api_link' => site_url('api')

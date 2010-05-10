@@ -57,13 +57,12 @@ a:hover {
 #logo {
 	font-size: 19pt;
 	color: #dedede;
-	margin-top: 10px;
 	margin-bottom: 10px;
 	font-weight: normal;
 	background-image: url(../images/logo.gif);
 	background-repeat: no-repeat;
 	width: 360px;
-	height: 50px;
+	height: 70px;
 }
 
 #topnav {
@@ -200,6 +199,15 @@ ul#account_menu li a:hover {
 	color: #333;
 }
 
+#content h2.colour {
+	margin: 0;
+	padding: 0;
+	background-color: #fef4e0;
+	padding: 10px;
+	color: #b75813;
+	font-weight: normal;
+}
+
 #content h3 {
 	font-weight: bold;
 }
@@ -321,6 +329,10 @@ table.dataset tbody td {
 
 table.dataset tbody tr.odd td {
 	background-color: #f0f0f0;
+}
+
+table.dataset td.label {
+	color: #999;
 }
 
 table.dataset tbody td.ok {
@@ -660,61 +672,49 @@ span.suspended img {
 	margin-right: 5px;
 }
 
-div#charge_recurring {
-	background-image: url(../images/recurring.png);
-	background-position: 0px 0px;
-	background-repeat: no-repeat;
-	padding-left: 65px;
-	padding-top: 15px;
-	font-weight: bold;
-	height: 50px;
-	margin-top: 10px;
-	border-bottom: 3px solid #f0f0f1;
-}
-
-div#charge_info {
-	background-image: url(../images/money.png);
-	background-position: 0px 15px;
-	background-repeat: no-repeat;
-	padding-left: 65px;
-}
-
-div#charge_customer {
-	background-image: url(../images/customer.png);
-	background-position: 0px 15px;
-	background-repeat: no-repeat;
-	padding-left: 65px;
-	border-top: 3px solid #f0f0f1;
-}
-
-div#charge_details {
-	border: 1px solid #ccc;
-	background-color: #f0f0f1;
+a.charge_recurring {
+	background-color: #e5f5d3;
+	margin: 15px 0px;
 	padding: 15px;
-	float: right;
+	color: #366f0c;
+	text-decoration: none;
+	display: block;
 }
 
-div#recurring_info {
-	background-image: url(../images/recurring.png);
-	background-position: 0px 15px;
-	background-repeat: no-repeat;
-	padding-left: 65px;
+a.charge_recurring:hover {
+	background-color: #acd68c;
+}
+
+div.activity_log {
+	float: left;
+	width: 65%;
+	margin-right: 2%;
+}
+
+div.activity_log p {
+	margin-left: 15px;
+	margin-bottom: 2px;
+	line-height: 1em;
+}
+
+div.buttons {
+	float: left;
+	width: 33%;
 }
 
 ul.dashboard {
 	list-style-type: none;
+	margin-left: 20px;
+	padding: 0;
 }
 
 ul.dashboard li a {
 	display: block;
-	float: left;
-	width: 15%;
-	height: 70px;
-	font-weight: bold;
-	padding-left: 80px;
-	padding-top: 20px;
+	height: 40px;
+	padding-left: 45px;
+	padding-top: 4px;
 	margin-top: 10px;
-	font-size: 14pt;
+	font-size: 12pt;
 	background-repeat: no-repeat;
 	/*background-position: top left;*/
 	text-decoration: none;
@@ -757,4 +757,10 @@ div.total p {
 	padding-left: 10px;
 	display: inline;
 	color: #000;
+}
+
+p.soft {
+	color: #666;
+	font-style:italic;
+	font-size: 9pt;
 }

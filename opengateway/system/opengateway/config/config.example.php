@@ -28,6 +28,7 @@ $config['recurring_charge_failures_allowed'] = 1;
 $config['support_url'] = 'http://www.opengateway.net/support/';
 $config['ssl_active'] = false;
 $config['cron_key'] = '0000000000000000';
+$config['currency_symbol'] = '$';
 
 // rewrite base URL to SSL if accessed via SSL
 if ($_SERVER["SERVER_PORT"] == "443") {

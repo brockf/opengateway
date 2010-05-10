@@ -503,6 +503,11 @@ class Gateway_model extends Model
 			
 			// trip it - were golden!
 			TriggerTrip('new_recurring', $client_id, $response['charge_id'], $response['recurring_id']);
+			
+			// trip a recurring charge?
+			if (!empty($response['charge_id'])) {
+				TriggerTrip('recurring_charge', $client_id, $response['charge_id'], $response['recurring_id']);
+			}
 		}
 		else {
 			// did we require an IP address?
