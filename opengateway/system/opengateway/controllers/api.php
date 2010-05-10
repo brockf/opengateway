@@ -924,4 +924,4 @@ class API extends Controller {
 
 
 /* End of file gateway.php */
-/* Location: ./system/application/controllers/gateway.php */
+/* Location: ./system/opengateway/controllers/gateway.php */

@@ -1,7 +1,8 @@
 FOR DOCUMENTATION:
 -----------------------------------
 - Unzip and upload OpenGateway files
-- Rename /system/opengateway/
+- Rename /system/opengateway/config/config.example.php to /system/opengateway/config/config.php.
+- Access yourdomain.com
 
 
 - Upload all files/folders

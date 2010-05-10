@@ -34,8 +34,8 @@ class Dashboard extends Controller {
 				$series2[] = date("M j",strtotime($day['day']));
 			}
 			
-			include(BASEPATH . 'application/libraries/pchart/pData.class');
-			include(BASEPATH . 'application/libraries/pchart/pChart.class');
+			include(APPPATH . 'libraries/pchart/pData.class');
+			include(APPPATH . 'libraries/pchart/pChart.class');
 			  
 			// Dataset definition   
 			$DataSet = new pData;  
@@ -52,7 +52,7 @@ class Dashboard extends Controller {
 			  
 			// Initialise the graph  
 			$Test = new pChart(1000,260);  
-			$Test->setFontProperties(BASEPATH . 'application/libraries/pchart/Arial.ttf',10);  
+			$Test->setFontProperties(APPPATH . 'libraries/pchart/Arial.ttf',10);  
 			$Test->setGraphArea(90,30,960,200);  
 			$Test->drawGraphArea(252,252,252);  
 			$Test->drawScale($DataSet->GetData(),$DataSet->GetDataDescription(),SCALE_NORMAL,150,150,150,TRUE,0,2);  
@@ -63,9 +63,9 @@ class Dashboard extends Controller {
 			$Test->drawPlotGraph($DataSet->GetData(),$DataSet->GetDataDescription(),3,2,255,255,255);  
 			  
 			// Finish the graph  
-			$Test->setFontProperties(BASEPATH . 'application/libraries/pchart/Arial.ttf',8);  
+			$Test->setFontProperties(APPPATH . 'libraries/pchart/Arial.ttf',8);  
 			$Test->drawLegend(45,35,$DataSet->GetDataDescription(),255,255,255);  
-			$Test->setFontProperties(BASEPATH . 'application/libraries/pchart/Arial.ttf',10);  
+			$Test->setFontProperties(APPPATH . 'libraries/pchart/Arial.ttf',10);  
 			//$Test->drawTitle(60,22,"Last 30 Days",50,50,50,585);  
 			$Test->Render(BASEPATH . '../writeable/rev_chart_' . $this->user->Get('client_id') . '.png');
 		}

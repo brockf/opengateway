@@ -32,7 +32,7 @@
 |  Auto-load Libraries
 | -------------------------------------------------------------------
 | These are the classes located in the system/libraries folder
-| or in your system/application/libraries folder.
+| or in your system/opengateway/libraries folder.
 |
 | Prototype:
 |
@@ -113,4 +113,4 @@ $autoload['model'] = array('log_model');
 
 
 /* End of file autoload.php */
-/* Location: ./system/application/config/autoload.php */
+/* Location: ./system/opengateway/config/autoload.php */
