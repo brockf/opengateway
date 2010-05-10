@@ -1,3 +1,9 @@
+FOR DOCUMENTATION:
+-----------------------------------
+- Unzip and upload OpenGateway files
+- Rename /system/opengateway/
+
+
 - Upload all files/folders
 - CHMOD /writeable 0777
 - Execute /sql/fresh_install.sql
