@@ -1,3 +1,10 @@
+<?php if (!is_defined("_CONTROLPANEL")) { ?>
+<?php echo "<?xml version='1.0' encoding='utf-8'?>"; ?>
+<response>
+	<error>00</error>
+	<error_text>System Error: <?php echo $message; ?></error_text>
+</response>
+<?php } else { ?>
 <html>
 <head>
 <title>Error</title>
@@ -32,3 +39,4 @@ margin: 			0 0 4px 0;
 	</div>
 </body>
 </html>
+<?php } ?>

@@ -39,7 +39,7 @@
 |	$autoload['libraries'] = array('database', 'session', 'xmlrpc');
 */
 
-$autoload['libraries'] = array('database', 'auto_updater', 'response', 'email');
+$autoload['libraries'] = (!file_exists(APPPATH . 'config/database.php')) ? array('') : array('database', 'auto_updater', 'response', 'email');
 
 
 /*

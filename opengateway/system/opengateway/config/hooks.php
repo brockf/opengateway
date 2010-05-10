@@ -10,6 +10,12 @@
 |
 */
 
+$hook['pre_controller'] = array(
+                                'class'    => '',
+                                'function' => 'install_redirect',
+                                'filename' => 'install_redirect_helper.php',
+                                'filepath' => 'helpers'
+                                );
 
 
 /* End of file hooks.php */
