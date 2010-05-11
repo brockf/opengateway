@@ -226,7 +226,7 @@ class paypal
 			$response = $CI->response->TransactionResponse(1, $response_array);
 		}
 		else {
-			$response_array = array('reason' => $response['L_LONGMESSAGE0']);
+			$response_array = array('reason' => $response['L_ERRORCODE0'] . ' - ' . $response['L_LONGMESSAGE0']);
 			$response = $CI->response->TransactionResponse(2, $response_array);
 		}
 		

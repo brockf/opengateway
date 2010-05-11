@@ -1,5 +1,5 @@
 <?php if (!defined("_CONTROLPANEL")) { ?>
-<?php echo "<?xml version='1.0' encoding='utf-8'?>"; ?>
+<?php echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"; ?>
 <response>
 	<error>00</error>
 	<error_text>System PHP Error (line <?php echo $line; ?> of <?php echo $filepath; ?>): <?php echo $message; ?></error_text>
