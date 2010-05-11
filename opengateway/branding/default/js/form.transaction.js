@@ -31,4 +31,8 @@ $(document).ready(function () {
 	if ($('p.no_gateway').length != 0) {
 		$('#form_transaction input, #form_transaction select').attr('disabled','disabled');
 	}
+	
+	$('select[name="gateway"]').change(function () {
+		$('[name="gateway_type"][value="specify"]').attr('checked',true);
+	});
 });
