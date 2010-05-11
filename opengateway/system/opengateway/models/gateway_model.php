@@ -294,6 +294,7 @@ class Gateway_model extends Model
 		$this->load->library('field_validation');
 		
 		// Validate the Credit Card number
+		$credit_card['card_num'] = trim(str_replace(array(' ','-'),'',$credit_card['card_num']));
 		$credit_card['card_type'] = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
 		
 		if (!$credit_card['card_type']) {
