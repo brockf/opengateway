@@ -4,5 +4,7 @@ $(document).ready(function () {
 	$('#plan_updater_link a').click(function () {
 		$('#plan_updater').show();
 		$(this).parent().hide();
+		
+		return FALSE;
 	});
 });
