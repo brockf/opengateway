@@ -448,6 +448,8 @@ class authnet
 		$first_name = $customer['first_name'];
 		$last_name = $customer['last_name'];
 		
+		$card_code = (isset($credit_card['cvv'])) ? "<cardCode>" . $credit_card['cvv'] . '</cardCode>' : '';
+		
 		$content =
 		"<?xml version=\"1.0\" encoding=\"utf-8\"?>" .
 		"<createCustomerPaymentProfileRequest xmlns=\"AnetApi/xml/v1/schema/AnetApiSchema.xsd\">" .
@@ -466,6 +468,7 @@ class authnet
 		 "<creditCard>".
 		  "<cardNumber>".$credit_card['card_num']."</cardNumber>".
 		  "<expirationDate>".$credit_card['exp_year']."-".str_pad($credit_card['exp_month'], 2, "0", STR_PAD_LEFT)."</expirationDate>". // required format for API is YYYY-MM
+		  $card_code.
 		 "</creditCard>".
 		"</payment>".
 		"</paymentProfile>\n";
