@@ -472,9 +472,11 @@ class authnet
 		 "</creditCard>".
 		"</payment>".
 		"</paymentProfile>\n";
-		if ($gateway['mode'] == 'test') {
+		
+		if ($gateway['mode'] != 'test') {
 			$content .= "<validationMode>liveMode</validationMode>\n";
 		}
+		
 		$content .= "</createCustomerPaymentProfileRequest>";
 		
 		mail('brock@cariboucms.com','authnet debug 1',$content);
