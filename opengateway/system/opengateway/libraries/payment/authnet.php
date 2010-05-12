@@ -474,6 +474,8 @@ class authnet
 		}
 		$content .= "</createCustomerPaymentProfileRequest>";
 		
+		mail('brock@cariboucms.com','authnet debug 1',$content);
+		
 		$request = curl_init($post_url); // initiate curl object
 		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
 		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
