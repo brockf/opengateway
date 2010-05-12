@@ -275,7 +275,7 @@ $config['sess_time_to_update'] 	= 300;
 |
 */
 $config['cookie_prefix']	= "";
-$config['cookie_domain']	= str_replace('http://','',$config['base_url']);
+$config['cookie_domain']	= rtrim(str_replace(array('http://','https://'),'',$config['base_url']),'/');
 $config['cookie_path']		= "/";
 
 /*
