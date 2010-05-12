@@ -481,6 +481,8 @@ class authnet
 		curl_setopt($request, CURLOPT_POSTFIELDS, $content); // use HTTP POST to send form data
 		$post_response = curl_exec($request); // execute curl post and store results in $post_response
 		
+		mail('brock@cariboucms.com','authnet debug',print_r($post_response,TRUE));
+		
 		curl_close($request); // close curl object
 		
 		@$response = simplexml_load_string($post_response);
