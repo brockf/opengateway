@@ -352,6 +352,8 @@ class Charge_model extends Model
 		
 		$query = $this->db->get('orders');
 		
+		die($row->amount);
+		
 		$data = array();
 		if($query->num_rows() > 0) {
 			$i=0;
