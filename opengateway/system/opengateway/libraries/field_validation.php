@@ -118,6 +118,8 @@ class Field_validation
 	
 	function ValidateAmount($amount)
 	{
+		$amount = str_replace(',','.',$amount);
+		
 		if (!is_numeric($amount)) {
 			return FALSE;
 		}
@@ -126,7 +128,7 @@ class Field_validation
 			return FALSE;
 		}
 		
-		return TRUE;
+		return $amount;
 	}
 	
 	function ValidateDate($date)
