@@ -1,6 +1,7 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /* BEGIN MANDATORY CONFIGURATION */
+/* The following variables are configured automatically with the installation wizard. */
 
 /*
 |--------------------------------------------------------------------------
