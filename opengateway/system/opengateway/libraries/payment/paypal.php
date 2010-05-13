@@ -325,8 +325,6 @@ class paypal
 		$CI =& get_instance();
 		
 		$data = '';
-		
-		mail('brock@cariboucms.com','paypal post',print_r($post_data,TRUE));
 
 		// Build the data string for the request body
 		foreach($post_data as $key => $value)
@@ -357,8 +355,6 @@ class paypal
 	
 		// getting response from server
 		$response = curl_exec($ch);
-		
-		mail('brock@cariboucms.com','paypal response',print_r($response,TRUE));
 		
 		return $response;
 		
