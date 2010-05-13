@@ -5,11 +5,8 @@
 	<div id="footer">
 		Powered by <a href="http://www.opengateway.net">OpenGateway.net</a> v<?=$this->config->item('opengateway_version');?>.  Copyright &copy; 2009-<?=date('Y');?>, Electric Function, Inc. <?
 		
-			if (function_exists('ioncube_license_properties')) {
-				$license = ioncube_license_properties();
-				if (isset($license['number'])) {
-					echo 'License Number: ' . $license['number'];
-				}
+			if (is_defined("_LICENSENUMBER")) {
+				echo 'License Number: ' . _LICENSENUMBER;
 			}
 			
 			?>
