@@ -10,4 +10,7 @@ function ioncube_license () {
 			define("_LICENSENUMBER",$license['number']);
 		}
 	}
+	else {
+		die('test');
+	}
 }

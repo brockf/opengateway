@@ -5,7 +5,7 @@
 	<div id="footer">
 		Powered by <a href="http://www.opengateway.net">OpenGateway.net</a> v<?=$this->config->item('opengateway_version');?>.  Copyright &copy; 2009-<?=date('Y');?>, Electric Function, Inc. <?
 		
-			if (is_defined("_LICENSENUMBER")) {
+			if (defined("_LICENSENUMBER")) {
 				echo 'License Number: ' . _LICENSENUMBER;
 			}
 			
