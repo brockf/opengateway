@@ -1,6 +1,11 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /
+    
+    <FilesMatch "\.(htaccess|htpasswd|txt)$">
+	 Order Allow,Deny
+	 Deny from all
+	</FilesMatch>
 
     #Removes access to the system folder by users.
     #Additionally this will allow you to create a System.php controller,
