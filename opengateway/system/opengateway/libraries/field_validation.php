@@ -118,7 +118,11 @@ class Field_validation
 	
 	function ValidateAmount($amount)
 	{
-		$amount = str_replace(',','.',$amount);
+		// remove all commas used to indicate dollars/cents
+		$amount = preg_replace('/\,([0-9]{2})$/i','.$1',$amount);
+		
+		// remove all commas used to indicate groupings
+		$amount = str_replace(',','',$amount);
 		
 		if (!is_numeric($amount)) {
 			return FALSE;
@@ -128,7 +132,7 @@ class Field_validation
 			return FALSE;
 		}
 		
-		return $amount;
+		return (float)$amount;
 	}
 	
 	function ValidateDate($date)
