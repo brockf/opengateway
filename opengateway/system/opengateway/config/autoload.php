@@ -51,7 +51,7 @@ $autoload['libraries'] = (!file_exists(APPPATH . 'config/database.php')) ? array
 |	$autoload['helper'] = array('url', 'file');
 */
 
-$autoload['helper'] = array('triggertrip','date','cp_loader','local_time','money_format');
+$autoload['helper'] = array('ioncube_license','triggertrip','date','cp_loader','local_time','money_format');
 
 
 /*
