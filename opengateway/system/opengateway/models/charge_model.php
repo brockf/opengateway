@@ -356,8 +356,6 @@ class Charge_model extends Model
 		if($query->num_rows() > 0) {
 			$i=0;
 			foreach($query->result() as $row) {
-				die($row->amount);
-				
 				$data[$i]['id'] = $row->order_id;
 				$data[$i]['gateway_id'] = $row->gateway_id;
 				$data[$i]['date'] = local_time($client_id, $row->timestamp);
