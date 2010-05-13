@@ -359,7 +359,7 @@ class Charge_model extends Model
 				$data[$i]['id'] = $row->order_id;
 				$data[$i]['gateway_id'] = $row->gateway_id;
 				$data[$i]['date'] = local_time($client_id, $row->timestamp);
-				$data[$i]['amount'] = money_format("%!i",$row->amount);
+				$data[$i]['amount'] = money_format("%!i",(int)$row->amount);
 				$data[$i]['card_last_four'] = $row->card_last_four;
 				$data[$i]['status'] = ($row->status == '1') ? 'ok' : 'failed';
 				$data[$i]['refunded'] = $row->refunded;
