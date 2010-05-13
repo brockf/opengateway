@@ -158,9 +158,9 @@ class Gateway_model extends Model
 		}
 		
 		// Validate the amount
-		$valid_amount = $this->field_validation->ValidateAmount($amount);
+		$amount = $this->field_validation->ValidateAmount($amount);
 		
-		if(!$valid_amount) {
+		if(!$amount) {
 			die($this->response->Error(5009));
 		}
 		
@@ -372,6 +372,12 @@ class Gateway_model extends Model
 			}
 			elseif (isset($plan_details->amount)) {
 				$amount = $plan_details->amount;
+			}
+			
+			$amount = $this->field_validation->ValidateAmount($amount);
+			
+			if (!$amount) {
+				die($this->response->Error(5009));
 			}
 			
 			// store plan ID
