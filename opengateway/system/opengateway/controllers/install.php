@@ -48,7 +48,7 @@ class Install extends Controller {
 		    	$error_mysql = TRUE;
 		    }
 		    
-			$base_url = $this->input->post('base_url');
+			$base_url = rtrim($this->input->post('base_url'),'/') . '/';
 			$cron_key = $this->input->post('cron_key');
 			$encryption_key = $this->input->post('encryption_key');
 			
