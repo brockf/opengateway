@@ -175,6 +175,15 @@ class Gateway_model extends Model
 			$CI->load->model('customer_model');
 			// create customer record from attached information
 			// by Getting the customer after it's creation, we get a nice clean ISO2 code for the country
+			if (!isset($customer['first_name'])) {
+				$name = explode(' ', $credit_card['name']);
+				$customer['first_name'] = $name[0];
+			}
+			if (!isset($customer['last_name'])) {
+				$name = explode(' ', $credit_card['name']);
+				$customer['last_name'] = $name[count($name) - 1];
+			}
+			
 			$customer_id = $CI->customer_model->NewCustomer($client_id, $customer);
 			$customer = $CI->customer_model->GetCustomer($client_id, $customer_id);
 			$customer['customer_id'] = $customer_id;

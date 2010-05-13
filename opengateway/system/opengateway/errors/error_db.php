@@ -2,7 +2,7 @@
 <?php echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"; ?>
 <response>
 	<error>00</error>
-	<error_text>Database Error: <?php echo $message; ?></error_text>
+	<error_text>Database Error: <?php echo strip_tags($message); ?></error_text>
 </response>
 <?php } else { ?>
 <html>
