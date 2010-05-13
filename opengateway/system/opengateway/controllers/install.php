@@ -123,11 +123,11 @@ class Install extends Controller {
 				}
 				
 				// send to administrator account setup
-				if (strstr(current_url(),'/index')) {
+				if (strstr($this->current_url(),'/index')) {
 					$forward_url = str_replace('/index','/admin',current_url());
 				}
 				else {
-					$forward_url = rtrim(current_url(),'/') . '/admin'; 
+					$forward_url = rtrim($this->current_url(),'/') . '/admin'; 
 				}
 				
 				// send to admin step
@@ -154,7 +154,7 @@ class Install extends Controller {
 		}
 		
 		// get domain name
-		$domain = ($this->input->post('base_url')) ? $this->input->post('base_url') : rtrim(str_replace(array('install','index'),'',current_url()), '/') . '/';
+		$domain = ($this->input->post('base_url')) ? $this->input->post('base_url') : rtrim(str_replace(array('install','index'),'',$this->current_url()), '/') . '/';
 		
 		// default values
 		$db_user = ($this->input->post('db_user')) ? $this->input->post('db_user') : '';
@@ -181,6 +181,18 @@ class Install extends Controller {
 				);
 		
 		$this->load->view(branded_view('install/configuration.php'), $vars);
+	}
+	
+	function current_url() {
+		 $pageURL = 'http';
+		 if ($_SERVER["HTTPS"] == "on") {$pageURL .= "s";}
+		 $pageURL .= "://";
+		 if ($_SERVER["SERVER_PORT"] != "80") {
+		  $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+		 } else {
+		  $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+		 }
+		 return $pageURL;
 	}
 	
 	function admin () {
