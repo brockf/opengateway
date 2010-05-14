@@ -266,6 +266,7 @@ class paypal
 		if ($response) {
 			$profile_id = $response['profile_id'];	
 		} else {
+			$CI->recurring_model->DeleteRecurring($subscription_id);
 			die($CI->response->Error(5005));
 		}
 		

@@ -138,6 +138,19 @@ class Recurring_model extends Model
 	}
 	
 	/**
+	* Delete Recurring Completely (Charge Failed)
+	*
+	* @param int $subscription_id
+	*/
+	
+	function DeleteRecurring ($subscription_id) {
+		$this->db->where('subscription_id',$subscription);
+		$this->db->delete('subscriptions');
+		
+		return TRUE;
+	}
+	
+	/**
 	* Add a failure to a subscription
 	*
 	*

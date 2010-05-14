@@ -248,6 +248,7 @@ class authnet
 		
 		if (empty($profile_id)) {
 			$add_text = (isset($response['reason'])) ? $response['reason'] : FALSE;
+			$CI->recurring_model->DeleteRecurring($subscription_id);
 			die($CI->response->Error(5005, $add_text));
 		}
 
@@ -265,6 +266,7 @@ class authnet
 		
 		if (empty($payment_profile_id)) {
 			$add_text = (isset($response['reason'])) ? $response['reason'] : FALSE;
+			$CI->recurring_model->DeleteRecurring($subscription_id);
 			die($CI->response->Error(5006, $add_text));
 		}
 		

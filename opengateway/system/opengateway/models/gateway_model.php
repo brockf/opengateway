@@ -514,7 +514,12 @@ class Gateway_model extends Model
 			$response['customer_id'] = $customer['customer_id'];
 		}
 		
-		if ($response['response_code'] == '100') {
+		if ($response['response_code'] != 100) {
+			// mark it in active
+			$CI->recurring_model->DeleteRecurring($subscription_id);
+		}
+		
+		if ($response['response_code'] == 100) {
 			// delayed recurrings don't have a charge ID
 			$response['charge_id'] = (isset($response['charge_id'])) ? $response['charge_id'] : FALSE;
 			
