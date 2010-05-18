@@ -148,15 +148,15 @@ class wirecard
 	{	
 		$CI =& get_instance();
 		
-		$transaction = $this->TransactionArray($client_id, $order_id, $gateway, $customer, $amount, $credit_card, 'SINGLE');
+		$transaction = $this->TransactionArray($client_id, $order_id, $gateway, $customer, $amount, $credit_card);
 		
 		$response = $this->Process($gateway, $transaction);
 		
-		$result = $response['WIRECARD_BXML']['W_RESPONSE']['W_JOB']['FNC_CC_PURCHASE']['CC_TRANSACTION']['PROCESSING_STATUS'];
+		$result = $response['W_RESPONSE']['W_JOB']['FNC_CC_PURCHASE']['CC_TRANSACTION']['PROCESSING_STATUS'];
 		
 		if ($result['FunctionResult'] == 'ACK' or $result['FunctionResult'] == 'PENDING') {
 			$CI->load->model('order_authorization_model');
-			$CI->order_authorization_model->SaveAuthorization($order_id, $response['GuWID']);
+			$CI->order_authorization_model->SaveAuthorization($order_id, $result['GuWID']);
 			
 			$CI->load->model('charge_model');
 			$CI->charge_model->SetStatus($order_id, 1);
@@ -175,6 +175,8 @@ class wirecard
 	{		
 		$CI =& get_instance();
 		
+		$CI->load->model('order_authorization_model');
+		
 		$successful_recur = FALSE;
 		
 		// if a payment is to be made today, process it.
@@ -183,12 +185,15 @@ class wirecard
 			$CI->load->model('charge_model');
 			$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
 			
-			$response = $this->TransactionArray($client_id, $order_id, $gateway, $customer, $amount, $credit_card, 'INITIAL');
+			$transaction = $this->TransactionArray($client_id, $order_id, $gateway, $customer, $amount, $credit_card, 'Initial');
 			
-			$result = $response['WIRECARD_BXML']['W_RESPONSE']['W_JOB']['FNC_CC_PURCHASE']['CC_TRANSACTION']['PROCESSING_STATUS'];
+			$response = $this->Process($gateway, $transaction);
+			
+			$result = $response['W_RESPONSE']['W_JOB']['FNC_CC_PURCHASE']['CC_TRANSACTION']['PROCESSING_STATUS'];
 			
 			if ($result['FunctionResult'] == 'ACK' or $result['FunctionResult'] == 'PENDING') {
 				$CI->charge_model->SetStatus($order_id, 1);
+				$CI->order_authorization_model->SaveAuthorization($order_id, $result['GuWID']);
 				$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
 				$response = $CI->response->TransactionResponse(100, $response_array);
 				$successful_recur = TRUE;
@@ -206,9 +211,11 @@ class wirecard
 			$CI->load->model('charge_model');
 			$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], '0.00', $credit_card, $subscription_id);
 			
-			$response = $this->TransactionArray($client_id, $order_id, $gateway, $customer, $amount, $credit_card, 'INITIAL', 'FNC_CC_AUTHORIZATION');
+			$transaction = $this->TransactionArray($client_id, $order_id, $gateway, $customer, $amount, $credit_card, 'INITIAL', 'FNC_CC_AUTHORIZATION');
 			
-			$result = $response['WIRECARD_BXML']['W_RESPONSE']['W_JOB']['FNC_CC_AUTHORIZATION']['CC_TRANSACTION']['PROCESSING_STATUS'];
+			$response = $this->Process($gateway, $transaction);
+			
+			$result = $response['W_RESPONSE']['W_JOB']['FNC_CC_AUTHORIZATION']['CC_TRANSACTION']['PROCESSING_STATUS'];
 			
 			if ($result['FunctionResult'] == 'ACK' or $result['FunctionResult'] == 'PENDING') {
 				$CI->charge_model->SetStatus($order_id, 1);
@@ -247,17 +254,18 @@ class wirecard
 		
 		// get client country code
 		$CI->load->model('client_model');
-		$client = $CI->client_model->Get($client_id, $client_id);
+		$client = $CI->client_model->GetClient($client_id, $client_id);
 		
 		$transaction = array(
-						'WIRECARD_BXML xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance"' => array(
+						'WIRECARD_BXML' => array(
 							'W_REQUEST' => array(
 								'W_JOB' => array(
 										'BusinessCaseSignature' => $gateway['businesscasesignature'],
 										'FNC_CC_PURCHASE' => array(
-											'CC_TRANSACTION mode="' . $gateway['mode'] . '"' => array(
+											'CC_TRANSACTION' => array(
 												'TransactionID' => $order_id,
-												'Amount minorunits="2"' => int($params['amount'] * 100),
+												'GuWID' => $GuWID,
+												'Amount' => (int)($amount * 100),
 												'Currency' => $gateway['currency'],
 												'CountryCode' => $client['country'],
 												'RECURRING_TRANSACTION' => array(
@@ -272,7 +280,7 @@ class wirecard
 
 		$response = $this->Process($gateway, $transaction);
 		
-		$result = $response['WIRECARD_BXML']['W_RESPONSE']['W_JOB']['FNC_CC_PURCHASE']['CC_TRANSACTION']['PROCESSING_STATUS'];
+		$result = $response['W_RESPONSE']['W_JOB']['FNC_CC_PURCHASE']['CC_TRANSACTION']['PROCESSING_STATUS'];
 		
 		if ($result['FunctionResult'] == 'ACK' or $result['FunctionResult'] == 'PENDING'){
 			$response = array(
@@ -301,10 +309,18 @@ class wirecard
 		
 		$transaction_xml = $CI->arraytoxml->ToXML($transaction_array);
 		
+		// make unique adjustments
+		$transaction_xml = (string)$transaction_xml;
+		$transaction_xml = str_replace('<WIRECARD_BXML>','<WIRECARD_BXML xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance">',$transaction_xml);
+		$transaction_xml = str_replace('<CC_TRANSACTION>','<CC_TRANSACTION mode="' . $gateway['mode'] . '">',$transaction_xml);
+		$transaction_xml = str_replace('<Amount>','<Amount minorunits="2">',$transaction_xml);
+		$transaction_xml = str_replace('<ResultSet>','',$transaction_xml);
+		$transaction_xml = str_replace('</ResultSet>','',$transaction_xml);
+		
 		$post_url = $gateway['gateway_url'];
 		
 		$request = curl_init($post_url); // initiate curl object
-		curl_setopt($request, CURLOPT_HTTPHEADER, Array("Content-Type: text/xml"));
+		curl_setopt($request, CURLOPT_HTTPHEADER, Array("Content-Type: text/xml", "Authorization: Basic " . base64_encode($gateway['username'] . ':' . $gateway['password'])));
 		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
 		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
 		curl_setopt($request, CURLOPT_POSTFIELDS, $transaction_xml); // use HTTP POST to send form data
@@ -318,20 +334,22 @@ class wirecard
 		return $response;
 	}
 	
-	function TransactionArray ($client_id, $order_id, $gateway, $customer, $amount, $credit_card, $type = 'SINGLE', $node = 'FNC_CC_PURCHASE') {
+	function TransactionArray ($client_id, $order_id, $gateway, $customer, $amount, $credit_card, $type = 'Single', $node = 'FNC_CC_PURCHASE') {
+		$CI =& get_instance();
+	
 		// get client country code
 		$CI->load->model('client_model');
-		$client = $CI->client_model->Get($client_id, $client_id);
+		$client = $CI->client_model->GetClient($client_id, $client_id);
 		
 		$transaction = array(
-						'WIRECARD_BXML xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance"' => array(
+						'WIRECARD_BXML' => array(
 							'W_REQUEST' => array(
 								'W_JOB' => array(
 										'BusinessCaseSignature' => $gateway['businesscasesignature'],
 										$node => array(
-											'CC_TRANSACTION mode="' . $gateway['mode'] . '"' => array(
+											'CC_TRANSACTION' => array(
 												'TransactionID' => $order_id,
-												'Amount minorunits="2"' => int($amount * 100),
+												'Amount' => (int)($amount * 100),
 												'Currency' => $gateway['currency'],
 												'CountryCode' => $client['country'],
 												'RECURRING_TRANSACTION' => array(
