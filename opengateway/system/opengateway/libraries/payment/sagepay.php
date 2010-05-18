@@ -269,8 +269,6 @@ class sagepay
 				$response_array = array('reason' => $response['reason']);
 				$response = $CI->response->TransactionResponse(2, $response_array);
 			}
-			
-			$response = $CI->response->TransactionResponse(100, array('recurring_id' => $subscription_id));
 		}
 		
 		// let's save the transaction details for future REPEATs
