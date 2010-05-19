@@ -22,7 +22,7 @@ class paypal
 		$settings['transaction_fee'] = '2.5% + $0.30';
 		$settings['purchase_link'] = 'https://www.paypal.com/ca/mrb/pal=Q4XUN8HMLDQ2N';
 		$settings['allows_updates'] = 0;
-		$settings['allows_refunds'] = 1;
+		$settings['allows_refunds'] = 0;
 		$settings['requires_customer_information'] = 1;
 		$settings['requires_customer_ip'] = 1;
 		$settings['required_fields'] = array('enabled',
@@ -289,6 +289,7 @@ class paypal
 		return $response;
 	}
 	
+	/*
 	function Refund ($client_id, $gateway, $charge, $authorization)
 	{
 		$CI =& get_instance();
@@ -320,7 +321,7 @@ class paypal
 		} else {
 			return FALSE;
 		}
-	}
+	}*/
 	
 	function Process($url, $post_data, $order_id = FALSE)
 	{

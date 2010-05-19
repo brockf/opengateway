@@ -226,39 +226,6 @@ class paypal_standard
 		return $response;
 	}
 	
-	function Refund ($client_id, $gateway, $charge, $authorization)
-	{
-		$CI =& get_instance();
-		
-		// Get the proper URL
-		switch($gateway['mode']) {
-			case 'live':
-				$post_url = $gateway['url_live'];
-			break;
-			case 'test':
-				$post_url = $gateway['url_test'];
-			break;
-		}
-		
-		$post = array();
-		$post['version'] = '56.0';
-		$post['method'] = 'RefundTransaction';
-		$post['user'] = $gateway['user'];
-		$post['pwd'] = $gateway['pwd'];
-		$post['signature'] = $gateway['signature'];
-		$post['transactionid'] = $authorization->tran_id;
-		$post['refundtype'] = 'FULL';
-	
-		$response = $this->Process($post_url, $post);
-		$response = $this->response_to_array($response);
-		
-		if ($response['ACK'] == 'Success') {
-			return TRUE;
-		} else {
-			return FALSE;
-		}
-	}
-	
 	function Process($url, $post_data)
 	{
 		$CI =& get_instance();
@@ -516,6 +483,9 @@ class paypal_standard
 					
 					$customer_id = (isset($subscription['customer']['id'])) ? $subscription['customer']['id'] : FALSE;
 					$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $subscription['amount'], array(), $subscription['id'], $customer_id);
+					
+					$CI->load->model('order_authorization_model');
+					$CI->order_authorization_model->SaveAuthorization($charge['id'], $response['PROFILEID']);
 					
 					$CI->charge_model->SetStatus($order_id, 1);
 				}

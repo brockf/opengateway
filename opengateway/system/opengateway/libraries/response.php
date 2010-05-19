@@ -141,7 +141,7 @@ class Response
 						'5012' => 'A valid description is required.',
 						'5014' => 'Error cancelling subscription',
 						'5015' => 'You cannot modify the plan_id via UpdateRecurring.  You must use ChangeRecurringPlan to upgrade or downgrade a recurring charge.',
-						'5016' => 'Recurring billings cannot be updated for this gateway. You must cancel the existing subscription and create a new one.',
+						'5016' => 'Recurring billings cannot be updated for this gateway. You must either (a) cancel this existing subscription and create a new one or (b) go and update the recurring transaction at your merchant control panel.',
 						'5017' => 'Gateway is disabled.',
 						'5018' => 'This gateway requires customer information to be processed.  Please include a customer_id of an existing customer or a customer node with new customer information in your request.',
 						'5019' => 'This gateway requires the purchasing customer\'s IP address.  Please include a customer_ip_address node in your request.',
