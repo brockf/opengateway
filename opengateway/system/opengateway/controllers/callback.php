@@ -38,19 +38,26 @@ class Callback extends Controller {
 			$params[$key] = $value;
 		}
 		
-		// get client ID
-		$this->db->select('client_id');
-		$this->db->where('order_id',$charge_id);
-		$result = $this->db->get('orders');
-		$client = $result->row_array();
-		$client_id = $client['client_id'];
-		
 		// get charge
 		if ($action == 'confirm') {
+			// get client ID
+			$this->db->select('client_id');
+			$this->db->where('order_id',$charge_id);
+			$result = $this->db->get('orders');
+			$client = $result->row_array();
+			$client_id = $client['client_id'];
+			
 			$this->load->model('charge_model');
 			$charge = $this->charge_model->GetCharge($client_id, $charge_id);
 		}
 		elseif ($action == 'confirm_recur') {
+			// get client ID
+			$this->db->select('client_id');
+			$this->db->where('subscription_id',$charge_id);
+			$result = $this->db->get('subscriptions');
+			$client = $result->row_array();
+			$client_id = $client['client_id'];
+			
 			$this->load->model('recurring_model');
 			$charge = $this->recurring_model->GetRecurring($client_id, $charge_id);
 		}

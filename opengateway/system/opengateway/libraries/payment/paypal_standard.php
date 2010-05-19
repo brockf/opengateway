@@ -164,6 +164,9 @@ class paypal_standard
 		// save the return URL
 		$CI->charge_data_model->Save('r' . $subscription_id, 'return_url', $return_url);
 		
+		// save the initial charge amount (it may be different, so we treat it as a separate first charge)
+		$CI->charge_data_model->Save('r' . $subscription_id, 'first_charge', $amount);
+		
 		$post_url = $this->GetAPIURL($gateway);
 		
 		$post = array();
@@ -193,12 +196,12 @@ class paypal_standard
 		$post['amt'] = $amount; 
 		$post['invnum'] = $subscription_id;
 		$post['currencycode'] = $gateway['currency'];
-		$post['L_BILLINGTYPE1'] = 'RecurringPayments';
-		$description = $gateway['currency'] . $amount . ' every ' . $interval . ' days until ' . $end_date;
+		$post['L_BILLINGTYPE0'] = 'RecurringPayments';
+		$description = $gateway['currency'] . money_format("%!i",$amount) . ' every ' . $interval . ' days until ' . $end_date;
 		if ($start_date != date('Y-m-d')) {
 			$description .= ' (free trial ends ' . $start_date . ')';
 		}
-		$post['L_BILLINGAGREEMENTDESCRIPTION1'] = $description;
+		$post['L_BILLINGAGREEMENTDESCRIPTION0'] = $description;
 				
 		$response = $this->Process($post_url, $post);
 		
@@ -302,18 +305,7 @@ class paypal_standard
 		$CI =& get_instance();
 		$CI->load->model('recurring_model');
 		
-		switch($gateway['mode'])
-		{
-			case 'live':
-				$post_url = $subscription['arb_prod_url'];
-			break;
-			case 'test':
-				$post_url = $subscription['arb_test_url'];
-			break;
-			case 'dev':
-				$post_url = $subscription['arb_dev_url'];
-			break;
-		}
+		$post_url = $this->GetAPIURL($gateway);
 		
 		$post = array();
 		$post['version'] = '60';
@@ -342,18 +334,7 @@ class paypal_standard
 		$CI =& get_instance();
 		$CI->load->model('recurring_model');
 		
-		switch($gateway['mode'])
-		{
-			case 'live':
-				$post_url = $subscription['arb_prod_url'];
-			break;
-			case 'test':
-				$post_url = $subscription['arb_test_url'];
-			break;
-			case 'dev':
-				$post_url = $subscription['arb_dev_url'];
-			break;
-		}
+		$post_url = $this->GetAPIURL($gateway);
 		
 		$post = array();
 		$post['version'] = '58.0';
@@ -430,7 +411,7 @@ class paypal_standard
 	function Callback_confirm ($client_id, $gateway, $charge, $params) {
 		$CI =& get_instance();
 		
-		$url = $this->GetAPIUrl($gateway);
+		$url = $this->GetAPIURL($gateway);
 	
 		$post = array();
 		$post['method'] = 'GetExpressCheckoutDetails';
@@ -480,8 +461,10 @@ class paypal_standard
 		}
 	}
 	
-	function Callback_recur ($client_id, $gateway, $subscription, $params) {
+	function Callback_confirm_recur ($client_id, $gateway, $subscription, $params) {
 		$CI =& get_instance();
+		
+		$CI->load->model('charge_data_model');
 		
 		$url = $this->GetAPIUrl($gateway);
 	
@@ -508,12 +491,12 @@ class paypal_standard
 			$post['pwd'] = $gateway['pwd'];
 			$post['signature'] = $gateway['signature'];
 			$post['TOKEN'] = $response['TOKEN'];
-			$description = $gateway['currency'] . $amount . ' every ' . $subscription['interval'] . ' days until ' . $subscription['end_date'];
-			if ($subscription['start_date'] != date('Y-m-d')) {
-				$description .= ' (free trial ends ' . $subscription['start_date'] . ')';
+			$description = $gateway['currency'] . $subscription['amount'] . ' every ' . $subscription['interval'] . ' days until ' . date('Y-m-d',strtotime($subscription['end_date']));
+			if (date('Y-m-d',strtotime($subscription['start_date'])) != date('Y-m-d')) {
+				$description .= ' (free trial ends ' . date('Y-m-d',strtotime($subscription['start_date'])) . ')';
 			}
 			$post['DESC'] = $description;
-			$post['PROFILESTARTDATE'] = date('c',time($subscription['start_date']));
+			$post['PROFILESTARTDATE'] = date('c',strtotime($subscription['start_date']));
 			$post['BILLINGPERIOD'] = 'Day';
 			$post['BILLINGFREQUENCY'] = $subscription['interval'];
 			$post['AMT'] = $subscription['amount'];
@@ -527,35 +510,14 @@ class paypal_standard
 				
 				if (date('Y-m-d',strtotime($subscription['start_date'])) == date('Y-m-d')) {
 					// create today's order
+					// we assume it's good because the profile is OK
+					
 					$CI->load->model('charge_model');
 					
 					$customer_id = (isset($subscription['customer']['id'])) ? $subscription['customer']['id'] : FALSE;
 					$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $subscription['amount'], array(), $subscription['id'], $customer_id);
 					
-					// complete the payment
-					$post = $response; // most of the data is from here
-					unset($post['NOTE']);
-					
-					$post['METHOD'] = 'DoExpressCheckoutPayment';
-					$post['TOKEN'] = $response['TOKEN'];
-					$post['PAYMENTACTION'] = 'Sale';
-					$post['version'] = '56.0';
-					$post['user'] = $gateway['user'];
-					$post['pwd'] = $gateway['pwd'];
-					$post['signature'] = $gateway['signature'];
-					
-					$response_charge = $this->Process($url, $post);
-					
-					if ($response_charge['PAYMENTSTATUS'] == 'Completed' or $response_charge['PAYMENTSTATUS'] == 'Pending' or $response_charge['PAYMENTSTATUS'] == 'Processed') {
-						$CI->load->model('order_authorization_model');
-						$CI->order_authorization_model->SaveAuthorization($order_id, $response_charge['TRANSACTIONID']);
-						
-						$CI->charge_model->SetStatus($order_id, 1);
-					}
-					else {
-						header('Failed to make initial charge.  Please contact support.');
-						die();
-					}
+					$CI->charge_model->SetStatus($order_id, 1);
 				}
 				
 				// we're all done now - finally!
@@ -573,13 +535,37 @@ class paypal_standard
 				}
 				
 				// get return URL from original OpenGateway request
-				$CI->load->model('charge_data_model');
 				$data = $CI->charge_data_model->Get('r' . $subscription['id']);
 				
 				// redirect back to user's site
 				header('Location: ' . $data['return_url']);
 				die();
 			}
+		}
+	}
+	
+	function GetProfileDetails($client_id, $gateway, $params)
+	{
+		$CI =& get_instance();
+		$CI->load->model('recurring_model');
+		
+		$post_url = $this->GetAPIURL($gateway);
+		
+		$post = array();
+		$post['version'] = '60';
+		$post['method'] = 'GetRecurringPaymentsProfileDetails';
+		$post['user'] = $gateway['user'];
+		$post['pwd'] = $gateway['pwd'];
+		$post['signature'] = $gateway['signature'];
+		$post['profileid'] = $params['api_customer_reference'];
+		
+		$post_response = $this->Process($post_url, $post);
+		$response = $this->response_to_array($post_response);
+		
+		if ($response['ACK'] == 'Success') {
+			return $response;
+		} else {
+			return FALSE;
 		}
 	}
 	

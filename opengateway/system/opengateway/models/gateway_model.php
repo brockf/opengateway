@@ -325,7 +325,7 @@ class Gateway_model extends Model
 			$credit_card['card_type'] = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
 			
 			if (!$credit_card['card_type']) {
-				//die($this->response->Error(5008));
+				die($this->response->Error(5008));
 			}
 		}
 		
