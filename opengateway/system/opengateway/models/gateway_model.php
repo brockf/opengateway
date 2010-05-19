@@ -132,6 +132,7 @@ class Gateway_model extends Model
 	function Charge($client_id, $gateway_id, $amount, $credit_card = array(), $customer_id = FALSE, $customer = array(), $customer_ip = FALSE, $return_url = FALSE, $cancel_url = FALSE)
 	{
 		$CI =& get_instance();
+		$CI->load->library('field_validation');
 		
 		// Get the gateway info to load the proper library
 		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
@@ -297,6 +298,7 @@ class Gateway_model extends Model
 	function Recur($client_id, $gateway_id, $amount = FALSE, $credit_card = array(), $customer_id = FALSE, $customer = array(), $customer_ip = FALSE, $recur = array(), $return_url = FALSE, $cancel_url = FALSE)
 	{		
 		$CI =& get_instance();
+		$CI->load->library('field_validation');
 		
 		// Get the gateway info to load the proper library
 		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
@@ -323,7 +325,7 @@ class Gateway_model extends Model
 			$credit_card['card_type'] = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
 			
 			if (!$credit_card['card_type']) {
-				die($this->response->Error(5008));
+				//die($this->response->Error(5008));
 			}
 		}
 		
@@ -532,20 +534,27 @@ class Gateway_model extends Model
 		}
 		
 		if ($response['response_code'] != 100) {
-			// mark it in active
+			// clear it out completely
 			$CI->recurring_model->DeleteRecurring($subscription_id);
 		}
 		
 		if ($response['response_code'] == 100) {
-			// delayed recurrings don't have a charge ID
-			$response['charge_id'] = (isset($response['charge_id'])) ? $response['charge_id'] : FALSE;
-			
-			// trip it - were golden!
-			TriggerTrip('new_recurring', $client_id, $response['charge_id'], $response['recurring_id']);
-			
-			// trip a recurring charge?
-			if (!empty($response['charge_id'])) {
-				TriggerTrip('recurring_charge', $client_id, $response['charge_id'], $response['recurring_id']);
+			if (!isset($response['not_completed']) or $response['not_completed'] == FALSE) {
+				$CI->recurring_model->SetActive($client_id, $subscription_id);
+		
+				// delayed recurrings don't have a charge ID
+				$response['charge_id'] = (isset($response['charge_id'])) ? $response['charge_id'] : FALSE;
+				
+				// trip it - were golden!
+				TriggerTrip('new_recurring', $client_id, $response['charge_id'], $response['recurring_id']);
+				
+				// trip a recurring charge?
+				if (!empty($response['charge_id'])) {
+					TriggerTrip('recurring_charge', $client_id, $response['charge_id'], $response['recurring_id']);
+				}
+			}
+			else {
+				unset($response['not_completed']);
 			}
 		}
 		else {

@@ -52,7 +52,7 @@ class Recurring_model extends Model
 							'next_charge'		=> $next_charge_date,
 							'number_occurrences'=> $total_occurrences,
 							'amount'			=> $amount,
-							'active'			=> 1,
+							'active'			=> 0,
 							'cancel_date'		=> '0000-00-00 00:00:00',
 							'timestamp'			=> $timestamp
 			  				);  					  				
@@ -60,6 +60,20 @@ class Recurring_model extends Model
 		$this->db->insert('subscriptions', $insert_data);
 		
 		return $this->db->insert_id();
+	}
+	
+	/**
+	* Set Active
+	*
+	* Makes a new subscription active
+	*
+	* @param $client_id The Client ID
+	* @param $subscription_id The recurring ID
+	*
+	* @return boolean TRUE
+	*/
+	function SetActive ($client_id, $recurring_id) {
+		$this->db->update('subscriptions',array('active' => '1'),'subscription_id' => $recurring_id);
 	}
 	
 	/**

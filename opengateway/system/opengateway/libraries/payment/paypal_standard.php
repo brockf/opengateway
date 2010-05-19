@@ -15,7 +15,7 @@ class paypal_standard
 		$settings['name'] = 'PayPal Express Checkout';
 		$settings['class_name'] = 'paypal_standard';
 		$settings['external'] = TRUE;
-		$settings['description'] = 'PayPal Standard is the easiest, cheapest way to accept payments online.';
+		$settings['description'] = 'PayPal Express Checkout is the easiest, cheapest way to accept payments online.  Any Website Payments Standard account supports it.';
 		$settings['is_preferred'] = 1;
 		$settings['setup_fee'] = '$0';
 		$settings['monthly_fee'] = '$0';
@@ -30,12 +30,7 @@ class paypal_standard
 											 'user',
 											 'pwd',
 											 'signature',
-											 'currency',
-											 'accept_visa',
-											 'accept_mc',
-											 'accept_discover',
-											 'accept_dc',
-											 'accept_amex'
+											 'currency'
 											);
 		
 		$settings['field_details'] = array(
@@ -77,46 +72,6 @@ class paypal_standard
 																		'AUD' => 'Australian Dollar',
 																		'JPY' => 'Japanese Yen'
 																	)
-														),
-										'accept_visa' => array(
-														'text' => 'Accept VISA?',
-														'type' => 'radio',
-														'options' => array(
-																		'1' => 'Yes',
-																		'0' => 'No'
-																	)
-														),
-										'accept_mc' => array(
-														'text' => 'Accept MasterCard?',
-														'type' => 'radio',
-														'options' => array(
-																		'1' => 'Yes',
-																		'0' => 'No'
-																	)
-														),
-										'accept_discover' => array(
-														'text' => 'Accept Discover?',
-														'type' => 'radio',
-														'options' => array(
-																		'1' => 'Yes',
-																		'0' => 'No'
-																	)
-														),
-										'accept_dc' => array(
-														'text' => 'Accept Diner\'s Club?',
-														'type' => 'radio',
-														'options' => array(
-																		'1' => 'Yes',
-																		'0' => 'No'
-																	)
-														),
-										'accept_amex' => array(
-														'text' => 'Accept American Express?',
-														'type' => 'radio',
-														'options' => array(
-																		'1' => 'Yes',
-																		'0' => 'No'
-																	)
 														)
 											);
 		return $settings;
@@ -144,8 +99,8 @@ class paypal_standard
 		$post = array();
 		$post['version'] = '56.0';
 		$post['method'] = 'SetExpressCheckout';
-		$post['return_url'] = site_url('callback/paypal/confirm/' . $order_id);
-		$post['cancel_url'] = $cancel_url;
+		$post['returnurl'] = site_url('callback/paypal/confirm/' . $order_id);
+		$post['cancelurl'] = (!empty($cancel_url)) ? $cancel_url : 'http://www.paypal.com';
 		$post['noshipping'] = '0';
 		$post['allownote'] = '0';
 		$post['localecode'] = $client['country'];
@@ -171,14 +126,14 @@ class paypal_standard
 		
 		$response = $this->Process($post_url, $post);
 		
-		if (!empty($response['Token'])) {
+		if (!empty($response['TOKEN'])) {
 			$CI->load->model('order_authorization_model');
-			$CI->order_authorization_model->SaveAuthorization($order_id, $response['Token']);
+			$CI->order_authorization_model->SaveAuthorization($order_id, $response['TOKEN']);
 			
 			// generate express checkout URL
 			$url = $this->GetExpressCheckoutURL($gateway);
 			
-			$url .= '&token=' . $response['Token'];
+			$url .= '&token=' . $response['TOKEN'];
 			
 			$response_array = array(
 							'not_completed' => TRUE, // don't mark charge as complete
@@ -199,53 +154,66 @@ class paypal_standard
 	{		
 		$CI =& get_instance();
 		
-		// If the start date is today, we'll do the first one manually
-		if (strtotime($start_date) == strtotime(date('Y-m-d'))) {
-			// Create an order
-			$CI->load->model('charge_model');
-			
-			$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
-			$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
-			$response = $this->Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card);
-			
-			if ($response['response_code'] == 1) {
-				$response_array['charge_id'] = $response['charge_id'];
-				$start_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400));
-				$CI->charge_model->SetStatus($order_id, 1);
-			} else {
-				$CI->load->model('recurring_model');
-				$CI->recurring_model->MakeInactive($subscription_id);
-				$response_array = array('reason' => $response['reason']);
-				$response = $CI->response->TransactionResponse(2, $response_array);
-				
-				return $response;
-			}
+		$CI =& get_instance();
+		$CI->load->model('charge_data_model');
+		$CI->load->helper('url');
+		$CI->load->model('client_model');
+		
+		$client = $CI->client_model->GetClient($client_id,$client_id);
+		
+		// save the return URL
+		$CI->charge_data_model->Save($order_id, 'return_url', $return_url);
+		
+		$post_url = $this->GetAPIURL($gateway);
+		
+		$post = array();
+		$post['version'] = '56.0';
+		$post['method'] = 'SetExpressCheckout';
+		$post['returnurl'] = site_url('callback/paypal/confirm_recur/' . $order_id);
+		$post['cancelurl'] = (!empty($cancel_url)) ? $cancel_url : 'http://www.paypal.com';
+		$post['noshipping'] = '0';
+		$post['allownote'] = '0';
+		$post['localecode'] = $client['country'];
+		$post['solutiontype'] = 'Mark';
+		$post['landingpage'] = 'Billing';
+		$post['channeltype'] = 'Merchant';
+		
+		if (isset($customer['email'])) {
+			$post['email'] = $customer['email'];
 		}
 		
-		// Create a new PayPal profile
-		$response = $this->CreateProfile($client_id, $gateway, $customer, $amount, $credit_card, $start_date, $subscription_id, $total_occurrences, $interval);
-		
-		if ($response) {
-			$profile_id = $response['profile_id'];	
-		} else {
-			$CI->recurring_model->DeleteRecurring($subscription_id);
-			die($CI->response->Error(5005));
+		if (isset($customer['first_name'])) {
+			$post['name'] = $customer['first_name'] . ' ' . $customer['last_name'];
 		}
 		
-		// save the api_customer_reference
+		$post['paymentaction'] = 'sale';
+		$post['user'] = $gateway['user'];
+		$post['pwd'] = $gateway['pwd'];
+		$post['signature'] = $gateway['signature'];
+		$post['amt'] = $amount; 
+		$post['invnum'] = $order_id;
+		$post['custom'] = $subscription_id;
+		$post['currencycode'] = $gateway['currency'];
 		
-		$CI->recurring_model->SaveApiCustomerReference($subscription_id, $profile_id);
+		$response = $this->Process($post_url, $post);
 		
-		if($response['success'] == TRUE){
-				$response_array['recurring_id'] = $subscription_id;
-				$response = $CI->response->TransactionResponse(100, $response_array);
-			} else {
-				// Make the subscription inactive
-				$CI->recurring_model->MakeInactive($subscription_id);
-				
-				$response_array = array('reason' => $response['reason']);
-				$response = $CI->response->TransactionResponse(2, $response_array);
-			}
+		if (!empty($response['TOKEN'])) {
+			// generate express checkout URL
+			$url = $this->GetExpressCheckoutURL($gateway);
+			
+			$url .= '&token=' . $response['TOKEN'];
+			
+			$response_array = array(
+							'not_completed' => TRUE, // don't mark charge as complete
+							'redirect' => $url, // redirect the user to this address
+							'subscription_id' => $subscription_id
+						);
+			$response = $CI->response->TransactionResponse(100, $response_array);
+		}
+		else {
+			$response_array = array('reason' => $response['L_ERRORCODE0'] . ' - ' . $response['L_LONGMESSAGE0']);
+			$response = $CI->response->TransactionResponse(2, $response_array);
+		}
 		
 		return $response;
 	}
@@ -324,92 +292,6 @@ class paypal_standard
 		return $response;
 	}
 
-	function CreateProfile($client_id, $gateway, $customer, $amount, $credit_card, $start_date, $subscription_id, $total_occurrences, $interval)
-	{
-		$CI =& get_instance();
-		
-		switch($credit_card['card_type']) {
-			case 'visa';
-				$card_type = 'Visa';
-			break;
-			case 'mc';
-				$card_type = 'MasterCard';
-			break;
-			case 'discover';
-				$card_type = 'Discover';
-			break;
-			case 'amex';
-				$card_type = 'Amex';
-			break;
-		}
-		
-		// Get the proper URL
-		switch($gateway['mode'])
-		{
-			case 'live':
-				$post_url = $gateway['arb_url_live'];
-			break;
-			case 'test':
-				$post_url = $gateway['arb_url_test'];
-			break;
-		}
-		
-		$post = array();
-		$post['version'] = '60';
-		$post['method'] = 'CreateRecurringPaymentsProfile';
-		$post['user'] = $gateway['user'];
-		$post['pwd'] = $gateway['pwd'];
-		$post['signature'] = $gateway['signature'];
-		$post['amt'] = $amount; 
-		$post['acct'] = $credit_card['card_num'];
-		$post['currencycode'] = $gateway['currency'];
-		$post['creditcardtype'] = $card_type;
-		$post['expdate'] = $credit_card['exp_month'] . $credit_card['exp_year'];
-		$post['billingperiod'] = 'Day';
-		$post['billingfrequency'] = $interval;
-		$post['profilestartdate'] = date('c', strtotime($start_date));
-		$post['totalbillingcycles'] = $total_occurrences;
-		$post['ipaddress'] = $customer['ip_address'];
-		
-		if(isset($credit_card['cvv'])) {
-			$post['cvv2'] = $credit_card['cvv'];
-		}
-		
-		// build customer address
-		$post['firstname'] = (isset($customer['first_name'])) ? $customer['first_name'] : '';
-		$post['lastname'] = (isset($customer['last_name'])) ? $customer['last_name'] : '';
-		$post['street'] = (isset($customer['address_1'])) ? $customer['address_1'] : '';
-		if (isset($customer['address_2'])) {
-			$post['street'] .= ' ' . $customer['address_2'];
-		}
-		$post['city'] = (isset($customer['city'])) ? $customer['city'] : '';
-		$post['state'] = (isset($customer['state'])) ? $customer['state'] : '';
-		$post['countrycode'] = (isset($customer['country'])) ? $customer['country'] : '';
-		$post['zip'] = (isset($customer['postal_code'])) ? $customer['postal_code'] : '';
-		$post['email'] = (isset($customer['email'])) ? $customer['email'] : '';
-		
-		// Get the company name
-		$CI->load->model('client_model');
-		$company = $CI->client_model->GetClientDetails($client_id)->company;
-		
-		$post['desc'] = $company.' Subscription';
-		
-		$post_response = $this->Process($post_url, $post);
-		
-		$post_response = $this->response_to_array($post_response);
-		
-		if($post_response['ACK'] == 'Success') {
-			$response['success'] = TRUE;
-			$response['profile_id'] = $post_response['PROFILEID'];
-		} else {
-			$response['success'] = FALSE;
-			$response['profile_id'] = FALSE;
-			$response['reason'] = $post_response['L_LONGMESSAGE0'];
-		}
-		
-		return $response;
-	}
-	
 	function CancelRecurring($client_id, $subscription, $gateway)
 	{
 		$CI =& get_instance();
@@ -540,60 +422,89 @@ class paypal_standard
 		return $response;	
 	}
 	
-	function GetProfileDetails($client_id, $gateway, $params)
-	{
+	function Callback_confirm ($client_id, $gateway, $charge, $params) {
 		$CI =& get_instance();
-		$CI->load->model('recurring_model');
 		
-		switch($gateway['mode'])
-		{
-			case 'live':
-				$post_url = $params['arb_live_url'];
-			break;
-			case 'test':
-				$post_url = $params['arb_test_url'];
-			break;
-			case 'dev':
-				$post_url = $params['arb_dev_url'];
-			break;
-			default:
-				$post_url = $params['arb_dev_url'];
-			break;
-		}
-		
+		$url = $this->GetAPIUrl($gateway);
+	
 		$post = array();
-		$post['version'] = '60';
-		$post['method'] = 'GetRecurringPaymentsProfileDetails';
+		$post['method'] = 'GetExpressCheckoutDetails';
+		$post['token'] = $params['token'];
+		$post['version'] = '56.0';
 		$post['user'] = $gateway['user'];
 		$post['pwd'] = $gateway['pwd'];
 		$post['signature'] = $gateway['signature'];
-		$post['profileid'] = $params['api_customer_reference'];
+				
+		$response = $this->Process($url, $post);
 		
-		$post_response = $this->Process($post_url, $post);
-		$response = $this->response_to_array($post_response);
-		
-		if ($response['ACK'] == 'Success') {
-			return $response;
-		} else {
-			return FALSE;
+		if (isset($response['TOKEN']) and $response['TOKEN'] == $params['token']) {
+			// we're good
+						
+			// complete the payment
+			$post = $response; // most of the data is from here
+			unset($post['NOTE']);
+			
+			$post['METHOD'] = 'DoExpressCheckoutPayment';
+			$post['TOKEN'] = $response['TOKEN'];
+			$post['PAYMENTACTION'] = 'Sale';
+			$post['version'] = '56.0';
+			$post['user'] = $gateway['user'];
+			$post['pwd'] = $gateway['pwd'];
+			$post['signature'] = $gateway['signature'];
+			
+			$response = $this->Process($url, $post);
+			
+			if ($response['PAYMENTSTATUS'] == 'Completed' or $response['PAYMENTSTATUS'] == 'Pending' or $response['PAYMENTSTATUS'] == 'Processed') {
+				// we're good
+				
+				// save authorization (transaction id #)
+				$CI->load->model('order_authorization_model');
+				$CI->order_authorization_model->SaveAuthorization($charge['id'], $response['TRANSACTIONID']);
+				
+				$CI->charge_model->SetStatus($charge['id'], 1);
+				TriggerTrip('charge', $client_id, $charge['id']);
+				
+				// get return URL from original OpenGateway request
+				$CI->load->model('charge_data_model');
+				$data = $CI->charge_data_model->Get($charge['id']);
+				
+				// redirect back to user's site
+				header('Location: ' . $data['return_url']);
+				die();
+			}
 		}
+	}
+	
+	function Callback_recur () {
+		$CI->recurring_model->SetActive($client_id, $subscription_id);
+		
+		$response['charge_id'] = (isset($response['charge_id'])) ? $response['charge_id'] : FALSE;
+		
+		// trip it - were golden!
+		TriggerTrip('new_recurring', $client_id, $response['charge_id'], $response['recurring_id']);
+		
+		// trip a recurring charge?
+		if (!empty($response['charge_id'])) {
+			TriggerTrip('recurring_charge', $client_id, $response['charge_id'], $response['recurring_id']);
+		}
+
 	}
 	
 	private function GetAPIURL ($gateway) {
 		if ($gateway['mode'] == 'test') {
-			return $gateway['test_url'];
+			return $gateway['url_test'];
 		}
 		else {
-			return $gateway['prod_url'];
+			return $gateway['url_live'];
 		}
 	}
 	
 	private function GetExpressCheckoutURL ($gateway) {
 		if ($gateway['mode'] == 'test') {
-			return $gateway['arb_test_url'];
+			return $gateway['arb_url_test'];
 		}
 		else {
-			return $gateway['arb_prod_url'];
+			return $gateway['arb_url_live'];
 		}
 	}
 	

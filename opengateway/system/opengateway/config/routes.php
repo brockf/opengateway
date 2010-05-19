@@ -43,6 +43,9 @@
 $route['default_controller'] = "dashboard";
 $route['scaffolding_trigger'] = "";
 
+// reroute all callback/X calls to the main callback controller
+$route['callback:any'] = 'callback/process';
+
 
 /* End of file routes.php */
 /* Location: ./system/opengateway/config/routes.php */

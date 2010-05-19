@@ -104,7 +104,7 @@ class API extends Controller {
 		// to find the default gateway
 		
 		// take XML params and put them in variables
-		$credit_card = isset($params['credit_card']) ? $params['credit_card'] : FALSE;
+		$credit_card = isset($params['credit_card']) ? $params['credit_card'] : array();
 		$customer_id = isset($params['customer_id']) ? $params['customer_id'] : FALSE;
 		$customer = isset($params['customer']) ? $params['customer'] : FALSE;
 		$amount = isset($params['amount']) ? $params['amount'] : FALSE;
@@ -128,7 +128,7 @@ class API extends Controller {
 		// to find the default gateway
 		
 		// take XML params and put them in variables
-		$credit_card = isset($params['credit_card']) ? $params['credit_card'] : FALSE;
+		$credit_card = isset($params['credit_card']) ? $params['credit_card'] : array();
 		$customer_id = isset($params['customer_id']) ? $params['customer_id'] : FALSE;
 		$customer = isset($params['customer']) ? $params['customer'] : FALSE;
 		$amount = isset($params['amount']) ? $params['amount'] : FALSE;
