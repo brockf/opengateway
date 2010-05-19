@@ -162,14 +162,14 @@ class paypal_standard
 		$client = $CI->client_model->GetClient($client_id,$client_id);
 		
 		// save the return URL
-		$CI->charge_data_model->Save($order_id, 'return_url', $return_url);
+		$CI->charge_data_model->Save('r' . $subscription_id, 'return_url', $return_url);
 		
 		$post_url = $this->GetAPIURL($gateway);
 		
 		$post = array();
 		$post['version'] = '56.0';
 		$post['method'] = 'SetExpressCheckout';
-		$post['returnurl'] = site_url('callback/paypal/confirm_recur/' . $order_id);
+		$post['returnurl'] = site_url('callback/paypal/confirm_recur/' . $subscription_id);
 		$post['cancelurl'] = (!empty($cancel_url)) ? $cancel_url : 'http://www.paypal.com';
 		$post['noshipping'] = '0';
 		$post['allownote'] = '0';
@@ -191,10 +191,15 @@ class paypal_standard
 		$post['pwd'] = $gateway['pwd'];
 		$post['signature'] = $gateway['signature'];
 		$post['amt'] = $amount; 
-		$post['invnum'] = $order_id;
-		$post['custom'] = $subscription_id;
+		$post['invnum'] = $subscription_id;
 		$post['currencycode'] = $gateway['currency'];
-		
+		$post['L_BILLINGTYPE1'] = 'RecurringPayments';
+		$description = $gateway['currency'] . $amount . ' every ' . $interval . ' days until ' . $end_date;
+		if ($start_date != date('Y-m-d')) {
+			$description .= ' (free trial ends ' . $start_date . ')';
+		}
+		$post['L_BILLINGAGREEMENTDESCRIPTION1'] = $description;
+				
 		$response = $this->Process($post_url, $post);
 		
 		if (!empty($response['TOKEN'])) {
@@ -475,19 +480,107 @@ class paypal_standard
 		}
 	}
 	
-	function Callback_recur () {
-		$CI->recurring_model->SetActive($client_id, $subscription_id);
+	function Callback_recur ($client_id, $gateway, $subscription, $params) {
+		$CI =& get_instance();
 		
-		$response['charge_id'] = (isset($response['charge_id'])) ? $response['charge_id'] : FALSE;
+		$url = $this->GetAPIUrl($gateway);
+	
+		$post = array();
+		$post['method'] = 'GetExpressCheckoutDetails';
+		$post['token'] = $params['token'];
+		$post['version'] = '56.0';
+		$post['user'] = $gateway['user'];
+		$post['pwd'] = $gateway['pwd'];
+		$post['signature'] = $gateway['signature'];
+				
+		$response = $this->Process($url, $post);
 		
-		// trip it - were golden!
-		TriggerTrip('new_recurring', $client_id, $response['charge_id'], $response['recurring_id']);
-		
-		// trip a recurring charge?
-		if (!empty($response['charge_id'])) {
-			TriggerTrip('recurring_charge', $client_id, $response['charge_id'], $response['recurring_id']);
+		if (isset($response['TOKEN']) and $response['TOKEN'] == $params['token']) {
+			// we're good			
+			
+			// continue with creating payment profile
+			$post = $response; // most of the data is from here
+			unset($post['NOTE']);
+			
+			$post['METHOD'] = 'CreateRecurringPaymentsProfile';
+			$post['VERSION'] = '60';
+			$post['user'] = $gateway['user'];
+			$post['pwd'] = $gateway['pwd'];
+			$post['signature'] = $gateway['signature'];
+			$post['TOKEN'] = $response['TOKEN'];
+			$description = $gateway['currency'] . $amount . ' every ' . $subscription['interval'] . ' days until ' . $subscription['end_date'];
+			if ($subscription['start_date'] != date('Y-m-d')) {
+				$description .= ' (free trial ends ' . $subscription['start_date'] . ')';
+			}
+			$post['DESC'] = $description;
+			$post['PROFILESTARTDATE'] = date('c',time($subscription['start_date']));
+			$post['BILLINGPERIOD'] = 'Day';
+			$post['BILLINGFREQUENCY'] = $subscription['interval'];
+			$post['AMT'] = $subscription['amount'];
+			
+			$response_sub = $this->Process($url, $post);
+			
+			if (isset($response_sub['PROFILEID'])) {
+				// success!
+				
+				$CI->recurring_model->SaveApiCustomerReference($subscription['id'], $response_sub['PROFILEID']);
+				
+				if (date('Y-m-d',strtotime($subscription['start_date'])) == date('Y-m-d')) {
+					// create today's order
+					$CI->load->model('charge_model');
+					
+					$customer_id = (isset($subscription['customer']['id'])) ? $subscription['customer']['id'] : FALSE;
+					$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $subscription['amount'], array(), $subscription['id'], $customer_id);
+					
+					// complete the payment
+					$post = $response; // most of the data is from here
+					unset($post['NOTE']);
+					
+					$post['METHOD'] = 'DoExpressCheckoutPayment';
+					$post['TOKEN'] = $response['TOKEN'];
+					$post['PAYMENTACTION'] = 'Sale';
+					$post['version'] = '56.0';
+					$post['user'] = $gateway['user'];
+					$post['pwd'] = $gateway['pwd'];
+					$post['signature'] = $gateway['signature'];
+					
+					$response_charge = $this->Process($url, $post);
+					
+					if ($response_charge['PAYMENTSTATUS'] == 'Completed' or $response_charge['PAYMENTSTATUS'] == 'Pending' or $response_charge['PAYMENTSTATUS'] == 'Processed') {
+						$CI->load->model('order_authorization_model');
+						$CI->order_authorization_model->SaveAuthorization($order_id, $response_charge['TRANSACTIONID']);
+						
+						$CI->charge_model->SetStatus($order_id, 1);
+					}
+					else {
+						header('Failed to make initial charge.  Please contact support.');
+						die();
+					}
+				}
+				
+				// we're all done now - finally!
+				
+				$order_id = (isset($order_id)) ? $order_id : FALSE;
+			
+				$CI->recurring_model->SetActive($client_id, $subscription['id']);
+				
+				// trip it - were golden!
+				TriggerTrip('new_recurring', $client_id, $order_id, $subscription['id']);
+				
+				// trip a recurring charge?
+				if ($order_id) {
+					TriggerTrip('recurring_charge', $client_id, $order_id, $subscription['id']);
+				}
+				
+				// get return URL from original OpenGateway request
+				$CI->load->model('charge_data_model');
+				$data = $CI->charge_data_model->Get('r' . $subscription['id']);
+				
+				// redirect back to user's site
+				header('Location: ' . $data['return_url']);
+				die();
+			}
 		}
-
 	}
 	
 	private function GetAPIURL ($gateway) {

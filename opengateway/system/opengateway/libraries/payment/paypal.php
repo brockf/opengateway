@@ -406,7 +406,6 @@ class paypal
 		$post['billingperiod'] = 'Day';
 		$post['billingfrequency'] = $interval;
 		$post['profilestartdate'] = date('c', strtotime($start_date));
-		$post['totalbillingcycles'] = $total_occurrences;
 		$post['ipaddress'] = $customer['ip_address'];
 		
 		if(isset($credit_card['cvv'])) {

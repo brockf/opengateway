@@ -23,7 +23,7 @@ class Callback extends Controller {
 		// get action
 		$action = $this->uri->segment(3);
 		
-		// get charge_id
+		// get (recurring or one-time) charge_id
 		$charge_id = $this->uri->segment(4);
 		
 		// compile all GET and POST parameters
@@ -46,8 +46,17 @@ class Callback extends Controller {
 		$client_id = $client['client_id'];
 		
 		// get charge
-		$this->load->model('charge_model');
-		$charge = $this->charge_model->GetCharge($client_id, $charge_id);
+		if ($action == 'confirm') {
+			$this->load->model('charge_model');
+			$charge = $this->charge_model->GetCharge($client_id, $charge_id);
+		}
+		elseif ($action == 'confirm_recur') {
+			$this->load->model('recurring_model');
+			$charge = $this->recurring_model->GetRecurring($client_id, $charge_id);
+		}
+		else {
+			die('Invalid action.');
+		}
 		
 		// get gateway
 		$this->load->model('gateway_model');

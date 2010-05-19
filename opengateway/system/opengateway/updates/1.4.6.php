@@ -10,7 +10,7 @@ $sql[] = 'INSERT INTO `external_apis` (`external_api_id`, `name`, `display_name`
 // create order_data table
 $sql[] = 'CREATE TABLE `order_data` (
   `order_data_id` int(11) NOT NULL auto_increment,
-  `order_id` int(11) NOT NULL,
+  `order_id` varchar(250) NOT NULL,
   `order_data_key` varchar(25) NOT NULL,
   `order_data_value` varchar(250) NOT NULL,
   PRIMARY KEY  (`order_data_id`)

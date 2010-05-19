@@ -73,7 +73,7 @@ class Recurring_model extends Model
 	* @return boolean TRUE
 	*/
 	function SetActive ($client_id, $recurring_id) {
-		$this->db->update('subscriptions',array('active' => '1'),'subscription_id' => $recurring_id);
+		$this->db->update('subscriptions',array('active' => '1'),array('subscription_id' => $recurring_id));
 	}
 	
 	/**
