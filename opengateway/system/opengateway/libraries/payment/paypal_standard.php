@@ -116,11 +116,11 @@ class paypal_standard
 			$post['name'] = $customer['first_name'] . ' ' . $customer['last_name'];
 		}
 		
-		$post['paymentaction'] = 'sale';
+		$post['PAYMENTREQUEST_0_PAYMENTACTION'] = 'sale';
 		$post['user'] = $gateway['user'];
 		$post['pwd'] = $gateway['pwd'];
 		$post['signature'] = $gateway['signature'];
-		$post['amt'] = $amount; 
+		$post['PAYMENTREQUEST_0_AMT'] = $amount; 
 		$post['invnum'] = $order_id;
 		$post['currencycode'] = $gateway['currency'];
 		
@@ -189,16 +189,29 @@ class paypal_standard
 			$post['name'] = $customer['first_name'] . ' ' . $customer['last_name'];
 		}
 		
-		$post['paymentaction'] = 'sale';
+		$post['PAYMENTACTION'] = 'sale';
 		$post['user'] = $gateway['user'];
 		$post['pwd'] = $gateway['pwd'];
 		$post['signature'] = $gateway['signature'];
-		$post['amt'] = $amount; 
+		$post['AMT'] = $amount; 
 		$post['invnum'] = $subscription_id;
 		$post['currencycode'] = $gateway['currency'];
 		$post['L_BILLINGTYPE0'] = 'RecurringPayments';
-		$description = $gateway['currency'] . money_format("%!i",$amount) . ' every ' . $interval . ' days until ' . $end_date;
-		if ($start_date != date('Y-m-d')) {
+		
+		// handle first charges unless there's a free trial
+		if (date('Y-m-d',strtotime($start_date)) == date('Y-m-d')) {
+			// first recurring charge won't start until after the first interval
+			// we'll run an instant payment first
+			// old start date
+			$adjusted_start_date = TRUE;
+			$start_date = date('Y-m-d',strtotime($start_date)+(60*60*24*$interval));
+		}
+		
+		// get true recurring rate, first
+		$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
+		
+		$description = $gateway['currency'] . money_format("%!i",$subscription['amount']) . ' every ' . $interval . ' days until ' . $end_date;
+		if ($start_date != date('Y-m-d') and !isset($adjusted_start_date)) {
 			$description .= ' (free trial ends ' . $start_date . ')';
 		}
 		$post['L_BILLINGAGREEMENTDESCRIPTION0'] = $description;
@@ -446,7 +459,50 @@ class paypal_standard
 		$response = $this->Process($url, $post);
 		
 		if (isset($response['TOKEN']) and $response['TOKEN'] == $params['token']) {
-			// we're good			
+			// we're good	
+			
+			// do we need a first charge?
+			if (date('Y-m-d',strtotime($subscription['start_date'])) == date('Y-m-d')) {
+				$CI->load->model('charge_model');
+				
+				$customer_id = (isset($subscription['customer']['id'])) ? $subscription['customer']['id'] : FALSE;
+				$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $subscription['amount'], array(), $subscription['id'], $customer_id);
+				
+				// yes, the first charge is today
+				$post = $response; // most of the data is from here
+				unset($post['NOTE']);
+				
+				$post['METHOD'] = 'DoExpressCheckoutPayment';
+				$post['TOKEN'] = $response['TOKEN'];
+				$post['PAYMENTACTION'] = 'Sale';
+				$post['version'] = '56.0';
+				$post['user'] = $gateway['user'];
+				$post['pwd'] = $gateway['pwd'];
+				$post['signature'] = $gateway['signature'];
+				
+				$response_charge = $this->Process($url, $post);
+				
+				//die(print_r($response_charge));
+				
+				if ($response_charge['PAYMENTSTATUS'] != 'Completed' and $response_charge['PAYMENTSTATUS'] == 'Pending' and $response_charge['PAYMENTSTATUS'] != 'Processed') {
+					$data = $CI->charge_data_model->Get('r' . $subscription['id']);
+					
+					die('Your initial PayPal payment failed.  <a href="' . $data['cancel_url'] . '">Go back to merchant</a>.');
+				}
+				else {
+					// create today's order
+					// we assume it's good because the profile is OK
+					
+					$CI->load->model('order_authorization_model');
+					$CI->order_authorization_model->SaveAuthorization($order_id, $response_charge['TRANSACTIONID']);
+					
+					$CI->charge_model->SetStatus($order_id, 1);
+				}
+				
+				// we'll also adjust the profile start date
+				$adjusted_start_date = TRUE;
+				$subscription['start_date'] = date('Y-m-d',strtotime($subscription['start_date'])+(60*60*24*$subscription['interval']));
+			}		
 			
 			// continue with creating payment profile
 			$post = $response; // most of the data is from here
@@ -459,7 +515,7 @@ class paypal_standard
 			$post['signature'] = $gateway['signature'];
 			$post['TOKEN'] = $response['TOKEN'];
 			$description = $gateway['currency'] . $subscription['amount'] . ' every ' . $subscription['interval'] . ' days until ' . date('Y-m-d',strtotime($subscription['end_date']));
-			if (date('Y-m-d',strtotime($subscription['start_date'])) != date('Y-m-d')) {
+			if (date('Y-m-d',strtotime($subscription['start_date'])) != date('Y-m-d') and !isset($adjusted_start_date)) {
 				$description .= ' (free trial ends ' . date('Y-m-d',strtotime($subscription['start_date'])) . ')';
 			}
 			$post['DESC'] = $description;
@@ -474,23 +530,6 @@ class paypal_standard
 				// success!
 				
 				$CI->recurring_model->SaveApiCustomerReference($subscription['id'], $response_sub['PROFILEID']);
-				
-				if (date('Y-m-d',strtotime($subscription['start_date'])) == date('Y-m-d')) {
-					// create today's order
-					// we assume it's good because the profile is OK
-					
-					$CI->load->model('charge_model');
-					
-					$customer_id = (isset($subscription['customer']['id'])) ? $subscription['customer']['id'] : FALSE;
-					$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $subscription['amount'], array(), $subscription['id'], $customer_id);
-					
-					$CI->load->model('order_authorization_model');
-					$CI->order_authorization_model->SaveAuthorization($charge['id'], $response['PROFILEID']);
-					
-					$CI->charge_model->SetStatus($order_id, 1);
-				}
-				
-				// we're all done now - finally!
 				
 				$order_id = (isset($order_id)) ? $order_id : FALSE;
 			

@@ -388,7 +388,7 @@ class Gateway_model extends Model
 			$free_trial 		= (isset($recur['free_trial'])) ? $recur['free_trial'] : $plan_details->free_trial;
 			$occurrences		= (isset($recur['occurrences'])) ? $recur['occurrences'] : $plan_details->occurrences;
 			
-			// calculate amount:
+			// calculate first charge amount:
 			//	  1) First charge is main $amount if given
 			//	  2) If no $recur['amount'], use plan amount
 			//	  3) Else use $recur['amount']
@@ -497,9 +497,21 @@ class Gateway_model extends Model
 		// figure the total number of occurrences
 		$total_occurrences = round((strtotime($end_date) - strtotime($start_date)) / ($interval * 86400), 0);
 		
+		// if they sent an $amount with their charge, this means that their first charge is different
+		// so now we need to grab the true recurring amount
+		if (is_object($plan_details) and isset($plan_details->amount)) {
+			$recur['amount'] = $plan_details->amount;
+		}
+		elseif (isset($recur['amount'])) {
+			$recur['amount'] = $recur['amount'];
+		}
+		else {
+			$recur['amount'] = $amount;
+		}
+		
 		// Save the subscription info
 		$CI->load->model('recurring_model');
-		$subscription_id = $CI->recurring_model->SaveRecurring($client_id, $gateway['gateway_id'], $customer['customer_id'], $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id);
+		$subscription_id = $CI->recurring_model->SaveRecurring($client_id, $gateway['gateway_id'], $customer['customer_id'], $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $recur['amount'], $plan_id);
 		
 		// set last_charge as today, if today was a charge
 		if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {

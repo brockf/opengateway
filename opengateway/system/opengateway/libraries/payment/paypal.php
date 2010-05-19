@@ -261,8 +261,11 @@ class paypal
 			}
 		}
 		
+		// get true recurring rate, first
+		$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
+		
 		// Create a new PayPal profile
-		$response = $this->CreateProfile($client_id, $gateway, $customer, $amount, $credit_card, $start_date, $subscription_id, $total_occurrences, $interval);
+		$response = $this->CreateProfile($client_id, $gateway, $customer, $subscription['amount'], $credit_card, $start_date, $subscription_id, $total_occurrences, $interval);
 		
 		if ($response) {
 			$profile_id = $response['profile_id'];	
@@ -275,7 +278,7 @@ class paypal
 		
 		$CI->recurring_model->SaveApiCustomerReference($subscription_id, $profile_id);
 		
-		if($response['success'] == TRUE){
+		if ($response['success'] == TRUE){
 				$response_array['recurring_id'] = $subscription_id;
 				$response = $CI->response->TransactionResponse(100, $response_array);
 			} else {
