@@ -103,10 +103,6 @@ class API extends Controller {
 		// we don't check the gateway here, because the GetGatewayDetails function will attempt
 		// to find the default gateway
 		
-		// validate required fields
-		$this->load->library('field_validation');
-		$this->field_validation->ValidateRequiredFields('Charge', $params);
-		
 		// take XML params and put them in variables
 		$credit_card = isset($params['credit_card']) ? $params['credit_card'] : FALSE;
 		$customer_id = isset($params['customer_id']) ? $params['customer_id'] : FALSE;
@@ -114,8 +110,10 @@ class API extends Controller {
 		$amount = isset($params['amount']) ? $params['amount'] : FALSE;
 		$gateway_id = isset($params['gateway_id']) ? $params['gateway_id'] : FALSE;
 		$customer_ip = isset($params['customer_ip_address']) ? $params['customer_ip_address'] : FALSE;
+		$return_url = isset($params['return_url']) ? $params['return_url'] : FALSE;
+		$cancel_url = isset($params['cancel_url']) ? $params['cancel_url'] : FALSE;
 		
-		return $this->gateway_model->Charge($client_id, $gateway_id, $amount, $credit_card, $customer_id, $customer, $customer_ip);
+		return $this->gateway_model->Charge($client_id, $gateway_id, $amount, $credit_card, $customer_id, $customer, $customer_ip, $return_url, $cancel_url);
 	}
 	
 	function Recur($client_id, $params) {
@@ -129,10 +127,6 @@ class API extends Controller {
 		// we don't check the gateway here, because the GetGatewayDetails function will attempt
 		// to find the default gateway
 		
-		// validate required fields
-		$this->load->library('field_validation');
-		$this->field_validation->ValidateRequiredFields('Recur', $params);
-		
 		// take XML params and put them in variables
 		$credit_card = isset($params['credit_card']) ? $params['credit_card'] : FALSE;
 		$customer_id = isset($params['customer_id']) ? $params['customer_id'] : FALSE;
@@ -141,8 +135,10 @@ class API extends Controller {
 		$gateway_id = isset($params['gateway_id']) ? $params['gateway_id'] : FALSE;
 		$customer_ip = isset($params['customer_ip_address']) ? $params['customer_ip_address'] : FALSE;
 		$recur = isset($params['recur']) ? $params['recur'] : FALSE;
+		$return_url = isset($params['return_url']) ? $params['return_url'] : FALSE;
+		$cancel_url = isset($params['cancel_url']) ? $params['cancel_url'] : FALSE;
 		
-		return $this->gateway_model->Recur($client_id, $gateway_id, $amount, $credit_card, $customer_id, $customer, $customer_ip, $recur);
+		return $this->gateway_model->Recur($client_id, $gateway_id, $amount, $credit_card, $customer_id, $customer, $customer_ip, $recur, $return_url, $cancel_url);
 	}
 	
 	function Refund ($client_id, $params) {

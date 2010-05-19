@@ -14,6 +14,7 @@ class exact
 		
 		$settings['name'] = 'E-xact';
 		$settings['class_name'] = 'exact';
+		$settings['external'] = FALSE;
 		$settings['description'] = 'E-xact from VersaPay is the perfect gateway for both Canadian and American merchants.';
 		$settings['is_preferred'] = 1;
 		$settings['setup_fee'] = '$149.99';

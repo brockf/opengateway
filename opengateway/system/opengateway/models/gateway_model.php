@@ -123,18 +123,15 @@ class Gateway_model extends Model
 	* @param int $customer_id The ID of the customer to link the charge to
 	* @param array $customer An array of customer data to create a new customer with, if no customer_id
 	* @param float $customer_ip The optional IP address of the customer
+	* @param string $return_url The URL for external payment processors to return the user to after payment
+	* @param string $cancel_url The URL to send if the user cancels an external payment
 	*
 	* @return mixed Array with response_code and response_text
 	*/
 	
-	function Charge($client_id, $gateway_id, $amount, $credit_card = array(), $customer_id = FALSE, $customer = array(), $customer_ip = FALSE)
+	function Charge($client_id, $gateway_id, $amount, $credit_card = array(), $customer_id = FALSE, $customer = array(), $customer_ip = FALSE, $return_url = FALSE, $cancel_url = FALSE)
 	{
 		$CI =& get_instance();
-		
-		// validate function arguments
-		if (empty($amount) or empty($credit_card)) {
-			die($CI->response->Error(1004));
-		}
 		
 		// Get the gateway info to load the proper library
 		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
@@ -149,12 +146,19 @@ class Gateway_model extends Model
 		$this->load->library('payment/'.$gateway_name);
 		$gateway_settings = $this->$gateway_name->Settings();
 		
-		// validate the Credit Card number
-		$credit_card['card_num'] = trim(str_replace(array(' ','-'),'',$credit_card['card_num']));
-		$credit_card['card_type'] = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
+		// validate function arguments
+		if (empty($amount) or (empty($credit_card) and $gateway_settings['external'] == FALSE)) {
+			die($CI->response->Error(1004));
+		}
 		
-		if (!$credit_card['card_type']) {
-			die($this->response->Error(5008));
+		if (!empty($credit_card)) {
+			// validate the Credit Card number
+			$credit_card['card_num'] = trim(str_replace(array(' ','-'),'',$credit_card['card_num']));
+			$credit_card['card_type'] = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
+			
+			if (!$credit_card['card_type']) {
+				die($this->response->Error(5008));
+			}
 		}
 		
 		// Validate the amount
@@ -221,8 +225,7 @@ class Gateway_model extends Model
 		// if amount is greater than $0, we require a gateway
 		if ($amount > 0) {
 			// make the charge
-			
-			$response = $this->$gateway_name->Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card);	
+			$response = $this->$gateway_name->Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card, $return_url, $cancel_url);	
 		}
 		else {
 			// it's a free charge of $0, it's ok
@@ -241,8 +244,13 @@ class Gateway_model extends Model
 		
 		// if it was successful, send an email
 		if ($response['response_code'] == 1) {
-			$CI->charge_model->SetStatus($order_id, 1);
-			TriggerTrip('charge', $client_id, $response['charge_id']);
+			if (!isset($response['not_completed']) or $response['not_completed'] != FALSE) {
+				$CI->charge_model->SetStatus($order_id, 1);
+				TriggerTrip('charge', $client_id, $response['charge_id']);
+			}
+			else {
+				unset($response['not_completed']); // no need to show this to the end user
+			}
 		} else {
 			$CI->charge_model->SetStatus($order_id, 0);
 			
@@ -280,11 +288,13 @@ class Gateway_model extends Model
 	* @param float $recur['amount'] The amount to charge every INTERVAL days.  If not there, the main $amount will be used.
 	* @param int $recur['occurrences'] The total number of occurrences (Optional, if end_date doesn't exist).
 	* @param string $recur['notification_url'] The URL to send POST updates to for notices re: this subscription.
+	* @param string $return_url The URL for external payment processors to return the user to after payment
+	* @param string $cancel_url The URL to send if the user cancels an external payment
 	*
 	* @return mixed Array with response_code and response_text
 	*/
 	
-	function Recur($client_id, $gateway_id, $amount = FALSE, $credit_card = array(), $customer_id = FALSE, $customer = array(), $customer_ip = FALSE, $recur = array())
+	function Recur($client_id, $gateway_id, $amount = FALSE, $credit_card = array(), $customer_id = FALSE, $customer = array(), $customer_ip = FALSE, $recur = array(), $return_url = FALSE, $cancel_url = FALSE)
 	{		
 		$CI =& get_instance();
 		
@@ -300,14 +310,21 @@ class Gateway_model extends Model
 		$CI->load->library('payment/'.$gateway_name);
 		$gateway_settings = $this->$gateway_name->Settings();
 		
+		// validate function arguments
+		if (empty($credit_card) and $gateway_settings['external'] == FALSE) {
+			die($CI->response->Error(1004));
+		}
+		
 		$this->load->library('field_validation');
 		
-		// Validate the Credit Card number
-		$credit_card['card_num'] = trim(str_replace(array(' ','-'),'',$credit_card['card_num']));
-		$credit_card['card_type'] = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
-		
-		if (!$credit_card['card_type']) {
-			die($this->response->Error(5008));
+		if (!empty($credit_card)) {
+			// Validate the Credit Card number
+			$credit_card['card_num'] = trim(str_replace(array(' ','-'),'',$credit_card['card_num']));
+			$credit_card['card_type'] = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
+			
+			if (!$credit_card['card_type']) {
+				die($this->response->Error(5008));
+			}
 		}
 		
 		// Get the customer details if a customer id was included
@@ -487,7 +504,7 @@ class Gateway_model extends Model
 		
 		// if amount is greater than 0, we require a gateway to process
 		if ($amount > 0) {
-			$response = $CI->$gateway_name->Recur($client_id, $gateway, $customer, $amount, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences);
+			$response = $CI->$gateway_name->Recur($client_id, $gateway, $customer, $amount, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences, $return_url, $cancel_url);
 		}
 		else {
 			// this is a free subscription

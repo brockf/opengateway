@@ -14,6 +14,7 @@ class authnet
 		
 		$settings['name'] = 'Authorize.net';
 		$settings['class_name'] = 'authnet';
+		$settings['external'] = FALSE;
 		$settings['description'] = 'Authorize.net is the USA\'s premier gateway.  Coupled with the powerful Customer Information Manager (CIM), this gateway is an affordable and powerful gateway for any American merchant.';
 		$settings['is_preferred'] = 1;
 		$settings['setup_fee'] = '$99.00';
