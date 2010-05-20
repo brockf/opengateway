@@ -210,7 +210,8 @@ class paypal_standard
 		// get true recurring rate, first
 		$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
 		
-		$description = $gateway['currency'] . money_format("%!i",$subscription['amount']) . ' every ' . $interval . ' days until ' . $end_date;
+		$description = (date('Y-m-d',strtotime($start_date)) == date('Y-m-d')) ? 'Initial charge: ' . $gateway['currency'] . $amount . ', then ' : '';
+		$description .= $gateway['currency'] . money_format("%!i",$subscription['amount']) . ' every ' . $interval . ' days until ' . $end_date;
 		if ($start_date != date('Y-m-d') and !isset($adjusted_start_date)) {
 			$description .= ' (free trial ends ' . $start_date . ')';
 		}
@@ -467,7 +468,7 @@ class paypal_standard
 				$CI->load->model('charge_model');
 				
 				// get the first charge amount (it may be different)
-				$data = (isset($data['first_charge'])) ? $data['first_charge'] : $subscription['amount'];
+				$first_charge_amount = (isset($data['first_charge'])) ? $data['first_charge'] : $subscription['amount'];
 				
 				$customer_id = (isset($subscription['customer']['id'])) ? $subscription['customer']['id'] : FALSE;
 				$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $first_charge_amount, array(), $subscription['id'], $customer_id);
@@ -489,8 +490,6 @@ class paypal_standard
 				//die(print_r($response_charge));
 				
 				if ($response_charge['PAYMENTSTATUS'] != 'Completed' and $response_charge['PAYMENTSTATUS'] == 'Pending' and $response_charge['PAYMENTSTATUS'] != 'Processed') {
-					$data = $CI->charge_data_model->Get('r' . $subscription['id']);
-					
 					die('Your initial PayPal payment failed.  <a href="' . $data['cancel_url'] . '">Go back to merchant</a>.');
 				}
 				else {
@@ -518,7 +517,8 @@ class paypal_standard
 			$post['pwd'] = $gateway['pwd'];
 			$post['signature'] = $gateway['signature'];
 			$post['TOKEN'] = $response['TOKEN'];
-			$description = $gateway['currency'] . $subscription['amount'] . ' every ' . $subscription['interval'] . ' days until ' . date('Y-m-d',strtotime($subscription['end_date']));
+			$description = ($order_id) ? 'Initial charge: ' . $gateway['currency'] . $first_charge_amount . ', then ' : '';
+			$description .= $gateway['currency'] . $subscription['amount'] . ' every ' . $subscription['interval'] . ' days until ' . date('Y-m-d',strtotime($subscription['end_date']));
 			if (date('Y-m-d',strtotime($subscription['start_date'])) != date('Y-m-d') and !isset($adjusted_start_date)) {
 				$description .= ' (free trial ends ' . date('Y-m-d',strtotime($subscription['start_date'])) . ')';
 			}
