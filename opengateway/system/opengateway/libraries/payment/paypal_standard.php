@@ -445,6 +445,7 @@ class paypal_standard
 		$CI =& get_instance();
 		
 		$CI->load->model('charge_data_model');
+		$data = $CI->charge_data_model->Get('r' . $subscription['id']);
 		
 		$url = $this->GetAPIUrl($gateway);
 	
@@ -465,8 +466,11 @@ class paypal_standard
 			if (date('Y-m-d',strtotime($subscription['start_date'])) == date('Y-m-d')) {
 				$CI->load->model('charge_model');
 				
+				// get the first charge amount (it may be different)
+				$data = (isset($data['first_charge'])) ? $data['first_charge'] : $subscription['amount'];
+				
 				$customer_id = (isset($subscription['customer']['id'])) ? $subscription['customer']['id'] : FALSE;
-				$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $subscription['amount'], array(), $subscription['id'], $customer_id);
+				$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $first_charge_amount, array(), $subscription['id'], $customer_id);
 				
 				// yes, the first charge is today
 				$post = $response; // most of the data is from here
@@ -542,9 +546,6 @@ class paypal_standard
 				if ($order_id) {
 					TriggerTrip('recurring_charge', $client_id, $order_id, $subscription['id']);
 				}
-				
-				// get return URL from original OpenGateway request
-				$data = $CI->charge_data_model->Get('r' . $subscription['id']);
 				
 				// redirect back to user's site
 				header('Location: ' . $data['return_url']);
