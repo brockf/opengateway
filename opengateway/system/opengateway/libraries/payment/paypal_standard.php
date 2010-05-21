@@ -159,6 +159,8 @@ class paypal_standard
 		$CI->load->helper('url');
 		$CI->load->model('client_model');
 		
+		$amount = money_format("%i",$amount);
+		
 		$client = $CI->client_model->GetClient($client_id,$client_id);
 		
 		// save the return URL
@@ -210,7 +212,7 @@ class paypal_standard
 		// get true recurring rate, first
 		$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
 		
-		$description = (date('Y-m-d',strtotime($start_date)) == date('Y-m-d')) ? 'Initial charge: ' . $gateway['currency'] . $amount . ', then ' : '';
+		$description = ($subscription['amount'] != $amount) ? 'Initial charge: ' . $gateway['currency'] . $amount . ', then ' : '';
 		$description .= $gateway['currency'] . money_format("%!i",$subscription['amount']) . ' every ' . $interval . ' days until ' . $end_date;
 		if ($start_date != date('Y-m-d') and !isset($adjusted_start_date)) {
 			$description .= ' (free trial ends ' . $start_date . ')';
@@ -517,7 +519,7 @@ class paypal_standard
 			$post['pwd'] = $gateway['pwd'];
 			$post['signature'] = $gateway['signature'];
 			$post['TOKEN'] = $response['TOKEN'];
-			$description = ($order_id) ? 'Initial charge: ' . $gateway['currency'] . $first_charge_amount . ', then ' : '';
+			$description = ($order_id and ($first_charge_amount != $subscription['amount'])) ? 'Initial charge: ' . $gateway['currency'] . $first_charge_amount . ', then ' : '';
 			$description .= $gateway['currency'] . $subscription['amount'] . ' every ' . $subscription['interval'] . ' days until ' . date('Y-m-d',strtotime($subscription['end_date']));
 			if (date('Y-m-d',strtotime($subscription['start_date'])) != date('Y-m-d') and !isset($adjusted_start_date)) {
 				$description .= ' (free trial ends ' . date('Y-m-d',strtotime($subscription['start_date'])) . ')';

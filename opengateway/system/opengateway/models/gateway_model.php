@@ -148,7 +148,7 @@ class Gateway_model extends Model
 		$gateway_settings = $this->$gateway_name->Settings();
 		
 		// validate function arguments
-		if (empty($amount) or (empty($credit_card) and $gateway_settings['external'] == FALSE)) {
+		if ($amount == FALSE or ((empty($credit_card) and $gateway_settings['external'] == FALSE) and $amount != '0.00' and $amount != '0')) {
 			die($CI->response->Error(1004));
 		}
 		
@@ -325,6 +325,14 @@ class Gateway_model extends Model
 			$credit_card['card_type'] = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
 			
 			if (!$credit_card['card_type']) {
+				die($this->response->Error(5008));
+			}
+			
+			if (!isset($credit_card['exp_month']) or empty($credit_card['exp_month'])) {
+				die($this->response->Error(5008));
+			}
+			
+			if (!isset($credit_card['exp_year']) or empty($credit_card['exp_year'])) {
 				die($this->response->Error(5008));
 			}
 		}
