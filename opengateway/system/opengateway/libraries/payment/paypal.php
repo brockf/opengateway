@@ -195,7 +195,7 @@ class paypal
 		$post['amt'] = $amount; 
 		$post['acct'] = $credit_card['card_num'];
 		$post['creditcardtype'] = $card_type;
-		$post['expdate'] = $credit_card['exp_month'] . $credit_card['exp_year'];
+		$post['expdate'] = str_pad($credit_card['exp_month'], 2, "0", STR_PAD_LEFT) . $credit_card['exp_year'];
 		$post['invnum'] = $order_id;
 		$post['currencycode'] = $gateway['currency'];
 		$post['ipaddress'] = $customer['ip_address'];
@@ -406,7 +406,7 @@ class paypal
 		$post['acct'] = $credit_card['card_num'];
 		$post['currencycode'] = $gateway['currency'];
 		$post['creditcardtype'] = $card_type;
-		$post['expdate'] = $credit_card['exp_month'] . $credit_card['exp_year'];
+		$post['expdate'] = str_pad($credit_card['exp_month'], 2, "0", STR_PAD_LEFT) . $credit_card['exp_year'];
 		$post['billingperiod'] = 'Day';
 		$post['billingfrequency'] = $interval;
 		$post['profilestartdate'] = date('c', strtotime($start_date));

@@ -360,7 +360,7 @@ class wirecard
 													'CreditCardNumber' => $credit_card['card_num'],
 													'CVC2' => $credit_card['cvv'],
 													'ExpirationYear' => $credit_card['exp_year'],
-													'ExpirationMonth' => $credit_card['exp_month'],
+													'ExpirationMonth' => str_pad($credit_card['exp_month'], 2, "0", STR_PAD_LEFT),
 													'CardHolderName' => $credit_card['name']
 												),
 												'CONTACT_DATA' => array(

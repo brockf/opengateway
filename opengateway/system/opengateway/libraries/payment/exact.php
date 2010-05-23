@@ -132,7 +132,7 @@ class exact
 			  		'Password'			=> $gateway['password'],
 					'Transaction_Type'  => '00',
 				 	'Card_Number' 		=> $credit_card['card_num'],
-					'Expiry_Date'		=> $credit_card['exp_month'] . substr($credit_card['exp_year'],-2,2),
+					'Expiry_Date'		=> str_pad($credit_card['exp_month'], 2, "0", STR_PAD_LEFT) . substr($credit_card['exp_year'],-2,2),
 					'CVD_Presence_Ind' 	=> (empty($credit_card['cvv'])) ? '9' : '1',
 					'Customer_Ref' 		=> $order_id,
 					'DollarAmount' 		=> $amount
@@ -248,7 +248,7 @@ class exact
   		'Password'			=> $gateway['password'],
 		'Transaction_Type'  => '00',
 	 	'Card_Number' 		=> $credit_card['card_num'],
-		'Expiry_Date'		=> $credit_card['exp_month'] . substr($credit_card['exp_year'],-2,2),
+		'Expiry_Date'		=> str_pad($credit_card['exp_month'], 2, "0", STR_PAD_LEFT) . substr($credit_card['exp_year'],-2,2),
 		'CVD_Presence_Ind' 	=> (empty($credit_card['cvv'])) ? '9' : '1',
 		'Customer_Ref' 		=> $order_id,
 		'DollarAmount' 		=> $amount
