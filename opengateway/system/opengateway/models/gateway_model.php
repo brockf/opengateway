@@ -253,7 +253,7 @@ class Gateway_model extends Model
 		
 		// if it was successful, send an email
 		if ($response['response_code'] == 1) {
-			if (!isset($response['not_completed']) or $response['not_completed'] != FALSE) {
+			if (!isset($response['not_completed']) or $response['not_completed'] == TRUE) {
 				$CI->charge_model->SetStatus($order_id, 1);
 				TriggerTrip('charge', $client_id, $response['charge_id']);
 			}
