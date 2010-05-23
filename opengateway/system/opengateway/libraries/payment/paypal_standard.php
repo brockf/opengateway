@@ -116,11 +116,11 @@ class paypal_standard
 			$post['name'] = $customer['first_name'] . ' ' . $customer['last_name'];
 		}
 		
-		$post['PAYMENTREQUEST_0_PAYMENTACTION'] = 'sale';
+		$post['paymentaction'] = 'sale';
 		$post['user'] = $gateway['user'];
 		$post['pwd'] = $gateway['pwd'];
 		$post['signature'] = $gateway['signature'];
-		$post['PAYMENTREQUEST_0_AMT'] = $amount; 
+		$post['AMT'] = $amount; 
 		$post['invnum'] = $order_id;
 		$post['currencycode'] = $gateway['currency'];
 		
