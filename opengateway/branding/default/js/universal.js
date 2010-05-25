@@ -7,9 +7,11 @@ $(document).ready(function() {
 	
 	// menu
 	$('#topnav li.parent').hover(function () {
-		$(this).children('ul.children').slideDown(100);
+		$(this).children('ul.children').each(function () {
+			$(this).stop(false,true).slideDown(100);
+		});
 	}, function () {
-		$(this).children('ul.children').slideUp(100);
+		$(this).children('ul.children').stop(false,true).slideUp(100);
 	});
 	
 	// table row colours
