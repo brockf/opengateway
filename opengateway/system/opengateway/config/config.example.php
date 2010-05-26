@@ -279,7 +279,7 @@ $config['cookie_prefix']	= "";
 $parsed_url = parse_url($config['base_url']);
 $host = $parsed_url['host'];
 $config['cookie_domain']	= $host;
-$config['cookie_path']		= "/";
+$config['cookie_path']		= (empty($parsed_url['path'])) ? "/" : $parsed_url['path'];
 
 /*
 |--------------------------------------------------------------------------
