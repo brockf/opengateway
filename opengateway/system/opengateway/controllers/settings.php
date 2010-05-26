@@ -416,13 +416,25 @@ class Settings extends Controller {
 			$settings = $this->$class->Settings();
 		}
 		
+		$gateway = array();
+		
 		foreach ($settings['field_details'] as $name => $details) {
+			$gateway[$name] = $this->input->post($name);
+			
 			if ($this->input->post($name) == '') {
 				$this->notices->SetError('Required field missing: ' . $details['text']);
 				$error = true;
 			}
 		}
 		reset($settings['field_details']);
+		
+		// test gateway
+		$test = $this->$class->TestConnection($this->user->Get('client_id'),$gateway);
+		
+		if (!$test) {
+			$this->notices->SetError('Unable to establish a test connection.  Your details may be incorrect.');
+			$error = true;
+		}
 		
 		if (isset($error)) {
 			if ($action == 'new') {

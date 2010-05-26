@@ -85,6 +85,7 @@ class Transactions extends Controller {
 		$total_amount = $this->charge_model->GetTotalAmount($this->user->Get('client_id'),$this->dataset->params);
 		
 		// sidebar
+		$this->navigation->SidebarButton('Recurring Charges','transactions/recurring');
 		$this->navigation->SidebarButton('New Charge','transactions/create');
 		
 		$data = array(
@@ -173,6 +174,7 @@ class Transactions extends Controller {
 		$this->dataset->Initialize('recurring_model','GetRecurrings',$columns);
 		
 		// sidebar
+		$this->navigation->SidebarButton('Charge Records','transactions');
 		$this->navigation->SidebarButton('New Charge','transactions/create');
 		
 		$this->load->view(branded_view('cp/recurrings.php'));

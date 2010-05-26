@@ -163,7 +163,7 @@ class sagepay
 			"Description" => "API Payment at " . date('Y-m-d H:i:s') . " via " . $CI->config->item('server_name'),
 			"CardHolder" => $credit_card['name'],
 			"CardNumber" => $credit_card['card_num'],
-			"ExpiryDate" => $credit_card['exp_month'] . substr($credit_card['exp_year'],-2,2),
+			"ExpiryDate" => str_pad($credit_card['exp_month'], 2, "0", STR_PAD_LEFT) . substr($credit_card['exp_year'],-2,2),
 			"CardType" => $card_type,
 			"Apply3DSecure" => "2" // No 3DSecure checks, ever
 		);
