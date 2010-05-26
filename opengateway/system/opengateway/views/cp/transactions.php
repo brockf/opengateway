@@ -11,7 +11,7 @@ if (!empty($this->dataset->data)) {
 			<td><?=$row['date'];?></td>
 			<td><?=$this->config->item('currency_symbol');?><?=$row['amount'];?></td>
 			<td><? if (isset($row['customer'])) { ?><?=$row['customer']['last_name'];?>, <?=$row['customer']['first_name'];?><? } ?></td>
-			<td>****<?=$row['card_last_four'];?></td>
+			<td><? if (!empty($row['card_last_four'])) { ?>****<?=$row['card_last_four'];?><? } ?></td>
 			<td class="options"><? if (isset($row['recurring_id'])) { ?><a href="<?=site_url('transactions/recurring/' . $row['recurring_id']);?>"><?=$row['recurring_id'];?></a><? } ?></td>
 			<td class="options"><a href="<?=site_url('transactions/charge/' . $row['id']);?>">details</a></td>
 		</tr>

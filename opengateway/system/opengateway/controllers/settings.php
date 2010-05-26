@@ -428,14 +428,6 @@ class Settings extends Controller {
 		}
 		reset($settings['field_details']);
 		
-		// test gateway
-		$test = $this->$class->TestConnection($this->user->Get('client_id'),$gateway);
-		
-		if (!$test) {
-			$this->notices->SetError('Unable to establish a test connection.  Your details may be incorrect.');
-			$error = true;
-		}
-		
 		if (isset($error)) {
 			if ($action == 'new') {
 				redirect('settings/new_gateway');
@@ -458,7 +450,27 @@ class Settings extends Controller {
 		$this->load->model('gateway_model');
 		
 		if ($action == 'new') {
-			$email_id = $this->gateway_model->NewGateway($this->user->Get('client_id'), $params);
+			$gateway_id = $this->gateway_model->NewGateway($this->user->Get('client_id'), $params);
+			
+			$gateway = $this->gateway_model->GetGatewayDetails($this->user->Get('client_id'), $gateway_id);
+			
+			// test gateway
+			$test = $this->$class->TestConnection($this->user->Get('client_id'),$gateway);
+			
+			if (!$test) {
+				$this->gateway_model->DeleteGateway($this->user->Get('client_id'),$gateway_id,TRUE);
+				
+				$this->notices->SetError('Unable to establish a test connection.  Your details may be incorrect.');
+				
+				if ($action == 'new') {
+					redirect('settings/new_gateway');
+					return false;
+				}
+				else {
+					redirect('settings/edit_gateway/' . $id);
+				}	
+			}
+			
 			$this->notices->SetNotice($this->lang->line('gateway_added'));
 		}
 		else {

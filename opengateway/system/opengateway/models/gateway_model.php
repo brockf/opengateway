@@ -102,7 +102,6 @@ class Gateway_model extends Model
 		}
 		
 		return $new_gateway_id;
-
 	}
 	
 	/**
@@ -846,7 +845,7 @@ class Gateway_model extends Model
 	* @return bool TRUE on success
 	*/
 	
-	function DeleteGateway($client_id, $gateway_id)
+	function DeleteGateway($client_id, $gateway_id, $completely = FALSE)
 	{
 		$CI =& get_instance();
 		
@@ -867,9 +866,15 @@ class Gateway_model extends Model
 		}
 		
 		// Mark as deleted
-		$update_data['deleted'] = 1;
-		$this->db->where('client_gateway_id', $gateway_id);
-		$this->db->update('client_gateways', $update_data);
+		if ($completely == FALSE) {
+			$update_data['deleted'] = 1;
+			$this->db->where('client_gateway_id', $gateway_id);
+			$this->db->update('client_gateways', $update_data);
+		}
+		else {
+			// remove from database completely
+			$this->db->delete('client_gateways',array('client_gateway_id' => $gateway_id));
+		}
 		
 		// Delete the client gateway params
 		$this->db->where('client_gateway_id', $gateway_id);

@@ -143,7 +143,6 @@ class authnet
 		}
 		
 		return $response;
-		
 	}
 	
 	function Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card)

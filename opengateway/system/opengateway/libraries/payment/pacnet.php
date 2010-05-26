@@ -142,7 +142,7 @@ class pacnet
 		$variables = array(
 							'PaymentRoutingNumber' => $gateway['prn'],
 							'PaymentType' => 'cc_debit',
-							'Amount' => $amount,
+							'Amount' => (int)($amount * 100),
 							'CurrencyCode' => $gateway['currency'],
 							'CardNumber' => $credit_card['card_num'],
 							'ExpiryDate' => str_pad($credit_card['exp_month'], 2, "0", STR_PAD_LEFT) . substr($credit_card['exp_year'],-2,2),
@@ -161,13 +161,13 @@ class pacnet
 		
 		$response = $this->Process($gateway, array('UserName','Timestamp','Amount','CurrencyCode','Reference'), $variables, 'submit');
 		
-		if (isset($response['StatusCode']) and ($response['StatusCode'] == 'Approved' or $response['StatusCode'] == 'Submitted' or $response['StatusCode'] == 'InProgress')) {
+		if (isset($response['Status']) and ($response['Status'] == 'Approved' or $response['Status'] == 'Submitted' or $response['Status'] == 'InProgress')) {
 			$CI->load->model('order_authorization_model');
 			$CI->order_authorization_model->SaveAuthorization($order_id, $response['TrackingNumber'], '');
 			$response_array = array('charge_id' => $order_id);
 			$response = $CI->response->TransactionResponse(1, $response_array);
 		} else {
-			$response_array = array('reason' => (isset($response['StatusCode'])) ? 'Error ' . $response['StatusCode'] : 'Undefined Error');
+			$response_array = array('reason' => (isset($response['Status'])) ? 'Error ' . $response['Status'] : 'Undefined Error');
 			$response = $CI->response->TransactionResponse(2, $response_array);
 		}
 		
@@ -177,6 +177,8 @@ class pacnet
 	function Recur ($client_id, $gateway, $customer, $amount, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences = FALSE)
 	{
 		$CI =& get_instance();
+		
+		$CI->load->model('order_authorization_model');
 		
 		// is there a payment for today?
 		if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
@@ -188,7 +190,7 @@ class pacnet
 			$variables = array(
 								'PaymentRoutingNumber' => $gateway['prn'],
 								'PaymentType' => 'cc_debit',
-								'Amount' => $amount,
+								'Amount' => (int)($amount * 100),
 								'CurrencyCode' => $gateway['currency'],
 								'CardNumber' => $credit_card['card_num'],
 								'ExpiryDate' => str_pad($credit_card['exp_month'], 2, "0", STR_PAD_LEFT) . substr($credit_card['exp_year'],-2,2),
@@ -207,7 +209,7 @@ class pacnet
 			
 			$response = $this->Process($gateway, array('UserName','Timestamp','Amount','CurrencyCode','Reference'), $variables, 'submit');
 			
-			if (isset($response['StatusCode']) and ($response['StatusCode'] == 'Approved' or $response['StatusCode'] == 'Submitted' or $response['StatusCode'] == 'InProgress')) {
+			if (isset($response['Status']) and ($response['Status'] == 'Approved' or $response['Status'] == 'Submitted' or $response['Status'] == 'InProgress')) {
 				$CI->recurring_model->SaveApiAuthNumber($subscription_id, $response['TrackingNumber']);
 				$CI->order_authorization_model->SaveAuthorization($order_id, $response['TrackingNumber'], '');
 
@@ -219,19 +221,19 @@ class pacnet
 				$CI->recurring_model->MakeInactive($subscription_id);
 				$CI->charge_model->SetStatus($order_id, 0);
 				
-				$response_array = array('reason' => (isset($response['StatusCode'])) ? 'Error ' . $response['StatusCode'] : 'Undefined Error');
+				$response_array = array('reason' => (isset($response['Status'])) ? 'Error ' . $response['Status'] : 'Undefined Error');
 				$response = $CI->response->TransactionResponse(2, $response_array);
 			}
 		} else {	
 			// authorize
 			$variables = array(
 								'PaymentRoutingNumber' => $gateway['prn'],
-								'PaymentType' => 'cc_preaut',
-								'Amount' => '0.00',
+								'PaymentType' => 'cc_preauth',
+								'Amount' => '1',
 								'CurrencyCode' => $gateway['currency'],
 								'CardNumber' => $credit_card['card_num'],
 								'ExpiryDate' => str_pad($credit_card['exp_month'], 2, "0", STR_PAD_LEFT) . substr($credit_card['exp_year'],-2,2),
-								'Reference' => ''
+								'Reference' => md5(time())
 							);
 							
 			if (isset($credit_card['cvv'])) {
@@ -246,7 +248,7 @@ class pacnet
 			
 			$response = $this->Process($gateway, array('UserName','Timestamp','Amount','CurrencyCode','Reference'), $variables, 'submit');
 			
-			if (isset($response['StatusCode']) and ($response['StatusCode'] == 'Approved' or $response['StatusCode'] == 'Submitted' or $response['StatusCode'] == 'InProgress')) {
+			if (isset($response['Status']) and ($response['Status'] == 'Approved' or $response['Status'] == 'Submitted' or $response['Status'] == 'InProgress')) {
 				$CI->recurring_model->SaveApiAuthNumber($subscription_id, $response['TrackingNumber']);
 				
 				$response_array = array('recurring_id' => $subscription_id);
@@ -255,7 +257,7 @@ class pacnet
 				// Make the subscription inactive
 				$CI->recurring_model->MakeInactive($subscription_id);
 				
-				$response_array = array('reason' => (isset($response['StatusCode'])) ? 'Error ' . $response['StatusCode'] : 'Undefined Error');
+				$response_array = array('reason' => (isset($response['Status'])) ? 'Error ' . $response['Status'] : 'Undefined Error');
 				$response = $CI->response->TransactionResponse(2, $response_array);
 			}
 		}
@@ -270,15 +272,15 @@ class pacnet
 		$variables = array(
 							'PaymentRoutingNumber' => $gateway['prn'],
 							'PaymentType' => 'cc_credit',
-							'Amount' => $charge['amount'],
+							'Amount' => (int)($charge['amount'] * 100),
 							'CurrencyCode' => $gateway['currency'],
 							'TemplateNumber' => $authorization->tran_id,
-							'Reference' => ''
+							'Reference' => md5(time())
 						);
 		
 		$response = $this->Process($gateway, array('UserName','Timestamp','Amount','CurrencyCode','Reference'), $variables, 'submit');
 		
-		if (isset($response['StatusCode']) and ($response['StatusCode'] == 'Approved' or $response['StatusCode'] == 'Submitted' or $response['StatusCode'] == 'InProgress')) {
+		if (isset($response['Status']) and ($response['Status'] == 'Approved' or $response['Status'] == 'Submitted' or $response['Status'] == 'InProgress')) {
 			return TRUE;
 		} else {
 			return FALSE;
@@ -296,22 +298,22 @@ class pacnet
 		$variables = array(
 							'PaymentRoutingNumber' => $gateway['prn'],
 							'PaymentType' => 'cc_debit',
-							'Amount' => $charge['amount'],
+							'Amount' => (int)($amount * 100),
 							'CurrencyCode' => $gateway['currency'],
 							'TemplateNumber' => $template_number,
-							'Reference' => ''
+							'Reference' => md5(time())
 						);
 		
 		$response = $this->Process($gateway, array('UserName','Timestamp','Amount','CurrencyCode','Reference'), $variables, 'submit');
 		
-		if (isset($response['StatusCode']) and ($response['StatusCode'] == 'Approved' or $response['StatusCode'] == 'Submitted' or $response['StatusCode'] == 'InProgress')) {
+		if (isset($response['Status']) and ($response['Status'] == 'Approved' or $response['Status'] == 'Submitted' or $response['Status'] == 'InProgress')) {
 			$response['success'] = TRUE;
 			// Save the Auth information
 			$CI->load->model('order_authorization_model');
 			$CI->order_authorization_model->SaveAuthorization($order_id, $response['TrackingNumber']);
 		} else {
 			$response['success'] = FALSE;
-			$response['reason'] = (isset($response['StatusCode'])) ? 'Error ' . $response['StatusCode'] : 'Undefined Error';
+			$response['reason'] = (isset($response['Status'])) ? 'Error ' . $response['Status'] : 'Undefined Error';
 		}
 		
 		return $response;
@@ -329,7 +331,7 @@ class pacnet
 	
 	function Process($gateway, $signature_variables = array(), $variables = array(), $method = 'hello') 
 	{
-		$url = $this->GetAPIURL() . '/' . $method;
+		$url = $this->GetAPIURL($gateway) . '/' . $method;
 		
 		// start post_string
 		$post_string = '';
@@ -339,20 +341,20 @@ class pacnet
 		
 		// build signature
 		$variables['UserName'] = $gateway['username'];
-		$variables['Timestamp'] = date("c",(time() + date('Z')));
+		$variables['Timestamp'] = gmdate('Y-m-d\TH:i:s.000\Z');
 		
 		$signature_string = '';
 		foreach ($signature_variables as $variable) {
-			$signature_string .= $variablebs[$variable] . ',';
+			$signature_string .= $variables[$variable] . ',';
 		}
 		$signature_string = rtrim($signature_string, ',');
 		
 		$sha1 = strtoupper(sha1($signature_string));
 		
-		$signature = sha1($sha1 . ',' . $gateway['password']);
+		$signature = strtoupper(sha1($sha1 . ',' . $gateway['password']));
 		
 		// finish $post_string
-		$post_string .= 'UserName=' . $variables['Username'] . '&Timestamp=' . $variables['Timestamp'] . '&Signature=' . $signature;
+		$post_string .= 'UserName=' . urlencode($variables['UserName']) . '&Timestamp=' . urlencode($variables['Timestamp']) . '&Signature=' . $signature;
 		
 		$request = curl_init($url); // initiate curl object
 		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
