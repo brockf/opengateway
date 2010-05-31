@@ -17,6 +17,13 @@ class Install extends Controller {
 		
 		define("_CONTROLPANEL","1");
 		define("_INSTALLER","1");
+		
+		// make sure we have a trailing slash
+		if (substr($this->current_url(),-7,7) == 'install') {
+			// we don't have a trailing slash
+			header('Location: ' . $this->current_url() . '/');
+			die();
+		}
 				
 		// no one should access this if OpenGateway is installed
 		if (file_exists(APPPATH . 'config/installed.php')) {
