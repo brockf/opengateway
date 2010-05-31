@@ -4,6 +4,7 @@
 	<error>00</error>
 	<error_text>System Error: <?php echo strip_tags($message); ?></error_text>
 </response>
+<? die(); ?>
 <?php } else { ?>
 <html>
 <head>

@@ -4,6 +4,7 @@
 	<error>00</error>
 	<error_text>Database Error: <?php echo strip_tags($message); ?></error_text>
 </response>
+<? die(); ?>
 <?php } else { ?>
 <html>
 <head>
