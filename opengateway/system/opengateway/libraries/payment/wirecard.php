@@ -22,7 +22,7 @@ class wirecard
 		$settings['transaction_fee'] = '$0.23';
 		$settings['purchase_link'] = 'http://www.wirecard.com/products/payment/credit-card-processing.html';
 		$settings['allows_updates'] = 1;
-		$settings['allows_refunds'] = 0;
+		$settings['allows_refunds'] = 1;
 		$settings['requires_customer_information'] = 1;
 		$settings['requires_customer_ip'] = 1;
 		$settings['required_fields'] = array(
@@ -238,6 +238,38 @@ class wirecard
 		}
 		
 		return $response;
+	}
+	
+	function Refund ($client_id, $gateway, $charge, $authorization)
+	{	
+		$CI =& get_instance();
+		
+		$transaction = array(
+			'WIRECARD_BXML' => array(
+				'W_REQUEST' => array(
+					'W_JOB' => array(
+							'BusinessCaseSignature' => $gateway['businesscasesignature'],
+							'FNC_CC_BOOKBACK' => array(
+								'CC_TRANSACTION' => array(
+									'TransactionID' => $charge['id'],
+									'GuWID' => $authorization->tran_id,
+									'Amount' => (int)($charge['amount'] * 100),
+									'Currency' => $gateway['currency']
+								)
+							)
+						)
+					)	
+				)	
+			);
+			
+		$response = $this->Process($gateway, $transaction);
+		
+		if (isset($response['W_RESPONSE']['W_JOB']['FNC_CC_BOOKBACK']['CC_TRANSACTION']['PROCESSING_STATUS']['FunctionResult']) and $response['W_RESPONSE']['W_JOB']['FNC_CC_BOOKBACK']['CC_TRANSACTION']['PROCESSING_STATUS']['FunctionResult'] == 'ACK') {
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
 	}
 	
 	function CancelRecurring($client_id, $subscription)
