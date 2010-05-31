@@ -18,7 +18,7 @@ class Field_validation
 		if ($required_fields) {
 			foreach($required_fields as $required_value) {
 				foreach($required_value as $key => $value) {
-					if (!in_array($value, $param_keys)) {
+					if (!in_array($value, $param_keys)) {			
 						$error = TRUE;
 					}
 					

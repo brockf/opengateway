@@ -408,8 +408,8 @@ class API extends Controller {
 		
 		if ($customer_id = $this->customer_model->NewCustomer($client_id, $params)) {
 			$response = array('customer_id' => $customer_id);
-		
-			return $response = $this->response->TransactionResponse(200, $response);
+			
+			return $this->response->TransactionResponse(200, $response);
 		}
 		else {
 			return FALSE;
