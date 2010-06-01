@@ -350,7 +350,7 @@ class Customer_model extends Model
 	* @return mixed Array containing the search results
 	*/
 	
-	function GetCustomers($client_id, $params)
+	function GetCustomers($client_id, $params, $any_status = FALSE)
 	{
 		// Make sure they only get their own customers
 		$this->db->where('customers.client_id', $client_id);
@@ -358,7 +358,7 @@ class Customer_model extends Model
 		if(isset($params['deleted']) and $params['deleted'] == '1') {
 			$this->db->where('customers.active', '0');
 		}
-		else {
+		elseif ($any_status == FALSE) {
 			$this->db->where('customers.active', '1');
 		}
 		
@@ -551,7 +551,7 @@ class Customer_model extends Model
 	{	
 		$params = array('customer_id' => $customer_id);
 		
-		$data = $this->GetCustomers($client_id, $params);
+		$data = $this->GetCustomers($client_id, $params, TRUE);
 		
 		if (!empty($data)) {
 			return $data[0];

@@ -370,7 +370,7 @@ class pacnet
 		if (is_array($pairs)) {
 		    foreach ($pairs as $pair)
 		    {
-				list($key, $value) = split('=', $pair);
+				list($key, $value) = explode('=', $pair);
 				if ($key != '')
 				{
 					$key = htmlspecialchars(urldecode($key));
