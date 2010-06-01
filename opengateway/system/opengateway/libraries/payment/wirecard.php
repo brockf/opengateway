@@ -212,7 +212,7 @@ class wirecard
 			$CI->load->model('charge_model');
 			$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], '0.00', $credit_card, $subscription_id);
 			
-			$transaction = $this->TransactionArray($client_id, $order_id, $gateway, $customer, $amount, $credit_card, 'INITIAL', 'FNC_CC_AUTHORIZATION');
+			$transaction = $this->TransactionArray($client_id, $order_id, $gateway, $customer, $amount, $credit_card, 'Initial', 'FNC_CC_AUTHORIZATION');
 			
 			$response = $this->Process($gateway, $transaction);
 			
