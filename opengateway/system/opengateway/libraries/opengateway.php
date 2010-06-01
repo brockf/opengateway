@@ -62,7 +62,7 @@ class OpenGateway
 	*/
     public function Param($name, $value, $parent = FALSE)  {
     	// prep value for XML
-    	$value = $this->xmlEntities($this->utf8tohtml($value));
+    	$value = (is_numeric($value)) ? $value : $this->xmlEntities($this->utf8tohtml($value));
     
         if($parent) {
        	   $this->params->$parent->$name = (string)$value;
