@@ -50,7 +50,7 @@ class ArrayToXML
         $doc->preserveWhiteSpace = FALSE;
         $doc->loadXML( $xml->asXML() );
         $doc->formatOutput = TRUE;
-        return $doc->saveXML();
+        return xml_value_prep($doc->saveXML(),FALSE);
     }
 
     /**

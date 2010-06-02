@@ -1,6 +1,6 @@
 <?php
 
-function xml_value_prep ($value) {
+function xml_value_prep ($value, $encode_tags = TRUE) {
 
 	if (is_numeric($value)) {
 		// don't work with numbers
@@ -13,7 +13,7 @@ function xml_value_prep ($value) {
         $ascii = ord($char);
         if ($ascii < 128) {
             // one-byte character
-            $result .= htmlentities($char);
+            $result .= ($encode_tags == TRUE) ? htmlentities($char) : $char;
         } else if ($ascii < 192) {
             // non-utf8 character or not a start byte
         } else if ($ascii < 224) {

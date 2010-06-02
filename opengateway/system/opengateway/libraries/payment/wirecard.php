@@ -418,6 +418,11 @@ class wirecard
 							)	
 						);
 						
+		// if this is outside Canada or USA, we don't need state
+		if ($customer['country'] != 'US' or $customer['country'] != 'CA') {
+			unset($transaction['WIRECARD_BXML']['W_REQUEST']['W_JOB'][$node]['CC_TRANSACTION']['CORPTRUSTCENTER_DATA']['ADDRESS']['State']);
+		}
+						
 		return $transaction;
 	}
 }
