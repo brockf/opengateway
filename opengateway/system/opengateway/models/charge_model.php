@@ -192,9 +192,17 @@ class Charge_model extends Model
 		}
 		
 		if (isset($params['status'])) {
-			$status = ($params['status'] == '1' or $params['status'] == 'ok') ? '1' : '0';
-			$this->db->where('orders.status',$status);
-		}	
+			if ($params['status'] == '1' or $params['status'] == 'ok') {
+				$this->db->where('orders.status','1');
+				$this->db->where('orders.refunded','0');
+			}
+			elseif ($params['status'] == '2' or $params['status'] == 'refunded') {
+				$this->db->where('orders.refunded','1');
+			}
+			else {
+				$this->db->where('orders.status','0');
+			}
+		}
 		
 		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
@@ -299,8 +307,16 @@ class Charge_model extends Model
 		}
 		
 		if (isset($params['status'])) {
-			$status = ($params['status'] == '1' or $params['status'] == 'ok') ? '1' : '0';
-			$this->db->where('orders.status',$status);
+			if ($params['status'] == '1' or $params['status'] == 'ok') {
+				$this->db->where('orders.status','1');
+				$this->db->where('orders.refunded','0');
+			}
+			elseif ($params['status'] == '2' or $params['status'] == 'refunded') {
+				$this->db->where('orders.refunded','1');
+			}
+			else {
+				$this->db->where('orders.status','0');
+			}
 		}
 		
 		if (isset($params['offset'])) {

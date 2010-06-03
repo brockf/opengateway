@@ -347,6 +347,12 @@ table.dataset tbody td.failed {
 	background-repeat: no-repeat;
 }
 
+table.dataset tbody td.refunded {
+	background-image: url(../images/refunded.png);
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
 table.dataset tbody tr.selected td {
 	background-color: #f3fcca;
 }

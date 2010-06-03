@@ -36,7 +36,7 @@ class Transactions extends Controller {
 							'name' => 'Status',
 							'sort_column' => 'status',
 							'type' => 'select',
-							'options' => array('1' => 'ok','0' => 'failed'),
+							'options' => array('1' => 'ok', '2' => 'refunded', '0' => 'failed'),
 							'width' => '10%',
 							'filter' => 'status'),
 						array(

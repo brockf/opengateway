@@ -284,7 +284,7 @@
 				<li><span class="request">customer_last_name</span></li>
 				<li><span class="request">customer_internal_id</span></li>
 				<li><span class="request">recurring_only</span> - Set to "1" to only retrieve charges linked to recurring charges.</li>
-				<li><span class="request">status</span> - Values: "ok" or "failed".  If not present in the request, both "ok" and "failed" transactions are returned.</li>
+				<li><span class="request">status</span> - Values: "ok", "refunded", or "failed".  If not present in the request, all transactions are returned regardless of status.</li>
 				<li><span class="request">offset</span> - Retrieval will begin after <i>offset</i> # of records.  Useful for pagination.  Default: 0.</li>
 				<li><span class="request">limit</span> - The total number of records to retrieve, beginning at the offset.  Maximum: 100.  Default: 100.</li>
 				<li><span class="request">sort</span> - The field on which to sort retrieved records.  Default: "date".  Available values:
