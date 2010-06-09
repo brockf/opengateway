@@ -500,7 +500,8 @@ class Gateway_model extends Model
 		
 		if (!empty($credit_card)) {
 			// if the credit card expiration date is before the end date, we need to set the end date to one day before the expiration
-			$expiry = mktime(0,0,0, $credit_card['exp_month'], days_in_month($credit_card['exp_month'], $credit_card['exp_year']), $credit_card['exp_year']);
+			$check_year = ($credit_card['exp_year'] > 2000) ? $credit_card['exp_year'] : '20' . $credit_card['exp_year'];
+			$expiry = mktime(0,0,0, $credit_card['exp_month'], days_in_month($credit_card['exp_month'], $credit_card['exp_year']), $check_year);
 			
 			if ($expiry < strtotime($end_date)) {
 				// make the adjustment, this card will expire
