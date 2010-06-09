@@ -172,7 +172,7 @@ class Gateway_model extends Model
 		// Validate the amount
 		$amount = $this->field_validation->ValidateAmount($amount);
 		
-		if(!$amount) {
+		if($amount === FALSE) {
 			die($this->response->Error(5009));
 		}
 		
@@ -419,7 +419,7 @@ class Gateway_model extends Model
 			
 			$amount = $this->field_validation->ValidateAmount($amount);
 			
-			if (!$amount) {
+			if ($amount === FALSE) {
 				die($this->response->Error(5009));
 			}
 			
@@ -437,7 +437,7 @@ class Gateway_model extends Model
 			$notification_url = (isset($recur['notification_url'])) ? $recur['notification_url'] : '';
 			
 			// Validate the amount
-			if (!$this->field_validation->ValidateAmount($amount)) {
+			if ($this->field_validation->ValidateAmount($amount) === FALSE) {
 				die($this->response->Error(5009));
 			}
 			
