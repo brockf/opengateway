@@ -233,7 +233,7 @@ class API extends Controller {
 	}
 	
 	function ChangeRecurringPlan($client_id,$params) {
-		$this->load->model('plan_model');
+		$this->load->model('recurring_model');
 		
 		if (!isset($params['plan_id'])) {
 			die($this->response->Error(6006));
@@ -242,7 +242,7 @@ class API extends Controller {
 			die($this->response->Error(6002));
 		}
 		
-		if ($this->plan_model->ChangeRecurringPlan($client_id,$params['recurring_id'],$params['plan_id'])) 
+		if ($this->recurring_model->ChangeRecurringPlan($client_id,$params['recurring_id'],$params['plan_id'])) 
 		{
 			return $this->response->TransactionResponse(103, array());
 		}
