@@ -1,8 +1,8 @@
 <?=$this->load->view(branded_view('install/header'), array('complete' => TRUE));?>
 <h1>Install Complete!</h1>
 <p class="error"><b>Do not refresh this page!  Now that OpenGateway is installed, the installer will be completely disabled.</b></p>
-<p><strong>Congratulations!  You have successfully uploaded and configure your OpenGateway billing engine.</strong></p>
-<p>Import instructions, credentials and links will follow.</p>
+<p><strong>Congratulations!  You have successfully uploaded and configured your OpenGateway billing engine.</strong></p>
+<p>Important instructions, credentials and links will follow.</p>
 <h2>Setup your cronjobs</h2>
 <p>Automated processes like emails and recurring charges require the daily execution of two cronjobs.  Please use
 a crontab manager (either in your cPanel/Plesk control panel or via SSH) to setup the following crontabs, exactly as so:</p>
