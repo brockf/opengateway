@@ -203,6 +203,10 @@ class Settings extends Controller {
 						'to_address' => ($this->input->post('to_address') == 'email') ? $this->input->post('to_address_email') : 'customer',
 						'bcc_address' => ($this->input->post('bcc_address') == 'client' or $this->input->post('bcc_address') == '') ? $this->input->post('bcc_address',true) : $this->input->post('bcc_address_email')
 					);
+					
+		if ($params['bcc_address'] == 'email@example.com') {
+			$params['bcc_address'] = '';
+		}
 		
 		$this->load->model('email_model');
 		
