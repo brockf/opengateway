@@ -158,7 +158,7 @@ class Recurring_model extends Model
 	*/
 	
 	function DeleteRecurring ($subscription_id) {
-		$this->db->where('subscription_id',$subscription);
+		$this->db->where('subscription_id',$subscription_id);
 		$this->db->delete('subscriptions');
 		
 		return TRUE;
