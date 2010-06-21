@@ -373,7 +373,13 @@ class Recurring_model extends Model
 				$data[$i]['end_date'] = local_time($client_id, $row->end_date);
 				$data[$i]['last_charge_date'] = local_time($client_id, $row->last_charge);
 				$data[$i]['next_charge_date'] = local_time($client_id, $row->next_charge);
-				if ($row->sub_active == '0') { $data[$i]['cancel_date'] = local_time($client_id, $row->cancel_date); }
+				if ($row->sub_active == '0' and $row->cancel_date == '0000-00-00 00:00:00') {
+					// this sub never even started
+					$data[$i]['cancel_date'] = local_time($row->start_date);
+				}
+				elseif ($row->sub_active == '0') {
+					$data[$i]['cancel_date'] = local_time($row->cancel_date);
+				}
 				$data[$i]['number_occurrences'] = $row->number_occurrences;
 				$data[$i]['notification_url'] = $row->notification_url;
 				$data[$i]['status'] = ($row->sub_active == '1') ? 'active' : 'inactive';
