@@ -329,7 +329,7 @@ class Recurring_model extends Model
 		switch($params['sort'])
 		{
 			case 'date':
-				$sort = 'timestamp';
+				$sort = 'recurring_id';
 				break;
 			case 'customer_first_name':
 				$sort = 'first_name';
@@ -341,7 +341,7 @@ class Recurring_model extends Model
 				$sort = 'amount';
 				break;
 			default:
-				$sort = 'timestamp';
+				$sort = 'recurring_id';
 				break;	
 		}
 		$this->db->order_by($sort, $sort_dir);	
