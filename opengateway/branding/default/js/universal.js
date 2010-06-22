@@ -67,7 +67,7 @@ $(document).ready(function() {
 		window.location.href = $('#base_url').html()+$('#class').html()+'/'+$('#method').html()+'/'+$('#page').html();
 	});
 	
-	$('#dataset_form tr.filters input.text').each(function () {
+	$('#dataset_form tr.filters input.text').not('.datepick').each(function () {
 		if ($(this).val() == '' || $(this).val() == 'filter results') {
 			$(this).val('filter results');
 			$(this).addClass('emptyfilter');
@@ -81,7 +81,7 @@ $(document).ready(function() {
 		}
 	});
 	
-	if (typeof datePicker == 'function') {
+	if (typeof $.fn.datePicker == 'function') {
 		Date.format = 'yyyy-mm-dd';
 		$('#dataset_form input.date_start').datePicker({clickInput:true,startDate:'2009-01-01'});
 		$('#dataset_form input.date_end').datePicker({clickInput:true,startDate:'2009-01-01'});

@@ -15,7 +15,7 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 	// load all available data
     if ($subscription_id) {
     	$CI->load->model('recurring_model');
-    	$subscription = $CI->recurring_model->GetRecurring($subscription_id);
+    	$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
     	
     	if (isset($subscription['customer']['id'])) {
     		$customer_id = $subscription['customer']['id'];
@@ -24,7 +24,7 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
     
     if ($charge_id) {
     	$CI->load->model('charge_model');
-    	$charge = $CI->charge_model->GetCharge($charge_id);
+    	$charge = $CI->charge_model->GetCharge($client_id, $charge_id);
     	
     	if (isset($charge['customer']['id'])) {
     		$customer_id = $charge['customer']['id'];
