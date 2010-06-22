@@ -301,8 +301,6 @@ class paypal_standard
 		
 		$post_response = $this->Process($post_url, $post);
 		
-		$post_response = $this->response_to_array($post_response);
-		
 		if($post_response['ACK'] == 'Success') {
 			$response = TRUE;
 		} else {
