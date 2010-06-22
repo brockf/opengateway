@@ -561,8 +561,7 @@ class Recurring_model extends Model
 	function CancelRecurring($client_id, $recurring_id, $expiring = FALSE)
 	{
 		// Get the subscription information
-		$this->load->model('recurring_model');
-		$subscription = $this->recurring_model->GetSubscriptionDetails($client_id, $recurring_id);
+		$subscription = $this->GetSubscriptionDetails($client_id, $recurring_id);
 		
 		// Get the gateway info to load the proper library
 		$CI =& get_instance();
