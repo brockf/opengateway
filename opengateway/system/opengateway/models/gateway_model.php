@@ -515,11 +515,11 @@ class Gateway_model extends Model
 		
 		// if they sent an $amount with their charge, this means that their first charge is different
 		// so now we need to grab the true recurring amount
-		if (is_object($plan_details) and isset($plan_details->amount)) {
-			$recur['amount'] = $plan_details->amount;
-		}
-		elseif (isset($recur['amount'])) {
+		if (isset($recur['amount'])) {
 			$recur['amount'] = $recur['amount'];
+		}
+		elseif (is_object($plan_details) and isset($plan_details->amount)) {
+			$recur['amount'] = $plan_details->amount;
 		}
 		else {
 			$recur['amount'] = $amount;
