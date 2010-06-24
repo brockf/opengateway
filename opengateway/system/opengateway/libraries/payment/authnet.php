@@ -475,10 +475,6 @@ class authnet
 		"</payment>".
 		"</paymentProfile>\n";
 		
-		if ($gateway['mode'] != 'test') {
-			$content .= "<validationMode>liveMode</validationMode>\n";
-		}
-		
 		$content .= "</createCustomerPaymentProfileRequest>";
 		
 		$request = curl_init($post_url); // initiate curl object
