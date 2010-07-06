@@ -578,7 +578,7 @@ class authnet
 			$response['success'] = TRUE;
 		} else {
 			$response['success'] = FALSE;
-			$response['reason'] = (string)$response->messages->message->text;
+			$response['reason'] = (string)$response->messages->message->text[0];
 		}
 		
 		return $response;	
@@ -608,7 +608,7 @@ class authnet
 			return $response;
 		}
 		
-		if($test) {
+		if ($test) {
 			if($response[0] == 1) {
 				$response['success'] = TRUE;
 			} else {
