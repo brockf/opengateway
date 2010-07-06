@@ -568,17 +568,17 @@ class authnet
 		
 		curl_close($request); // close curl object
 		
-		@$response = simplexml_load_string($post_response);
+		@$post_response = simplexml_load_string($post_response);
 		
-		if($response->messages->resultCode == 'Ok') {
+		if($post_response->messages->resultCode == 'Ok') {
 			// Get the auth code
-			$post_response = explode(',', $response->directResponse);
+			$post_response = explode(',', $post_response->directResponse);
 			$CI->load->model('order_authorization_model');
 			$CI->order_authorization_model->SaveAuthorization($order_id, $post_response[6], $post_response[4]);
 			$response['success'] = TRUE;
 		} else {
 			$response['success'] = FALSE;
-			$response['reason'] = (string)$response->messages->message->text[0];
+			$response['reason'] = (string)$post_response->messages->message->text[0];
 		}
 		
 		return $response;	
