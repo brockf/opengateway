@@ -253,7 +253,7 @@ class paypal_standard
 		{
 			if(!empty($value))
 			{
-				$data .= strtoupper($key) . '=' . urlencode($value) . '&';
+				$data .= strtoupper($key) . '=' . urlencode(trim($value)) . '&';
 			}
 		}
 
