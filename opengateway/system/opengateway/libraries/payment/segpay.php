@@ -27,10 +27,8 @@ class segpay
 		$settings['requires_customer_ip'] = 0;
 		$settings['required_fields'] = array('enabled',
 											 'mode',
-											 'user',
-											 'pwd',
-											 'signature',
-											 'currency'
+											 'username',
+											 'password'
 											);
 		
 		$settings['field_details'] = array(
