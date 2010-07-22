@@ -61,7 +61,7 @@ class segpay
 		$CI =& get_instance();
 		// get plans
 		$CI->load->model('plan_model');
-		$plans = $this->plan_model->GetPlans($CI->user->Get('client_id'));
+		$plans = $CI->plan_model->GetPlans($CI->user->Get('client_id'));
 		
 		foreach ($plans as $plan) {
 			$settings['required_fields'][] = 'plan_' . $plan['id'] . '_product';
