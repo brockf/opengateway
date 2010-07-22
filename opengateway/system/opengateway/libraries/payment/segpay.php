@@ -60,8 +60,8 @@ class segpay
 		// create settings dynamically for packages
 		$CI =& get_instance();
 		// get plans
-		$CI->load->model('plans_model');
-		$plans = $this->plans_model->GetPlans($CI->user->Get('client_id'));
+		$CI->load->model('plan_model');
+		$plans = $this->plan_model->GetPlans($CI->user->Get('client_id'));
 		
 		foreach ($plans as $plan) {
 			$settings['required_fields'][] = 'plan_' . $plan['id'] . '_product';
