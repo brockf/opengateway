@@ -535,7 +535,7 @@ class Gateway_model extends Model
 		}
 		
 		// if amount is greater than 0, we require a gateway to process
-		if ($amount > 0) {
+		if ($recur['amount'] > 0) {
 			$response = $CI->$gateway_name->Recur($client_id, $gateway, $customer, $amount, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences, $return_url, $cancel_url);
 		}
 		else {
