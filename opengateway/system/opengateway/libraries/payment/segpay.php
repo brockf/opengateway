@@ -26,9 +26,7 @@ class segpay
 		$settings['requires_customer_information'] = 0;
 		$settings['requires_customer_ip'] = 0;
 		$settings['required_fields'] = array('enabled',
-											 'mode',
-											 'username',
-											 'password'
+											 'mode'
 											);
 		
 		$settings['field_details'] = array(
@@ -45,14 +43,6 @@ class segpay
 														'options' => array(
 																		'live' => 'Live Mode'
 																		)
-														),
-										'username' => array(
-														'text' => 'Username',
-														'type' => 'text'
-														),
-										'password' => array(
-														'text' => 'Password',
-														'type' => 'text'
 														)
 											);
 											
@@ -125,8 +115,6 @@ class segpay
               'x-eticketid'   => $gateway['plan_' . $plan_id . '_product'] . ':' . $gateway['plan_' . $plan_id . '_package'],
               'x-auth-link'   => site_url('callback/paypal/confirm_recur/' . $subscription_id),
               'x-auth-text'   => "Click here to return to " . $client['company'],
-              'username'      => $gateway['username'],
-              'password'      => $gateway['password'],
               'payment_id'    => $subscription['id']
         );
         
