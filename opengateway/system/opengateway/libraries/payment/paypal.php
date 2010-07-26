@@ -267,7 +267,7 @@ class paypal
 		// Create a new PayPal profile
 		$response = $this->CreateProfile($client_id, $gateway, $customer, $subscription['amount'], $credit_card, $start_date, $subscription_id, $total_occurrences, $interval);
 		
-		if ($response) {
+		if (is_array($response) and $response['success'] == TRUE) {
 			$profile_id = $response['profile_id'];	
 		} else {
 			$CI->recurring_model->DeleteRecurring($subscription_id);
