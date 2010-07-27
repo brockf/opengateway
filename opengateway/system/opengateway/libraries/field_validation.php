@@ -87,7 +87,7 @@ class Field_validation
 		}
 		
 		if (isset($gateway['accept_amex']) and $gateway['accept_amex'] == 1) {
-			$patterns['amex'] = "/^([34|37]{2})([0-9]{13})$/";
+			$patterns['amex'] = "/^(3[47][0-9]{13})*$/";
 		}
 		
 		if (isset($gateway['accept_discover']) and $gateway['accept_discover'] == 1) {
