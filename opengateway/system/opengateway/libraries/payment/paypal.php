@@ -75,7 +75,22 @@ class paypal
 																		'EUR' => 'Euro',
 																		'GBP' => 'UK Pound',
 																		'AUD' => 'Australian Dollar',
-																		'JPY' => 'Japanese Yen'
+																		'JPY' => 'Japanese Yen',
+																		'MXN' => 'Mexican Pesos',
+																		'CZK' => 'Czech Koruna',
+																		'DKK' => 'Danish Krone',
+																		'HKD' => 'Hong Kong Dollar',
+																		'HUF' => 'Hungarian Forint',
+																		'ILS' => 'Israeli New Shegel',
+																		'NOK' => 'Norwegian Krone',
+																		'NZD' => 'New Zealand Dollar',
+																		'PHP' => 'Philippine Peso',
+																		'PLN' => 'Polish Zloty',
+																		'SGD' => 'Singapore Dollar',
+																		'SEK' => 'Swedish Krona',
+																		'CHF' => 'Swiss Franc',
+																		'TWD' => 'Taiwan New Dollar',
+																		'THB' => 'Thai Baht'
 																	)
 														),
 										'accept_visa' => array(
@@ -271,7 +286,7 @@ class paypal
 			$profile_id = $response['profile_id'];	
 		} else {
 			$CI->recurring_model->DeleteRecurring($subscription_id);
-			die($CI->response->Error(5005));
+			die($CI->response->Error(5005, $response['reason']));
 		}
 		
 		// save the api_customer_reference
