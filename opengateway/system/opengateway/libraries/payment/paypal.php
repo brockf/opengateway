@@ -284,25 +284,20 @@ class paypal
 		
 		if (is_array($response) and $response['success'] == TRUE) {
 			$profile_id = $response['profile_id'];	
-		} else {
-			$CI->recurring_model->DeleteRecurring($subscription_id);
-			die($CI->response->Error(5005, $response['reason']));
+			
+			$CI->recurring_model->SaveApiCustomerReference($subscription_id, $profile_id);
 		}
-		
-		// save the api_customer_reference
-		
-		$CI->recurring_model->SaveApiCustomerReference($subscription_id, $profile_id);
 		
 		if ($response['success'] == TRUE){
 				$response_array['recurring_id'] = $subscription_id;
 				$response = $CI->response->TransactionResponse(100, $response_array);
-			} else {
-				// Make the subscription inactive
-				$CI->recurring_model->MakeInactive($subscription_id);
-				
-				$response_array = array('reason' => $response['reason']);
-				$response = $CI->response->TransactionResponse(2, $response_array);
-			}
+		} else {
+			// Make the subscription inactive
+			$CI->recurring_model->MakeInactive($subscription_id);
+			
+			$response_array = array('reason' => $response['reason']);
+			$response = $CI->response->TransactionResponse(2, $response_array);
+		}
 		
 		return $response;
 	}
