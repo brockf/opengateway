@@ -224,7 +224,9 @@ class paypal
 			$post['lastname'] = $customer['last_name'];
 			$post['street'] = $customer['address_1'].$customer['address_2'];
 			$post['city'] = $customer['city'];
-			$post['state'] = $customer['state'];
+			if ($customer['country'] == 'CA' or $customer['US'] == 'US') {
+				$post['state'] = $customer['state'];
+			}
 			$post['zip'] = $customer['postal_code'];
 			$post['countrycode'] = $customer['country'];
 			$post['phonenum'] = $customer['phone'];
@@ -433,7 +435,9 @@ class paypal
 			$post['street'] .= ' ' . $customer['address_2'];
 		}
 		$post['city'] = (isset($customer['city'])) ? $customer['city'] : '';
-		$post['state'] = (isset($customer['state'])) ? $customer['state'] : '';
+		if ($customer['country'] == 'CA' or $customer['US'] == 'US') {
+			$post['state'] = $customer['state'];
+		}
 		$post['countrycode'] = (isset($customer['country'])) ? $customer['country'] : '';
 		$post['zip'] = (isset($customer['postal_code'])) ? $customer['postal_code'] : '';
 		$post['email'] = (isset($customer['email'])) ? $customer['email'] : '';
