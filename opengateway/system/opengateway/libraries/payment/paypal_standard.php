@@ -497,6 +497,9 @@ class paypal_standard
 					// we assume it's good because the profile is OK
 					
 					$CI->load->model('order_authorization_model');
+					
+					// we may not have the transaction ID if it's Pending
+					$response_charge['TRANSACTIONID'] = (isset($response_charge['TRANSACTIONID'])) ? $response_charge['TRANSACTIONID'] : 'pending_payment';
 					$CI->order_authorization_model->SaveAuthorization($order_id, $response_charge['TRANSACTIONID']);
 					
 					$CI->charge_model->SetStatus($order_id, 1);
