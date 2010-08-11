@@ -29,13 +29,17 @@ class edgil
 		$settings['purchase_link'] = 'http://www.edgil.com';
 		$settings['allows_updates'] = 1;
 		$settings['allows_refunds'] = 1;
-		$settings['requires_customer_information'] = 0;
+		$settings['requires_customer_information'] = 1;
 		$settings['requires_customer_ip'] = 0;
 		$settings['required_fields'] = array(
 										'enabled',
 										'mode', 
+										'url',
+										'port',
 										'login_id',
 										'password',
+										'merchant_id',
+										'oep_id',
 										'accept_visa',
 										'accept_mc',
 										'accept_discover',
@@ -167,43 +171,50 @@ class edgil
 		return $response;
 	}
 	
-	function getCustomerToken($client_id, $customer,$credit_card, $gateway)
+	function GetEdgilToken ($customer_id, $order_id, $is_recurring = FALSE)
+	{
+		$CI->load->model('charge_data_model');
+		
+		$token_name = 'customer_' . $customer_id;
+		if ($is_recurring == TRUE) {
+			$token_name .= '_recur_' . $order_id;
+		}
+		else {
+			$token_name .= '_charge_' . $order_id;
+		}
+		
+		$data = $CI->charge_data_model->Get($token_name);
+		
+		if (empty($data)) {
+			return FALSE;
+		}
+		else {
+			return $data['token'];
+		}
+	}
+	
+	function SetEdgilToken($client_id, $customer, $credit_card, $gateway, $order_id, $is_recurring = FALSE)
 	{
 		$CI =& get_instance();
 
 		$this->loadObject($gateway);
 		$data = new Java("com.edgil.ecco.eccoapi.CardholderData");
 		
-		if(isset($customer['customer_id']))
-		{	
-			// see if they already have a token
-			$CI->db->where('customer_id', $customer['customer_id']);
-			$query = $CI->db->get('edgil_tokens');
-			if($query->num_rows() > 0)
-			{
-				return $query->row()->edgil_token;
-			}
-			
-			$customer_id = $customer['customer_id'];
+		// build customer data
+		$customer_id = $customer['customer_id'];
+		
+		// can we put an address on Edgil's records?
+		if (!empty($customer['address_1']) and !empty($customer['city']) and !empty($customer['state']) and !empty($customer['postal_code'])) {
 			$address = $customer['address_1'];
-			if(isset($customer['address_2']) and !empty($customer['address_2'])) {
+			if (isset($customer['address_2']) and !empty($customer['address_2'])) {
 				$address .= ' '.$customer['address_2'];
 			}
 			
-			$data->setAddress($address,$customer['city'], $customer['state'],$customer['postal_code']);
-			$data->setName($customer['first_name'], $customer['last_name']);
+			$data->setAddress($address, $customer['city'], $customer['state'], $customer['postal_code']);
 		}
-		else
-		{
-			$name = explode(' ', $credit_card['name']);
-			
-			$CI->load->model('customer_model');
-			$params['first_name'] = $name[0];
-			$params['last_name'] = $name[1];
-			$customer_id = $CI->customer_model->NewCustomer($client_id, $params);
-			
-			$data->setName($name[0],$name[1]);
-		}
+		
+		// set name
+		$data->setName($customer['first_name'], $customer['last_name']);
 		
 		$data->setAccountNumber($credit_card['card_num']);
 		$data->setExpirationDate($credit_card['exp_month'], $credit_card['exp_year']);
@@ -213,11 +224,21 @@ class edgil
 		
 		$status = $this->ECCOClient->requestCreateToken($data, FALSE);
 		
-		if($status == $this->ECCOStatusCodes->SUCCESS)
+		if ($status == $this->ECCOStatusCodes->SUCCESS)
 		{
-			$token =  $data->getToken();
-			$insert_data = array('customer_id' => $customer_id, 'edgil_token' => $token);
-			$CI->db->insert('edgil_tokens', $insert_data);
+			$token = $data->getToken();
+			
+			$CI->load->model('charge_data_model');
+			
+			$token_name = 'customer_' . $customer_id;
+			if ($is_recurring == TRUE) {
+				$token_name .= '_recur_' . $order_id;
+			}
+			else {
+				$token_name .= '_charge_' . $order_id;
+			}
+			
+			$CI->charge_data_model->Save($token_name, 'token', $token);
 			
 			$return = $token;
 		}
@@ -235,16 +256,9 @@ class edgil
 	{	
 		$CI =& get_instance();
 	
-		$CI->load->model('customer_model');
-		$token = $CI->customer_model->GetEdgilToken($customer['id']);
+		$token = $this->SetEdgilToken($client_id,$customer,$credit_card,$gateway,$order_id,FALSE);
 		
-		if(!$token)
-		{
-			$token = $this->getCustomerToken($client_id,$customer,$credit_card,$gateway);
-		}
-		
-		if(!isset($this->object_loaded))
-		{
+		if (!isset($this->object_loaded)) {
 			$this->loadObject($gateway);
 		}
 
@@ -298,13 +312,7 @@ class edgil
 	{		
 		$CI =& get_instance();
 		
-		$CI->load->model('customer_model');
-		$token = $CI->customer_model->GetEdgilToken($customer['id']);
-		
-		if(!$token)
-		{
-			$token = $this->getCustomerToken($client_id,$customer,$credit_card,$gateway);
-		}
+		$token = $this->SetEdgilToken($client_id, $customer, $credit_card, $gateway, $subscription_id, TRUE);
 		
 		// save the api_customer_reference
 		$CI->load->model('recurring_model');
@@ -340,18 +348,15 @@ class edgil
 	{	
 		$CI =& get_instance();
 		
-		$CI->load->model('customer_model');
-		$token = $CI->customer_model->GetEdgilToken($charge['customer']['id']);
+		$token = $this->GetEdgilToken($charge['customer']['id'], $charge['id'], FALSE);
 	
-		if(!$token)
-		{
+		if (empty($token)) {
 			$response_array = array('reason' => 'Could not get customer token.');
 			$response = $CI->response->TransactionResponse(2, $response_array);
 			return $response;
 		}
 		
-		if(!isset($this->object_loaded))
-		{
+		if (!isset($this->object_loaded)) {
 			$this->loadObject($gateway);
 		}
 
@@ -373,26 +378,20 @@ class edgil
 		
 		$this->ECCOClient->logoff();
 		
-		return $response;
-			
+		return $response;	
 	}
 	
 	function ChargeRecurring($client_id, $gateway, $order_id, $token, $amount)
 	{	
 		$CI =& get_instance();
 	
-		$CI->load->model('customer_model');
-		$token = $CI->customer_model->GetEdgilToken($customer['id']);
-		
-		if(!$token)
-		{
-			$response['reason'] = 'Could not get customer token';
+		if (empty($token)) {
+			$response['reason'] = 'Token not passed to ChargeRecurring.';
 			$response['success'] = FALSE;
 			return $response;
 		}
 		
-		if(!isset($this->object_loaded))
-		{
+		if (!isset($this->object_loaded)) {
 			$this->loadObject($gateway);
 		}
 
@@ -444,10 +443,9 @@ class edgil
 	}
 	
 	function AutoRecurringCharge ($client_id, $order_id, $gateway, $params) {
-		$CI->load->model('customer_model');
-		$token = $CI->customer_model->GetEdgilToken($params['customer_id']);
+		$token = $this->GetEdgilToken($params['customer_id'], $params['subscription_id'], TRUE);
 		
-		return $this->ChargeRecurring($client_id, $order_id, $gateway, $token, $params['amount']);
+		return $this->ChargeRecurring($client_id, $gateway, $order_id, $token, $params['amount']);
 	}
 	
 	function UpdateRecurring()

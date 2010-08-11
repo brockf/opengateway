@@ -31,7 +31,7 @@ $config['ssl_active'] = false;
 $config['cron_key'] = '0000000000000000';
 $config['currency_symbol'] = '$';
 
-$config['java_include_path'] = '/home/dave/workspace/OGW/opengateway/system/opengateway/includes/';
+$config['java_include_path'] = APPATH . 'includes/';
 
 // rewrite base URL to SSL if accessed via SSL
 if ($_SERVER["SERVER_PORT"] == "443") {

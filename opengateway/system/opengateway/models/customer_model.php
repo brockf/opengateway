@@ -606,16 +606,4 @@ class Customer_model extends Model
 		
 		return $plans;
 	}
-	
-	function GetEdgilToken($customer_id)
-	{
-		$this->db->where('customer_id', $customer_id);
-		$query = $this->db->get('edgil_tokens');
-		if($query->num_rows() > 0)
-		{
-			return $query->row()->edgil_token;
-		}
-		
-		return FALSE;
-	}
 }

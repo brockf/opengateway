@@ -52,7 +52,7 @@ class Charge_data_model extends Model
 	{
 		$this->db->where('order_id', $order_id);
 		$query = $this->db->get('order_data');
-		if($query->num_rows() > 0) {
+		if ($query->num_rows() > 0) {
 			$return = array();
 			foreach ($query->result_array() as $row) {
 				$return[$row['order_data_key']] = $row['order_data_value'];
