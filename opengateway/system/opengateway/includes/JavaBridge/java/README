@@ -1,0 +1,31 @@
+This directory contains a pure PHP implementation of the PHP/Java
+Bridge: it doesn't require a Java extension ("java.so" or
+"php_java.dll") installed on the web server.
+
+
+Usage
+-----
+
+* Type java -jar JavaBridge.jar SERVLET:8080
+
+* To call out to your Java libraries require java/Java.inc
+  and use the provided Java class as usual. Example:
+
+<?php
+
+  require_once("http://localhost:8080/JavaBridge/java/Java.inc");
+  $string = new Java("java.lang.String", "HelloWorld");
+  echo $string;
+
+?>
+
+* On a server connected to the internet use SERVLET_LOCAL:8080 or
+  use a J2EE/Servlet engine and the JavaBridge.war instead.
+
+
+Mailing List
+------------
+Please report bugs/problems to the mailing list:
+
+  php-java-bridge-users@lists.sourceforge.net
+

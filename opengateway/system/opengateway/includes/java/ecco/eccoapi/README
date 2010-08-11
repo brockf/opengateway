@@ -1,0 +1,175 @@
+Read Me for ECCO Java Installation
+
+1. Requirements
+
+ECCO requires the presence of at least a 1.5 Java runtime environment.  (Note: Java 1.5 is
+needed as a minimum if using the ECCO PHP API). The ECCO Java API has been tested with 
+Java 1.5 and 1.6 and should be compatible with subsequent versions of the Java runtime environments.
+
+Download the JRE from java.sun.com.
+at:
+
+http://java.sun.com/javase/downloads/index_jdk5.jsp
+
+Scroll down to the Java Runtime Environment (JRE) 5.0, and click the "Download"
+button to download. 
+
+
+2. Delivered files
+
+2.1  Documentation
+
+    /ecco/eccoapi/README  - This file
+    /ecco/docs/EccoAPI.pdf - The complete Ecco API java, C++ and other APIs (such as PHP, DotNet) 
+        documentation.
+     
+2.2  Properties files
+
+    /ecco/data/ECCO.properties - Basic ECCO properties files, including logging for 
+        debugging. In the delivered file, logging is commented out. The IP and port for
+        locating EdgCapture are set in this file.         
+    /ecco/data/ECCOStatusMessages.properties - Status messages that may be edited.
+    /ecco/data/SimpleSocketServerECCO.properties - Properties file for simple socket
+        server required for logging.   
+    
+2.3  Jars
+
+     /lib/EccoAPI.jar 
+     /lib/xercesImpl.jar
+     /lib/xmlParserAPIs.jar
+     /lib/log4j-1.2rc1.jar
+     
+2.4  Certificate/SSL
+     /ecco/data/edgilca.keystore - Keystore with the edgil public certificate for SSL server authentication     
+
+The ECCO.properties file specifies the location of edgilca.keystore.  Edit the property com.edgil.ecco.sslKeyFile
+for the path to the keystore.  Change com.edgil.ecco.sslKeyFile=\\edgil\\java\\edgilca.keystore to 
+ecco/data/edgilca.keystore correcting the path as necessary for your system.
+
+The delivered ECCO.properties file also specifies the SSL connection in the property com.edgil.ecco.serverConnectionType.
+Leave com.edgil.ecco.serverConnectionType=Ssl as is for the connection to the Edgil server.
+Consult with Edgil support if a temporary fake connection is desired for testing.
+
+
+3.   Setting the classpath
+
+On Linux or UNIX, you must either write a shell script setting your classpath 
+or add the four delivered jars to the classpath for your shell. The classpath must include the 
+following jars: EccoAPI.jar, xercesImpl.jar, xmpParserAPIs.jar, log4j-1.2rc1.jar. The classpath 
+must also include the directory containing the ECCOStatusMessages.properties file.
+
+For example, to set the classpath for the bash shell, if "edgil" is your base directory (.bashrc):
+
+    export CLASSPATH=$CLASSPATH:/edgil/lib/EccoAPI.jar:/edgil/lib/xercesImpl.jar
+    :/edgil/lib/xmlParserAPIs.jar:/edgil/lib/log4j-1.2rc1.jar:/edgil/ecco/data.
+
+To set the classpath for tcsh or csh, if "edgil" is your base directory (.cshrc):
+
+    set CLASSPATH = ($CLASSPATH /edgil/lib/EccoAPI.jar /edgil/lib/xercesImpl.jar
+    /edgil/lib/xmlParserAPIs.jar /edgil/lib/log4j-1.2rc1.jar /edgil/ecco/data .)
+
+
+4. Setting up logging from the java ECCO API
+
+Java logging depends upon the SimpleSocketServer. To enable logging, you must edit the ECCO and 
+SimpleSocketServer properties files and start the SimpleSocketServer, as described in the 
+developer's guide (EccoAPI.pdf). 
+
+4.1 ECCO.properties
+   
+The delivered ECCO.properties file is set up not to log. To turn on logging, edit the 
+file to comment out the no logging sections and uncomment the logging sections, as described
+in the developer's guide.  
+   
+In addition, edit the log4j.appender.SocketApp.RemoteHost line to specify either the 
+name or the IP address of your local machine, for example: 
+   
+       log4j.appender.SocketApp.RemoteHost=raven
+       
+The ECCO.properties file specifies the location of edgilca.keystore.  Edit the property com.edgil.ecco.sslKeyFile
+for the path to the keystore.  Change com.edgil.ecco.sslKeyFile=\\edgil\\java\\edgilca.keystore to 
+ecco/data/edgilca.keystore correcting the path as necessary for your system.
+
+The delivered ECCO.properties file also specifies the SSL connection in the property com.edgil.ecco.serverConnectionType.
+Leave com.edgil.ecco.serverConnectionType=Ssl as is for the connection to the Edgil server.
+Consult with Edgil support if a temporary fake connection is desired for testing.
+
+The ECCO.properties file specifies an SSL connection
+ 
+4.2 SimpleSocketServer
+
+The SimpleSocketServer task logs to a single file that is shared by all simultaneous 
+users.
+
+Edit the SimpleSocketServerECCO.properties file to specify the pathname for the log 
+file. Note that this directory must exist:
+
+     log4j.appender.DailyRollingFile.File=/edgil/data/ecco/ecco.log
+
+After setting up the CLASSPATH as described in section 3 above, start the task 
+giving it a port number and the path/file name for its properties file:
+   
+     java java.org.apache.log4j.net.SimpleSocketServer 3421 SimpleSocketServerECCO.properties
+   
+The port number must match the port specified for the SocketApp appender in the
+ECCO.properties file:
+   
+     log4j.appender.SocketApp.Port=3421
+
+
+5. Certification
+
+The ECCOClient method CertifyECCO currently uses edgilca.keystore as described above.
+The first parameter for CertifyECCO is the file password for edgilca.keystore.  The keystore is
+deliverd with the password ChangeIt.  The java tool, keystool may be used to change the password
+or it can be used as is. The call to CertifyECCO must be made before logging on to submit a transaction or 
+directory request. You can use any strings to represent the second and third parameters which are 
+placeholders for future development.
+
+
+6. Limitations to TransactionSelection
+
+TransactionSelection supports the selection of only a single MonetaryTransactionData record
+using Merchant Id, Oep Id and Transaction Id.
+
+Methods currently supported:
+
+   clearAllEntries
+   getNextTransaction
+   setSelectionTransactionKey
+   setSelectionTransactionKeyMerchant
+   setSelectionTransactionKeyOep
+   setSelectionTransactionKeyTransactionId
+
+7. Testing connectivity with EdgCapture.
+
+You need to make sure that the EccoAPI and EdgCapture systems are on the network, 
+and that the required EdgCapture tasks are running (ECCOServer, CreditServer, NSP). 
+
+You need to ensure the ECCOServer's certificate is available for the SSL connection.  See the
+certifcate generation document delivered with the Edgil server. 
+
+You also need to edit the ECCO.properties file to set the connection type ("Ssl" connects to 
+EdgCapture; "Fake" simulates a connection), and to provide the IP address of the EdgCapture 
+system and the port used by the EdgCapture ECCOServer. "2052" is the default port number for 
+the ECCO server. For example:
+
+com.edgil.ecco.serverConnectionType=Ssl
+com.edgil.ecco.serverIpAddress=123.456.1.789
+com.edgil.ecco.serverPortNum=2052
+
+8. Acknowledgments
+
+This product includes software developed by the Apache Software Foundation (http://www.apache.org).
+
+
+
+
+  
+
+ 
+
+
+ 
+
+

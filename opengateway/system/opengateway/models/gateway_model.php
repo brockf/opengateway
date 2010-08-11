@@ -608,7 +608,7 @@ class Gateway_model extends Model
 	* @return boolean TRUE upon success
 	*/
 	function Refund ($client_id, $charge_id)
-	{
+	{	
 		$CI =& get_instance();
 		
 		// Get the order details

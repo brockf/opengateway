@@ -5,13 +5,13 @@ $url = "http://localhost/api/";
 $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 <request>
 	<authentication>
-		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>
-		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>
+		<api_id>U1ZOH92275K2JUMV2JXC</api_id>
+		<secret_key>RKNTFSWQI7KRM3KA72FX3L7L6U1CBN6LSYKROANX</secret_key>
 	</authentication>
 	<type>Refund</type>
-		<gateway_id>58</gateway_id>
-		<customer_id>2</customer_id>
-		<order_id>629</order_id>
+		<gateway_id>3</gateway_id>
+		<customer_id>1000</customer_id>
+		<charge_id>1276</charge_id>
 		<amount>19.99</amount>
 </request>';
 
