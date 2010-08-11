@@ -31,6 +31,8 @@ $config['ssl_active'] = false;
 $config['cron_key'] = '0000000000000000';
 $config['currency_symbol'] = '$';
 
+$config['java_include_path'] = '/home/dave/workspace/OGW/opengateway/system/opengateway/includes/';
+
 // rewrite base URL to SSL if accessed via SSL
 if ($_SERVER["SERVER_PORT"] == "443") {
 	$config['base_url'] = str_replace('http://','https://',$config['base_url']);
