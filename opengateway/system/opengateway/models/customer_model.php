@@ -465,25 +465,25 @@ class Customer_model extends Model
 		
 		$this->db->order_by($sort, $sort_dir);	
 		
-		$this->db->join('subscriptions', 'customers.customer_id = subscriptions.customer_id', 'left');
-	
-		if(isset($params['active_recurring'])) {
+		if (isset($params['active_recurring']) or isset($params['plan_id'])) {
+			$this->db->join('subscriptions', 'customers.customer_id = subscriptions.customer_id', 'left');
+		}
+			
+		if (isset($params['active_recurring'])) {
 			if($params['active_recurring'] == 1) {
 				$this->db->where('subscriptions.active', 1);
 			} elseif($params['active_recurring'] === 0) {
 				$this->db->where('subscriptions.active', 0);
 			}
-			
 		}
 		
-		if(isset($params['plan_id'])) {
+		if (isset($params['plan_id'])) {
 			$this->db->where('subscriptions.plan_id',$params['plan_id']);
 			$this->db->where('subscriptions.active','1');
 		}
 		
 		$this->db->select('customers.*');
 		$this->db->select('countries.iso2');
-		$this->db->select('subscriptions.plan_id');
 		
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$this->db->group_by('customers.customer_id');
@@ -510,20 +510,18 @@ class Customer_model extends Model
 				$data[$i]['date_created'] = local_time($client_id, $row->date_created);
 				$data[$i]['status'] = ($row->active == 1) ? 'active' : 'deleted';
 				
-				if (isset($row->plan_id) and !empty($row->plan_id)) {	
-					$plans = $this->GetPlansByCustomer($client_id, $row->customer_id);
-					if($plans) {
-						$n=0;
-						foreach($plans as $plan) {
-							$data[$i]['plans'][$n]['id'] = $plan['id'];
-							$data[$i]['plans'][$n]['type'] = $plan['type'];
-							$data[$i]['plans'][$n]['name'] = $plan['name'];
-							$data[$i]['plans'][$n]['amount'] = $plan['amount'];
-							$data[$i]['plans'][$n]['interval'] = $plan['interval'];
-							$data[$i]['plans'][$n]['notification_url'] = $plan['notification_url'];
-							$data[$i]['plans'][$n]['status'] = $plan['active'];
-							$n++;
-						}
+				$plans = $this->GetPlansByCustomer($client_id, $row->customer_id);
+				if (!empty($plans)) {
+					$n=0;
+					foreach($plans as $plan) {
+						$data[$i]['plans'][$n]['id'] = $plan['id'];
+						$data[$i]['plans'][$n]['type'] = $plan['type'];
+						$data[$i]['plans'][$n]['name'] = $plan['name'];
+						$data[$i]['plans'][$n]['amount'] = $plan['amount'];
+						$data[$i]['plans'][$n]['interval'] = $plan['interval'];
+						$data[$i]['plans'][$n]['notification_url'] = $plan['notification_url'];
+						$data[$i]['plans'][$n]['status'] = $plan['active'];
+						$n++;
 					}
 				}
 				
@@ -572,36 +570,30 @@ class Customer_model extends Model
 	* @return array All the plans, including status
 	*/
 	function GetPlansByCustomer ($client_id, $customer_id) {
-		$CI =& get_instance();
-		$CI->load->model('recurring_model');
-		$params = array(
-						'customer_id' => $customer_id
-						);
-		$recurrings = $CI->recurring_model->GetRecurrings($client_id, $params);
+		$this->db->select('*');
+		$this->db->select('subscriptions.amount AS sub_amount');
+		$this->db->select('subscriptions.active AS sub_active');
+		$this->db->where('customer_id',$customer_id);
+		$this->db->join('plans','plans.plan_id = subscriptions.plan_id','INNER');
+		$result = $this->db->get('subscriptions');
 		
 		$plans = array();
 		
-		if (is_array($recurrings)) {
-			while (list(,$recurring) = each($recurrings)) {
-				if (!empty($recurring['plan']['id'])) {
-					$plans[] = array(
-									'id' => $recurring['plan']['id'],
-									'type' => $recurring['plan']['type'],
-									'name' => $recurring['plan']['name'],
-									'amount' => $recurring['plan']['amount'],
-									'interval' => $recurring['plan']['interval'],
-									'notification_url' => $recurring['plan']['notification_url'],
-									'active' => $recurring['status']
-								);
-				}
+		if ($result->num_rows() > 0) {
+			foreach ($result->result_array() as $row) {
+				$plans[] = array(
+								'id' => $row['plan_id'],
+								'type' => $row['type'],
+								'name' => $row['name'],
+								'amount' => $row['sub_amount'],
+								'interval' => $row['interval'],
+								'notification_url' => $row['notification_url'],
+								'active' => ($row['sub_active'] == '1') ? 'active' : 'inactive'
+							);
 			}
 		}
 		else {
-			return false;
-		}
-	
-		if (empty($plans)) {
-			return false;
+			return FALSE;
 		}
 		
 		return $plans;

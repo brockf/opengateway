@@ -31,6 +31,19 @@ class Dataset extends Model {
     }
     
     /**
+    * Set Total Rows Manually
+    *
+    * @param int $total_rows
+    *
+    * @return void
+    */
+    function total_rows ($total_rows) {
+    	$this->total_rows = $total_rows;
+    	
+    	return;
+    }
+    
+    /**
     * Initialize Dataset
     *
     * Initializes the dataset with data configuration, column specs
@@ -150,24 +163,26 @@ class Dataset extends Model {
     	
     	$this->data = $CI->data_model->$data_function($CI->user->Get('client_id'),$params);
     	
-    	unset($params);
-    	$params = array();
-    	
-		$params = (!empty($filter_params)) ? array_merge($params, $filter_params) : $params;
-		
-		// store in a public variable
-		$this->params = $params;
-    	
-    	$total_rows = count($CI->data_model->$data_function($CI->user->Get('client_id'),$params));
-    	
-    	$this->total_rows = $total_rows;
+    	if (empty($this->total_rows) or !empty($filter_params)) {
+	    	unset($params);
+	    	$params = array();
+	    	
+			$params = (!empty($filter_params)) ? array_merge($params, $filter_params) : $params;
+			
+			// store in a public variable
+			$this->params = $params;
+	    	
+	    	$total_rows = count($CI->data_model->$data_function($CI->user->Get('client_id'),$params));
+	    	
+	    	$this->total_rows = $total_rows;
+	    }
     	
     	// set $url_filters if they exist
     	$url_filters = (!empty($this->filter_values)) ? '/' . $CI->asciihex->AsciiToHex(base64_encode(serialize($this->filter_values))) . '/' : '';
 		$this->base_url = ($base_url == false) ? site_url($CI->router->fetch_class() . '/' . $CI->router->fetch_method() . $url_filters) : $base_url;
 		
 		$config['base_url'] = $this->base_url;
-		$config['total_rows'] = $total_rows;
+		$config['total_rows'] = $this->total_rows;
 		$config['per_page'] = $this->rows_per_page;
 		$config['uri_segment'] = ($has_filters) ? 4 : 3;
 		$config['num_links'] = '10';

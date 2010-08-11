@@ -234,6 +234,7 @@ class Charge_model extends Model
 	* @param int $params['status'] Set to ok/failed to filter results.  Optional.
 	* @param boolean $params['recurring_only'] Returns only orders that are part of a recurring subscription. Optional.
 	* @param int $params['offset'] Offsets the database query.
+	* @param int $params['card_last_four'] Last 4 digits of credit card
 	* @param int $params['limit'] Limits the number of results returned. Optional.
 	* @param string $params['sort'] Variable used to sort the results.  Possible values are date, customer_first_name, customer_last_name, amount. Optional
 	* @param string $params['sort_dir'] Used when a sort param is supplied.  Possible values are asc and desc. Optional.
@@ -304,6 +305,10 @@ class Charge_model extends Model
 		
 		if (isset($params['recurring_id'])) {
 			$this->db->where('orders.subscription_id', $params['recurring_id']);
+		}
+		
+		if (isset($params['card_last_four'])) {
+			$this->db->where('orders.card_last_four', $params['card_last_four']);
 		}
 		
 		if (isset($params['status'])) {

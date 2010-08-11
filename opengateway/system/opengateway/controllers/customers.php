@@ -88,6 +88,10 @@ class Customers extends Controller {
 				'width' => '10%'
 				);
 		
+		// set total rows by hand to reduce database load
+		$result = $this->db->select('COUNT(customer_id) AS total_rows',FALSE)->where('active','1')->from('customers')->get();
+		$this->dataset->total_rows((int)$result->row()->total_rows);
+		
 		$this->dataset->Initialize('customer_model','GetCustomers',$columns);
 		
 		// add actions
