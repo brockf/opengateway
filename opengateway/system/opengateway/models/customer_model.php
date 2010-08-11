@@ -416,7 +416,7 @@ class Customer_model extends Model
 		}
 		
 		if(isset($params['email'])) {
-			$this->db->where('email', $params['email']);
+			$this->db->like('email', $params['email']);
 		}
 		
 		if (isset($params['offset'])) {
