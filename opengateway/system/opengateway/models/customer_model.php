@@ -583,7 +583,6 @@ class Customer_model extends Model
 			foreach ($result->result_array() as $row) {
 				$plans[] = array(
 								'id' => $row['plan_id'],
-								'type' => $row['type'],
 								'name' => $row['name'],
 								'amount' => $row['sub_amount'],
 								'interval' => $row['interval'],
