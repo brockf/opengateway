@@ -515,7 +515,6 @@ class Customer_model extends Model
 					$n=0;
 					foreach($plans as $plan) {
 						$data[$i]['plans'][$n]['id'] = $plan['id'];
-						$data[$i]['plans'][$n]['type'] = $plan['type'];
 						$data[$i]['plans'][$n]['name'] = $plan['name'];
 						$data[$i]['plans'][$n]['amount'] = $plan['amount'];
 						$data[$i]['plans'][$n]['interval'] = $plan['interval'];
