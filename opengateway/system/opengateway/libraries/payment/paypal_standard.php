@@ -351,8 +351,6 @@ class paypal_standard
 		
 		$post_response = $this->Process($post_url, $post);
 		
-		$post_response = $this->response_to_array($post_response);
-		
 		if($post_response['ACK'] == 'Success') {
 			$response = TRUE;
 		} else {
@@ -573,10 +571,9 @@ class paypal_standard
 		$post['profileid'] = $params['api_customer_reference'];
 		
 		$post_response = $this->Process($post_url, $post);
-		$response = $this->response_to_array($post_response);
 		
-		if ($response['ACK'] == 'Success') {
-			return $response;
+		if ($post_response['ACK'] == 'Success') {
+			return $post_response;
 		} else {
 			return FALSE;
 		}
