@@ -53,6 +53,12 @@
 			<td class="label">Next Charge Date</td>
 			<td><?=$next_charge_date;?></td>
 		</tr>
+			<? if (!empty($card_last_four)) { ?>
+			<tr>
+				<td class="label">Credit Card</td>
+				<td>****<?=$card_last_four;?> (<a href="<?=site_url('transactions/update_cc/' . $id);?>">update credit card information</a>)</td>
+			</tr>
+			<? } ?>
 		<? } else { ?>
 		<tr>
 			<td class="label">Cancel Date</td>

@@ -223,7 +223,7 @@ class Transactions extends Controller {
 					);
 					
 		$this->load->view(branded_view('cp/new_transaction.php'), $data);
-		return true;
+		return TRUE;
 	}
 	
 	/**
@@ -335,7 +335,7 @@ class Transactions extends Controller {
 		
 		redirect($redirect);
 		
-		return true;
+		return TRUE;
 	}
 	
 	/**
@@ -361,7 +361,7 @@ class Transactions extends Controller {
 		 
 		$this->load->view(branded_view('cp/charge'), $data);
 		
-		return true;
+		return TRUE;
 	}
 	
 	/**
@@ -396,6 +396,72 @@ class Transactions extends Controller {
 		}
 		
 		$this->load->view(branded_view('cp/recurring'), $data);
+	}
+	
+	/**
+	* Update Credit Card
+	*/
+	function update_cc ($id) {
+		$this->load->model('recurring_model');
+		$recurring = $this->recurring_model->GetRecurring($this->user->Get('client_id'), $id);
+		
+		// load existing gateways
+		$this->load->model('gateway_model');
+		$gateways = $this->gateway_model->GetGateways($this->user->Get('client_id'),array());
+		
+		$data = array(
+					'recurring' => $recurring,
+					'gateways' => $gateways
+				);
+		$this->load->view(branded_view('cp/update_cc'), $data);
+	}
+	
+	/**
+	* Post Update Credit Card
+	*/
+	function post_update_cc () {
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('cc_number','Credit Card Number','required|is_natural');
+		$this->form_validation->set_rules('cc_name','Credit Card Name','required');
+		$this->form_validation->set_rules('recurring_id','Recurring ID # (hidden)','required|is_natural');
+		
+		if ($this->form_validation->run() === FALSE) {
+			$this->notices->SetError(validation_errors());
+		}
+		
+		// passed validation
+		$recurring_id = $this->input->post('recurring_id');
+		$credit_card = array(
+						'card_num' => $this->input->post('cc_number'),
+						'card_name' => $this->input->post('card_name'),
+						'exp_month' => $this->input->post('cc_expiry_month'),
+						'exp_year' => $this->input->post('cc_expiry_year')
+						);
+		$gateway_id = $this->input->post('gateway');
+		
+		$this->load->model('gateway_model');
+		$response = $this->gateway_model->UpdateCreditCard($this->user->Get('client_id'), $recurring_id, $credit_card, $gateway_id);
+		
+		if (!is_array($response) or isset($response['error'])) {
+			$this->notices->SetError($this->lang->line('transaction_error') . $response['error_text'] . ' (#' . $response['error'] . ')');
+		}
+		elseif (isset($response['response_code']) and $response['response_code'] == '2') {
+			$this->notices->SetError($this->lang->line('transaction_error') . $response['response_text'] . '. ' . $response['reason'] . ' (#' . $response['response_code'] . ')');
+		}
+		else {
+			$this->notices->SetNotice($this->lang->line('transaction_ok'));
+		}
+		
+		if (isset($response['recurring_id'])) {
+			$redirect = site_url('transactions/recurring/' . $response['recurring_id']);
+		}
+		else {
+			$redirect = site_url('transactions/update_cc/' . $recurring_id);
+		}
+		
+		redirect($redirect);
+		
+		return TRUE;
 	}
 	
 	/**

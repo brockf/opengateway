@@ -31,9 +31,7 @@ class Response
 				$response = json_encode($response);
 			}
 			
-			//Return it
 			return $response;
-
 		}
 		else
 		{
@@ -59,6 +57,8 @@ class Response
 							'101' => 'Subscription cancelled.',
 							'102' => 'Subscription updated.',
 							'103' => 'Subscription plan updated.  Changes will appear upon next charge.',
+							'104' => 'Subscription credit card updated successfully.',
+							'105' => 'Subscription credit card details could not be updated.',
 							'200' => 'Customer created.',
 							'201' => 'Customer updated.',
 							'202' => 'Customer deleted.',
@@ -146,6 +146,9 @@ class Response
 						'5018' => 'This gateway requires customer information to be processed.  Please include a customer_id of an existing customer or a customer node with new customer information in your request.',
 						'5019' => 'This gateway requires the purchasing customer\'s IP address.  Please include a customer_ip_address node in your request.',
 						'5020' => 'This gateway does not allow refunds via the API.',
+						'5021' => 'Only active gateways can be updated with new credit card details.',
+						'5022' => 'This subscription is free - updating credit card details is futile.',
+						'5023' => 'The new gateway you have chosen requires customer information but this customer record currently doesn\'t exist.  Please use UpdateCustomer to add full customer details for this user before calling UpdateCreditCard.',
 						'6000' => 'A valid Charge ID is required.',
 						'6001' => 'A valid Customer ID is required.',
 						'6002' => 'A valid Recurring ID is required',

@@ -527,7 +527,8 @@ class Gateway_model extends Model
 		
 		// Save the subscription info
 		$CI->load->model('recurring_model');
-		$subscription_id = $CI->recurring_model->SaveRecurring($client_id, $gateway['gateway_id'], $customer['customer_id'], $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $recur['amount'], $plan_id);
+		$card_last_four = (isset($credit_card['card_num'])) ? substr($credit_card['card_num'],-4,4) : '0';
+		$subscription_id = $CI->recurring_model->SaveRecurring($client_id, $gateway['gateway_id'], $customer['customer_id'], $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $recur['amount'], $plan_id, $card_last_four);
 		
 		// set last_charge as today, if today was a charge
 		if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
@@ -655,6 +656,149 @@ class Gateway_model extends Model
 	}
 	
 	/**
+	* Update Credit Card
+	*
+	* Updates the credit card on a subscription.  In actuality, it cancels the current subscription and creates a new one.
+	*
+	* @param int $client_id
+	* @param int $recurring_id
+	* @param array $credit_card The credit card information
+	* @param int $credit_card['card_num'] The credit card number
+	* @param int $credit_card['exp_month'] The credit card expiration month in 2 digit format (01 - 12)
+	* @param int $credit_card['exp_year'] The credit card expiration year (YYYY)
+	* @param string $credit_card['name'] The credit card cardholder name.  Required only is customer ID is not supplied.
+	* @param int $credit_card['cvv'] The Card Verification Value.  Optional
+	* @param int $gateway_id Set to a gateway_id to use a new gateway for this charge
+	*
+	* @return array With recurring_id, response_code and response_text
+	*/
+	function UpdateCreditCard ($client_id, $recurring_id, $credit_card = array(), $gateway_id = FALSE) {
+		$CI =& get_instance();
+		$this->load->library('field_validation');
+		
+		// validate credit card
+		if (!empty($credit_card)) {
+			$credit_card['card_num'] = trim(str_replace(array(' ','-'),'',$credit_card['card_num']));
+			$credit_card['card_type'] = $this->field_validation->ValidateCreditCard($credit_card['card_num']);
+			
+			if (!isset($credit_card['card_type']) or empty($credit_card['card_type'])) {
+				die($this->response->Error(5008));
+			}
+			
+			if (!isset($credit_card['exp_month']) or empty($credit_card['exp_month'])) {
+				die($this->response->Error(5008));
+			}
+			
+			if (!isset($credit_card['exp_year']) or empty($credit_card['exp_year'])) {
+				die($this->response->Error(5008));
+			}
+		}
+		else {
+			die($this->response->Error(5008));
+		}
+		
+		// make sure subscription is owned by client
+		// get subscription information
+		$CI->load->model('recurring_model');
+		$recurring = $CI->recurring_model->GetRecurring($client_id, $recurring_id);		
+		
+		// make sure subscription is active
+		if ($recurring['status'] != 'active') {
+			die($this->response->Error(5021));
+		}
+		
+		// make sure the subscription isn't free (i.e. that it requires info)
+		if (intval($recurring['amount']) == 0) {
+			die($this->response->Error(5022));
+		}
+		
+		// get the gateway info to load the proper library
+		$gateway = $this->GetGatewayDetails($client_id, $recurring['gateway_id']);
+		
+		if (!$gateway or $gateway['enabled'] == '0') {
+			die($this->response->Error(5017));
+		}
+		
+		// load the gateway
+		$gateway_name = $gateway['name'];
+		$CI->load->library('payment/'.$gateway_name);
+		$gateway_settings = $this->$gateway_name->Settings();
+		
+		$gateway_old = $gateway;
+		
+		// calculate end date from CC expiry date and setting for maximum subscription length
+		// calculate the end_date based on the max end date setting
+		$end_date = date('Y-m-d', time() + ($this->config->item('max_recurring_days_from_today') * 86400));
+		
+		// if the credit card expiration date is before the end date, we need to set the end date to one day before the expiration
+		$check_year = ($credit_card['exp_year'] > 2000) ? $credit_card['exp_year'] : '20' . $credit_card['exp_year'];
+		$expiry = mktime(0,0,0, $credit_card['exp_month'], days_in_month($credit_card['exp_month'], $credit_card['exp_year']), $check_year);
+		
+		if ($expiry < strtotime($end_date)) {
+			// make the adjustment, this card will expire
+			$end_date = mktime(0,0,0, $credit_card['exp_month'], (days_in_month($credit_card['exp_month'], $credit_card['exp_year']) - 1), $credit_card['exp_year']);
+			$end_date = date('Y-m-d', $end_date);
+		}
+
+		// are we using a new gateway?
+		if ($gateway_id != FALSE) {
+			$gateway_new = $this->GetGatewayDetails($client_id, $gateway_id);
+		
+			if (!$gateway_new or $gateway_new['enabled'] == '0') {
+				die($this->response->Error(5017));
+			}
+			
+			// load the gateway
+			$gateway_name = $gateway_new['name'];
+			$CI->load->library('payment/'.$gateway_name);
+			$gateway_settings = $this->$gateway_name->Settings();
+			
+			// does this gateway require customer info we don't have?
+			if ($gateway_settings['requires_customer_information'] == 1 and (!isset($recurring['customer']) or empty($recurring['customer']['address_1']))) {
+				die($this->response->Error(5023));
+			}
+			
+			$gateway = $gateway_new;
+		}
+		
+		// get new sub start date from $next_charge_date
+		$start_date = date('Y-m-d', strtotime($recurring['next_charge_date']));
+		
+		// is this for a plan?
+		$plan_id = (isset($recurring['plan']['id'])) ? $recurring['plan']['id'] : FALSE;
+		
+		// save new subscription record
+		$card_last_four = (isset($credit_card['card_num'])) ? substr($credit_card['card_num'],-4,4) : '0';
+		
+		$subscription_id = $CI->recurring_model->SaveRecurring($client_id, $gateway['gateway_id'], $recurring['customer']['id'], $recurring['interval'], $start_date, $end_date, $start_date, $recurring['number_occurrences'], $recurring['notification_url'], $recurring['amount'], $plan_id, $card_last_four);
+		
+		// try creating a new subscription
+		$response = $CI->$gateway_name->Recur($client_id, $gateway, $recurring['customer'], $recurring['amount'], $start_date, $end_date, $recurring['interval'], $credit_card, $subscription_id, $recurring['total_occurrences'], FALSE, FALSE);
+		
+		if ($response['response_code'] != 100) {
+			// clear it out completely
+			$CI->recurring_model->DeleteRecurring($subscription_id);
+			
+			return $response;
+		}
+		else {		
+			// set active
+			$CI->recurring_model->SetActive($this->user->Get('client_id'), $subscription_id);
+			
+			// cancel the old subscription
+			// use $gateway_old for gateway array if we need it
+			
+			// by setting $expiring to TRUE, we don't trigger any email triggers
+			$CI->recurring_model->CancelRecurring($client_id, $recurring_id, TRUE);
+			
+			// prep the response back
+			$response['recurring_id'] = $subscription_id;
+			
+			return $response;
+		}
+	}
+	
+	/**
 	* Process a credit card recurring charge
 	*
 	* Processes a credit card CHARGE transaction for a recurring subscription using the gateway_id to use the proper client gateway.
@@ -680,13 +824,7 @@ class Gateway_model extends Model
 		}
 		
 		// get the credit card last four digits
-		$this->db->select('card_last_four');
-		$this->db->where('subscription_id',$params['subscription_id']);
-		$this->db->order_by('timestamp','asc');
-		$this->db->limit('1');
-		$result = $this->db->get('orders');
-		$row = $result->result_array();
-		$params['credit_card']['card_num'] = $row[0]['card_last_four'];
+		$params['credit_card']['card_num'] = $params['card_last_four'];
 		
 		// Create a new order
 		$CI->load->model('charge_model');

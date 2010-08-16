@@ -152,6 +152,29 @@ class API extends Controller {
 		}
 	}
 	
+	function UpdateCreditCard ($client_id, $params) {
+		// Make sure it came from a secure connection if SSL is active
+		if (empty($_SERVER["HTTPS"]) and $this->config->item('ssl_active') == TRUE) {
+			die($this->response->Error(1010));
+		}
+		
+		$gateway_id = (isset($params['gateway_id'])) ? $params['gateway_id'] : FALSE;
+		$credit_card = (isset($params['credit_card'])) ? $params['credit_card'] : FALSE;
+		
+		if (isset($params['recurring_id']) or empty($params['recurring_id'])) {
+			die($this->response->Error(6002));
+		}
+		
+		$this->load->model('gateway_model');
+		
+		if ($this->gateway_model->UpdateCreditCard($client_id, $params['recurring_id'], $credit_card, $gateway_id)) {
+			return $this->response->TransactionResponse(104, array());
+		}
+		else {
+			return $this->response->TransactionResponse(105, array());
+		}
+	}
+	
 	function DeletePlan($client_id, $params)
 	{
 		$this->load->model('plan_model');

@@ -37,7 +37,7 @@ class Recurring_model extends Model
 	* @return int The new subscription ID
 	*/
 	
-	function SaveRecurring($client_id, $gateway_id, $customer_id, $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id = 0)
+	function SaveRecurring($client_id, $gateway_id, $customer_id, $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id = 0, $card_last_four = 0)
 	{
 		$timestamp = date('Y-m-d H:i:s');
 		$insert_data = array(
@@ -52,6 +52,7 @@ class Recurring_model extends Model
 							'next_charge'		=> $next_charge_date,
 							'number_occurrences'=> $total_occurrences,
 							'amount'			=> $amount,
+							'card_last_four'	=> (!empty($card_last_four)) ? $card_last_four : '0',
 							'active'			=> 0,
 							'cancel_date'		=> '0000-00-00 00:00:00',
 							'timestamp'			=> $timestamp
@@ -372,7 +373,7 @@ class Recurring_model extends Model
 				$data[$i]['start_date'] = local_time($client_id, $row->start_date);
 				$data[$i]['end_date'] = local_time($client_id, $row->end_date);
 				$data[$i]['last_charge_date'] = local_time($client_id, $row->last_charge);
-				$data[$i]['next_charge_date'] = local_time($client_id, $row->next_charge);
+				$data[$i]['next_charge_date'] = (strtotime($row->next_charge) < strtotime($row->end_date)) ? local_time($client_id, $row->next_charge) : local_time($client_id, $row->end_date);
 				if ($row->sub_active == '0' and $row->cancel_date == '0000-00-00 00:00:00') {
 					// this sub never even started
 					$data[$i]['cancel_date'] = local_time($client_id, $row->start_date);
@@ -383,6 +384,7 @@ class Recurring_model extends Model
 				$data[$i]['number_occurrences'] = $row->number_occurrences;
 				$data[$i]['notification_url'] = $row->notification_url;
 				$data[$i]['status'] = ($row->sub_active == '1') ? 'active' : 'inactive';
+				$data[$i]['card_last_four'] = $row->card_last_four;
 				
 				if($row->customer_id !== 0) {
 					$data[$i]['customer']['id'] = $row->customer_id;
@@ -709,9 +711,8 @@ class Recurring_model extends Model
 	*/
 	
 	function GetChargesByDate($date, $client_id = FALSE)
-	{	
-		
-		if($client_id) {
+	{		
+		if ($client_id) {
 			$this->db->where('orders.client_id', $client_id);
 		}
 		
@@ -740,9 +741,8 @@ class Recurring_model extends Model
 	*/
 	
 	function GetChargesByExpiryDate($date, $client_id = FALSE)
-	{	
-		
-		if($client_id) {
+	{		
+		if ($client_id) {
 			$this->db->where('orders.client_id', $client_id);
 		}
 		
@@ -751,7 +751,7 @@ class Recurring_model extends Model
 		$this->db->where('subscriptions.active', 1);
 		$this->db->where('end_date', date('Y-m-d', $date));
 		$query = $this->db->get('subscriptions');
-		if($query->num_rows() > 0) {
+		if ($query->num_rows() > 0) {
 			return $query->result_array();
 		} else {
 			return FALSE;
