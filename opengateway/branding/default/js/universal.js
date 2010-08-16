@@ -210,7 +210,7 @@ function form_error(message) {
 	$('#notices').append('<div class="error">'+message+'</div>');
 	$('#notices div').each(function () {
 		$(this).animate({top:$(window).scrollTop()+5+"px" },{queue: false, duration: 0});
-		$(this).animate({opacity: 1.0},4000).fadeOut('slow');
+		$(this).animate({opacity: 1.0},6000).fadeOut('slow');
 	});
 	
 	$(window).scroll(function() {
