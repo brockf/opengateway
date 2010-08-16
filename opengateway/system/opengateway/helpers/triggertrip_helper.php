@@ -176,7 +176,7 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 			$from_email = $email['from_email'];
 			
 			// make email variables available globally
-			define('EMAIL_TRIGGER_VARIABLES', $variables);
+			define('EMAIL_TRIGGER_VARIABLES', serialize($variables));
 			
 			// replace all possible variables that have parameter
 			$body = preg_replace_callback('/\[\[(.*?)\|\"(.*?)\"\]\]/i', 'trigger_parse_variable_with_parameter', $body);
@@ -227,7 +227,7 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 // for now, this is only date parameters
 function trigger_parse_variable_with_parameter ($params) {
 	// load $variables array
-	$variables = EMAIL_TRIGGER_VARIABLES;
+	$variables = unserialize(EMAIL_TRIGGER_VARIABLES);
 	
 	$variable = $params[1];
 	$parameter = $params[2];
