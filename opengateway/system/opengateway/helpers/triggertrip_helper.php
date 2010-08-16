@@ -175,6 +175,13 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 			$from_name = $email['from_name'];
 			$from_email = $email['from_email'];
 			
+			// make email variables available globally
+			define('EMAIL_TRIGGER_VARIABLES', $variables);
+			
+			// replace all possible variables that have parameter
+			$body = preg_replace_callback('/\[\[(.*?)\|\"(.*?)\"\]\]/i', 'trigger_parse_variable_with_parameter', $body);
+			$subject = preg_replace_callback('/\[\[(.*?)\|\"(.*?)\"\]\]/i', 'trigger_parse_variable_with_parameter', $subject);
+			
 			// replace all possible variables
 			while (list($name,$value) = each($variables)) {
 				$subject = str_ireplace('[[' . $name . ']]',$value,$subject);
@@ -214,4 +221,29 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 	}
 	
 	return $email_count;
+}
+
+// replaces a variable that is being modified with a parameter
+// for now, this is only date parameters
+function trigger_parse_variable_with_parameter ($params) {
+	// load $variables array
+	$variables = EMAIL_TRIGGER_VARIABLES;
+	
+	$variable = $params[1];
+	$parameter = $params[2];
+	
+	$array_key = strtolower($variable);
+	
+	$return = $variables[$array_key];
+	
+	// format the date
+	// we'll take strftime or date formatting:
+	if (strpos($parameter, '%') !== FALSE) {				
+		$return = strftime($parameter, strtotime($return));
+	}
+	else {
+		$return = date($parameter, strtotime($return));
+	}
+	
+	return $return;
 }
