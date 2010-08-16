@@ -779,6 +779,8 @@ class Gateway_model extends Model
 			// clear it out completely
 			$CI->recurring_model->DeleteRecurring($subscription_id);
 			
+			// set response code to update CC error
+			$response['response_code'] = '105';
 			return $response;
 		}
 		else {		
@@ -794,6 +796,8 @@ class Gateway_model extends Model
 			// prep the response back
 			$response['recurring_id'] = $subscription_id;
 			
+			// set response code to update CC success
+			$response['response_code'] = '104';
 			return $response;
 		}
 	}

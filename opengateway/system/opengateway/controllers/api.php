@@ -167,12 +167,7 @@ class API extends Controller {
 		
 		$this->load->model('gateway_model');
 		
-		if ($this->gateway_model->UpdateCreditCard($client_id, $params['recurring_id'], $credit_card, $gateway_id)) {
-			return $this->response->TransactionResponse(104, array());
-		}
-		else {
-			return $this->response->TransactionResponse(105, array());
-		}
+		return $this->gateway_model->UpdateCreditCard($client_id, $params['recurring_id'], $credit_card, $gateway_id);
 	}
 	
 	function DeletePlan($client_id, $params)
