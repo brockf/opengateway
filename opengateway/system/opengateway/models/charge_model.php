@@ -92,6 +92,7 @@ class Charge_model extends Model
 		$this->db->select('DATE(orders.timestamp) AS day');
 		$this->db->where('orders.client_id', $client_id);
 		$this->db->where('orders.timestamp >',date('Y-m-d',time()-(60*60*24*$back_days)));
+		$this->db->where('order.status','1');
 		$this->db->group_by('DATE(orders.timestamp)');
 		$result = $this->db->get('orders');
 		
