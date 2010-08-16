@@ -364,7 +364,7 @@ class Customer_model extends Model
 		
 		// Check which search paramaters are set
 		if(isset($params['first_name'])) {
-			$this->db->where('first_name', $params['first_name']);
+			$this->db->like('first_name', $params['first_name']);
 		}
 		
 		if(isset($params['internal_id'])) {
@@ -380,11 +380,11 @@ class Customer_model extends Model
 		}
 		
 		if(isset($params['last_name'])) {
-			$this->db->where('last_name', $params['last_name']);
+			$this->db->like('last_name', $params['last_name']);
 		}
 		
 		if(isset($params['company'])) {
-			$this->db->where('company', $params['company']);
+			$this->db->like('company', $params['company']);
 		}
 		
 		if(isset($params['address_1'])) {
@@ -396,7 +396,7 @@ class Customer_model extends Model
 		}
 		
 		if(isset($params['city'])) {
-			$this->db->where('city', $params['city']);
+			$this->db->like('city', $params['city']);
 		}
 		
 		if(isset($params['state'])) {
@@ -412,7 +412,7 @@ class Customer_model extends Model
 		}
 		
 		if(isset($params['phone'])) {
-			$this->db->where('phone', $params['phone']);
+			$this->db->like('phone', $params['phone']);
 		}
 		
 		if(isset($params['email'])) {
