@@ -15,6 +15,7 @@ class pacnet
 		$settings['name'] = 'Pacnet';
 		$settings['class_name'] = 'pacnet';
 		$settings['external'] = FALSE;
+		$settings['no_credit_card'] = FALSE;
 		$settings['description'] = 'Pacnet, and its RAVEN payment system, are a great way for companies to process transactions online.';
 		$settings['is_preferred'] = 1;
 		$settings['setup_fee'] = 'n/a';

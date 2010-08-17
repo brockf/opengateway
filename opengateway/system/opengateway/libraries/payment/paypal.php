@@ -15,6 +15,7 @@ class paypal
 		$settings['name'] = 'PayPal Pro';
 		$settings['class_name'] = 'paypal';
 		$settings['external'] = FALSE;
+		$settings['no_credit_card'] = FALSE;
 		$settings['description'] = 'PayPal Pro is easy to setup and even easier to use.  Though not as powerful as other gateways (you cannot edit existing subscriptions, only cancel them), this gateway is very easy to setup.  Requires the Recurring Billing addon.';
 		$settings['is_preferred'] = 1;
 		$settings['setup_fee'] = '$0.00';

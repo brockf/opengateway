@@ -18,10 +18,11 @@ class edgil
 	{
 		$settings = array();
 		
-		$settings['name'] = 'EdgCapture';
+		$settings['name'] = 'Edgil (Java) Gateway';
 		$settings['class_name'] = 'edgil';
 		$settings['external'] = FALSE;
-		$settings['description'] = 'EdgCapture.';
+		$settings['no_credit_card'] = FALSE;
+		$settings['description'] = 'Use Edgil\'s EdgCapture system to accept payments online.  This gateway requires that your server can execute the Java binaries and may take some manual tweaking and configuration due to its complexity.';
 		$settings['is_preferred'] = 1;
 		$settings['setup_fee'] = '$99.00';
 		$settings['monthly_fee'] = '$40.00';

@@ -15,6 +15,7 @@ class sagepay
 		$settings['name'] = 'SagePay';
 		$settings['class_name'] = 'sagepay';
 		$settings['external'] = FALSE;
+		$settings['no_credit_card'] = FALSE;
 		$settings['description'] = 'SagePay is the premier merchant account provider for the United Kingdom.';
 		$settings['is_preferred'] = 1;
 		$settings['setup_fee'] = '&pound;0';

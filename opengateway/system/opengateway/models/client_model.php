@@ -507,7 +507,7 @@ class Client_model extends Model
 			$this->db->where('client_id', $client_id);
 			$this->db->limit(1);
 			$query = $this->db->get('clients');
-			if($query->num_rows() > 0) {
+			if ($query->num_rows() > 0) {
 				$this->cache[$client_id] = $query->row();
 				
 				return $this->cache[$client_id];

@@ -15,6 +15,7 @@ class paypal_standard
 		$settings['name'] = 'PayPal Express Checkout';
 		$settings['class_name'] = 'paypal_standard';
 		$settings['external'] = TRUE;
+		$settings['no_credit_card'] = TRUE;
 		$settings['description'] = 'PayPal Express Checkout is the easiest, cheapest way to accept payments online.  Any Website Payments Standard account supports it.';
 		$settings['is_preferred'] = 1;
 		$settings['setup_fee'] = '$0';

@@ -15,6 +15,7 @@ class wirecard
 		$settings['name'] = 'Wirecard';
 		$settings['class_name'] = 'wirecard';
 		$settings['external'] = FALSE;
+		$settings['no_credit_card'] = FALSE;
 		$settings['description'] = 'Wirecard is a premium provider of online credit card processing services available for international merchants.';
 		$settings['is_preferred'] = 1;
 		$settings['setup_fee'] = '$33';

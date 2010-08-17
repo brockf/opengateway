@@ -214,12 +214,24 @@ class Transactions extends Controller {
 		$this->load->model('gateway_model');
 		$gateways = $this->gateway_model->GetGateways($this->user->Get('client_id'),array());
 		
+		foreach ($gateways as $key => $gateway) {
+			$gateway_name = $gateway['library_name'];
+			$this->load->library('payment/' . $gateway_name);
+			$gateways[$key]['settings'] = $this->$gateway_name->Settings();
+		}
+		
+		// get default gateway settings
+		$default_gateway = $this->gateway_model->GetGatewayDetails($this->user->Get('client_id'));
+		$default_gateway_name = $default_gateway['name'];
+		$default_gateway_settings = $this->$default_gateway_name->Settings();
+		
 		$data = array(
 					'states' => $states,
 					'countries' => $countries,
 					'plans' => $plans,
 					'customers' => $customers,
-					'gateways' => $gateways
+					'gateways' => $gateways,
+					'default_gateway_settings' => $default_gateway_settings
 					);
 					
 		$this->load->view(branded_view('cp/new_transaction.php'), $data);
@@ -250,13 +262,15 @@ class Transactions extends Controller {
 		
 		$charge->Amount($this->input->post('amount'));
 		
-		$charge->CreditCard(
-						$this->input->post('cc_name'),
-						$this->input->post('cc_number'),
-						$this->input->post('cc_expiry_month'),
-						$this->input->post('cc_expiry_year'),
-						$this->input->post('cc_security')
-					);
+		if ($this->input->post('cc_number')) {
+			$charge->CreditCard(
+							$this->input->post('cc_name'),
+							$this->input->post('cc_number'),
+							$this->input->post('cc_expiry_month'),
+							$this->input->post('cc_expiry_year'),
+							$this->input->post('cc_security')
+						);
+		}
 					
 		if ($this->input->post('recurring') == '1') {
 			$charge->UsePlan($this->input->post('recurring_plan'));

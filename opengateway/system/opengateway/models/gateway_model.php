@@ -147,7 +147,7 @@ class Gateway_model extends Model
 		$gateway_settings = $this->$gateway_name->Settings();
 		
 		// validate function arguments
-		if ($amount == FALSE or ((empty($credit_card) and $gateway_settings['external'] == FALSE) and $amount != '0.00' and $amount != '0')) {
+		if ($amount == FALSE or ((empty($credit_card) and $gateway_settings['external'] == FALSE and $gateway_settings['no_credit_card'] == FALSE) and $amount != '0.00' and $amount != '0')) {
 			die($CI->response->Error(1004));
 		}
 		
@@ -320,7 +320,7 @@ class Gateway_model extends Model
 		$gateway_settings = $this->$gateway_name->Settings();
 		
 		// validate function arguments
-		if (empty($credit_card) and $gateway_settings['external'] == FALSE) {
+		if (empty($credit_card) and $gateway_settings['external'] == FALSE and $gateway_settings['no_credit_card'] == FALSE) {
 			die($CI->response->Error(1004));
 		}
 		
@@ -704,7 +704,7 @@ class Gateway_model extends Model
 		
 		// make sure subscription is active
 		if ($recurring['status'] != 'active') {
-			die($this->response->Error(5021));
+			die($this->response->Error(5000));
 		}
 		
 		// make sure the subscription isn't free (i.e. that it requires info)
@@ -785,7 +785,7 @@ class Gateway_model extends Model
 		}
 		else {		
 			// set active
-			$CI->recurring_model->SetActive($this->user->Get('client_id'), $subscription_id);
+			$CI->recurring_model->SetActive($client_id, $subscription_id);
 			
 			// cancel the old subscription
 			// use $gateway_old for gateway array if we need it
@@ -1100,6 +1100,7 @@ class Gateway_model extends Model
 			{
 				$array = array(
 								'id' => $row['client_gateway_id'],
+								'library_name' => $row['name'],
 								'gateway' => (!empty($row['alias'])) ? $row['alias'] : $row['display_name'],
 								'date_created' => $row['create_date']
 								);

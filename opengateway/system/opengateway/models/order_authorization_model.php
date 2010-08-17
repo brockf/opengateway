@@ -56,7 +56,7 @@ class Order_authorization_model extends Model
 		if($query->num_rows() > 0) {
 			return $query->row();
 		} else {
-			die($this->response->Error(4001));
+			return FALSE;
 		}
 	}
 }

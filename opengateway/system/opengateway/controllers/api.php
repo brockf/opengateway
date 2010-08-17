@@ -161,7 +161,7 @@ class API extends Controller {
 		$gateway_id = (isset($params['gateway_id'])) ? $params['gateway_id'] : FALSE;
 		$credit_card = (isset($params['credit_card'])) ? $params['credit_card'] : FALSE;
 		
-		if (isset($params['recurring_id']) or empty($params['recurring_id'])) {
+		if (!isset($params['recurring_id']) or empty($params['recurring_id'])) {
 			die($this->response->Error(6002));
 		}
 		

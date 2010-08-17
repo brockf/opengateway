@@ -15,6 +15,7 @@ class segpay
 		$settings['name'] = 'SegPay';
 		$settings['class_name'] = 'segpay';
 		$settings['external'] = TRUE;
+		$settings['no_credit_card'] = FALSE;
 		$settings['description'] = 'Segpay launched in June of 2005 as an EU Internet Payment Service Provider (IPSP) alternative for webmasters.';
 		$settings['is_preferred'] = 0;
 		$settings['setup_fee'] = 'n/a';

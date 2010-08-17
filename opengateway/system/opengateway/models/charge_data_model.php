@@ -27,7 +27,7 @@ class Charge_data_model extends Model
 	*
 	*/
 	
-	function Save($order_id, $key, $value)
+	function Save ($order_id, $key, $value)
 	{
 		$insert_data = array(
 							'order_id' => $order_id,
@@ -48,7 +48,7 @@ class Charge_data_model extends Model
 	* @return mixed Array containg authorization details
 	*/
 	
-	function Get($order_id)
+	function Get ($order_id)
 	{
 		$this->db->where('order_id', $order_id);
 		$query = $this->db->get('order_data');
