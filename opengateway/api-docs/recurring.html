@@ -243,6 +243,27 @@
 				<li><span class="response">customer_id</span> - The ID of the new customer created and linked to the recurring charge.  This is only returned
 				if a <span class="request">customer_id</span> was not passed in the request (and thus a new customer record was created).</li>
 			</ul>
+			<h2>Method: <a name="updatecreditcard">UpdateCreditCard</a></h2>
+			<p>Updates the credit card associated with a subscription.</p>
+			<p>Required date:</p>
+			<ul>
+				<li><span class="request">recurring_id</span></li>
+				<li><span class="request">credit_card</span>
+					<ul>
+						<li><span class="request">card_num</span></li>
+						<li><span class="request">name</span></li>
+						<li><span class="request">exp_month</span></li>
+						<li><span class="request">exp_year</span></li>
+						<li><span class="request">cvv</span> (optional)</li>
+					</ul>
+				</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> - "104" upon success, "105" upon failure.</li>
+				<li><span class="response">response_text</span> - A verbose description of the response_code.</li>
+				<li><span class="response">recurring_id</span> - The ID of the <b>NEW</b> recurring charge.  OpenGateway creates a new subscription from this new data.</li>
+			</ul>
 			<h2>Method: <a name="getrecurring">GetRecurring</a></h2>
 			<p>Retrieves available information about a recurring charge.</p>
 			<p>Required data:</p>
