@@ -12,7 +12,7 @@ class freshbooks
 	{
 		$settings = array();
 		
-		$settings['name'] = 'Offline Invoicing with FreshBooks';
+		$settings['name'] = 'Online Invoicing with FreshBooks';
 		$settings['class_name'] = 'freshbooks';
 		$settings['external'] = FALSE;
 		$settings['no_credit_card'] = TRUE;
