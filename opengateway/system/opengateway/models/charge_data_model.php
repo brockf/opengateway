@@ -62,4 +62,15 @@ class Charge_data_model extends Model
 			return FALSE;
 		}
 	}
+	
+	/**
+	* Delete Order Data
+	*
+	* @param int $order_id
+	*
+	* @return void
+	*/
+	function Delete ($order_id) {
+		$this->db->delete('order_data', array('order_id' => $order_id));
+	}
 }

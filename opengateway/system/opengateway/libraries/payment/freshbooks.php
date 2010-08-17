@@ -12,11 +12,11 @@ class freshbooks
 	{
 		$settings = array();
 		
-		$settings['name'] = 'FreshBooks';
+		$settings['name'] = 'Offline Invoicing with FreshBooks';
 		$settings['class_name'] = 'freshbooks';
 		$settings['external'] = FALSE;
 		$settings['no_credit_card'] = TRUE;
-		$settings['description'] = 'Instead of collecting payments online, this gateway will create an invoice in your FreshBooks account for the customer.  This way, you can accept payments offline (or via other methods) and track your income and accounts receivable with FreshBooks.';
+		$settings['description'] = 'FreshBooks is a popular, versatile online invoicing application.  Instead of collecting payments online, this gateway will create an invoice in your FreshBooks account for the customer.  This way, you can accept payments offline (or via other methods) and track your income and accounts receivable with FreshBooks.';
 		$settings['is_preferred'] = 0;
 		$settings['setup_fee'] = 'n/a';
 		$settings['monthly_fee'] = 'n/a';
@@ -112,11 +112,15 @@ class freshbooks
 	function SaveClientID ($customer_id, $client_id) {
 		$CI =& get_instance();
 		$CI->load->model('charge_data_model');
+		$CI->charge_data_model->Delete('fb_customer_' . $customer_id);
 		$CI->charge_data_model->Save('fb_customer_' . $customer_id, 'client_id', $client_id);
 	}
 	
 	function GetCreateClient ($client_id, $gateway, $customer) {
 		$CI =& get_instance();
+		
+		// we may get arrays from GetCustomer which have the "id" key, not "customer_id"
+		$customer['customer_id'] = (isset($customer['id'])) ? $customer['id'] : $customer['customer_id'];
 	
 		// does this client already exist in FreshBooks?
 		$CI->load->model('charge_data_model');
@@ -180,32 +184,8 @@ class freshbooks
 			$response = $this->SendRequest($gateway['api_url'], $gateway['auth_token'], $xml);
 
 			if (empty($response) or !isset($response['client'])) {
-				return FALSE;
-			}
-			
-			// compare to see if we need an update
-			$update_client = FALSE;
-			if ($response['client']['first_name'] != $customer['first_name']) {
-				$update_client = TRUE;
-			}
-			if ($response['client']['last_name'] != $customer['last_name']) {
-				$update_client = TRUE;
-			}
-			if ($response['client']['email'] != $customer['email']) {
-				$update_client = TRUE;
-			}
-			if ($response['client']['p_street1'] != $customer['address_1']) {
-				$update_client = TRUE;
-			}
-			if ($response['client']['p_city'] != $customer['city']) {
-				$update_client = TRUE;
-			}
-			if ($response['client']['p_code'] != $customer['postal_code']) {
-				$update_client = TRUE;
-			}
-			
-			if ($update_client == TRUE) {
-				// update the client
+				// we likely deleted the client
+				// create the client
 				$company = (!empty($customer['company'])) ? $customer['company'] : $customer['first_name'] . ' ' . $customer['last_name'];
 				$phone = (!empty($customer['phone'])) ? '<work_phone>' . $customer['phone'] . '</work_phone>' : '';
 				
@@ -222,9 +202,8 @@ class freshbooks
 				}
 				
 				$xml = '<?xml version="1.0" encoding="utf-8"?>
-						<request method="client.update">
+						<request method="client.create">
 						  <client>
-						  	<client_id>' . $client_id . '</client_id>
 						    <first_name>' . $customer['first_name'] . '</first_name>
 						    <last_name>' . $customer['last_name'] . '</last_name>
 						    <organization>' . $company . '</organization>
@@ -236,8 +215,72 @@ class freshbooks
 						
 				$response = $this->SendRequest($gateway['api_url'], $gateway['auth_token'], $xml);
 				
-				if (empty($response)) {
+				if (empty($response) or !isset($response['client_id'])) {
 					return FALSE;
+				}
+				
+				$client_id = $response['client_id'];
+				
+				// save this ID
+				$this->SaveClientID($customer['customer_id'], $client_id);
+			}
+			else {
+				// compare to see if we need an update
+				$update_client = FALSE;
+				if ($response['client']['first_name'] != $customer['first_name']) {
+					$update_client = TRUE;
+				}
+				if ($response['client']['last_name'] != $customer['last_name']) {
+					$update_client = TRUE;
+				}
+				if ($response['client']['email'] != $customer['email']) {
+					$update_client = TRUE;
+				}
+				if ($response['client']['p_street1'] != $customer['address_1']) {
+					$update_client = TRUE;
+				}
+				if ($response['client']['p_city'] != $customer['city']) {
+					$update_client = TRUE;
+				}
+				if ($response['client']['p_code'] != $customer['postal_code']) {
+					$update_client = TRUE;
+				}
+				
+				if ($update_client == TRUE) {
+					// update the client
+					$company = (!empty($customer['company'])) ? $customer['company'] : $customer['first_name'] . ' ' . $customer['last_name'];
+					$phone = (!empty($customer['phone'])) ? '<work_phone>' . $customer['phone'] . '</work_phone>' : '';
+					
+					if (!empty($customer['address_1'])) {
+						$address = '<p_street1>' . $customer['address_1'] . '</p_street1>
+								    <p_street2>' . $customer['address_2'] . '</p_street2>
+								    <p_city>' . $customer['city'] . ' </p_city>
+								    <p_state>' . $customer['state'] . '</p_state>
+								    <p_country>' . $customer['country'] . '</p_country>
+								    <p_code>' . $customer['postal_code'] . '</p_code>';
+					}
+					else {
+						$address = '';
+					}
+					
+					$xml = '<?xml version="1.0" encoding="utf-8"?>
+							<request method="client.update">
+							  <client>
+							  	<client_id>' . $client_id . '</client_id>
+							    <first_name>' . $customer['first_name'] . '</first_name>
+							    <last_name>' . $customer['last_name'] . '</last_name>
+							    <organization>' . $company . '</organization>
+							    <email>' . $customer['email'] . '</email>
+							    ' . $phone . '
+								' . $address .'
+							  </client>
+							</request>';
+							
+					$response = $this->SendRequest($gateway['api_url'], $gateway['auth_token'], $xml);
+					
+					if (empty($response)) {
+						return FALSE;
+					}
 				}
 			}
 		}
@@ -297,7 +340,7 @@ class freshbooks
 			
 			$response = $this->Charge($client_id, $order_id, $gateway, $customer, $amount, array(), $return_url, $cancel_url);
 			
-			if (!empty($response)) {
+			if (!empty($response) and $response['response_code'] != '2') {
 				$CI->charge_model->SetStatus($order_id, 1);
 				$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
 				$response = $CI->response->TransactionResponse(100, $response_array);
