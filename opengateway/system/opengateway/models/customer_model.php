@@ -197,6 +197,8 @@ class Customer_model extends Model
 	*/
 	function UpdateCustomer($client_id, $customer_id, $params)
 	{
+		$this->load->library('field_validation');
+
 		if(!isset($customer_id)) {
 			return FALSE;
 		}
@@ -243,7 +245,6 @@ class Customer_model extends Model
 			}
 			else {
 				// Make sure the country is in the proper format
-				$this->load->library('field_validation');
 				$country_id = $this->field_validation->ValidateCountry($params['country']);
 				
 				if(!$country_id) {
