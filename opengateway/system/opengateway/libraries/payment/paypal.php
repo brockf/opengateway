@@ -250,12 +250,12 @@ class paypal
 		return $response;	
 	}
 	
-	function Recur($client_id, $gateway, $customer, $amount, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences)
+	function Recur($client_id, $gateway, $customer, $amount, $charge_today, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences)
 	{		
 		$CI =& get_instance();
 		
 		// If the start date is today, we'll do the first one manually
-		if (strtotime($start_date) == strtotime(date('Y-m-d'))) {
+		if ($charge_today === TRUE) {
 			// Create an order
 			$CI->load->model('charge_model');
 			

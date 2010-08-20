@@ -63,6 +63,23 @@
 			and <span class="email_body">email_body</span> in the form of <span class="code">[[VARIABLE_NAME]]</span>.  They will be
 			dynamically replaced upon sending the email.</p>
 			<p>To see what variables are available for each system trigger, make a call to <a href="#getemailvariables">GetEmailVariables</a>.</p>
+			
+			<h2>Formatting Dates in Emails</h2>
+
+			<p>Date variables are often available in emails for things like the Next Charge Date, Order Date, etc.  You are able to specify the
+			format for these dates.  For example, while the date variable may be "2010-09-19", you can print this as:</p>
+			<ul>
+				<li>September 19, 2010</li>
+				<li>Sep 19, 2010</li>
+				<li>2010.09.19</li>
+				<li>19-Sep-2010</li>
+				<li>etc.</li>
+			</ul>
+			
+			<p>Formatting is done by passing a parameter with the variable.  For Example: <span class="code">[[NEXT_CHARGE_DATE|"M d, Y"]]</span>.  The second parameter (in quotation marks)
+			tells the application how to display the dates.  You can specify any date format using either of PHP's <a href="http://www.php.net/date">date()</a>
+			and <a href="http://www.php.net/strftime">strftime()</a> formatting styles.</p>
+
 			<h2>Object Data</h2>
 			<p>The following data can be sent in the <a href="#newemail">NewEmail</a> and <a href="#updateemail">UpdateEmail</a>
 			methods.</p>

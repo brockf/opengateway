@@ -325,6 +325,15 @@ class Transactions extends Controller {
 			$charge->UseGateway($this->input->post('gateway'));
 		}
 		
+		// set return URL
+		if ($this->input->post('recurring') == '0') {
+			$charge->Param('return_url',site_url('transactions/latest_charge'));
+		}
+		else {
+			$charge->Param('return_url',site_url('transactions/latest_recur'));
+		}
+		$charge->Param('cancel_url',site_url('transactions/create'));
+		
 		$response = $charge->Charge();
 		
 		if (!is_array($response) or isset($response['error'])) {
@@ -350,6 +359,30 @@ class Transactions extends Controller {
 		redirect($redirect);
 		
 		return TRUE;
+	}
+	
+	/**
+	* View Latest Charge (from a PayPal Express Redirect)
+	*/
+	function latest_charge () {
+		$this->load->model('charge_model');
+		$charge = $this->charge_model->GetCharges($this->user->Get('client_id'), array());
+		
+		$charge = $charge[0];
+		
+		return redirect('transactions/charge/' . $charge['id']);
+	}
+	
+	/**
+	* View Latest Recur (from a PayPal Express Redirect)
+	*/
+	function latest_recur () {
+		$this->load->model('recurring_model');
+		$charge = $this->recurring_model->GetRecurrings($this->user->Get('client_id'), array());
+		
+		$charge = $charge[0];
+		
+		return redirect('transactions/recurring/' . $charge['id']);
 	}
 	
 	/**

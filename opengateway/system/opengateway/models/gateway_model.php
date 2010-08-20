@@ -530,14 +530,19 @@ class Gateway_model extends Model
 		$card_last_four = (isset($credit_card['card_num'])) ? substr($credit_card['card_num'],-4,4) : '0';
 		$subscription_id = $CI->recurring_model->SaveRecurring($client_id, $gateway['gateway_id'], $customer['customer_id'], $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $recur['amount'], $plan_id, $card_last_four);
 		
+		// get subscription
+		$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
+		// is there a charge for today?
+		$charge_today == (date('Y-m-d', strtotime($subscription['date_created'])) == date('Y-m-d', strtotime($subscription['start_date']))) ? TRUE : FALSE;
+		
 		// set last_charge as today, if today was a charge
-		if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
+		if ($charge_today === TRUE) {
 			$CI->recurring_model->SetChargeDates($subscription_id, date('Y-m-d'), $next_charge_date);
 		}
 		
 		// if amount is greater than 0, we require a gateway to process
 		if ($recur['amount'] > 0) {
-			$response = $CI->$gateway_name->Recur($client_id, $gateway, $customer, $amount, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences, $return_url, $cancel_url);
+			$response = $CI->$gateway_name->Recur($client_id, $gateway, $customer, $amount, $charge_today, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences, $return_url, $cancel_url);
 		}
 		else {
 			// this is a free subscription
@@ -772,8 +777,13 @@ class Gateway_model extends Model
 		
 		$subscription_id = $CI->recurring_model->SaveRecurring($client_id, $gateway['gateway_id'], $recurring['customer']['id'], $recurring['interval'], $start_date, $end_date, $start_date, $recurring['number_occurrences'], $recurring['notification_url'], $recurring['amount'], $plan_id, $card_last_four);
 		
+		// get subscription
+		$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
+		// is there a charge for today?
+		$charge_today == (date('Y-m-d', strtotime($subscription['date_created'])) == date('Y-m-d', strtotime($subscription['start_date']))) ? TRUE : FALSE;
+		
 		// try creating a new subscription
-		$response = $CI->$gateway_name->Recur($client_id, $gateway, $recurring['customer'], $recurring['amount'], $start_date, $end_date, $recurring['interval'], $credit_card, $subscription_id, $recurring['total_occurrences'], FALSE, FALSE);
+		$response = $CI->$gateway_name->Recur($client_id, $gateway, $recurring['customer'], $recurring['amount'], $charge_today, $start_date, $end_date, $recurring['interval'], $credit_card, $subscription_id, $recurring['total_occurrences'], FALSE, FALSE);
 		
 		if ($response['response_code'] != 100) {
 			// clear it out completely

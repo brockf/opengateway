@@ -58,11 +58,11 @@ class offline
 		return $response;
 	}
 	
-	function Recur ($client_id, $gateway, $customer, $amount, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences = FALSE)
+	function Recur ($client_id, $gateway, $customer, $amount, $charge_today, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences = FALSE)
 	{		
 		$CI =& get_instance();
 		// if a payment is to be made today, process it.
-		if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
+		if ($charge_today === TRUE) {
 			// Create an order for today's payment
 			$CI->load->model('charge_model');
 			$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);

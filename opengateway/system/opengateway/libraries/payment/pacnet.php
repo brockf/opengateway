@@ -175,14 +175,14 @@ class pacnet
 		return $response;
 	}
 	
-	function Recur ($client_id, $gateway, $customer, $amount, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences = FALSE)
+	function Recur ($client_id, $gateway, $customer, $amount, $charge_today, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences = FALSE)
 	{
 		$CI =& get_instance();
 		
 		$CI->load->model('order_authorization_model');
 		
 		// is there a payment for today?
-		if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
+		if ($charge_today === TRUE) {
 			// Create an order for today's payment
 			$CI->load->model('charge_model');
 			$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;

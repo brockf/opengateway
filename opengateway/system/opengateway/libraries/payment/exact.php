@@ -174,7 +174,7 @@ class exact
 		return $response;
 	}
 	
-	function Recur ($client_id, $gateway, $customer, $amount, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences = FALSE)
+	function Recur ($client_id, $gateway, $customer, $amount, $charge_today, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences = FALSE)
 	{
 		$CI =& get_instance();
 		
@@ -187,7 +187,7 @@ class exact
 		$response = $this->CreateProfile($client_id, $gateway, $customer, $credit_card, $subscription_id, $amount, $order_id);
 		  
 		// Process today's payment
-		if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
+		if ($charge_today === TRUE) {
 			$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $response['transaction_tag'], $response['auth_num'], $amount);
 		
 			if($response['success'] == TRUE){

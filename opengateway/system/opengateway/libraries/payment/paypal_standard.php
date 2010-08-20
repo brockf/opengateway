@@ -151,7 +151,7 @@ class paypal_standard
 		return $response;	
 	}
 	
-	function Recur($client_id, $gateway, $customer, $amount, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences, $return_url, $cancel_url)
+	function Recur($client_id, $gateway, $customer, $amount, $charge_today, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences, $return_url, $cancel_url)
 	{		
 		$CI =& get_instance();
 		
@@ -202,7 +202,7 @@ class paypal_standard
 		$post['L_BILLINGTYPE0'] = 'RecurringPayments';
 		
 		// handle first charges unless there's a free trial
-		if (date('Y-m-d',strtotime($start_date)) == date('Y-m-d')) {
+		if ($charge_today === TRUE) {
 			// first recurring charge won't start until after the first interval
 			// we'll run an instant payment first
 			// old start date
@@ -214,8 +214,8 @@ class paypal_standard
 		$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
 		
 		$description = ($subscription['amount'] != $amount) ? 'Initial charge: ' . $gateway['currency'] . $amount . ', then ' : '';
-		$description .= $gateway['currency'] . money_format("%!i",$subscription['amount']) . ' every ' . $interval . ' days until ' . $end_date;
-		if ($start_date != date('Y-m-d') and !isset($adjusted_start_date)) {
+		$description .= $gateway['currency'] . money_format("%!i",$subscription['amount']) . ' every ' . $interval . ' days until ' . date('Y-m-d',strtotime($subscription['end_date']));
+		if ($charge_today === FALSE) {
 			$description .= ' (free trial ends ' . $start_date . ')';
 		}
 		$post['L_BILLINGAGREEMENTDESCRIPTION0'] = $description;
@@ -463,7 +463,7 @@ class paypal_standard
 			// we're good	
 			
 			// do we need a first charge?
-			if (date('Y-m-d',strtotime($subscription['start_date'])) == date('Y-m-d')) {
+			if (date('Y-m-d',strtotime($subscription['start_date'])) == date('Y-m-d', strtotime($subscription['date_created']))) {
 				$CI->load->model('charge_model');
 				
 				// get the first charge amount (it may be different)
@@ -521,7 +521,7 @@ class paypal_standard
 			$post['TOKEN'] = $response['TOKEN'];
 			$description = ($order_id and ($first_charge_amount != $subscription['amount'])) ? 'Initial charge: ' . $gateway['currency'] . $first_charge_amount . ', then ' : '';
 			$description .= $gateway['currency'] . $subscription['amount'] . ' every ' . $subscription['interval'] . ' days until ' . date('Y-m-d',strtotime($subscription['end_date']));
-			if (date('Y-m-d',strtotime($subscription['start_date'])) != date('Y-m-d') and !isset($adjusted_start_date)) {
+			if (date('Y-m-d',strtotime($subscription['start_date'])) != date('Y-m-d', strtotime($subscrition['date_created'])) and !isset($adjusted_start_date)) {
 				$description .= ' (free trial ends ' . date('Y-m-d',strtotime($subscription['start_date'])) . ')';
 			}
 			$post['DESC'] = $description;
@@ -552,6 +552,9 @@ class paypal_standard
 				// redirect back to user's site
 				header('Location: ' . $data['return_url']);
 				die();
+			}
+			else {
+				die('Error completing payment (subscription profile error).');
 			}
 		}
 	}
