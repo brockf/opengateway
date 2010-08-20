@@ -533,7 +533,7 @@ class Gateway_model extends Model
 		// get subscription
 		$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
 		// is there a charge for today?
-		$charge_today == (date('Y-m-d', strtotime($subscription['date_created'])) == date('Y-m-d', strtotime($subscription['start_date']))) ? TRUE : FALSE;
+		$charge_today = (date('Y-m-d', strtotime($subscription['date_created'])) == date('Y-m-d', strtotime($subscription['start_date']))) ? TRUE : FALSE;
 		
 		// set last_charge as today, if today was a charge
 		if ($charge_today === TRUE) {
@@ -780,7 +780,7 @@ class Gateway_model extends Model
 		// get subscription
 		$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
 		// is there a charge for today?
-		$charge_today == (date('Y-m-d', strtotime($subscription['date_created'])) == date('Y-m-d', strtotime($subscription['start_date']))) ? TRUE : FALSE;
+		$charge_today = (date('Y-m-d', strtotime($subscription['date_created'])) == date('Y-m-d', strtotime($subscription['start_date']))) ? TRUE : FALSE;
 		
 		// try creating a new subscription
 		$response = $CI->$gateway_name->Recur($client_id, $gateway, $recurring['customer'], $recurring['amount'], $charge_today, $start_date, $end_date, $recurring['interval'], $credit_card, $subscription_id, $recurring['total_occurrences'], FALSE, FALSE);
