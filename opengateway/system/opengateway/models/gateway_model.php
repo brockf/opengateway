@@ -537,7 +537,7 @@ class Gateway_model extends Model
 		
 		// set last_charge as today, if today was a charge
 		if ($charge_today === TRUE) {
-			$CI->recurring_model->SetChargeDates($subscription_id, date('Y-m-d'), $next_charge_date);
+			$CI->recurring_model->SetChargeDates($subscription_id, date('Y-m-d', strtotime($subscription['date_created'])), $next_charge_date);
 		}
 		
 		// if amount is greater than 0, we require a gateway to process
