@@ -1,3 +1,3 @@
 <?php
 
-$config['opengateway_version'] = '1.52';
+$config['opengateway_version'] = '1.53';
