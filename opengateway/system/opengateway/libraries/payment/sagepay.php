@@ -132,7 +132,7 @@ class sagepay
 		return TRUE;
 	}
 	
-	function Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card, $txtype = 'PAYMENT')
+	function Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card, $return_url, $cancel_url, $txtype = 'PAYMENT')
 	{	
 		$CI =& get_instance();
 					
@@ -241,7 +241,7 @@ class sagepay
 			$CI->load->model('charge_model');
 			$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
 			
-			$response = $this->Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card);
+			$response = $this->Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card, $return_url, $cancel_url);
 			
 			if ($response['response_code'] == '1') {
 				$CI->charge_model->SetStatus($order_id, 1);
@@ -259,7 +259,7 @@ class sagepay
 			
 			// generate a fake random Order ID - this isn't a true order
 			$order_id = rand(100000,1000000);
-			$response = $this->Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card, 'AUTHENTICATE');
+			$response = $this->Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card, $return_url, $cancel_url, 'AUTHENTICATE');
 			
 			if ($response['response_code'] == '1') {
 				$response_array = array('recurring_id' => $subscription_id);
