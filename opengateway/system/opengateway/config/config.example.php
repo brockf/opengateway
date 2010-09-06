@@ -31,7 +31,7 @@ $config['ssl_active'] = false;
 $config['cron_key'] = '0000000000000000';
 $config['currency_symbol'] = '$';
 
-$config['java_include_path'] = APPATH . 'includes/';
+$config['java_include_path'] = APPPATH . 'includes/';
 
 // rewrite base URL to SSL if accessed via SSL
 if ($_SERVER["SERVER_PORT"] == "443") {
