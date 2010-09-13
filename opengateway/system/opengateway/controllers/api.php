@@ -137,8 +137,9 @@ class API extends Controller {
 		$recur = isset($params['recur']) ? $params['recur'] : FALSE;
 		$return_url = isset($params['return_url']) ? $params['return_url'] : FALSE;
 		$cancel_url = isset($params['cancel_url']) ? $params['cancel_url'] : FALSE;
+		$renew = isset($params['renew']) ? $params['renew'] : FALSE;
 		
-		return $this->gateway_model->Recur($client_id, $gateway_id, $amount, $credit_card, $customer_id, $customer, $customer_ip, $recur, $return_url, $cancel_url);
+		return $this->gateway_model->Recur($client_id, $gateway_id, $amount, $credit_card, $customer_id, $customer, $customer_ip, $recur, $return_url, $cancel_url, $renew);
 	}
 	
 	function Refund ($client_id, $params) {

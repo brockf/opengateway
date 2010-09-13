@@ -298,11 +298,12 @@ class Gateway_model extends Model
 	* @param string $recur['notification_url'] The URL to send POST updates to for notices re: this subscription.
 	* @param string $return_url The URL for external payment processors to return the user to after payment
 	* @param string $cancel_url The URL to send if the user cancels an external payment
+	* @param int $renew The subscription that is being renewed, if there is one
 	*
 	* @return mixed Array with response_code and response_text
 	*/
 	
-	function Recur($client_id, $gateway_id, $amount = FALSE, $credit_card = array(), $customer_id = FALSE, $customer = array(), $customer_ip = FALSE, $recur = array(), $return_url = FALSE, $cancel_url = FALSE)
+	function Recur($client_id, $gateway_id, $amount = FALSE, $credit_card = array(), $customer_id = FALSE, $customer = array(), $customer_ip = FALSE, $recur = array(), $return_url = FALSE, $cancel_url = FALSE, $renew = FALSE)
 	{		
 		$CI =& get_instance();
 		$CI->load->library('field_validation');
@@ -342,6 +343,17 @@ class Gateway_model extends Model
 			if (!isset($credit_card['exp_year']) or empty($credit_card['exp_year'])) {
 				die($this->response->Error(5008));
 			}
+		}
+		
+		// are we linking this to another sub via renewal?
+		if (!empty($renew)) {
+			$this->load->model('recurring_model');
+			$renewed_subscription = $this->recurring_model->GetSubscriptionDetails($client_id, $renew);
+			
+			$mark_as_renewed = $renewed_subscription['subscription_id'];
+		}
+		else {
+			$mark_as_renewed = FALSE;
 		}
 		
 		// Get the customer details if a customer id was included
@@ -575,6 +587,10 @@ class Gateway_model extends Model
 		}
 		
 		if ($response['response_code'] == 100) {
+			if (!empty($mark_as_renewed)) {
+				$this->recurring_model->SetRenew($mark_as_renewed, $subscription_id);
+			}
+			
 			if (!isset($response['not_completed']) or $response['not_completed'] == FALSE) {
 				$CI->recurring_model->SetActive($client_id, $subscription_id);
 		

@@ -53,7 +53,8 @@ class Recurring_model extends Model
 							'number_occurrences'=> $total_occurrences,
 							'amount'			=> $amount,
 							'card_last_four'	=> (!empty($card_last_four)) ? $card_last_four : '0',
-							'active'			=> 0,
+							'active'			=> '0',
+							'renewed'			=> '0',
 							'cancel_date'		=> '0000-00-00 00:00:00',
 							'timestamp'			=> $timestamp
 			  				);  					  				
@@ -75,6 +76,24 @@ class Recurring_model extends Model
 	*/
 	function SetActive ($client_id, $recurring_id) {
 		$this->db->update('subscriptions',array('active' => '1'),array('subscription_id' => $recurring_id));
+		
+		return TRUE;
+	}
+	
+	/**
+	* Set Renewed
+	*
+	* Sets the "renew" field for a subscription as the subscription ID of the sub that renewed it.
+	*
+	* @param int $old_subscription_id
+	* @param int $new_subscription_id
+	*
+	* @return boolean TRUE
+	*/
+	function SetRenew ($old_subscription_id, $new_subscription_id) {
+		$this->db->update('subscriptions',array('renew' => $new_subscription_id),array('subscription_id' => $old_subscription_id));
+		
+		return TRUE;
 	}
 	
 	/**

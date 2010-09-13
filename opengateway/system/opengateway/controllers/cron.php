@@ -40,10 +40,14 @@ class Cron extends Controller {
 		$subscriptions = $this->recurring_model->GetAllSubscriptionsForExpiring();
 		if($subscriptions) {
 			foreach($subscriptions as $subscription) {
-				// Try and make the charge
+				// cancel the subscription
 				$response = $this->recurring_model->CancelRecurring($subscription['client_id'], $subscription['subscription_id'], TRUE);
-				if($response) {
-					TriggerTrip('recurring_expire', $subscription['client_id'], FALSE, $subscription['subscription_id']);
+				if ($response) {
+					if (empty($subscription['renew'])) {
+						// not begin renewed, send expiration notice
+						TriggerTrip('recurring_expire', $subscription['client_id'], FALSE, $subscription['subscription_id']);
+					}
+					
 					$cancelled[] = $subscription['subscription_id'];
 				}
 			}
@@ -97,8 +101,10 @@ class Cron extends Controller {
 		$charges = $this->recurring_model->GetChargesByExpiryDate($next_week);
 		if($charges) {
 			foreach($charges as $charge) {
-				if (TriggerTrip('recurring_expiring_in_week', $charge['client_id'], false, $charge['subscription_id'])) {
-					$sent_emails['recurring_expiring_in_week'][] = $charge['subscription_id'];
+				if (empty($charge['renew'])) {
+					if (TriggerTrip('recurring_expiring_in_week', $charge['client_id'], false, $charge['subscription_id'])) {
+						$sent_emails['recurring_expiring_in_week'][] = $charge['subscription_id'];
+					}
 				}
 			}		
 		}
@@ -108,8 +114,10 @@ class Cron extends Controller {
 		$charges = $this->recurring_model->GetChargesByExpiryDate($next_month);
 		if($charges) {
 			foreach($charges as $charge) {
-				if (TriggerTrip('recurring_expiring_in_month', $charge['client_id'], false, $charge['subscription_id'])) {
-					$sent_emails['recurring_expiring_in_month'][] = $charge['subscription_id'];
+				if (empty($charge['renew'])) {
+					if (TriggerTrip('recurring_expiring_in_month', $charge['client_id'], false, $charge['subscription_id'])) {
+						$sent_emails['recurring_expiring_in_month'][] = $charge['subscription_id'];
+					}
 				}
 			}		
 		}
