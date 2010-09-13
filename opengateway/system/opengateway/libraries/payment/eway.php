@@ -16,7 +16,7 @@ class eway
 		$settings['class_name'] = 'eway';
 		$settings['external'] = FALSE;
 		$settings['no_credit_card'] = FALSE;
-		$settings['description'] = 'eWAY is the premier gateway solution in Autstralia.';
+		$settings['description'] = 'eWAY is the premier gateway solution in Australia.';
 		$settings['is_preferred'] = 1;
 		$settings['setup_fee'] = '$0';
 		$settings['monthly_fee'] = '$29';
