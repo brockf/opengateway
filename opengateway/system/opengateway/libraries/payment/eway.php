@@ -12,16 +12,16 @@ class eway
 	{
 		$settings = array();
 		
-		$settings['name'] = 'eWay';
+		$settings['name'] = 'eWAY';
 		$settings['class_name'] = 'eway';
 		$settings['external'] = FALSE;
 		$settings['no_credit_card'] = FALSE;
-		$settings['description'] = 'eWay Info.';
+		$settings['description'] = 'eWAY is the premier gateway solution in Autstralia.';
 		$settings['is_preferred'] = 1;
-		$settings['setup_fee'] = '$99.00';
-		$settings['monthly_fee'] = '$40.00';
-		$settings['transaction_fee'] = '$0.10';
-		$settings['purchase_link'] = 'http://www.eway.com.au';
+		$settings['setup_fee'] = '$0';
+		$settings['monthly_fee'] = '$29';
+		$settings['transaction_fee'] = '$0.50';
+		$settings['purchase_link'] = 'https://www.eway.com.au/join/secure/signup.aspx';
 		$settings['allows_updates'] = 0;
 		$settings['allows_refunds'] = 0;
 		$settings['requires_customer_information'] = 1;
