@@ -172,6 +172,12 @@
 						<td>You can optionally send the purchaser's IP address.</td>
 					</tr>	
 					<tr>
+						<td><span class="request">renew</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>If an existing "recurring_id" is passed in this parameter, expiration notices/POSTS will not be sent for the old subscription, because we know that this new subscription is renewing it.</td>
+					</tr>
+					<tr>
 						<td><span class="request">recur</span></td>
 						<td>node</td>
 						<td class="yes">yes</td>

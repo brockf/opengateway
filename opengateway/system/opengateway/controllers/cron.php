@@ -43,7 +43,17 @@ class Cron extends Controller {
 				// cancel the subscription
 				$response = $this->recurring_model->CancelRecurring($subscription['client_id'], $subscription['subscription_id'], TRUE);
 				if ($response) {
-					if (empty($subscription['renew'])) {
+					$trip_trigger = TRUE;
+					if (!empty($subscription['renewed'])) {
+						// let's verify this subscription is active
+						$renewing_sub = $this->recurring_model->GetSubscriptionDetails($subscription['client_id'], $subscription['renewed']);
+						
+						if ($renewing_sub['active'] == '1') {
+							$trip_trigger = FALSE;
+						}
+					}
+				
+					if ($trip_trigger == TRUE) {
 						// not begin renewed, send expiration notice
 						TriggerTrip('recurring_expire', $subscription['client_id'], FALSE, $subscription['subscription_id']);
 					}
@@ -101,7 +111,17 @@ class Cron extends Controller {
 		$charges = $this->recurring_model->GetChargesByExpiryDate($next_week);
 		if($charges) {
 			foreach($charges as $charge) {
-				if (empty($charge['renew'])) {
+				$trip_trigger = TRUE;
+				if (!empty($charge['renewed'])) {
+					// let's verify this subscription is active
+					$renewing_sub = $this->recurring_model->GetSubscriptionDetails($charge['client_id'], $charge['renewed']);
+					
+					if ($renewing_sub['active'] == '1') {
+						$trip_trigger = FALSE;
+					}
+				}
+					
+				if ($trip_trigger == TRUE) {
 					if (TriggerTrip('recurring_expiring_in_week', $charge['client_id'], false, $charge['subscription_id'])) {
 						$sent_emails['recurring_expiring_in_week'][] = $charge['subscription_id'];
 					}
@@ -114,7 +134,17 @@ class Cron extends Controller {
 		$charges = $this->recurring_model->GetChargesByExpiryDate($next_month);
 		if($charges) {
 			foreach($charges as $charge) {
-				if (empty($charge['renew'])) {
+				$trip_trigger = TRUE;
+				if (!empty($charge['renewed'])) {
+					// let's verify this subscription is active
+					$renewing_sub = $this->recurring_model->GetSubscriptionDetails($charge['client_id'], $charge['renewed']);
+					
+					if ($renewing_sub['active'] == '1') {
+						$trip_trigger = FALSE;
+					}
+				}
+					
+				if ($trip_trigger == TRUE) {
 					if (TriggerTrip('recurring_expiring_in_month', $charge['client_id'], false, $charge['subscription_id'])) {
 						$sent_emails['recurring_expiring_in_month'][] = $charge['subscription_id'];
 					}

@@ -91,7 +91,7 @@ class Recurring_model extends Model
 	* @return boolean TRUE
 	*/
 	function SetRenew ($old_subscription_id, $new_subscription_id) {
-		$this->db->update('subscriptions',array('renew' => $new_subscription_id),array('subscription_id' => $old_subscription_id));
+		$this->db->update('subscriptions',array('renewed' => $new_subscription_id),array('subscription_id' => $old_subscription_id));
 		
 		return TRUE;
 	}
