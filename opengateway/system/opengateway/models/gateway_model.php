@@ -347,8 +347,8 @@ class Gateway_model extends Model
 		
 		// are we linking this to another sub via renewal?
 		if (!empty($renew)) {
-			$this->load->model('recurring_model');
-			$renewed_subscription = $this->recurring_model->GetSubscriptionDetails($client_id, $renew);
+			$CI->load->model('recurring_model');
+			$renewed_subscription = $CI->recurring_model->GetSubscriptionDetails($client_id, $renew);
 			
 			$mark_as_renewed = $renewed_subscription['subscription_id'];
 		}
@@ -588,7 +588,7 @@ class Gateway_model extends Model
 		
 		if ($response['response_code'] == 100) {
 			if (!empty($mark_as_renewed)) {
-				$this->recurring_model->SetRenew($mark_as_renewed, $subscription_id);
+				$CI->recurring_model->SetRenew($mark_as_renewed, $subscription_id);
 			}
 			
 			if (!isset($response['not_completed']) or $response['not_completed'] == FALSE) {
