@@ -320,6 +320,11 @@ class Charge_model extends Model
 			elseif ($params['status'] == '2' or $params['status'] == 'refunded') {
 				$this->db->where('orders.refunded','1');
 			}
+			elseif ($params['status'] == '3' or $params['status'] == 'failed_repeat') {
+				$this->db->where('orders.status','0');
+				$this->db->where('orders.subscription_id !=','0');
+				$this->db->where('subscriptions.start_date !=','subscriptions.end_date',FALSE);
+			}
 			else {
 				$this->db->where('orders.status','0');
 			}
@@ -348,19 +353,19 @@ class Charge_model extends Model
 		switch($params['sort'])
 		{
 			case 'date':
-				$sort = 'timestamp';
+				$sort = 'orders.timestamp';
 				break;
 			case 'customer_first_name':
-				$sort = 'first_name';
+				$sort = 'customers.first_name';
 				break;
 			case 'customer_last_name':
-				$sort = 'last_name';
+				$sort = 'customers.last_name';
 				break;	
 			case 'amount':
-				$sort = 'amount';
+				$sort = 'orders.amount';
 				break;
 			default:
-				$sort = 'timestamp';
+				$sort = 'orders.timestamp';
 				break;	
 		}
 		
@@ -369,8 +374,13 @@ class Charge_model extends Model
 		
 		$this->db->order_by($sort, $sort_dir);	
 		
+		$this->db->select('customers.*');
+		$this->db->select('countries.*');
+		$this->db->select('orders.*');
+		
 		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
+		$this->db->join('subscriptions', 'subscriptions.subscription_id = orders.subscription_id', 'left');
 		
 		$query = $this->db->get('orders');
 		
@@ -391,6 +401,17 @@ class Charge_model extends Model
 				
 				if($row->subscription_id != 0) {
 					$data[$i]['recurring_id'] = $row->subscription_id;
+				}
+				
+				// was this a recurring charge (other than the first charge)
+				if ($row->subscription_id != 0 and date('Y-m-d',strtotime($row->start_date)) != date('Y-m-d',strtotime($row->timestamp))) {
+					$data[$i]['type'] = 'recurring_repeat';
+				}
+				elseif ($row->subscription_id != 0) {
+					$data[$i]['type'] = 'recurring_charge';
+				}
+				else {
+					$data[$i]['type'] = 'single_charge';
 				}
 				
 				if($row->customer_id != 0) {

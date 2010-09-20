@@ -32,6 +32,10 @@
 				if ($refunded == "1") {
 					$status = "refunded on " . $refund_date;
 				}
+				elseif ($type == 'recurring_repeat' and $status == 'failed') {
+					$status = 'recurring repeat failed';
+				}
+				
 			?>
 			<td><img src="<?=branded_include('images/' . $status_image . '.png');?>" alt="" />&nbsp;<?=$status;?></td>
 		</tr>
