@@ -163,7 +163,32 @@ class Recurring_model extends Model
 	*/
 	function MakeInactive($subscription_id)
 	{
+		$subscription = $this->GetSubscriptionDetails(FALSE,$subscription_id,TRUE);
+		
 		$update_data = array('active' => 0, 'cancel_date' => date('Y-m-d H:i:s'));
+		
+		// set end date
+		if ($subscription['next_charge'] != '0000-00-00' and strtotime($subscription['next_charge']) > time()) {
+			// there's a next charge date which won't be renewed, so we'll end it then
+			// we must also account for their signup time
+			//$time_created = date('H:i:s',strtotime($subscription['date_created']));
+			//$end_date = $subscription['next_charge_date'] . ' ' . $time_created;
+			$end_date = $subscription['next_charge'];
+		}
+		elseif ($subscription['end_date'] != '0000-00-00 00:00:00') {
+			// there is a set end_date
+			$end_date = $subscription['end_date'];
+		}
+		else {
+			// for some reason, neither a next_charge_date or an end_date exist
+			// let's end this now
+			//$end_date = date('Y-m-d H:i:s');
+			$end_date = date('Y-m-d');
+		}
+		
+		$update_data['end_date'] = $end_date;
+		
+		$update_data['end_date'] = $end_date;
 		
 		$this->db->where('subscription_id', $subscription_id);
 		$this->db->update('subscriptions', $update_data);
@@ -209,14 +234,17 @@ class Recurring_model extends Model
 	*
 	* @param int $client_id The client ID 
 	* @param int $subscription_id The subscription_id
+	* @param boolean $force Force with NULL client_id
 	* 
 	* @return array Subscription details
 	*/
-	function GetSubscriptionDetails($client_id, $subscription_id)
+	function GetSubscriptionDetails($client_id, $subscription_id, $force = FALSE)
 	{
 		$this->db->join('client_gateways', 'client_gateways.client_gateway_id = subscriptions.gateway_id', 'inner');
 		$this->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
-		$this->db->where('subscriptions.client_id', $client_id);
+		if ($force != FALSE) {
+			$this->db->where('subscriptions.client_id', $client_id);
+		}
 		$this->db->where('subscription_id', $subscription_id);
 		$query = $this->db->get('subscriptions');
 		if($query->num_rows() > 0) {
