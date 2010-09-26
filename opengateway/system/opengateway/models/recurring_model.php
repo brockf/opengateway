@@ -97,6 +97,22 @@ class Recurring_model extends Model
 	}
 	
 	/**
+	* Set Updated
+	*
+	* Sets the "updated" field to the new subscription ID, if the Credit Card was updated
+	*
+	* @param int $old_subscription_id
+	* @param int $new_subscription_id
+	*
+	* @return boolean TRUE
+	*/
+	function SetUpdated ($old_subscription_id, $new_subscription_id) {
+		$this->db->update('subscriptions',array('updated' => $new_subscription_id),array('subscription_id' => $old_subscription_id));
+		
+		return TRUE;
+	}
+	
+	/**
 	* Add a customer profile ID.
 	*
 	* For API's that require a customer profile

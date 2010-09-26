@@ -818,6 +818,10 @@ class Gateway_model extends Model
 			// set active
 			$CI->recurring_model->SetActive($client_id, $subscription_id);
 			
+			// mark the old subscription as updated
+			// old ID, new ID
+			$CI->recurring_model->SetUpdated($recurring_id, $subscription_id);
+			
 			// cancel the old subscription
 			// use $gateway_old for gateway array if we need it
 			
