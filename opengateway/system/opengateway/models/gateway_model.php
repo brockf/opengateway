@@ -593,6 +593,7 @@ class Gateway_model extends Model
 		if ($response['response_code'] == 100) {
 			if (!empty($mark_as_renewed)) {
 				$CI->recurring_model->SetRenew($mark_as_renewed, $subscription_id);
+				$CI->recurring_model->MakeInactive($mark_as_renewed);
 			}
 			
 			if (!isset($response['not_completed']) or $response['not_completed'] == FALSE) {

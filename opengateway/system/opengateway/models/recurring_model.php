@@ -165,6 +165,10 @@ class Recurring_model extends Model
 	{
 		$subscription = $this->GetSubscriptionDetails(FALSE,$subscription_id,TRUE);
 		
+		if ($subscription['active'] == '0') {
+			return FALSE;
+		}
+		
 		$update_data = array('active' => 0, 'cancel_date' => date('Y-m-d H:i:s'));
 		
 		// set end date
