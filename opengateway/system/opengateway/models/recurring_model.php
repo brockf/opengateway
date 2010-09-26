@@ -55,6 +55,7 @@ class Recurring_model extends Model
 							'card_last_four'	=> (!empty($card_last_four)) ? $card_last_four : '0',
 							'active'			=> '0',
 							'renewed'			=> '0',
+							'updated'			=> '0',
 							'cancel_date'		=> '0000-00-00 00:00:00',
 							'timestamp'			=> $timestamp
 			  				);  					  				
