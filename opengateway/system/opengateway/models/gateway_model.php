@@ -524,6 +524,9 @@ class Gateway_model extends Model
 		
 		// figure the total number of occurrences
 		$total_occurrences = round((strtotime($end_date) - strtotime($start_date)) / ($interval * 86400), 0);
+		if ($total_occurrences < 0) {
+			$total_occurrences = 1;
+		}
 		
 		// if they sent an $amount with their charge, this means that their first charge is different
 		// so now we need to grab the true recurring amount
