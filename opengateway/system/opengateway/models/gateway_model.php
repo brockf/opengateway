@@ -502,7 +502,7 @@ class Gateway_model extends Model
 		} elseif (isset($occurrences) and !empty($occurrences)) {
 			// calculate end_date from # of occurrences as defined by plan
 			$end_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400 * $occurrences));
-		} elseif (isset($recur['occurrences'])) {
+		} elseif (isset($recur['occurrences']) and !empty($recur['occurrences'])) {
 			// calculate end_date from # of occurrences from recur node
 			$end_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400 * $recur['occurrences']));
 		} else {
