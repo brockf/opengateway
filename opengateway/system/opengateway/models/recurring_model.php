@@ -172,7 +172,7 @@ class Recurring_model extends Model
 		$update_data = array('active' => 0, 'cancel_date' => date('Y-m-d H:i:s'));
 		
 		// set end date
-		if ($subscription['next_charge'] != '0000-00-00' and strtotime($subscription['next_charge']) > time()) {
+		if ($subscription['next_charge'] != '0000-00-00' and strtotime($subscription['next_charge']) > time() and strtotime($subscription['next_charge']) < strtotime($subscription['end_date'])) {
 			// there's a next charge date which won't be renewed, so we'll end it then
 			// we must also account for their signup time
 			//$time_created = date('H:i:s',strtotime($subscription['date_created']));
