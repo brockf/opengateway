@@ -423,6 +423,8 @@ class Recurring_model extends Model
 				$data[$i]['interval'] = $row->charge_interval;
 				$data[$i]['start_date'] = local_time($client_id, $row->start_date);
 				$data[$i]['end_date'] = local_time($client_id, $row->end_date);
+				$data[$i]['renewed'] = $row->renewed;
+				$data[$i]['updated'] = $row->updated;
 				$data[$i]['last_charge_date'] = local_time($client_id, $row->last_charge);
 				$data[$i]['next_charge_date'] = (strtotime($row->next_charge) < strtotime($row->end_date) and $row->next_charge != '0000-00-00') ? local_time($client_id, $row->next_charge) : local_time($client_id, $row->end_date);
 				if ($row->sub_active == '0' and $row->cancel_date == '0000-00-00 00:00:00') {
