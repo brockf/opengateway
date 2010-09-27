@@ -734,7 +734,7 @@ class Gateway_model extends Model
 		}
 		
 		// make sure the subscription isn't free (i.e. that it requires info)
-		if (intval($recurring['amount']) == 0) {
+		if ((float)$recurring['amount'] == 0) {
 			die($this->response->Error(5022));
 		}
 		
