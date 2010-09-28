@@ -34,7 +34,7 @@ $config['currency_symbol'] = '$';
 $config['java_include_path'] = APPPATH . 'includes/';
 
 // rewrite base URL to SSL if accessed via SSL
-if ($_SERVER["SERVER_PORT"] == "443" or $_SERVER['HTTPS'] == 'on') {
+if ($_SERVER["SERVER_PORT"] == "443" or (isset($_SERVER['HTTPS']) and $_SERVER['HTTPS'] == 'on')) {
 	$config['base_url'] = str_replace('http://','https://',$config['base_url']);
 }
 
