@@ -27,7 +27,7 @@ class Dashboard extends Controller {
 		
 		$data = array();
 		
-		if (!empty($revenue)) {
+		if (!empty($revenue) and count($revenue) > 1) {
 			$series = array();
 			foreach ($revenue as $day) {
 				$series[] = $day['revenue'];
