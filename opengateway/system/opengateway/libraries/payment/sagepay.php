@@ -281,11 +281,13 @@ class sagepay
 		//		api_auth_number = SecurityKey
 		
 		// these authorizations were saved during $this->Process()
-		$authorizations = $CI->order_authorization_model->GetAuthorization($order_id);
-		
-		$CI->recurring_model->SaveApiCustomerReference($subscription_id, $authorizations->tran_id);
-		$CI->recurring_model->SaveApiPaymentReference($subscription_id, $authorizations->order_id . '|' . $authorizations->authorization_code);
-		$CI->recurring_model->SaveApiAuthNumber($subscription_id, $authorizations->security_key);
+		if ($response['response_code'] != '2') {
+			$authorizations = $CI->order_authorization_model->GetAuthorization($order_id);
+			
+			$CI->recurring_model->SaveApiCustomerReference($subscription_id, $authorizations->tran_id);
+			$CI->recurring_model->SaveApiPaymentReference($subscription_id, $authorizations->order_id . '|' . $authorizations->authorization_code);
+			$CI->recurring_model->SaveApiAuthNumber($subscription_id, $authorizations->security_key);
+		}
 		
 		return $response;
 	}
