@@ -214,7 +214,7 @@ class Transactions extends Controller {
 		$this->load->model('gateway_model');
 		$gateways = $this->gateway_model->GetGateways($this->user->Get('client_id'),array());
 		
-		foreach ($gateways as $key => $gateway) {
+		foreach ((array)$gateways as $key => $gateway) {
 			$gateway_name = $gateway['library_name'];
 			$this->load->library('payment/' . $gateway_name);
 			$gateways[$key]['settings'] = $this->$gateway_name->Settings();
