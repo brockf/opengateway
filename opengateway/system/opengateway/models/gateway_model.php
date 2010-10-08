@@ -522,9 +522,16 @@ class Gateway_model extends Model
 			}
 		}
 		
+		// adjust end date if it's less than next charge
+		if (strtotime($end_date) <= strtotime($next_charge_date)) {
+			// set end date to next charge
+			$end_date = $next_charge_date;
+			$total_occurrences = 1;
+		}
+		
 		// figure the total number of occurrences
 		$total_occurrences = round((strtotime($end_date) - strtotime($start_date)) / ($interval * 86400), 0);
-		if ($total_occurrences < 0) {
+		if ($total_occurrences < 1) {
 			// the CC expiry date is only going to allow 1 charge
 			$total_occurrences = 1;
 		}
