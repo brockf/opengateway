@@ -293,7 +293,7 @@ class eway
 			echo 'URL = '. $post_url .'<br/>';
 			var_dump($xml);
 		}
-
+		
 		$response = $this->Process($post_url,$xml);
 		
 		if($response['ewayTrxnStatus'] == 'True')
@@ -385,8 +385,7 @@ class eway
 		$CI->charge_model->SetStatus($order_id, 1);
 		$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
 		$response = $CI->response->TransactionResponse(100, $response_array);
-
-			
+		
 		return $response;
 	}
 	
@@ -526,14 +525,12 @@ class eway
 			var_dump($post_response); die();
 		}
 		
-		if(curl_errno($ch) == CURLE_OK)
+		if (curl_errno($ch) == CURLE_OK)
 		{
 			$response_xml = @simplexml_load_string($post_response);
 			$CI =& get_instance();
 			$CI->load->library('arraytoxml');
 			$response = $CI->arraytoxml->toArray($response_xml);
-			
-			echo $response;
 			
 			return $response;
 		}

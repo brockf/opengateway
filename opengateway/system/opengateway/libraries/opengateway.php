@@ -151,6 +151,8 @@ class OpenGateway
 			// empty parameters
 			$this->params = new stdClass;
 			
+			die($data);
+			
 			// check for a system error
 			if (strpos($data, '<div') === 0) {
 				// this isn't XML, it's an error
