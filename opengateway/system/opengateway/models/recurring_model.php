@@ -338,12 +338,12 @@ class Recurring_model extends Model
 		
 		if(isset($params['created_after'])) {
 			$start_date = date('Y-m-d H:i:s', strtotime($params['created_after']));
-			$this->db->where('timestamp >=', $start_date);
+			$this->db->where('subscriptions.timestamp >=', $start_date);
 		}
 		
 		if(isset($params['created_before'])) {
 			$end_date = date('Y-m-d H:i:s', strtotime($params['created_before']));
-			$this->db->where('timestamp <=', $end_date);
+			$this->db->where('subscriptions.timestamp <=', $end_date);
 		}
 		
 		if(isset($params['customer_id'])) {
@@ -359,7 +359,7 @@ class Recurring_model extends Model
 		}
 		
 		if(isset($params['amount'])) {
-			$this->db->where('amount', $params['amount']);
+			$this->db->where('subscriptions.amount', $params['amount']);
 		}
 		
 		if (isset($params['active'])) {
