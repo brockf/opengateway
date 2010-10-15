@@ -377,7 +377,7 @@ class Charge_model extends Model
 		$this->db->select('customers.*');
 		$this->db->select('countries.*');
 		$this->db->select('orders.*');
-		$this->db->select('subscriptions.*');
+		$this->db->select('subscriptions.start_date');
 		
 		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
