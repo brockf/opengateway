@@ -184,7 +184,7 @@ class eway
 	function createRebillCustomer($gateway, $customer)
 	{
 	    $array = array(
-	    	customerTitle		=> $customer['title'],
+	    	customerTitle		=> isset($customer['title']) && !empty($customer['title']) ? $customer['title'] : 'Mr.',
 	    	customerFirstName 	=> $customer['first_name'],
 	    	customerLastName	=> $customer['last_name'],
 	    	customerAddress		=> $customer['address_1'],
@@ -222,10 +222,6 @@ class eway
 	
 	function getCustomerProfile($gateway, $profile_id)
 	{
-		/*$xml = '<QueryRebillCustomer xmlns="http://www.eway.com.au/gateway/rebill/manageRebill">
-      <RebillCustomerID>'.$profile_id.'</RebillCustomerID>
-    </QueryRebillCustomer>';*/
-    
     	$xml = array(
     		RebillCustomerID	=> $profile_id
     	);
@@ -347,13 +343,13 @@ class eway
 			$current_profile = $current_profile->row_array();
 			$profile_id = $current_profile['api_customer_reference'];
 		}
-		else {
+		else { 
 			$response = $this->createRebillCustomer($gateway, $customer);
-			
 			if($response) {
 				$profile_id = $response;	
 			}
 		}
+		
 		
 		if (empty($profile_id)) {
 			$add_text = (isset($response['reason'])) ? $response['reason'] : FALSE;
@@ -392,14 +388,7 @@ class eway
 	//---------------------------------------------------------------
 	
 	function CancelRecurring($client_id, $subscription)
-	{
-		/*$xml =
-		'<DeleteRebillEvent xmlns="http://www.eway.com.au/gateway/rebill/manageRebill">
-      <RebillCustomerID>'.$subscription['api_customer_reference'].'</RebillCustomerID>
-      <RebillID>'.$subscription['api_payment_reference'].'</RebillID>
-    </DeleteRebillEvent>
-';*/
-
+	{ 
 		$xml = array(
 			RebillCustomerID	=> $subscription['api_customer_reference'],
 			RebillID			=> $subscription['api_payment_reference']
@@ -413,7 +402,7 @@ class eway
 		$response = $this->processSoap($gateway, $this->complete_array($xml), 'DeleteRebillEvent');
 		
 		if($response->DeleteRebillEventResult->Result == 'Success')
-		{
+		{	
 			return TRUE;
 		}
 		else
@@ -451,24 +440,8 @@ class eway
 			$init_amount = 0;
 		}
 		
-		/*$xml =
-		'<CreateRebillEvent xmlns="http://www.eway.com.au/gateway/rebill/manageRebill">
-      <RebillCustomerID>'.$profile_id.'</RebillCustomerID>
-      <RebillInvRef>'.$subscription_id.'</RebillInvRef>
-      <RebillInvDes></RebillInvDes>
-      <RebillCCName>'.$credit_card['name'].'</RebillCCName>
-      <RebillCCNumber>'.$credit_card['card_num'].'</RebillCCNumber>
-      <RebillCCExpMonth>'.$credit_card['exp_month'].'</RebillCCExpMonth>
-      <RebillCCExpYear>'.substr($credit_card['exp_year'],-2,2).'</RebillCCExpYear>
-      <RebillInitAmt>'.$init_amount.'</RebillInitAmt>
-      <RebillInitDate>'.date('d/m/Y').'</RebillInitDate>
-      <RebillRecurAmt>'.number_format($amount,2,'','').'</RebillRecurAmt>
-      <RebillStartDate>'.date('d/m/Y',strtotime($start_date)).'</RebillStartDate>
-      <RebillInterval>'.$interval.'</RebillInterval>
-      <RebillIntervalType>1</RebillIntervalType>
-      <RebillEndDate>'.date('d/m/Y',strtotime($end_date)).'</RebillEndDate>
-    </CreateRebillEvent>
-    */
+		// Add the current time onto the start date so it converts correctly.
+		$start_date = $start_date .'T'. date('G:i:s');
     	
     	$xml = array(
     		RebillCustomerID	=> $profile_id,
@@ -477,17 +450,26 @@ class eway
     		RebillCCName		=> $credit_card['name'],
     		RebillCCNumber		=> $credit_card['card_num'],
     		RebillCCExpMonth	=> $credit_card['exp_month'],
-    		rebillCCExpYear		=> $credit_card['exp_year'],
+    		RebillCCExpYear		=> $credit_card['exp_year'],
     		RebillInitAmt		=> $init_amount,
-    		RebillInitDate		=> date('d/m/Y'),
+    		RebillInitDate		=> $this->aus_date(null, 'd/m/Y'),
     		RebillRecurAmt		=> number_format($amount, 2, '', ''),
-    		RebillStartDate		=> date('d/m/Y', strtotime($start_date)),
+    		RebillStartDate		=> $this->aus_date(strtotime($start_date)),
     		RebillInterval		=> $interval,
-    		rebillIntervalType	=> 1,
-    		RebillEndDate		=> date('d/m/Y', strtotime($end_date))
+    		RebillIntervalType	=> 1,
+    		RebillEndDate		=> $this->aus_date(strtotime($end_date))
     	);
 
 		$response = $this->processSoap($gateway, $xml, 'CreateRebillEvent');
+		
+		if ($this->debug)
+    	{
+    		echo '<h2>RebillEvent Array:</h2>';
+    		print_r($xml);
+    		
+    		echo '<h2>CreateRebillEvent Response:</h2>';
+    		print_r($response);
+    	}
 		
 		if($response->CreateRebillEventResult->Result == 'Success')
 		{
@@ -513,13 +495,12 @@ class eway
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $xml); // use HTTP POST to send form data
 		
 		// We need to make curl recognize the CA certificated so it can get by...
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);	// Verify it belongs to the server.
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);	// Check common exists and matches the server host name
-		curl_setopt($ch, CURLOPT_CAINFO, BASEPATH . "opengateway/libraries/payment/Certificates/eway.crt");
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);	// Verify it belongs to the server.
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);	// Check common exists and matches the server host name
 		
 		$post_response = curl_exec($ch); // execute curl post and store results in $post_response
 		
-		if ($this->debug)
+		if ($this->debug === true)
 		{
 			echo '<pre>';
 			var_dump($post_response); die();
@@ -690,6 +671,30 @@ class eway
 		}
 		
 		return $orig_array;
+	}
+	
+	//---------------------------------------------------------------
+	
+	public function aus_date($time=null, $format='d/m/Y') 
+	{
+		// Use today's date as the timestamp if none given.
+		if (!is_numeric($time))
+		{
+			$time = time();
+		}
+	
+		if (!function_exists('local_to_gmt'))
+		{
+			$this->load->helper('date');
+		}
+		
+		// Standardize time to GMT
+		$time = local_to_gmt($time);
+		
+		// Convert to Australian time
+		$time = gmt_to_local($time, 'UP10');
+		
+		return date($format, $time);
 	}
 	
 	//---------------------------------------------------------------
