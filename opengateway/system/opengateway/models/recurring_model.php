@@ -263,11 +263,15 @@ class Recurring_model extends Model
 	{
 		$this->db->join('client_gateways', 'client_gateways.client_gateway_id = subscriptions.gateway_id', 'inner');
 		$this->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
-		if ($force != FALSE) {
+		if ($force != TRUE) {
 			$this->db->where('subscriptions.client_id', $client_id);
 		}
 		$this->db->where('subscription_id', $subscription_id);
-		$query = $this->db->get('subscriptions');
+		
+		$this->db->from('subscriptions');
+		
+		$query = $this->db->get();
+		
 		if($query->num_rows() > 0) {
 			return $query->row_array();
 		} else {
