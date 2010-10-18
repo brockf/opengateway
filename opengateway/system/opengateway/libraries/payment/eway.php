@@ -261,7 +261,7 @@ class eway
 		$post['ewaygateway']['ewayOption2'] = '';
 		$post['ewaygateway']['ewayOption3'] = '';
 		$post['ewaygateway']['ewayCustomerInvoiceDescription'] = '';
-		$post['ewaygateway']['ewayCustomerInvoiceRef'] = '';
+		$post['ewaygateway']['ewayCustomerInvoiceRef'] = $order_id;
 		
 		$post['ewaygateway']['ewayCardHoldersName'] = $customer['first_name'].' '.$customer['last_name'];
 		$post['ewaygateway']['ewayCustomerFirstName'] = $customer['first_name'];
