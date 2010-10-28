@@ -3,6 +3,25 @@
 /**
  * eWAY processing gateway.
  *
+ * NOTE: This gateway does not use the eWay rebill API. Instead, it uses the Token Payments
+ * API since we do not save credit card information and cannot provide some of the required
+ * info for the Rebill API.
+ *
+ * Prod URL: http://www.eway.com.au/gateway/managedpayment
+ * Test URL: https://www.eway.com.au/gateway/ManagedPaymentService/test/managedcreditcardpayment.asmx
+ * Dev  URL: https://www.eway.com.au/gateway/ManagedPaymentService/test/managedcreditcardpayment.asmx
+ * Rebill Prod URL: http://www.eway.com.au/gateway/managedpayment 
+ * Rebill Test URL: https://www.eway.com.au/gateway/ManagedPaymentService/test/managedcreditcardpayment.asmx
+ * Rebill Dev  URL: https://www.eway.com.au/gateway/ManagedPaymentService/test/managedcreditcardpayment.asmx
+ *
+ * Token Payment Test Information: 
+ *		Test Customer ID		- 87654321
+ *		Test Username 			- test@eway.com.au
+ *		Test Password			- test123
+ *		Test CreditCard #		- 4444333322221111
+ *		Test ManagedCustomerID	- 987654321000
+ *		Test CCV				- 123
+ * 
  * @package 	OpenGateway
  * @author		Dave Ryan
  * @modified	Lonnie Ezell
@@ -22,11 +41,6 @@ class eway
 	
 	function eway() {
 		$this->settings = $this->Settings();
-		
-		if ($this->debug)
-		{
-			echo '<pre>';
-		}
 	}
 
 	//---------------------------------------------------------------
@@ -149,26 +163,34 @@ class eway
 	 */
 	function TestConnection($client_id, $gateway) 
 	{	
-		$post_url = $this->GetAPIUrl($gateway, 'rebill');	// Make sure we get the rebill url.
-		
 		$customer = array(
-			'title'			=> 'Mr.',
-			'first_name'	=> 'John',
-			'last_name'		=> 'Doe',
-			'address_1'		=> 'John Doe Enterprise',
-			'city'			=> 'Capital City',
-			'state'			=> 'ACT',
-			'company'		=> 'Doe',
-			'postal_code'	=> '2111',
-			'country'		=> 'au',
-			'email'			=> 'test@eway.com.au',
-			'customer_id'	=> 'Ref123'
-		);
+			Title		=> 'Mr.',
+	    	FirstName 	=> 'Joe',
+	    	LastName	=> 'Bloggs',
+	    	Address		=> 'Blogg enterprises',
+	    	Suburb		=> 'Capital City',
+	    	State		=> 'act',
+	    	Company		=> 'Bloggs',
+	    	PostCode	=> '2111',
+	    	Country		=> 'au',
+	    	Email		=> 'test@eway.com.au',
+	    	Fax			=> '0298989898',
+	    	Phone		=> '0297979797',
+	    	Mobile		=> '',
+	    	CustomerRef	=> 'Ref123',
+	    	JobDesc		=> '',
+	    	Comments	=> 'Please ship ASAP',
+	    	URL			=> 'http://www.test.com.au',
+	    	CCNumber	=> '4444333322221111',
+	    	CCNameOnCard	=> 'Test Account',
+	    	CCExpiryMonth	=> '12',
+	    	CCExpiryYear	=> date('y')
+	    );
 		
-		$response = $this->createRebillCustomer($gateway, $customer);
+		$response = $this->processSoap($gateway, $customer, 'CreateCustomer');
 		
-		if ($response) 
-		{ 
+		if (isset($response['CREATECUSTOMERRESULT']))
+		{
 			return TRUE;
 		}
 		
@@ -180,61 +202,52 @@ class eway
 	//---------------------------------------------------------------
 	// !CUSTOMER FUNCTIONS
 	//---------------------------------------------------------------
-	
-	function createRebillCustomer($gateway, $customer)
+		
+	function createProfile($client_id, $gateway, $customer, $credit_card, $subscription_id, $amount, $order_id)
 	{
-	    $array = array(
-	    	customerTitle		=> isset($customer['title']) && !empty($customer['title']) ? $customer['title'] : 'Mr.',
-	    	customerFirstName 	=> $customer['first_name'],
-	    	customerLastName	=> $customer['last_name'],
-	    	customerAddress		=> $customer['address_1'],
-	    	customerSuburb		=> $customer['city'],
-	    	customerState		=> $customer['state'],
-	    	customerCompany		=> $customer['company'],
-	    	customerPostCode	=> $customer['postal_code'],
-	    	customerCountry		=> $customer['country'],
-	    	customerEmail		=> $customer['email'],
-	    	customerRef			=> $customer['customer_id']
+		$CI =& get_instance();
+	
+	    $xml = array(
+	    	Title		=> isset($customer['title']) && !empty($customer['title']) ? $customer['title'] : 'Mr.',
+	    	FirstName 	=> $customer['first_name'],
+	    	LastName	=> $customer['last_name'],
+	    	Address		=> $customer['address_1'],
+	    	Suburb		=> $customer['city'],
+	    	State		=> $customer['state'],
+	    	Company		=> $customer['company'],
+	    	PostCode	=> $customer['postal_code'],
+	    	Country		=> strtolower($customer['country']),
+	    	Email		=> $customer['email'],
+	    	Fax			=> 'N/A',
+	    	Phone		=> 'N/A',
+	    	Mobile		=> 'N/A',
+	    	CustomerRef	=> $order_id,
+	    	JobDesc		=> 'N/A',
+	    	Comments	=> 'N/A',
+	    	URL			=> '',
+	    	CCNumber	=> isset($credit_card['card_num']) ? $credit_card['card_num'] : '',
+	    	CCNameOnCard	=> isset($credit_card['name']) ? $credit_card['name'] : '',
+	    	CCExpiryMonth	=> isset($credit_card['exp_month']) ? $credit_card['exp_month'] : '',
+	    	CCExpiryYear	=> isset($credit_card['exp_year']) ? substr($credit_card['exp_year'], -2) : ''
 	    );
     
-		$response = $this->processSoap($gateway, $this->complete_array($array), 'CreateRebillCustomer');
+		$response = $this->processSoap($gateway, $xml, 'CreateCustomer');
 		
-		if ($this->debug)
-    	{
-    		echo '<h2>Customer Array:</h2>';
-    		print_r($customer);
-    		
-    		echo '<h2>CreateRebillCustomer Reponse:</h2>';
-    		print_r($response);
-    	}
-		
-		if($response->CreateRebillCustomerResult->Result == 'Success')
-		{
-			return $response->CreateRebillCustomerResult->RebillCustomerID;
+		if(isset($response['CREATECUSTOMERRESULT']) && is_numeric($response['CREATECUSTOMERRESULT']))
+		{	
+			$response['success'] = true;
+			$response['client_id'] = $response['CREATECUSTOMERRESULT'];
+			// Save the Auth information
+			$CI->load->model('recurring_model');
+			$CI->recurring_model->SaveApiCustomerReference($subscription_id, $response['CREATECUSTOMERRESULT']);
+			// Client successfully created at eWay. Now we ned to save the info here. 
+			return $response;
 		}
 		else
 		{
-			return FALSE;
-		}
-	}
-	
-	//---------------------------------------------------------------
-	
-	function getCustomerProfile($gateway, $profile_id)
-	{
-    	$xml = array(
-    		RebillCustomerID	=> $profile_id
-    	);
-    
-		$response = $this->processSoap($gateway, $this->complete_array($xml), 'QueryRebillCustomer');
-		
-		if($response->QueryRebillCustomerResult->Result == 'Success')
-		{
-			return $response->QueryRebillCustomerResult;
-		}
-		else
-		{
-			return FALSE;
+			$response['success'] = false;
+			$response['reason'] = 'Could not create customer at eWay.';
+			return $response;
 		}
 	}
 	
@@ -243,12 +256,14 @@ class eway
 	//---------------------------------------------------------------
 	// !EVENT FUNCTIONS
 	//---------------------------------------------------------------
-	
+		
 	function Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card)
 	{ 
 		$CI =& get_instance();
 	
-		$post_url = $this->GetAPIUrl($gateway);
+		// The Charge function is the only one to use the eWay Hosted Payments solution,
+		// so the url's are not stored in the database. Instead, they are provided here.
+		$post_url = $gateway['mode'] == 'prod' ? 'https://www.eway.com.au/gateway/xmlpayment.asp' : 'https://www.eway.com.au/gateway/xmltest/testpage.asp';
 		
 		$post['ewaygateway']['ewayCustomerID'] = $gateway['customer_id'];
 		$post['ewaygateway']['ewayTotalAmount'] = number_format($amount,2,'','');
@@ -283,14 +298,16 @@ class eway
 		$xml = str_replace('<ResultSet>','', $xml);
 		$xml = str_replace('</ResultSet>','', $xml);
 		
-		if ($this->debug)
+		$response = $this->Process($post_url,$xml);
+		
+		
+		if (1)
 		{
 			echo '<pre>';
 			echo 'URL = '. $post_url .'<br/>';
-			var_dump($xml);
+			print_r($post);
+			print_r($response);
 		}
-		
-		$response = $this->Process($post_url,$xml);
 		
 		if($response['ewayTrxnStatus'] == 'True')
 		{ 
@@ -315,72 +332,48 @@ class eway
 	
 	//---------------------------------------------------------------
 	
+	/**
+	 *	Recur - called when an initial Recur charge comes through to
+	 *	to create a subscription.
+	 *
+	 * 	Since we're using the TokenAPI and not an actual recurring api
+	 *  this method's primary purpose is to simply setup a user and charge
+	 *	them through the Token aPI.
+	 */
+		 
 	function Recur ($client_id, $gateway, $customer, $amount, $charge_today, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences = FALSE)
 	{		
 		$CI =& get_instance();
-		
-		if($gateway['mode'] =='test')
-		{
-			$post_url = $gateway['arb_url_test'];
-		}
-		else
-		{
-			$post_url = $gateway['arb_url_live'];
-		}
-
-		// Create a new eway profile if one doesn't exist
-		$CI->db->select('api_customer_reference');
-		$CI->db->join('client_gateways', 'subscriptions.gateway_id = client_gateways.client_gateway_id', 'inner');
-		$CI->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
-		$CI->db->where('api_customer_reference !=','');
-		$CI->db->where('subscriptions.gateway_id',$gateway['gateway_id']);
-		$CI->db->where('subscriptions.active', 1);
-		$CI->db->where('subscriptions.customer_id',$customer['customer_id']);
-		$current_profile = $CI->db->get('subscriptions');
-			
-		if ($current_profile->num_rows() > 0) {
-			// save the profile ID
-			$current_profile = $current_profile->row_array();
-			$profile_id = $current_profile['api_customer_reference'];
-		}
-		else { 
-			$response = $this->createRebillCustomer($gateway, $customer);
-			if($response) {
-				$profile_id = $response;	
-			}
-		}
-		
-		
-		if (empty($profile_id)) {
-			$add_text = (isset($response['reason'])) ? $response['reason'] : FALSE;
-			$CI->recurring_model->DeleteRecurring($subscription_id);
-			die($CI->response->Error(5005, $add_text));
-		}
-
-		// save the api_customer_reference
-		$CI->load->model('recurring_model');
-		$CI->recurring_model->SaveApiCustomerReference($subscription_id, $profile_id);
-		
-		
-		// Create the rebill event
-		
-		$rebill_id = $this->createRebillEvent($profile_id, $gateway, $customer, $amount, $charge_today, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences);
-		
-		if(!$rebill_id)
-		{
-			$add_text = (isset($response['reason'])) ? $response['reason'] : FALSE;
-			$CI->recurring_model->DeleteRecurring($subscription_id);
-			die($CI->response->Error(5005, $add_text));
-		}
-		
-		// Save the api_payment_reference
-		$CI->recurring_model->SaveApiPaymentReference($subscription_id, $rebill_id);
-		
+	
+		// Create an order for today's payment
 		$CI->load->model('charge_model');
+		$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
+		$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
 		
-		$CI->charge_model->SetStatus($order_id, 1);
-		$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
-		$response = $CI->response->TransactionResponse(100, $response_array);
+		// Create the recurring seed
+		$response = $this->CreateProfile($client_id, $gateway, $customer, $credit_card, $subscription_id, $amount, $order_id);
+		
+		// Process today's payment
+		if ($charge_today === TRUE) {
+			if ($gateway['mode'] != 'live') $response['client_id'] = '9876543211000';
+		
+			$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $response['client_id'], $amount);
+		
+			if($response['success'] == TRUE){
+				$CI->charge_model->SetStatus($order_id, 1);
+				$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
+				$response = $CI->response->TransactionResponse(100, $response_array);
+			} else {
+				// Make the subscription inactive
+				$CI->recurring_model->MakeInactive($subscription_id);
+				$CI->charge_model->SetStatus($order_id, 0);
+				
+				$response_array = array('reason' => $response['reason']);
+				$response = $CI->response->TransactionResponse(2, $response_array);
+			}
+		} else {
+			$response = $CI->response->TransactionResponse(100, array('recurring_id' => $subscription_id));
+		}
 		
 		return $response;
 	}
@@ -389,96 +382,63 @@ class eway
 	
 	function CancelRecurring($client_id, $subscription)
 	{ 
-		$xml = array(
-			RebillCustomerID	=> $subscription['api_customer_reference'],
-			RebillID			=> $subscription['api_payment_reference']
-		);
-
-		$CI =& get_instance();
-		$CI->load->model('gateway_model');
-		
-
-		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $subscription['gateway_id']);
-		$response = $this->processSoap($gateway, $this->complete_array($xml), 'DeleteRebillEvent');
-		
-		if($response->DeleteRebillEventResult->Result == 'Success')
-		{	
-			return TRUE;
-		}
-		else
-		{
-			return FALSE;
-		}
-
-		
+		// Recurring not stored at eWay, so do nothing here.
+		return TRUE;	
 	}
 	
 	//---------------------------------------------------------------
-	
+		
 	function AutoRecurringCharge ($client_id, $order_id, $gateway, $params) {
-		return TRUE;
+		return $this->ChargeRecurring($client_id, $gateway, $order_id, $params['api_customer_reference'], $params['api_payment_reference'], $params['amount']);
+	}
+	
+	//-----------------------------------------------------
+	
+	
+	/**
+	 *	Handles paying the recurring charge. 
+	 *
+	 *	NOTE: eWay does NOT provide a method in their API to trigger this, 
+	 *	it appears that eWay handles this automatically, so we are using
+	 * 	the TokenAPI.
+	 */	 
+	function ChargeRecurring ($client_id, $gateway, $order_id, $customer_id, $amount) {
+		
+		$CI =& get_instance();
+	
+		$xml = array(
+			managedCustomerID	=> $customer_id,
+			amount				=> number_format($amount, 2, '', ''),
+			invoiceReference	=> $order_id,
+			invoiceDescription	=> 'Recurring Payment.'
+		);
+		
+		$response = $this->processSoap($gateway, $xml, 'ProcessPayment');
+		
+		if (isset($response['EWAYTRXNSTATUS']) && $response['EWAYTRXNSTATUS'] == 'True')
+		{
+			$response['success']			= TRUE;
+			$response['transaction_num']	= $response['EWAYTRXNNUMBER'];
+			$response['auth_code']			= $response['EWAYAUTHCODE'];
+			
+			// Save the Auth information
+			$CI->load->model('order_authorization_model');
+			$CI->order_authorization_model->SaveAuthorization($order_id, $response['EWAYTRXNNUMBER'], $response['EWAYAUTHCODE']);
+		} else 
+		{
+			$response['success'] 	= FALSE;
+			$response['reason']		= $response['EWAYTRXNERROR'];
+		}
+		
+		return $response;
 	}
 	
 	//---------------------------------------------------------------
-	
+		
 	function UpdateRecurring($client_id, $gateway, $subscription, $customer, $params)
 	{
+		// Recurring info not stored at eWay, so do nothing here...
 		return TRUE;
-	}
-	
-	//---------------------------------------------------------------
-	
-	function createRebillEvent($profile_id, $gateway, $customer, $amount, $charge_today, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences = FALSE)
-	{
-		
-		if($charge_today)
-		{
-			$init_amount = number_format($amount,2,'','');
-		}
-		else
-		{
-			$init_amount = 0;
-		}
-		
-		// Add the current time onto the start date so it converts correctly.
-		$start_date = $start_date .'T'. date('G:i:s');
-    	
-    	$xml = array(
-    		RebillCustomerID	=> $profile_id,
-    		RebillInvRef		=> $subscription_id,
-    		RebillInvDes		=> '',
-    		RebillCCName		=> $credit_card['name'],
-    		RebillCCNumber		=> $credit_card['card_num'],
-    		RebillCCExpMonth	=> $credit_card['exp_month'],
-    		RebillCCExpYear		=> $credit_card['exp_year'],
-    		RebillInitAmt		=> $init_amount,
-    		RebillInitDate		=> $this->aus_date(null, 'd/m/Y'),
-    		RebillRecurAmt		=> number_format($amount, 2, '', ''),
-    		RebillStartDate		=> $this->aus_date(strtotime($start_date)),
-    		RebillInterval		=> $interval,
-    		RebillIntervalType	=> 1,
-    		RebillEndDate		=> $this->aus_date(strtotime($end_date))
-    	);
-
-		$response = $this->processSoap($gateway, $xml, 'CreateRebillEvent');
-		
-		if ($this->debug)
-    	{
-    		echo '<h2>RebillEvent Array:</h2>';
-    		print_r($xml);
-    		
-    		echo '<h2>CreateRebillEvent Response:</h2>';
-    		print_r($response);
-    	}
-		
-		if($response->CreateRebillEventResult->Result == 'Success')
-		{
-			return $response->CreateRebillEventResult->RebillID;
-		}
-		else
-		{
-			return FALSE;
-		}
 	}
 	
 	//---------------------------------------------------------------
@@ -499,12 +459,6 @@ class eway
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);	// Check common exists and matches the server host name
 		
 		$post_response = curl_exec($ch); // execute curl post and store results in $post_response
-		
-		if ($this->debug === true)
-		{
-			echo '<pre>';
-			var_dump($post_response); die();
-		}
 		
 		if (curl_errno($ch) == CURLE_OK)
 		{
@@ -529,39 +483,67 @@ class eway
 	 * 
 	 */
 	function processSoap($gateway, $xml, $action)
-	{
-		
+	{		
+		$CI =& get_instance();
+		$CI->load->library('arraytoxml');	
+
 		$url = $this->GetAPIUrl($gateway, 'rebill');
 		
-		$client = new SoapClient($url.'?WSDL', array('trace'=>TRUE));
+		$header = '<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:man="https://www.eway.com.au/gateway/managedpayment">
+	<soap:Header>
+		<man:eWAYHeader>
+			<man:eWAYCustomerID>'. $gateway['customer_id'] .'</man:eWAYCustomerID>
+			<man:Username>'. $gateway['username'] .'</man:Username>
+			<man:Password>'. $gateway['password'] .'</man:Password>
+		</man:eWAYHeader>
+	</soap:Header>';
+	
+		$body = '<soap:Body>'. $this->to_xml($xml, $action, 'man') . '</soap:Body></soap:Envelope>';
 		
-		// Set our SOAP Headers for authentication
-		$header_body = array(
-			'eWAYCustomerID'	=> $gateway['customer_id'],
-			'Username'			=> $gateway['username'],
-			'Password'			=> $gateway['password']
-		);
-				
-		$header = new SOAPHeader('http://www.eway.com.au/gateway/rebill/manageRebill', 'eWAYHeader', $header_body);
-		$client->__setSoapHeaders($header);
-				
-		$response = $client->__soapCall($action, array($xml), null, $header);
-				
-		if ($this->debug)
+		$request = trim($header) . trim($body);
+			
+		// Send the request via CURL
+		$ch = curl_init($url); // initiate curl object
+		curl_setopt($ch, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $request); // use HTTP POST to send form data
+		curl_setopt ($ch, CURLOPT_HTTPHEADER, array('SOAPAction: https://www.eway.com.au/gateway/managedpayment/'.$action, 'Content-type: text/xml')); 
+		
+		// We need to make curl ignore the CA certificate so it can get by...
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);	// Verify it belongs to the server.
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);	// Check common exists and matches the server host name
+		
+		$post_response = curl_exec($ch); // execute curl post and store results in $post_response
+		
+		if (curl_errno($ch) == CURLE_OK)
 		{
-			echo 'URL = '. $url;
+			// No CURL Errors, so translate the returned XML into a usable object to return
+			$p = xml_parser_create();	// Create a parser
+			xml_parse_into_struct($p, trim($post_response), $response, $index);	// Parse into a $response array
 			
-			/// TEST RESULTS ///
-			echo '<h2>Request</h2>';
-			print_r($client->__getLastRequest());
+			// Any errors? 
+			if (xml_get_error_code($p) != XML_ERROR_NONE)
+			{
+				xml_parser_free($p);	// Free the parser
+				return false;
+			}
+			xml_parser_free($p);	// Free the parser
 			
-			echo '<h2>Response</h2>';
-			print_r($response);
-			// END TEST RESULTS ///
+			// Combine into an organized array...
+			$response = $this->format_xml_array($response, $index);
+			
+			return $response;
+		} else 
+		{
+			echo 'Curl Error Number: '. curl_errno($ch) .', Error: '. curl_error($ch);
 		}
 		
-		return $response;
+		return FALSE;
+		
 	}
+	
+	//---------------------------------------------------------------
 	
 	//---------------------------------------------------------------
 	
@@ -613,68 +595,6 @@ class eway
 	
 	//---------------------------------------------------------------
 	
-	/** 
-	 * Creates an array containing all of the fields available
-	 * to the eWay Rebill server. It fills in empty fields for 
-	 * any that are not passed in.
-	 *
-	 * See: http://www.eway.com.au/Developer/eway-api/recurring-payments.aspx
-	 *
-	 * @param	array	$array - the array of fields that are required
-	 * @returns	array	The original array with any blank fields added.
-	 */
-	function complete_array($orig_array = array(), $include_rebill=false) 
-	{
-		$complete_if_blank = array(
-			'ewayCustomerID',
-			
-			// Customer Info
-			'customerRef',
-			'customerTitle',
-			'customerFirstName',
-			'customerLastName',
-			'customerCompany',
-			'customerJobDesc',
-			'customerEmail',
-			'customerAddress',
-			'customerState',
-			'customerPostCode',
-			'customerCountry',
-			'customerPhone1',
-			'customerPhone2',
-			'customerFax',
-			'customerURL',
-			'customerComments',
-			
-			// Rebill Info
-			'rebillInvRef',
-			'rebillInvDesc',
-			'rebillCCName',
-			'rebillCCNumber',
-			'rebillCCExpMonth',
-			'rebillCCExpYear',
-			'rebillInitAmt',
-			'rebillInitDate',
-			'rebillRecurAmt',
-			'rebillStartDate',
-			'rebillInterval',
-			'rebillEndDate'
-		);
-				
-		// Add in any elements that do not exist.
-		foreach ($complete_if_blank as $key => $index)
-		{
-			if (!array_key_exists($index, $orig_array))
-			{
-				$orig_array[$index] = ''; 
-			}
-		}
-		
-		return $orig_array;
-	}
-	
-	//---------------------------------------------------------------
-	
 	public function aus_date($time=null, $format='d/m/Y') 
 	{
 		// Use today's date as the timestamp if none given.
@@ -695,6 +615,41 @@ class eway
 		$time = gmt_to_local($time, 'UP10');
 		
 		return date($format, $time);
+	}
+	
+	//---------------------------------------------------------------
+	
+	public function to_xml($array=array(), $action='', $ns='man')
+	{
+		if (!count($array) || empty($action))
+		{
+			return false;
+		}
+		
+		$xml = "<$ns:$action>\n";
+		
+		foreach ($array as $key => $value)
+		{
+			$xml .= "\t<$ns:$key>$value</$ns:$key>\n";
+		}
+		
+		$xml .= "</$ns:$action>\n";
+		
+		return $xml;
+	}
+	
+	//---------------------------------------------------------------
+	
+	private function format_xml_array($orig, $index)
+	{
+		$response = array();
+		
+		foreach ($index as $key => $values)
+		{
+			$response[$key] = isset($orig[$values[0]]['value']) ? $orig[$values[0]]['value'] : '';
+		}
+		
+		return $response;
 	}
 	
 	//---------------------------------------------------------------
