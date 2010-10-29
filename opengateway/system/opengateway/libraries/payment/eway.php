@@ -164,27 +164,27 @@ class eway
 	function TestConnection($client_id, $gateway) 
 	{	
 		$customer = array(
-			Title		=> 'Mr.',
-	    	FirstName 	=> 'Joe',
-	    	LastName	=> 'Bloggs',
-	    	Address		=> 'Blogg enterprises',
-	    	Suburb		=> 'Capital City',
-	    	State		=> 'act',
-	    	Company		=> 'Bloggs',
-	    	PostCode	=> '2111',
-	    	Country		=> 'au',
-	    	Email		=> 'test@eway.com.au',
-	    	Fax			=> '0298989898',
-	    	Phone		=> '0297979797',
-	    	Mobile		=> '',
-	    	CustomerRef	=> 'Ref123',
-	    	JobDesc		=> '',
-	    	Comments	=> 'Please ship ASAP',
-	    	URL			=> 'http://www.test.com.au',
-	    	CCNumber	=> '4444333322221111',
-	    	CCNameOnCard	=> 'Test Account',
-	    	CCExpiryMonth	=> '12',
-	    	CCExpiryYear	=> date('y')
+			'Title'		=> 'Mr.',
+	    	'FirstName' => 'Joe',
+	    	'LastName'	=> 'Bloggs',
+	    	'Address'	=> 'Blogg enterprises',
+	    	'Suburb'	=> 'Capital City',
+	    	'State'		=> 'act',
+	    	'Company'	=> 'Bloggs',
+	    	'PostCode'	=> '2111',
+	    	'Country'	=> 'au',
+	    	'Email'		=> 'test@eway.com.au',
+	    	'Fax'		=> '0298989898',
+	    	'Phone'		=> '0297979797',
+	    	'Mobile'	=> '',
+	    	'CustomerRef'=> 'Ref123',
+	    	'JobDesc'	=> '',
+	    	'Comments'	=> 'Please ship ASAP',
+	    	'URL'		=> 'http://www.test.com.au',
+	    	'CCNumber'	=> '4444333322221111',
+	    	'CCNameOnCard'	=> 'Test Account',
+	    	'CCExpiryMonth'	=> '12',
+	    	'CCExpiryYear'	=> date('y')
 	    );
 		
 		$response = $this->processSoap($gateway, $customer, 'CreateCustomer');
@@ -208,27 +208,27 @@ class eway
 		$CI =& get_instance();
 	
 	    $xml = array(
-	    	Title		=> isset($customer['title']) && !empty($customer['title']) ? $customer['title'] : 'Mr.',
-	    	FirstName 	=> $customer['first_name'],
-	    	LastName	=> $customer['last_name'],
-	    	Address		=> $customer['address_1'],
-	    	Suburb		=> $customer['city'],
-	    	State		=> $customer['state'],
-	    	Company		=> $customer['company'],
-	    	PostCode	=> $customer['postal_code'],
-	    	Country		=> strtolower($customer['country']),
-	    	Email		=> $customer['email'],
-	    	Fax			=> 'N/A',
-	    	Phone		=> 'N/A',
-	    	Mobile		=> 'N/A',
-	    	CustomerRef	=> $order_id,
-	    	JobDesc		=> 'N/A',
-	    	Comments	=> 'N/A',
-	    	URL			=> '',
-	    	CCNumber	=> isset($credit_card['card_num']) ? $credit_card['card_num'] : '',
-	    	CCNameOnCard	=> isset($credit_card['name']) ? $credit_card['name'] : '',
-	    	CCExpiryMonth	=> isset($credit_card['exp_month']) ? $credit_card['exp_month'] : '',
-	    	CCExpiryYear	=> isset($credit_card['exp_year']) ? substr($credit_card['exp_year'], -2) : ''
+	    	'Title'		=> isset($customer['title']) && !empty($customer['title']) ? $customer['title'] : 'Mr.',
+	    	'FirstName' => $customer['first_name'],
+	    	'LastName'	=> $customer['last_name'],
+	    	'Address'	=> $customer['address_1'],
+	    	'Suburb'	=> $customer['city'],
+	    	'State'		=> $customer['state'],
+	    	'Company'	=> $customer['company'],
+	    	'PostCode'	=> $customer['postal_code'],
+	    	'Country'	=> strtolower($customer['country']),
+	    	'Email'		=> $customer['email'],
+	    	'Fax'		=> 'N/A',
+	    	'Phone'		=> 'N/A',
+	    	'Mobile'	=> 'N/A',
+	    	'CustomerRef'=> $order_id,
+	    	'JobDesc'	=> 'N/A',
+	    	'Comments'	=> 'N/A',
+	    	'URL'		=> '',
+	    	'CCNumber'	=> isset($credit_card['card_num']) ? $credit_card['card_num'] : '',
+	    	'CCNameOnCard'	=> isset($credit_card['name']) ? $credit_card['name'] : '',
+	    	'CCExpiryMonth'	=> isset($credit_card['exp_month']) ? $credit_card['exp_month'] : '',
+	    	'CCExpiryYear'	=> isset($credit_card['exp_year']) ? substr($credit_card['exp_year'], -2, 2) : ''  
 	    );
     
 		$response = $this->processSoap($gateway, $xml, 'CreateCustomer');
@@ -389,7 +389,7 @@ class eway
 	//---------------------------------------------------------------
 		
 	function AutoRecurringCharge ($client_id, $order_id, $gateway, $params) {
-		return $this->ChargeRecurring($client_id, $gateway, $order_id, $params['api_customer_reference'], $params['api_payment_reference'], $params['amount']);
+		return $this->ChargeRecurring($client_id, $gateway, $order_id, $params['api_customer_reference'], $params['amount']);
 	}
 	
 	//-----------------------------------------------------
@@ -403,14 +403,15 @@ class eway
 	 * 	the TokenAPI.
 	 */	 
 	function ChargeRecurring ($client_id, $gateway, $order_id, $customer_id, $amount) {
-		
 		$CI =& get_instance();
 	
+		if ($gateway['mode'] != 'live') $customer_id = '9876543211000';
+		
 		$xml = array(
-			managedCustomerID	=> $customer_id,
-			amount				=> number_format($amount, 2, '', ''),
-			invoiceReference	=> $order_id,
-			invoiceDescription	=> 'Recurring Payment.'
+			'managedCustomerID'	=> $customer_id,
+			'amount'			=> number_format($amount, 2, '', ''),
+			'invoiceReference'	=> $order_id,
+			'invoiceDescription'=> 'Recurring Payment.'
 		);
 		
 		$response = $this->processSoap($gateway, $xml, 'ProcessPayment');
