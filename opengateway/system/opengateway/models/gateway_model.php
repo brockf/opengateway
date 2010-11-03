@@ -147,7 +147,7 @@ class Gateway_model extends Model
 		$gateway_settings = $this->$gateway_name->Settings();
 		
 		// validate function arguments
-		if ($amount == FALSE or ((empty($credit_card) and $gateway_settings['external'] == FALSE and $gateway_settings['no_credit_card'] == FALSE) and $amount != '0.00' and $amount != '0')) {
+		if ($amount === FALSE or (empty($credit_card) and $gateway_settings['external'] == FALSE and $gateway_settings['no_credit_card'] == FALSE and (float)$amount != 0)) {
 			die($CI->response->Error(1004));
 		}
 		

@@ -219,6 +219,8 @@ class paypal_standard
 			$description .= ' (free trial ends ' . $start_date . ')';
 		}
 		$post['L_BILLINGAGREEMENTDESCRIPTION0'] = $description;
+		
+		$CI->charge_data_model->Save('r' . $subscription_id, 'profile_description', $description);
 				
 		$response = $this->Process($post_url, $post);
 		
@@ -519,12 +521,7 @@ class paypal_standard
 			$post['pwd'] = $gateway['pwd'];
 			$post['signature'] = $gateway['signature'];
 			$post['TOKEN'] = $response['TOKEN'];
-			$description = ($order_id and ($first_charge_amount != $subscription['amount'])) ? 'Initial charge: ' . $gateway['currency'] . $first_charge_amount . ', then ' : '';
-			$description .= $gateway['currency'] . $subscription['amount'] . ' every ' . $subscription['interval'] . ' days until ' . date('Y-m-d',strtotime($subscription['end_date']));
-			if (date('Y-m-d',strtotime($subscription['start_date'])) != date('Y-m-d', strtotime($subscrition['date_created'])) and !isset($adjusted_start_date)) {
-				$description .= ' (free trial ends ' . date('Y-m-d',strtotime($subscription['start_date'])) . ')';
-			}
-			$post['DESC'] = $description;
+			$post['DESC'] = $data['profile_description'];
 			$post['PROFILESTARTDATE'] = date('c',strtotime($subscription['start_date']));
 			$post['BILLINGPERIOD'] = 'Day';
 			$post['BILLINGFREQUENCY'] = $subscription['interval'];
