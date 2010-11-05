@@ -599,7 +599,7 @@ class paypal
 		switch($gateway['mode'])
 		{
 			case 'live':
-				$post_url = $params['arb_live_url'];
+				$post_url = isset($params['arb_prod_url']) ? $params['arb_prod_url'] : $params['arb_live_url'];
 			break;
 			case 'test':
 				$post_url = $params['arb_test_url'];
