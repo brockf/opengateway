@@ -105,7 +105,7 @@ class paypal_standard
 		$post['noshipping'] = '0';
 		$post['allownote'] = '0';
 		$post['localecode'] = $client['country'];
-		$post['solutiontype'] = 'Mark';
+		$post['solutiontype'] = 'Sole';
 		$post['landingpage'] = 'Billing';
 		$post['channeltype'] = 'Merchant';
 		
@@ -180,7 +180,7 @@ class paypal_standard
 		$post['noshipping'] = '0';
 		$post['allownote'] = '0';
 		$post['localecode'] = $client['country'];
-		$post['solutiontype'] = 'Mark';
+		$post['solutiontype'] = 'Sole';
 		$post['landingpage'] = 'Billing';
 		$post['channeltype'] = 'Merchant';
 		
