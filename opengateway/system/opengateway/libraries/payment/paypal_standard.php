@@ -378,9 +378,10 @@ class paypal_standard
 		$last_payment = date('Y-m-d',strtotime($details['LASTPAYMENTDATE']));
 		*/
 		$today = date('Y-m-d');
+		$status = $details['STATUS'];
 		$failed_payments = $details['FAILEDPAYMENTCOUNT'];
 		
-		if($failed_payments < 1) {		
+		if($failed_payments < 1 and $status != 'Cancelled') {		
 			$response['success'] = TRUE;
 		} else {
 			$response['success'] = FALSE;
