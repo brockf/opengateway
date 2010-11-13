@@ -38,6 +38,11 @@ function CPLoader () {
 	$CI->navigation->Add('transactions','Transactions');
 	$CI->navigation->Add('transactions/create','New Charge','transactions');
 	$CI->navigation->Add('transactions/all_recurring','Recurring Charges','transactions');
+	
+	$CI->navigation->Add('coupons', 'Coupons');
+	$CI->navigation->Add('coupons/add', 'New Coupon', 'coupons');	
+	
+	
 	$CI->navigation->Add('customers','Customers');
 	$CI->navigation->Add('plans','Recurring Plans');
 	$CI->navigation->Add('plans/new_plan','New Plan','plans');
@@ -51,6 +56,7 @@ function CPLoader () {
 	$CI->navigation->Add('settings/emails','Emails','#');
 	$CI->navigation->Add('settings/gateways','Gateways','#');
 	$CI->navigation->Add('settings/api','API Access','#');
+	
 	
 	// Set default page title
 	$CI->navigation->PageTitle('Control Panel');

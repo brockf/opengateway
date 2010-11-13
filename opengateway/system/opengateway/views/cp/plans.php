@@ -1,7 +1,7 @@
 <?=$this->load->view(branded_view('cp/header'));?>
 <h1>Recurring Plans</h1>
 <?=$this->dataset->TableHead();?>
-<?
+<?php
 if (!empty($this->dataset->data)) {
 	foreach ($this->dataset->data as $row) {
 	?>
