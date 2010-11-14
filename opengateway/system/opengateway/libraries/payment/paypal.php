@@ -201,6 +201,11 @@ class paypal
 			break;
 		}
 		
+		// prep exp_date
+		if (strlen($credit_card['exp_year']) == 2) {
+			$credit_card['exp_year'] = '20' . $credit_card['exp_year'];
+		}
+		
 		$post = array();
 		$post['version'] = '56.0';
 		$post['paymentaction'] = 'sale';
