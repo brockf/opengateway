@@ -259,6 +259,11 @@ class paypal
 	{		
 		$CI =& get_instance();
 		
+		// prep exp_date
+		if (strlen($credit_card['exp_year']) == 2) {
+			$credit_card['exp_year'] = '20' . $credit_card['exp_year'];
+		}
+		
 		// If the start date is today, we'll do the first one manually
 		if ($charge_today === TRUE) {
 			// Create an order
