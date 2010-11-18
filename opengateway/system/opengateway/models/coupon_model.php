@@ -9,6 +9,14 @@ class Coupon_model extends Model {
 	
 	//--------------------------------------------------------------------
 	
+	/**
+	 * Get a single coupon.
+	 *
+	 * @param	int		$client_id	The id of the client to find a coupon for.
+	 * @param	int		$id			The coupon_id to find.
+	 *
+	 * @return	array	The coupon details, or FALSE on coupon not found.
+	 */
 	public function get_coupon($client_id, $id) 
 	{
 		$this->db->where('coupon_deleted', 0);
@@ -20,11 +28,13 @@ class Coupon_model extends Model {
 		{
 			$coupon = $query->row_array();
 			
-			// Get associated subscriptions
-			$coupon['subscriptions'] = $this->get_related($id, 'coupons_subscriptions', 'subscription_id');
+			// Get associated plans
+			$coupon['plans'] = $this->get_related($id, 'coupons_plans', 'plan_id');
 					
 			return $coupon;
 		}
+		
+		return FALSE;
 	}
 	
 	//--------------------------------------------------------------------
@@ -32,6 +42,11 @@ class Coupon_model extends Model {
 	
 	/**
 	 * Get a list of coupons
+	 *
+	 * @param	int		$client_id	The id of the client to find coupons for.
+	 * @param	array	$filters	The filters to apply to the selection.
+	 *
+	 * @return	array	The coupons that match the filters.
 	 */
 	public function get_coupons($client_id=null, $filters=array()) 
 	{
@@ -84,11 +99,16 @@ class Coupon_model extends Model {
 			return $query->result_array();
 		}
 		
-		return false;
+		return FALSE;
 	}
 	
 	//--------------------------------------------------------------------
 	
+	/**
+	 * Returns an object containing all of the coupon types in the system.
+	 *
+	 * @return	object	The coupon types in system, or FALSE if none exist.
+	 */
 	public function get_coupon_types() 
 	{
 		$query = $this->db->get('coupon_types');
@@ -98,7 +118,7 @@ class Coupon_model extends Model {
 			return $query->result();
 		}
 		
-		return false;
+		return FALSE;
 	}
 	
 	//--------------------------------------------------------------------
@@ -106,11 +126,11 @@ class Coupon_model extends Model {
 	/**
 	 * Validates POST data to be appropriate for a coupon.
 	 *
-	 * @param	bool	Whether in editing/new mode.
+	 * @param	bool	$editing	Whether in editing/new mode.
 	 *
 	 * @return	bool	Whether it was successful or not.
 	 */
-	public function validation($editing=true) 
+	public function validation($editing=TRUE) 
 	{
 		$this->load->library('form_validation');
 		
@@ -142,29 +162,34 @@ class Coupon_model extends Model {
 			return $errors;
 		}
 		
-		return true;
+		return TRUE;
 	}
 	
 	//--------------------------------------------------------------------
 	
 	/**
 	 * Creates a new coupon in the database.
+	 *
+	 * @param	int		$client_id	The id of the client that owns the coupon.
+	 * @param	array	$fields		The coupon data to be saved.
+	 *
+	 * @return	int		The id of the new coupon, or FALSE on failure.
 	 */
 	public function new_coupon($client_id=null, $fields=array()) 
 	{
 		if (!is_array($fields) || !count($fields))
 		{
-			return false;
+			return FALSE;
 		}
 			
 		// Grab arrays of data to be used after the initial creation
-		$products = isset($fields['products']) ? $fields['products'] : null;
-		$subscriptions = isset($fields['subscriptions']) ? $fields['subscriptions'] : null;
+		$products	= isset($fields['products']) ? $fields['products'] : null;
+		$plans 		= isset($fields['plans']) ? $fields['plans'] : null;
 		$trial_subs = isset($fields['trial_subs']) ? $fields['trial_subs'] : null;
 		$ship_rates = isset($fields['ship_rates']) ? $fields['ship_rates'] : null;
 		
 		// Now unset these so they're not clogging up the system
-		unset($fields['products'], $fields['subscriptions'], $fields['trial_subs'], $fields['ship_rates']);
+		unset($fields['products'], $fields['plans'], $fields['trial_subs'], $fields['ship_rates']);
 		
 		// Add the created_on field
 		$fields['created_on'] = date('Y-m-d H:i:s');
@@ -179,31 +204,40 @@ class Coupon_model extends Model {
 		{
 			// Save was successfull, so try to save our various associated parts.
 			if (!empty($products))		{ $this->save_related($id, 'coupons_products', 'product_id', $products); }
-			if (!empty($subscriptions))	{ $this->save_related($id, 'coupons_subscriptions', 'subscription_id', $subscriptions); }
-			if (!empty($trial_subs))	{ $this->save_related($id, 'coupons_subscriptions', 'subscription_id', $trial_subs); }
+			if (!empty($plans))			{ $this->save_related($id, 'coupons_plans', 'plan_id', $plans); }
+			if (!empty($trial_subs))	{ $this->save_related($id, 'coupons_plans', 'plan_id', $trial_subs); }
 			if (!empty($ship_rates))	{ $this->save_related($id, 'coupons_shipping', 'shipping_id', $ship_rates); }
 			
 			return $id;
 		}
 		
-		return false;
+		return FALSE;
 	}
 	
 	//--------------------------------------------------------------------
 	
+	/**
+	 * Saves an edited coupon.
+	 *
+	 * @param	int		$client_id	The id of the client that owns the coupon.
+	 * @param	int		$id			The coupon_id to save the data to.
+	 * @param	array	$fields		The coupon data to be saved.
+	 *
+	 * @return	bool	Whether the coupon is succesfully saved or not.
+	 */
 	public function edit_coupon($client_id, $id, $fields=array()) 
 	{
 		if (!is_array($fields) || !count($fields))
 		{
-			return false;
+			return FALSE;
 		}
 		
 		// Grab arrays of data to be used after the initial creation
-		$subscriptions = isset($fields['subscriptions']) ? $fields['subscriptions'] : null;
+		$plans = isset($fields['plans']) ? $fields['plans'] : null;
 		$trial_subs = isset($fields['trial_subs']) ? $fields['trial_subs'] : null;
 	
 		// Now unset these so they're not clogging up the system
-		unset($fields['subscriptions'], $fields['trial_subs']);
+		unset($fields['plans'], $fields['trial_subs']);
 		
 		// Add the created_on field
 		$fields['modified_on'] = date('Y-m-d H:i:s');
@@ -216,23 +250,30 @@ class Coupon_model extends Model {
 		if ($this->db->affected_rows())
 		{
 			// Save was successfull, so try to save our various associated parts.
-			if (!empty($subscriptions) && count($subscriptions))	{ $this->save_related($id, 'coupons_subscriptions', 'subscription_id', $subscriptions); }
-			if (!empty($trial_subs) && count($trial_subs))	{ $this->save_related($id, 'coupons_subscriptions', 'subscription_id', $subscriptions); }
+			if (!empty($plans) && count($plans))	{ $this->save_related($id, 'coupons_plans', 'plan_id', $plans); }
+			if (!empty($trial_subs) && count($trial_subs))	{ $this->save_related($id, 'coupons_plans', 'plan_id', $plans); }
 			
-			return $id;
+			return TRUE;
 		}
 		
-		return false;
+		return FALSE;
 	}
 	
 	//--------------------------------------------------------------------
 	
-	
+	/**
+	 * Sets the deleted flag on a coupon (basically, saves it for the 'recycle bin')
+	 *
+	 * @param	int		$client_id	The id of the client that owns the coupon.
+	 * @param	int		$id			The id of the coupon to delete.
+	 *
+	 * @return	bool	Whether the coupon is successfully 'deleted' or not.
+	 */
 	public function delete_coupon($client_id=null, $id=null) 
 	{
 		if (!is_numeric($id))
 		{
-			return false;
+			return FALSE;
 		}
 		
 		$this->db->set('coupon_deleted', 1);
@@ -245,8 +286,15 @@ class Coupon_model extends Model {
 	
 	
 	/**
-	 * Saves related items into their pivot tables (like products, subscriptions, etc)
+	 * Saves related items into their pivot tables (like products, plans, etc)
 	 * that a coupon would be associated to.
+	 *
+	 * @param	int		$coupon_id	The id of the coupon this data is related to.
+	 * @param	string	$table		The name of the database table to save to.
+	 * @param	field	$field		The name of the database table field to save to.
+	 * @param	array	$items		The items to save.
+	 *
+	 * @return	void
 	 */
 	public function save_related($coupon_id=null, $table='', $field='', $items=array()) 
 	{	
@@ -264,6 +312,15 @@ class Coupon_model extends Model {
 	
 	//--------------------------------------------------------------------
 	
+	/**
+	 * Retrieves related records (in other db tables) to the specified coupon.
+	 *
+	 * @param	id		$coupon_id	The id of the coupon this data is related to.
+	 * @param	string	$table		The name of the database table to pull from.
+	 * @param	string	$field		The name of the database table field to retrieve.
+	 *
+	 * @return	array	The related object, or FALSE on failure.
+	 */
 	public function get_related($coupon_id=null, $table='', $field='') 
 	{
 		$this->db->where('coupon_id', $coupon_id);
@@ -280,6 +337,8 @@ class Coupon_model extends Model {
 			
 			return $collection;
 		}
+		
+		return FALSE;
 	}
 	
 	//--------------------------------------------------------------------

@@ -57,7 +57,7 @@ EOF;
             </li>
 
             <li ><label  for="coupon_customer_limit">One Per Customer?</label>
-            <input type="checkbox" id="coupon_customer_limit" name="coupon_customer_limit"  value="Yes" <?= isset($coupon) && $coupon['coupon_customer_limit'] ==1  ? 'checked="checked"' : '' ?>></li>
+            <input type="checkbox" id="coupon_customer_limit" name="coupon_customer_limit"  value="Yes" <?= isset($coupon) && $coupon['coupon_customer_limit'] == 1  ? 'checked="checked"' : '' ?>></li>
 
             <li>
                 <div class="help">
@@ -94,14 +94,14 @@ EOF;
                 </div>
             </li>
 
-            <li ><label  for="subscriptions[]">Subscriptions</label><select name="subscriptions[]"  multiple="multiple">
+            <li ><label  for="plans[]">Subscription Plans</label><select name="plans[]"  multiple="multiple">
                 <?php foreach ($plans as $plan) :?>
-					<option value="<?php echo $plan['id'] ?>" <?= isset($coupon['subscriptions']) && in_array($plan['id'], $coupon['subscriptions']) ? 'selected="selected"' : '' ?>><?php echo $plan['name']; ?></option>
+					<option value="<?php echo $plan['id'] ?>" <?= isset($coupon['plans']) && in_array($plan['id'], $coupon['plans']) ? 'selected="selected"' : '' ?>><?php echo $plan['name']; ?></option>
 				<?php endforeach; ?>
             </select></li>
             <li>
                 <div class="help">
-                    If no plans are selected, the coupon will be applied to all subscriptions.
+                    If no plans are selected, the coupon will be applied to all plans.
                 </div>
             </li>
        

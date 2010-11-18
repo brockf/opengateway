@@ -17,17 +17,16 @@ $sql[] = 'CREATE TABLE `coupons` (
   `coupon_reduction_type` tinyint(1) NOT NULL,
   `coupon_reduction_amt` int(9) NOT NULL,
   `coupon_trial_length` int(4) NOT NULL,
-  `coupon_min_cart_amt` int(9) NOT NULL,
   `coupon_deleted` tinyint(1) unsigned NOT NULL,
   `created_on` datetime NOT NULL,
   `modified_on` datetime DEFAULT NULL,
   PRIMARY KEY (`coupon_id`)
 ) ENGINE=MyISAM  DEFAULT;';
 
-$sql[] = "CREATE TABLE `coupons_subscriptions` (
+$sql[] = "CREATE TABLE `coupons_plans` (
   `coupon_id` int(11) NOT NULL,
-  `subscription_id` int(11) NOT NULL,
-  PRIMARY KEY `coupon_id` (`coupon_id`)
+  `plan_id` int(11) NOT NULL,
+  INDEX (  `coupon_id` ,  `plan_id` )
 ) ENGINE=MyISAM DEFAULT;";
 
 $sql[] = "CREATE TABLE `coupon_types` (

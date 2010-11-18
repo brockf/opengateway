@@ -227,13 +227,13 @@ class Coupons extends Controller {
 			case 3:
 				$coupon['coupon_reduction_type'] = $this->input->post('coupon_reduction_type');
 				$coupon['coupon_reduction_amt'] = $this->input->post('coupon_reduction_amt');
-				$coupon['subscriptions'] = $this->input->post('subscriptions');
+				$coupon['plans'] = $this->input->post('plans');
 				break;
 		
 			// Free Trial
 			case 4: 
 				$coupon['coupon_trial_length'] = $this->input->post('coupon_trial_length');
-				$coupon['subscriptions'] = $this->input->post('subscriptions');
+				$coupon['plans'] = $this->input->post('plans');
 				break;
 		}
 			
