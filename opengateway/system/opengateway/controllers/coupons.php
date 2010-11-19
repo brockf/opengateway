@@ -180,7 +180,23 @@ class Coupons extends Controller {
 		{
 			// Edited coupon
 			$coupon_id = $this->input->post('coupon_id');
-			$result = $this->coupon_model->edit_coupon($this->user->Get('client_id'), $coupon_id, $this->build_coupon_form_input());
+			$coupon = $this->build_coupon_form_input();
+			$coupon_id = $this->coupon_model->update_coupon(
+													$this->user->Get('client_id'),
+													$coupon_id,
+													$coupon['coupon_name'],
+													$coupon['coupon_code'],
+													$coupon['coupon_start_date'],
+													$coupon['coupon_end_date'],
+													$coupon['coupon_max_uses'],
+													$coupon['coupon_customer_limit'],
+													$coupon['coupon_type_id'],
+													$coupon['coupon_reduction_type'],
+													$coupon['coupon_reduction_amt'],
+													$coupon['coupon_trial_length'],
+													$coupon['products'],
+													$coupon['plans']
+												);
 			
 			if ($result)
 			{

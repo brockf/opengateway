@@ -234,7 +234,6 @@ class Coupon_model extends Model {
 			// Save was successfull, so try to save our various associated parts.
 			if (!empty($products))		{ $this->save_related($id, 'coupons_products', 'product_id', $products); }
 			if (!empty($plans))			{ $this->save_related($id, 'coupons_plans', 'plan_id', $plans); }
-			if (!empty($trial_subs))	{ $this->save_related($id, 'coupons_plans', 'plan_id', $trial_subs); }
 			
 			return $id;
 		}
@@ -245,43 +244,57 @@ class Coupon_model extends Model {
 	//--------------------------------------------------------------------
 	
 	/**
-	 * Saves an edited coupon.
+	 * Saves an updated coupon in the database.
 	 *
-	 * @param	int		$client_id	The id of the client that owns the coupon.
-	 * @param	int		$id			The coupon_id to save the data to.
-	 * @param	array	$fields		The coupon data to be saved.
+	 * @param	int			$client_id		The id of the client that has created the coupon.
+	 * @param	int			$coupon_id		The id of the coupon to save.
+	 * @param	string		$name			The coupon name
+	 * @param	string		$code			The coupon code
+	 * @param	string		$start_date		The first day that the coupon can be used (ie YYYY-MM-DD)
+	 * @param	string		$end_date		The last day the coupon can be used
+	 * @param	int			$max_uses		The maximum number of times the coupon can be used
+	 * @param	bool		$customer_limit	Whether or not to restrict the customer to a single use
+	 * @param	int			$type_id		The type of coupon (Price reduction, free trial or free subscription)
+	 * @param	int			$reduction_type	Whether percent or fixed amount of reduction. Only applicable for Price Reductions.
+	 * @param	string		$reduction_amt	How much to reduce price by. Only applicable for Price Reduction.
+	 * @param	int			$trial_length	How many days the free trial will last. 
+	 * @param	array		$products		An array of product ids to assign this coupon to.
+	 * @param	array		$plans			An array of subscription plans to assign this coupon to.
+	 * @param 	array		$ship_rates		An array of shipping rates to apply this coupon to.
 	 *
-	 * @return	bool	Whether the coupon is succesfully saved or not.
+	 * @return	int		The id of the new coupon, or FALSE on failure.
 	 */
-	public function edit_coupon($client_id, $id, $fields=array()) 
+	public function update_coupon($client_id, $coupon_id, $name, $code, $start_date, $end_date, $max_uses, $customer_limit, $type_id, $reduction_type, $reduction_amt, $trial_length, $products, $plans) 
 	{
-		if (!is_array($fields) || !count($fields))
-		{
-			return FALSE;
-		}
-		
-		// Grab arrays of data to be used after the initial creation
-		$plans = isset($fields['plans']) ? $fields['plans'] : null;
-		$trial_subs = isset($fields['trial_subs']) ? $fields['trial_subs'] : null;
-	
-		// Now unset these so they're not clogging up the system
-		unset($fields['plans'], $fields['trial_subs']);
+		$insert_fields = array(
+							'client_id'				=> $client_id,
+							'coupon_name'			=> $name,
+							'coupon_code'			=> $code,
+							'coupon_start_date'		=> $start_date,
+							'coupon_end_date'		=> $end_date,
+							'coupon_max_uses'		=> $max_uses,
+							'coupon_customer_limit'	=> $customer_limit,
+							'coupon_type_id'		=> $type_id,
+							'coupon_reduction_type'	=> $reduction_type,
+							'coupon_reduction_amt'	=> $reduction_amt,
+							'coupon_trial_length'	=> $trial_length,
+						);
 		
 		// Add the created_on field
-		$fields['modified_on'] = date('Y-m-d H:i:s');
+		$insert_fields['created_on'] = date('Y-m-d H:i:s');
 		
 		// Now, time to try saving the coupon itself
 		$this->db->where('client_id', $client_id);
-		$this->db->where('coupon_id', $id);
-		$this->db->update('coupons', $fields);
-		
+		$this->db->where('coupon_id', $coupon_id);
+		$this->db->update('coupons', $insert_fields);
+				
 		if ($this->db->affected_rows())
 		{
 			// Save was successfull, so try to save our various associated parts.
-			if (!empty($plans) && count($plans))	{ $this->save_related($id, 'coupons_plans', 'plan_id', $plans); }
-			if (!empty($trial_subs) && count($trial_subs))	{ $this->save_related($id, 'coupons_plans', 'plan_id', $plans); }
+			if (!empty($products))		{ $this->save_related($coupon_id, 'coupons_products', 'product_id', $products); }
+			if (!empty($plans))			{ $this->save_related($coupon_id, 'coupons_plans', 'plan_id', $plans); }
 			
-			return TRUE;
+			return $id;
 		}
 		
 		return FALSE;
