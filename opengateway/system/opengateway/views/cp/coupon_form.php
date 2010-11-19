@@ -99,17 +99,12 @@ EOF;
 					<option value="<?php echo $plan['id'] ?>" <?= isset($coupon['plans']) && in_array($plan['id'], $coupon['plans']) ? 'selected="selected"' : '' ?>><?php echo $plan['name']; ?></option>
 				<?php endforeach; ?>
             </select></li>
-            <li>
-                <div class="help">
-                    If no plans are selected, the coupon will be applied to all plans.
-                </div>
-            </li>
        
         </ul>
     </fieldset>
 
 <div class="submit">
-	<input type="submit" class="button" name="add_coupon" value="Create Coupon" />
+	<input type="submit" class="button" name="add_coupon" value="Save Coupon" />
 </div>
 </form>
 

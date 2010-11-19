@@ -92,14 +92,32 @@ class Coupon_model extends Model {
 		
 		$this->db->where('coupon_deleted', 0);
 		$this->db->where('coupons.client_id', $client_id);
-		$query = $this->db->get('coupons');
+		$result = $this->db->get('coupons');
 		
-		if ($query->num_rows())
+		if ($result->num_rows() === 0)
 		{
-			return $query->result_array();
+			return FALSE;
 		}
-		
-		return FALSE;
+
+		$coupons = array();
+		foreach ($result->result_array() as $row)
+		{ 
+			$coupons[] = array(
+				'id'				=> $row['coupon_id'],
+				'type_id'			=> $row['coupon_type_id'],
+				'name'				=> $row['coupon_name'],
+				'code'				=> $row['coupon_code'],
+				'start_date'		=> $row['coupon_start_date'],
+				'end_date'			=> $row['coupon_end_date'],
+				'max_uses'			=> $row['coupon_max_uses'],
+				'customer_limit'	=> $row['coupon_customer_limit'],
+				'reduction_type'	=> $row['coupon_reduction_type'],
+				'reduction_amt'		=> $row['coupon_reduction_amt'],
+				'trial_length'		=> $row['coupon_trial_length'],
+			);
+		}
+
+		return $coupons;
 	}
 	
 	//--------------------------------------------------------------------
@@ -170,43 +188,53 @@ class Coupon_model extends Model {
 	/**
 	 * Creates a new coupon in the database.
 	 *
-	 * @param	int		$client_id	The id of the client that owns the coupon.
-	 * @param	array	$fields		The coupon data to be saved.
+	 * @param	int			$client_id		The id of the client that has created the coupon.
+	 * @param	string		$name			The coupon name
+	 * @param	string		$code			The coupon code
+	 * @param	string		$start_date		The first day that the coupon can be used (ie YYYY-MM-DD)
+	 * @param	string		$end_date		The last day the coupon can be used
+	 * @param	int			$max_uses		The maximum number of times the coupon can be used
+	 * @param	bool		$customer_limit	Whether or not to restrict the customer to a single use
+	 * @param	int			$type_id		The type of coupon (Price reduction, free trial or free subscription)
+	 * @param	int			$reduction_type	Whether percent or fixed amount of reduction. Only applicable for Price Reductions.
+	 * @param	string		$reduction_amt	How much to reduce price by. Only applicable for Price Reduction.
+	 * @param	int			$trial_length	How many days the free trial will last. 
+	 * @param	array		$products		An array of product ids to assign this coupon to.
+	 * @param	array		$plans			An array of subscription plans to assign this coupon to.
+	 * @param 	array		$ship_rates		An array of shipping rates to apply this coupon to.
 	 *
 	 * @return	int		The id of the new coupon, or FALSE on failure.
 	 */
-	public function new_coupon($client_id=null, $fields=array()) 
+	public function new_coupon($client_id, $name, $code, $start_date, $end_date, $max_uses, $customer_limit, $type_id, $reduction_type, $reduction_amt, $trial_length, $products, $plans) 
 	{
-		if (!is_array($fields) || !count($fields))
-		{
-			return FALSE;
-		}
-			
-		// Grab arrays of data to be used after the initial creation
-		$products	= isset($fields['products']) ? $fields['products'] : null;
-		$plans 		= isset($fields['plans']) ? $fields['plans'] : null;
-		$trial_subs = isset($fields['trial_subs']) ? $fields['trial_subs'] : null;
-		$ship_rates = isset($fields['ship_rates']) ? $fields['ship_rates'] : null;
-		
-		// Now unset these so they're not clogging up the system
-		unset($fields['products'], $fields['plans'], $fields['trial_subs'], $fields['ship_rates']);
+		$insert_fields = array(
+							'client_id'				=> $client_id,
+							'coupon_name'			=> $name,
+							'coupon_code'			=> $code,
+							'coupon_start_date'		=> $start_date,
+							'coupon_end_date'		=> $end_date,
+							'coupon_max_uses'		=> $max_uses,
+							'coupon_customer_limit'	=> $customer_limit,
+							'coupon_type_id'		=> $type_id,
+							'coupon_reduction_type'	=> $reduction_type,
+							'coupon_reduction_amt'	=> $reduction_amt,
+							'coupon_trial_length'	=> $trial_length,
+						);
 		
 		// Add the created_on field
-		$fields['created_on'] = date('Y-m-d H:i:s');
-		$fields['client_id'] = $client_id;
+		$insert_fields['created_on'] = date('Y-m-d H:i:s');
 		
 		// Now, time to try saving the coupon itself
-		$this->db->insert('coupons', $fields);
+		$this->db->insert('coupons', $insert_fields);
 		
 		$id = $this->db->insert_id();
-		
+				
 		if (is_numeric($id))
 		{
 			// Save was successfull, so try to save our various associated parts.
 			if (!empty($products))		{ $this->save_related($id, 'coupons_products', 'product_id', $products); }
 			if (!empty($plans))			{ $this->save_related($id, 'coupons_plans', 'plan_id', $plans); }
 			if (!empty($trial_subs))	{ $this->save_related($id, 'coupons_plans', 'plan_id', $trial_subs); }
-			if (!empty($ship_rates))	{ $this->save_related($id, 'coupons_shipping', 'shipping_id', $ship_rates); }
 			
 			return $id;
 		}

@@ -5,12 +5,12 @@
 <?php if (!empty($this->dataset->data)) : ?>
 	<?php foreach ($this->dataset->data as $row) :?>
 		<tr>
-			<td><input type="checkbox" name="check_<?=$row['coupon_id'];?>" value="1" class="action_items" /></td>
-			<td><?=$row['coupon_id'];?></td>
-			<td><a href="<?=site_url('coupons/edit/' . $row['coupon_id']);?>"><?=$row['coupon_name'];?></a></td>
-			<td><?= $row['coupon_code'] ?></td>
-			<td><?= date('Y-m-d', strtotime($row['coupon_start_date'])) .' - '. date('Y-m-d', strtotime($row['coupon_end_date']));?></td>
-			<td><?= $coupon_options[$row['coupon_type_id']] ?></td>
+			<td><input type="checkbox" name="check_<?=$row['id'];?>" value="1" class="action_items" /></td>
+			<td><?=$row['id'];?></td>
+			<td><a href="<?=site_url('coupons/edit/' . $row['id']);?>"><?=$row['name'];?></a></td>
+			<td><?= $row['code'] ?></td>
+			<td><?= date('Y-m-d', strtotime($row['start_date'])) .' - '. date('Y-m-d', strtotime($row['end_date']));?></td>
+			<td><?= $coupon_options[$row['type_id']] ?></td>
 		</tr>
 	<?php endforeach; ?>
 <?php else : ?>
