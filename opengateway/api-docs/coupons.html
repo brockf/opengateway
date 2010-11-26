@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>PayPal | OpenGateway Documentation</title>
+	<title>Coupons | OpenGateway Documentation</title>
 	<link href="css/style.css" rel="stylesheet" type="text/css" media="screen" />
 </head>
 <body>
@@ -41,30 +41,22 @@
 			</ul>
 		</div>
 		<div id="content">
-			<h1>Using PayPal Express Checkout</h1>
-			<p>Most payment gateways integrate with OpenGateway so that the users stay on your site and the transactions occur in a one-time API call
-			such as <a href="recurring.html">Recur</a> or <a href="charges.html">Charge</a>.  However, PayPal Express Checkout requires users
-			to leave your site and enter their PayPal or credit card information on a PayPal check out page.  So, by it's nature, this
-			gateway functions a little differently than the others.  This documentation covers how Charge and Recur requests differ
-			when using the PayPal Express Checkout gateway.</p>
+			<h1>Coupons</h1>
+			<p>Coupons are codes included in either a <span class="request">Charge</span> or <span class="request">Recur</span> request that
+			do one of the following:</p>
 			<ul>
-				<li>
-					<b>Send <span class="request">&lt;return_url&gt;</span> and <span class="request">&lt;cancel_url&gt;</span> elements in the
-					root node of your request.</b><br />
-					<span class="request">return_url</span> should specify the complete web address to refer users to after making their purchase.<br />
-					<span class="request">cancel_url</span> should specify the complete web address to refer users to if they choose to abort the payment
-					process.
-				</li>
-				<li>
-					<b>You cannot process charges on behalf of others.</b><br />
-					While many integrations of OpenGateway include a virtual terminal where you can enter credit card information and charge a card,
-					PayPal doesn't allow this because, as stated above, the purchasing customer leaves your site to complete payment.
-				</li>
-				<li>
-					<b>You should not include a <span class="request">credit_card</span> node in your request, as the user is redirected to PayPal
-					and will enter their payment details there.</b>
-				</li>
-			</ul>			
+				<li>Reduce the payment amount (for single charges)</li>
+				<li>Reduce in the initial payment amount (for recurring charges)</li>
+				<li>Reduce the recurring payment amount (for recurring charges)</li>
+				<li>Reduce both the initial/recurring charge amounts (for recurring charges)</li>
+				<li>Add/modify the free trial (in days) (for recurring charges)</li>
+			</ul>
+			<p>Coupon values can be either a percentage of the current amount being charged or a set dollar amount.</p>
+			<p>They can also be limited specific plans.</p>
+			<h2>Using Coupons</h2>
+			<p>To use coupons, you must first define coupons in your control panel.</p>
+			<p>After that, simply send a <span class="request">coupon</span> node in your XML Charge or Recur request.  It will automatically be validated
+			and modify the payment accordingly.</p>
 		</div>
 	</div>
 	<div id="footer">
