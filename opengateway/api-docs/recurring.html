@@ -255,6 +255,10 @@
 				value is set.</li>
 				<li><span class="response">customer_id</span> - The ID of the new customer created and linked to the recurring charge.  This is only returned
 				if a <span class="request">customer_id</span> was not passed in the request (and thus a new customer record was created).</li>
+				<li><span class="response">amount</span> - The amount of the initial charge, useful for coupon-adjusted requests.</li>
+				<li><span class="response">recur_amount</span> - The amount of the recurring charge.</li>
+				<li><span class="response">free_trial</span> - The number of days prior to the start of the subscription.</li>
+				<li><span class="response">start_date</span> - The start date of the subscription.</li>
 			</ul>
 			<h2>Method: <a name="updatecreditcard">UpdateCreditCard</a></h2>
 			<p>Updates the credit card associated with a subscription.</p>

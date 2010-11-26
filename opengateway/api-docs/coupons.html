@@ -46,7 +46,7 @@
 			do one of the following:</p>
 			<ul>
 				<li>Reduce the payment amount (for single charges)</li>
-				<li>Reduce in the initial payment amount (for recurring charges)</li>
+				<li>Reduce the initial payment amount (for recurring charges)</li>
 				<li>Reduce the recurring payment amount (for recurring charges)</li>
 				<li>Reduce both the initial/recurring charge amounts (for recurring charges)</li>
 				<li>Add/modify the free trial (in days) (for recurring charges)</li>
@@ -57,6 +57,26 @@
 			<p>To use coupons, you must first define coupons in your control panel.</p>
 			<p>After that, simply send a <span class="request">coupon</span> node in your XML Charge or Recur request.  It will automatically be validated
 			and modify the payment accordingly.</p>
+			<h2>Charge/Recur Responses</h2>
+			<p>When a coupon code is used, OpenGateway will adjust the amount, recurring amount, free trial, etc. on its end.  However,
+			some applications may require that these adjusted values be stored locally.  For this reason, the following additional parameters
+			will be now returned in a <b>Charge</b> and <b>Recur</b> API requests:</p>
+			<ul>
+				<li>Charge
+					<ul>
+						<li><span class="response">amount</span> - The (possibly adjusted) amount of the payment.</li>
+					</ul>
+				</li>
+				<li>
+					Recur
+					<ul>
+						<li><span class="response">amount</span> - The (possibly adjusted) amount of the initial charge.</li>
+						<li><span class="response">recur_amount</span> - The (possibly adjusted) amount of the recurring charge.</li>
+						<li><span class="response">free_trial</span> - The (possibly adjusted) number of days before the first charge.</li>
+						<li><span class="response">start_date</span> - The (possibly adjusted) start date for the subscription.</li>
+					</ul>
+				</li>
+			</ul>
 		</div>
 	</div>
 	<div id="footer">
