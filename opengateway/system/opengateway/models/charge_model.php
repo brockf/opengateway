@@ -28,10 +28,11 @@ class Charge_model extends Model
 	* @param int $subscription_id The ID # of the recurring charge
 	* @param int $customer_id The customer ID to link this order to
 	* @param float $customer_ip The IP address of the purchasing customer
+	* @param int $coupon_id
 	* 
 	* @return int $order_id The new order id
 	*/
-	function CreateNewOrder($client_id, $gateway_id, $amount, $credit_card = array(), $subscription_id = 0, $customer_id = FALSE, $customer_ip = FALSE)
+	function CreateNewOrder($client_id, $gateway_id, $amount, $credit_card = array(), $subscription_id = 0, $customer_id = FALSE, $customer_ip = FALSE, $coupon_id = FALSE)
 	{
 		$timestamp = date('Y-m-d H:i:s');
 		$insert_data = array(
@@ -39,6 +40,7 @@ class Charge_model extends Model
 							'gateway_id' 	  => $gateway_id,
 							'subscription_id' => $subscription_id,
 							'amount'		  => $amount,
+							'coupon_id' 	  => $coupon_id,
 							'timestamp'		  => $timestamp,
 							'refunded' 		  => '0',
 							'refund_date'	  => '0000-00-00 00:00:00'
@@ -377,11 +379,13 @@ class Charge_model extends Model
 		$this->db->select('customers.*');
 		$this->db->select('countries.*');
 		$this->db->select('orders.*');
+		$this->db->select('coupons.coupon_code AS coupon_code');
 		$this->db->select('subscriptions.start_date');
 		
 		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$this->db->join('subscriptions', 'subscriptions.subscription_id = orders.subscription_id', 'left');
+		$this->db->join('coupons','coupons.coupon_id = orders.coupon_id','left');
 		
 		$query = $this->db->get('orders');
 		
@@ -414,6 +418,8 @@ class Charge_model extends Model
 				else {
 					$data[$i]['type'] = 'single_charge';
 				}
+				
+				$data[$i]['coupon'] = (isset($row->coupon_code)) ? $row->coupon_code : '';
 				
 				if($row->customer_id != 0) {
 					$data[$i]['customer']['id'] = $row->customer_id;

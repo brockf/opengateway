@@ -27,6 +27,10 @@
 			<td style="width: 75%"><?=$this->config->item('currency_symbol');?><?=$amount;?></td>
 		</tr>
 		<tr>
+			<td class="label">Coupon</td>
+			<td><? if (!empty($coupon)) { ?><?=$coupon;?><? } ?></td>
+		</tr>
+		<tr>
 			<td class="label">Charge Interval</td>
 			<td><?=$interval;?> days</td>
 		</tr>

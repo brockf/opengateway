@@ -100,7 +100,7 @@ class Coupons extends Controller {
 	
 	//--------------------------------------------------------------------
 	
-	public function edit($id=0) 
+	public function edit ($id = 0) 
 	{
 		// Grab our coupon data
 		$coupon = $this->coupon_model->get_coupon($this->user->Get('client_id'), $id);
@@ -128,7 +128,7 @@ class Coupons extends Controller {
 	//--------------------------------------------------------------------
 	
 	
-	public function post_coupon($action = 'edit', $id = FALSE) 
+	public function post_coupon ($action = 'edit', $id = FALSE) 
 	{	
 		$editing = $action == 'edit' ? TRUE : FALSE;
 	
@@ -140,7 +140,7 @@ class Coupons extends Controller {
 		
 		if (isset($error)) {
 			if ($action == 'new') {
-				redirect('/coupons/add');
+				redirect('coupons/add');
 				return FALSE;
 			}
 			else {
@@ -152,62 +152,53 @@ class Coupons extends Controller {
 		if ($action == 'new')
 		{
 			// New coupon
-			$coupon = $this->build_coupon_form_input();
 			$coupon_id = $this->coupon_model->new_coupon(
 													$this->user->Get('client_id'),
-													$coupon['coupon_name'],
-													$coupon['coupon_code'],
-													$coupon['coupon_start_date'],
-													$coupon['coupon_end_date'],
-													$coupon['coupon_max_uses'],
-													$coupon['coupon_customer_limit'],
-													$coupon['coupon_type_id'],
-													$coupon['coupon_reduction_type'],
-													$coupon['coupon_reduction_amt'],
-													$coupon['coupon_trial_length'],
-													$coupon['products'],
-													$coupon['plans']
+													$this->input->post('coupon_name'),
+													$this->input->post('coupon_code'),
+													$this->input->post('coupon_start_date'),
+													($this->input->post('no_expiry') == '1') ? FALSE : $this->input->post('coupon_end_date'),
+													($this->input->post('no_limit') == '1') ? FALSE : $this->input->post('coupon_max_uses'),
+													($this->input->post('coupon_customer_limit') == '') ? FALSE : $this->input->post('coupon_customer_limit'),
+													$this->input->post('coupon_type_id'),
+													$this->input->post('coupon_reduction_type'),
+													($this->input->post('coupon_reduction_amt') == '') ? FALSE : $this->input->post('coupon_reduction_amt'),
+													($this->input->post('coupon_trial_length') == '') ? FALSE : $this->input->post('coupon_trial_length'),
+													(in_array(0,$this->input->post('plans'))) ? FALSE : $this->input->post('plans')
 												);
 			
-			if ($coupon_id)
-			{
+			if ($coupon_id) {
 				$this->notices->SetNotice('Coupon added successfully.');
-			} else 
-			{
+			} else  {
 				$this->notices->SetError('Unable to create coupon.');
 			}
-		} else 
-		{
+		} else  {
 			// Edited coupon
-			$coupon_id = $this->input->post('coupon_id');
-			$coupon = $this->build_coupon_form_input();
-			$coupon_id = $this->coupon_model->update_coupon(
-													$this->user->Get('client_id'),
-													$coupon_id,
-													$coupon['coupon_name'],
-													$coupon['coupon_code'],
-													$coupon['coupon_start_date'],
-													$coupon['coupon_end_date'],
-													$coupon['coupon_max_uses'],
-													$coupon['coupon_customer_limit'],
-													$coupon['coupon_type_id'],
-													$coupon['coupon_reduction_type'],
-													$coupon['coupon_reduction_amt'],
-													$coupon['coupon_trial_length'],
-													$coupon['products'],
-													$coupon['plans']
-												);
+			$coupon_id = $id;
+			$result = $this->coupon_model->update_coupon(
+												$this->user->Get('client_id'),
+												$coupon_id,
+												$this->input->post('coupon_name'),
+												$this->input->post('coupon_code'),
+												$this->input->post('coupon_start_date'),
+												($this->input->post('no_expiry') == '1') ? FALSE : $this->input->post('coupon_end_date'),
+												($this->input->post('no_limit') == '1') ? FALSE : $this->input->post('coupon_max_uses'),
+												($this->input->post('coupon_customer_limit') == '') ? FALSE : $this->input->post('coupon_customer_limit'),
+												$this->input->post('coupon_type_id'),
+												$this->input->post('coupon_reduction_type'),
+												($this->input->post('coupon_reduction_amt') == '') ? FALSE : $this->input->post('coupon_reduction_amt'),
+												($this->input->post('coupon_trial_length') == '') ? FALSE : $this->input->post('coupon_trial_length'),
+												(in_array(0,$this->input->post('plans'))) ? FALSE : $this->input->post('plans')
+											);
 			
-			if ($result)
-			{
+			if ($result) {
 				$this->notices->SetNotice('Coupon saved successfully.');
-			} else 
-			{
+			} else  {
 				$this->notices->SetError('Unable to save coupon.');
 			}
 		}
 		
-		redirect('/coupons');
+		redirect('coupons');
 		
 		return TRUE;
 	}
@@ -230,48 +221,6 @@ class Coupons extends Controller {
 		
 		return TRUE;
 	}
-	
-	//--------------------------------------------------------------------
-	// PRIVATE METHODS
-	//--------------------------------------------------------------------
-	
-	/**
-	 * builds the coupon item from form input data.
-	 * This is used by both add and edit forms.
-	 */
-	private function build_coupon_form_input() 
-	{
-		$coupon = array(
-			'coupon_name'			=> $this->input->post('coupon_name'),
-			'coupon_code'			=> $this->input->post('coupon_code'),
-			'coupon_start_date'		=> $this->input->post('coupon_start_date'),
-			'coupon_end_date'		=> $this->input->post('coupon_end_date'),
-			'coupon_max_uses'		=> $this->input->post('coupon_max_uses'),
-			'coupon_customer_limit'	=> $this->input->post('coupon_customer_limit') != false ? 1 : 0,
-			'coupon_type_id'		=> $this->input->post('coupon_type_id')
-		);
-		
-		switch($this->input->post('coupon_type_id')) {
-			// Price Reduction
-			case 1: 
-			case 2:
-			case 3:
-				$coupon['coupon_reduction_type'] = $this->input->post('coupon_reduction_type');
-				$coupon['coupon_reduction_amt'] = $this->input->post('coupon_reduction_amt');
-				$coupon['plans'] = $this->input->post('plans');
-				break;
-		
-			// Free Trial
-			case 4: 
-				$coupon['coupon_trial_length'] = $this->input->post('coupon_trial_length');
-				$coupon['plans'] = $this->input->post('plans');
-				break;
-		}
-			
-		return $coupon;
-	}
-	
-	//--------------------------------------------------------------------
 }
 
 /* End of file Coupon.php */

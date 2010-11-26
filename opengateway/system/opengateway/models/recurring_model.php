@@ -33,11 +33,12 @@ class Recurring_model extends Model
 	* @param string $notification_url The notification URL
 	* @param int $amount The amount to be charged
 	* @param int $plan_id A link to a plan.  Optional.
-	* 
+	* @param int $coupon_id
+	*
 	* @return int The new subscription ID
 	*/
 	
-	function SaveRecurring($client_id, $gateway_id, $customer_id, $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id = 0, $card_last_four = 0)
+	function SaveRecurring($client_id, $gateway_id, $customer_id, $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id = 0, $card_last_four = 0, $coupon_id)
 	{
 		$timestamp = date('Y-m-d H:i:s');
 		$insert_data = array(
@@ -56,6 +57,7 @@ class Recurring_model extends Model
 							'active'			=> '0',
 							'renewed'			=> '0',
 							'updated'			=> '0',
+							'coupon_id'			=> $coupon_id,
 							'cancel_date'		=> '0000-00-00 00:00:00',
 							'timestamp'			=> $timestamp
 			  				);  					  				
@@ -423,11 +425,13 @@ class Recurring_model extends Model
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$this->db->join('plans', 'plans.plan_id = subscriptions.plan_id', 'left');
 		$this->db->join('plan_types', 'plan_types.plan_type_id = plans.plan_type_id', 'left');
+		$this->db->join('coupons','coupons.coupon_id = subscriptions.coupon_id','left');
 		$this->db->select('subscriptions.*');
 		$this->db->select('subscriptions.active AS sub_active');
 		$this->db->select('customers.*');
 		$this->db->select('countries.*');
 		$this->db->select('plans.name');
+		$this->db->select('coupons.coupon_code AS coupon_code');
 		$this->db->select('plan_types.type AS plan_type',false);
 		$this->db->select('plans.interval AS plan_interval',false);
 		$this->db->select('plans.amount AS plan_amount',false);
@@ -459,6 +463,7 @@ class Recurring_model extends Model
 				$data[$i]['notification_url'] = $row->notification_url;
 				$data[$i]['status'] = ($row->sub_active == '1') ? 'active' : 'inactive';
 				$data[$i]['card_last_four'] = $row->card_last_four;
+				$data[$i]['coupon'] = (isset($row->coupon_code)) ? $row->coupon_code : '';
 				
 				if($row->customer_id !== 0) {
 					$data[$i]['customer']['id'] = $row->customer_id;

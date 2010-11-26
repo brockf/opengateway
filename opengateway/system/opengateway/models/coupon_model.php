@@ -7,6 +7,161 @@ class Coupon_model extends Model {
 		parent::__construct();
 	}
 	
+	/*
+	* Is Eligible?
+	*
+	* @param array $coupon
+	*/
+	function is_eligible ($coupon, $plan_id, $customer_id, $single_charge = FALSE) {
+		// coupon may be multi-dimensional array.
+		// if so, we'll take key #0
+		if (isset($coupon[0])) {
+			$coupon = $coupon[0];
+		}
+		
+		if ($single_charge == TRUE and $coupon['type_id'] != '1') {
+			// this coupon is for recurrings
+			
+			return FALSE;
+		}
+	
+		if ($coupon['end_date'] != FALSE and (strtotime($coupon['end_date'])+84600) < time()) {
+			// expired
+			return FALSE;
+		}
+		
+		// linked plans
+		$plans = $this->get_related($coupon['id'], 'coupons_plans', 'plan_id');
+		
+		if (!empty($plans) and $plan_id == FALSE) {
+			// plan is required
+			return FALSE;
+		}
+		
+		if (!empty($plans) and !in_array($plan_id, $plans)) {
+			// not for this plan
+			return FALSE;
+		}
+		
+		if ($coupon['max_uses'] != FALSE) {
+			// count usage
+			$result = $this->db->select('*')
+							   ->where('coupon_id',$coupon['id'])
+							   ->from('subscriptions')
+							   ->get();
+							   
+			$result2 = $this->db->select('*')
+							    ->where('coupon_id',$coupon['id'])
+							    ->from('orders')
+							    ->get();
+							   
+			$uses = $result->num_rows() + $result2->num_rows();
+			
+			if ($uses >= $coupon['max_uses']) {
+				// too many uses
+				return FALSE;
+			}
+		}
+		
+		if ($coupon['customer_limit'] != FALSE) {
+			// count customer usage
+			$result = $this->db->select('*')
+							   ->where('coupon_id',$coupon['id'])
+							   ->where('customer_id',$customer_id)
+							   ->from('subscriptions')
+							   ->get();
+							   
+			$result2 = $this->db->select('*')
+							    ->where('coupon_id',$coupon['id'])
+							    ->where('customer_id',$customer_id)
+							    ->from('orders')
+							    ->get();
+							   
+			$customer_uses = $result->num_rows() + $result2->num_rows();
+			
+			if ($customer_uses >= $coupon['customer_limit']) {
+				// too many uses for this customer
+				return FALSE;
+			}
+		}
+		
+		return TRUE;
+	}
+	
+	function subscription_adjust_trial ($free_trial, $type_id, $trial_length) {
+		if ($type_id == 5) {
+			$free_trial = $trial_length;
+		}
+		
+		return $free_trial;
+	}
+	
+	function subscription_adjust_amount(&$amount, &$recur_amount, $type_id, $reduction_type, $reduction_amount) {
+		if ($type_id == 1) {
+			// this isn't for recurring charges
+		}
+	
+		if ((int)$reduction_type === 0) {
+			// percentage
+			
+			$multiplier = (100 - $reduction_amount) * 0.01;
+			
+			if ($type_id == 2 or $type_id == 4) {
+				// initial price
+				$amount = $amount * $multiplier;
+			}
+			
+			if ($type_id == 2 or $type_id == 3) {
+				$recur_amount = $recur_amount * $multiplier;
+			}
+		}
+		elseif ((int)$reduction_type === 1) {
+			// flat rate
+			if ($type_id == 2 or $type_id == 4) {
+				// initial price
+				$amount = $amount - $reduction_amount;
+			}
+			
+			if ($type_id == 2 or $type_id == 3) {
+				$recur_amount = $recur_amount - $reduction_amount;
+			}
+		}
+		
+		if ($amount < 0) {
+			$amount = 0;
+		}
+		
+		if ($recur_amount < 0) {
+			$recur_amount = 0;
+		}
+		
+		return TRUE;
+	}
+	
+	function adjust_amount($amount, $type_id, $reduction_type, $reduction_amount) {
+		if ($type_id != 1) {
+			// this isn't for single charges
+			return $amount;
+		}
+	
+		if ((int)$reduction_type === 0) {
+			// percentage
+			
+			$multiplier = (100 - $reduction_amount) * 0.01;
+			$amount = $amount * $multiplier;
+		}
+		elseif ((int)$reduction_type === 1) {
+			// flat rate
+			$amount = $amount - $reduction_amount;
+		}
+		
+		if ($amount < 0) {
+			$amount = 0;
+		}
+		
+		return $amount;
+	}
+	
 	//--------------------------------------------------------------------
 	
 	/**
@@ -19,22 +174,17 @@ class Coupon_model extends Model {
 	 */
 	public function get_coupon($client_id, $id) 
 	{
-		$this->db->where('coupon_deleted', 0);
-		$this->db->where('coupon_id', $id);
-		$this->db->where('client_id', $client_id);
-		$query = $this->db->get('coupons');
+		$coupon = $this->get_coupons($client_id, array('id' => $id));
 		
-		if ($query->num_rows())
-		{
-			$coupon = $query->row_array();
-			
-			// Get associated plans
-			$coupon['plans'] = $this->get_related($id, 'coupons_plans', 'plan_id');
-					
-			return $coupon;
+		if (empty($coupon)) {
+			return FALSE;
 		}
 		
-		return FALSE;
+		$coupon = $coupon[0];
+		
+		$coupon['plans'] = $this->get_related($id, 'coupons_plans', 'plan_id');
+					
+		return $coupon;
 	}
 	
 	//--------------------------------------------------------------------
@@ -48,7 +198,7 @@ class Coupon_model extends Model {
 	 *
 	 * @return	array	The coupons that match the filters.
 	 */
-	public function get_coupons($client_id=null, $filters=array()) 
+	public function get_coupons($client_id = null, $filters = array()) 
 	{
 	
 		//--------------------------------------------------------------------
@@ -70,7 +220,8 @@ class Coupon_model extends Model {
 		// Code
 		if (isset($filters['coupon_code']) && !empty($filters['coupon_code']))
 		{
-			$this->db->like('coupon_code', $filters['coupon_code']);
+			// this is a WHERE search to prevent LIKE searching in an actual Charge/Request call
+			$this->db->where('coupon_code', $filters['coupon_code']);
 		}
 		
 		// Start Date
@@ -90,8 +241,12 @@ class Coupon_model extends Model {
 			$this->db->where('coupon_type_id', $filters['coupon_type'] );
 		}
 		
+		// Client restriction
+		if (!empty($client_id)) {
+			$this->db->where('coupons.client_id', $client_id);
+		}
+		
 		$this->db->where('coupon_deleted', 0);
-		$this->db->where('coupons.client_id', $client_id);
 		$result = $this->db->get('coupons');
 		
 		if ($result->num_rows() === 0)
@@ -108,9 +263,9 @@ class Coupon_model extends Model {
 				'name'				=> $row['coupon_name'],
 				'code'				=> $row['coupon_code'],
 				'start_date'		=> $row['coupon_start_date'],
-				'end_date'			=> $row['coupon_end_date'],
-				'max_uses'			=> $row['coupon_max_uses'],
-				'customer_limit'	=> $row['coupon_customer_limit'],
+				'end_date'			=> ($row['coupon_end_date'] != '0000-00-00') ? $row['coupon_end_date'] : FALSE,
+				'max_uses'			=> ($row['coupon_max_uses'] != '0') ? $row['coupon_max_uses'] : FALSE,
+				'customer_limit'	=> ($row['coupon_customer_limit'] != '0') ? $row['coupon_customer_limit'] : FALSE,
 				'reduction_type'	=> $row['coupon_reduction_type'],
 				'reduction_amt'		=> $row['coupon_reduction_amt'],
 				'trial_length'		=> $row['coupon_trial_length'],
@@ -155,9 +310,11 @@ class Coupon_model extends Model {
 		$this->form_validation->set_rules('coupon_name', 'Coupon Name', 'trim|required|max_length[60]');
 		$this->form_validation->set_rules('coupon_code', 'Coupon Code', 'trim|required|mx_length[20]');
 		$this->form_validation->set_rules('coupon_start_date', 'Start Date', 'trim|required');
-		$this->form_validation->set_rules('coupon_end_date', 'End Date', 'trim|required');
-		$this->form_validation->set_rules('coupon_max_uses', 'Maximum Uses', 'trim|is_natural');
 		$this->form_validation->set_rules('coupon_type_id', 'Coupon Type', 'trim|is_natural');
+		
+		if ($this->input->post('coupon_max_uses')) {
+			$this->form_validation->set_rules('coupon_max_uses', 'Maximum Uses', 'trim|is_natural');
+		}
 		
 		switch ($this->input->post('coupon_type_id'))
 		{
@@ -165,10 +322,11 @@ class Coupon_model extends Model {
 			case 1:
 			case 2:
 			case 3: 
+			case 4:
 				$this->form_validation->set_rules('coupon_reduction_amt', 'Reduction Amount', 'trim|required|numeric');
 				break;
 			// Free Trial
-			case 4: 
+			case 5: 
 				$this->form_validation->set_rules('coupon_trial_length', 'Free Trial Length', 'trim|required|is_natural');
 				break;			
 		}
@@ -199,13 +357,11 @@ class Coupon_model extends Model {
 	 * @param	int			$reduction_type	Whether percent or fixed amount of reduction. Only applicable for Price Reductions.
 	 * @param	string		$reduction_amt	How much to reduce price by. Only applicable for Price Reduction.
 	 * @param	int			$trial_length	How many days the free trial will last. 
-	 * @param	array		$products		An array of product ids to assign this coupon to.
 	 * @param	array		$plans			An array of subscription plans to assign this coupon to.
-	 * @param 	array		$ship_rates		An array of shipping rates to apply this coupon to.
 	 *
 	 * @return	int		The id of the new coupon, or FALSE on failure.
 	 */
-	public function new_coupon($client_id, $name, $code, $start_date, $end_date, $max_uses, $customer_limit, $type_id, $reduction_type, $reduction_amt, $trial_length, $products, $plans) 
+	public function new_coupon($client_id, $name, $code, $start_date, $end_date, $max_uses, $customer_limit, $type_id, $reduction_type, $reduction_amt, $trial_length, $plans = array()) 
 	{
 		$insert_fields = array(
 							'client_id'				=> $client_id,
@@ -214,11 +370,11 @@ class Coupon_model extends Model {
 							'coupon_start_date'		=> $start_date,
 							'coupon_end_date'		=> $end_date,
 							'coupon_max_uses'		=> $max_uses,
-							'coupon_customer_limit'	=> $customer_limit,
+							'coupon_customer_limit'	=> ($customer_limit == FALSE) ? 0 : $customer_limit,
 							'coupon_type_id'		=> $type_id,
-							'coupon_reduction_type'	=> $reduction_type,
-							'coupon_reduction_amt'	=> $reduction_amt,
-							'coupon_trial_length'	=> $trial_length,
+							'coupon_reduction_type'	=> ($reduction_type == FALSE) ? 0 : $reduction_type,
+							'coupon_reduction_amt'	=> ($reduction_amt == FALSE) ? 0 : $reduction_amt,
+							'coupon_trial_length'	=> ($trial_length == FALSE) ? 0 : $trial_length,
 						);
 		
 		// Add the created_on field
@@ -232,8 +388,7 @@ class Coupon_model extends Model {
 		if (is_numeric($id))
 		{
 			// Save was successfull, so try to save our various associated parts.
-			if (!empty($products))		{ $this->save_related($id, 'coupons_products', 'product_id', $products); }
-			if (!empty($plans))			{ $this->save_related($id, 'coupons_plans', 'plan_id', $plans); }
+			if (!empty($plans) && count($plans)) { $this->save_related($id, 'coupons_plans', 'plan_id', $plans); }
 			
 			return $id;
 		}
@@ -258,13 +413,11 @@ class Coupon_model extends Model {
 	 * @param	int			$reduction_type	Whether percent or fixed amount of reduction. Only applicable for Price Reductions.
 	 * @param	string		$reduction_amt	How much to reduce price by. Only applicable for Price Reduction.
 	 * @param	int			$trial_length	How many days the free trial will last. 
-	 * @param	array		$products		An array of product ids to assign this coupon to.
 	 * @param	array		$plans			An array of subscription plans to assign this coupon to.
-	 * @param 	array		$ship_rates		An array of shipping rates to apply this coupon to.
 	 *
-	 * @return	int		The id of the new coupon, or FALSE on failure.
+	 * @return boolean
 	 */
-	public function update_coupon($client_id, $coupon_id, $name, $code, $start_date, $end_date, $max_uses, $customer_limit, $type_id, $reduction_type, $reduction_amt, $trial_length, $products, $plans) 
+	public function update_coupon($client_id, $coupon_id, $name, $code, $start_date, $end_date, $max_uses, $customer_limit, $type_id, $reduction_type, $reduction_amt, $trial_length, $plans) 
 	{
 		$insert_fields = array(
 							'client_id'				=> $client_id,
@@ -280,6 +433,13 @@ class Coupon_model extends Model {
 							'coupon_trial_length'	=> $trial_length,
 						);
 		
+		// Grab arrays of data to be used after the initial creation
+		$plans = isset($fields['plans']) ? $fields['plans'] : null;
+		$trial_subs = isset($fields['trial_subs']) ? $fields['trial_subs'] : null;
+	
+		// Now unset these so they're not clogging up the system
+		unset($fields['plans']);
+		
 		// Add the created_on field
 		$insert_fields['created_on'] = date('Y-m-d H:i:s');
 		
@@ -291,10 +451,9 @@ class Coupon_model extends Model {
 		if ($this->db->affected_rows())
 		{
 			// Save was successfull, so try to save our various associated parts.
-			if (!empty($products))		{ $this->save_related($coupon_id, 'coupons_products', 'product_id', $products); }
-			if (!empty($plans))			{ $this->save_related($coupon_id, 'coupons_plans', 'plan_id', $plans); }
+			if (!empty($plans) && count($plans)) { $this->save_related($id, 'coupons_plans', 'plan_id', $plans); }
 			
-			return $id;
+			return TRUE;
 		}
 		
 		return FALSE;
@@ -362,10 +521,12 @@ class Coupon_model extends Model {
 	 *
 	 * @return	array	The related object, or FALSE on failure.
 	 */
-	public function get_related($coupon_id=null, $table='', $field='') 
+	public function get_related($coupon_id = null, $table='', $field='') 
 	{
 		$this->db->where('coupon_id', $coupon_id);
 		$query = $this->db->get($table);
+		
+		$collection = array();
 		
 		if ($query->num_rows())
 		{
@@ -375,11 +536,9 @@ class Coupon_model extends Model {
 			{
 				$collection[] = $item[$field];
 			}
-			
-			return $collection;
 		}
 		
-		return FALSE;
+		return $collection;
 	}
 	
 	//--------------------------------------------------------------------

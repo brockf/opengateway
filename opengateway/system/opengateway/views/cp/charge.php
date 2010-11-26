@@ -16,6 +16,10 @@
 			<td style="width: 75%"><?=$this->config->item('currency_symbol');?><?=$amount;?><? if ($refunded == "0") { ?> (<a href="<?=site_url('transactions/refund/'  . $id);?>">issue refund</a>)<? } ?></td>
 		</tr>
 		<tr>
+			<td class="label">Coupon</td>
+			<td><? if (!empty($coupon)) { ?><?=$coupon;?><? } ?></td>
+		</tr>
+		<tr>
 			<td class="label">Transaction Date</td>
 			<td><?=$date;?></td>
 		</tr>

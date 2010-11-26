@@ -124,11 +124,12 @@ class Gateway_model extends Model
 	* @param float $customer_ip The optional IP address of the customer
 	* @param string $return_url The URL for external payment processors to return the user to after payment
 	* @param string $cancel_url The URL to send if the user cancels an external payment
+	* @param string $coupon A coupon code
 	*
 	* @return mixed Array with response_code and response_text
 	*/
 	
-	function Charge($client_id, $gateway_id, $amount, $credit_card = array(), $customer_id = FALSE, $customer = array(), $customer_ip = FALSE, $return_url = FALSE, $cancel_url = FALSE)
+	function Charge($client_id, $gateway_id, $amount, $credit_card = array(), $customer_id = FALSE, $customer = array(), $customer_ip = FALSE, $return_url = FALSE, $cancel_url = FALSE, $coupon = FALSE)
 	{
 		$CI =& get_instance();
 		$CI->load->library('field_validation');
@@ -225,10 +226,30 @@ class Gateway_model extends Model
 			$customer['ip_address'] = '';
 		}
 		
+		// coupon check
+		if (!empty($coupon)) {
+			$CI->load->model('coupon_model');
+			$coupon = $CI->coupon_model->get_coupons($client_id, array('coupon_code' => $coupon));
+			
+			if (!empty($coupon) and $CI->coupon_model->is_eligible($coupon, FALSE, isset($customer_id) ? $customer_id : FALSE, TRUE)) {
+				$coupon = $coupon[0];
+				
+				$amount = $CI->coupon_model->adjust_amount($amount, $coupon['type_id'], $coupon['reduction_type'], $coupon['reduction_amt']);
+				
+				$coupon_id = $coupon['id'];
+			}
+			else {
+				$coupon_id = FALSE;
+			}
+		}
+		else {
+			$coupon_id = FALSE;
+		}
+		
 		// Create a new order
 		$CI->load->model('charge_model');
 		$passed_customer = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
-		$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, 0, $passed_customer, $customer_ip);
+		$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, 0, $passed_customer, $customer_ip, $coupon_id);
 		
 		// if amount is greater than $0, we require a gateway
 		if ($amount > 0) {
@@ -299,11 +320,12 @@ class Gateway_model extends Model
 	* @param string $return_url The URL for external payment processors to return the user to after payment
 	* @param string $cancel_url The URL to send if the user cancels an external payment
 	* @param int $renew The subscription that is being renewed, if there is one
+	* @param string $coupon A coupon code
 	*
 	* @return mixed Array with response_code and response_text
 	*/
 	
-	function Recur($client_id, $gateway_id, $amount = FALSE, $credit_card = array(), $customer_id = FALSE, $customer = array(), $customer_ip = FALSE, $recur = array(), $return_url = FALSE, $cancel_url = FALSE, $renew = FALSE)
+	function Recur($client_id, $gateway_id, $amount = FALSE, $credit_card = array(), $customer_id = FALSE, $customer = array(), $customer_ip = FALSE, $recur = array(), $return_url = FALSE, $cancel_url = FALSE, $renew = FALSE, $coupon = FALSE)
 	{		
 		$CI =& get_instance();
 		$CI->load->library('field_validation');
@@ -471,6 +493,27 @@ class Gateway_model extends Model
 			$start_date = date('Y-m-d');
 		}
 		
+		// coupon check
+		if (!empty($coupon)) {
+			$CI->load->model('coupon_model');
+			
+			$coupon = $CI->coupon_model->get_coupons($client_id, array('coupon_code' => $coupon));
+			
+			if (!empty($coupon) and $CI->coupon_model->is_eligible($coupon, (isset($recur['plan_id'])) ? $recur['plan_id'] : FALSE, isset($customer_id) ? $customer_id : FALSE)) {
+				$coupon = $coupon[0];
+		
+				$free_trial = $CI->coupon_model->subscription_adjust_trial($free_trial, $coupon['type_id'], $coupon['trial_length']);
+				
+				$coupon_id = $coupon['id'];
+			}
+			else {
+				$coupon_id = FALSE;
+			}
+		}
+		else {
+			$coupon_id = FALSE;
+		}
+		
 		// do we have to adjust the start_date for a free trial?
 		if ($free_trial) {
 			$start_date = date('Y-m-d', strtotime($start_date) + ($free_trial * 86400));
@@ -548,10 +591,15 @@ class Gateway_model extends Model
 			$recur['amount'] = $amount;
 		}
 		
+		// 2nd coupon check - adjust amounts
+		if (!empty($coupon_id)) {
+			$CI->coupon_model->subscription_adjust_amount($amount, $recur['amount'], $coupon['type_id'], $coupon['reduction_type'], $coupon['reduction_amt']);
+		}
+		
 		// Save the subscription info
 		$CI->load->model('recurring_model');
 		$card_last_four = (isset($credit_card['card_num'])) ? substr($credit_card['card_num'],-4,4) : '0';
-		$subscription_id = $CI->recurring_model->SaveRecurring($client_id, $gateway['gateway_id'], $customer['customer_id'], $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $recur['amount'], $plan_id, $card_last_four);
+		$subscription_id = $CI->recurring_model->SaveRecurring($client_id, $gateway['gateway_id'], $customer['customer_id'], $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $recur['amount'], $plan_id, $card_last_four, $coupon_id);
 		
 		// get subscription
 		$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);

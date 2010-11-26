@@ -214,16 +214,26 @@ class Transactions extends Controller {
 		$this->load->model('gateway_model');
 		$gateways = $this->gateway_model->GetGateways($this->user->Get('client_id'),array());
 		
-		foreach ((array)$gateways as $key => $gateway) {
-			$gateway_name = $gateway['library_name'];
-			$this->load->library('payment/' . $gateway_name);
-			$gateways[$key]['settings'] = $this->$gateway_name->Settings();
+		if (!empty($gateways)) {
+			foreach ($gateways as $key => $gateway) {
+				$gateway_name = $gateway['library_name'];
+				$this->load->library('payment/' . $gateway_name);
+				$gateways[$key]['settings'] = $this->$gateway_name->Settings();
+			}
+		
+			// get default gateway settings
+			$default_gateway = $this->gateway_model->GetGatewayDetails($this->user->Get('client_id'));
+			$default_gateway_name = $default_gateway['name'];
+			$default_gateway_settings = $this->$default_gateway_name->Settings();
+		}
+		else {
+			$default_gateway_settings = FALSE;
+			$gateways = array();
 		}
 		
-		// get default gateway settings
-		$default_gateway = $this->gateway_model->GetGatewayDetails($this->user->Get('client_id'));
-		$default_gateway_name = $default_gateway['name'];
-		$default_gateway_settings = $this->$default_gateway_name->Settings();
+		// coupons
+		$this->load->model('coupon_model');
+		$coupons = $this->coupon_model->get_coupons();
 		
 		$data = array(
 					'states' => $states,
@@ -231,7 +241,8 @@ class Transactions extends Controller {
 					'plans' => $plans,
 					'customers' => $customers,
 					'gateways' => $gateways,
-					'default_gateway_settings' => $default_gateway_settings
+					'default_gateway_settings' => $default_gateway_settings,
+					'coupons' => $coupons
 					);
 					
 		$this->load->view(branded_view('cp/new_transaction.php'), $data);
@@ -261,6 +272,11 @@ class Transactions extends Controller {
 					);
 		
 		$charge->Amount($this->input->post('amount'));
+		
+		// coupon
+		if ($this->input->post('coupon')) {
+			$charge->Coupon($this->input->post('coupon'));
+		}
 		
 		if ($this->input->post('cc_number')) {
 			$charge->CreditCard(

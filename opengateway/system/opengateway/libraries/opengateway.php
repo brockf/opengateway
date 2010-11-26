@@ -72,6 +72,15 @@ class OpenGateway
         
         return TRUE;
     }
+    
+    /**
+    * Use a Coupon
+    *
+    * @param string $coupon_string
+    */
+    public function Coupon($coupon_code) {
+    	$this->params->coupon = $coupon_code;
+    }
 
 	/**
 	* Process the Request

@@ -112,8 +112,9 @@ class API extends Controller {
 		$customer_ip = isset($params['customer_ip_address']) ? $params['customer_ip_address'] : FALSE;
 		$return_url = isset($params['return_url']) ? $params['return_url'] : FALSE;
 		$cancel_url = isset($params['cancel_url']) ? $params['cancel_url'] : FALSE;
+		$coupon = isset($params['coupon']) ? $params['coupon'] : FALSE;
 		
-		return $this->gateway_model->Charge($client_id, $gateway_id, $amount, $credit_card, $customer_id, $customer, $customer_ip, $return_url, $cancel_url);
+		return $this->gateway_model->Charge($client_id, $gateway_id, $amount, $credit_card, $customer_id, $customer, $customer_ip, $return_url, $cancel_url, $coupon);
 	}
 	
 	function Recur($client_id, $params) {
@@ -138,8 +139,9 @@ class API extends Controller {
 		$return_url = isset($params['return_url']) ? $params['return_url'] : FALSE;
 		$cancel_url = isset($params['cancel_url']) ? $params['cancel_url'] : FALSE;
 		$renew = isset($params['renew']) ? $params['renew'] : FALSE;
+		$coupon = isset($params['coupon']) ? $params['coupon'] : FALSE;
 		
-		return $this->gateway_model->Recur($client_id, $gateway_id, $amount, $credit_card, $customer_id, $customer, $customer_ip, $recur, $return_url, $cancel_url, $renew);
+		return $this->gateway_model->Recur($client_id, $gateway_id, $amount, $credit_card, $customer_id, $customer, $customer_ip, $recur, $return_url, $cancel_url, $renew, $coupon);
 	}
 	
 	function Refund ($client_id, $params) {

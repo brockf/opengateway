@@ -2,7 +2,7 @@
 <script type="text/javascript" src="' . branded_include('js/form.transaction.js') . '"></script>')); ?>
 <h1>New Transaction</h1>
 <form class="form" id="form_transaction" method="post" action="<?=site_url('transactions/post');?>">
-<? if ($gateways === FALSE) { ?>
+<? if (empty($gateways)) { ?>
 <p class="warning no_gateway"><span>You do not have any active gateways available to process this transaction.  The submit button has been disabled.  To
 begin processing transactions, you should <a href="<?=site_url('settings/new_gateway');?>">setup a new payment gateway</a>.</span></p>
 <? } ?>
@@ -15,6 +15,20 @@ begin processing transactions, you should <a href="<?=site_url('settings/new_gat
 			</li>
 			<li>
 				<input type="text" class="text full required number" id="amount" name="amount" />
+			</li>
+			<li>
+				<label for="coupon" class="full">Coupon</label>
+			</li>
+			<li>
+				<select name="coupon" <? if ($coupons == FALSE) { ?>disabled="true"<? } ?>>
+					<? if ($coupons == FALSE) { ?><option value="">No available coupons</option> <? } ?>
+					<? if (!empty($coupons)) { ?>
+						<option value="">No coupon</option>
+						<? foreach ($coupons as $coupon) { ?>
+							<option value="<?=$coupon['code'];?>"><?=$coupon['code'];?> - <?=$coupon['name'];?></option>
+						<? } ?>
+					<? } ?>
+				</select>
 			</li>
 		</ul>
 	</fieldset>
@@ -191,7 +205,8 @@ begin processing transactions, you should <a href="<?=site_url('settings/new_gat
 			</li>
 			<li>
 				<label for="customer_id">Existing Customer</label>
-				<select id="customer_id" name="customer_id">
+				<select id="customer_id" name="customer_id" <? if ($customers == FALSE) { ?> disabled="disabled"<? } ?>>
+					<? if ($customers == FALSE) { ?><option value="">You do not have any customers</option><? } ?>
 					<option value=""></option>
 					<? if (is_array($customers)) { ?>
 					<? foreach ($customers as $customer) { ?>
@@ -250,7 +265,7 @@ begin processing transactions, you should <a href="<?=site_url('settings/new_gat
 	</fieldset>
 	</div>
 </div>
-<? if (is_array($gateways)) { ?>
+<? if (!empty($gateways)) { ?>
 <div id="transaction_gateway">
 	<fieldset>
 		<legend>Gateway</legend>

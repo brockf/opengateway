@@ -109,6 +109,8 @@ $(document).ready(function() {
 				}
 			}
 		);
+		
+		$('input.datepick').datePicker({clickInput:true});
 	}
 	
 	$('#dataset_form').submit(function () {
@@ -266,6 +268,9 @@ function MarkEmpty () {
 			if ($(this).val() == '') {
 				$(this).val(field_name);
 				$(this).addClass('emptyfield');
+			}
+			else if ($(this).val() != '' && $(this).val() != field_name) {
+				$(this).removeClass('emptyfield');
 			}
 		});
 	});

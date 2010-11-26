@@ -21,13 +21,13 @@ $sql[] = 'CREATE TABLE `coupons` (
   `created_on` datetime NOT NULL,
   `modified_on` datetime DEFAULT NULL,
   PRIMARY KEY (`coupon_id`)
-) ENGINE=MyISAM  DEFAULT;';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;';
 
 $sql[] = "CREATE TABLE `coupons_plans` (
   `coupon_id` int(11) NOT NULL,
   `plan_id` int(11) NOT NULL,
   INDEX (  `coupon_id` ,  `plan_id` )
-) ENGINE=MyISAM DEFAULT;";
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 
 $sql[] = "CREATE TABLE `coupon_types` (
   `coupon_type_id` int(3) NOT NULL,
@@ -35,11 +35,12 @@ $sql[] = "CREATE TABLE `coupon_types` (
   KEY `coupon_type_id` (`coupon_type_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 
-$sql[] = "INSERT INTO `coupon_types` VALUES(1, 'Recurring Price Reduction');";
 
-$sql[] = "INSERT INTO `coupon_types` VALUES(2, 'Initial Charge Price Reduction');";
+$sql[] = "INSERT INTO `coupon_types` VALUES(1, 'Total Price Reduction');";
 
-$sql[] = "INSERT INTO `coupon_types` VALUES(3, 'Total Price Reduction');";
+$sql[] = "INSERT INTO `coupon_types` VALUES(2, 'Recurring Price Reduction');";
+
+$sql[] = "INSERT INTO `coupon_types` VALUES(3, 'Initial Charge Price Reduction');";
 
 $sql[] = "INSERT INTO `coupon_types` VALUES(4, 'Free Trial');";
 
