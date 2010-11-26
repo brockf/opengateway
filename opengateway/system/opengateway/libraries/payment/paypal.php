@@ -2,8 +2,12 @@
 
 class paypal
 {
-	var $settings;
+	public $settings;
 	
+	// if set to TRUE, any recurring interval of 30, 60, etc. will be converted to a monthly interval so that
+	// the charges come on the same day each month
+	public $same_day_every_month = FALSE;
+		
 	function paypal() {
 		$this->settings = $this->Settings();
 	}
@@ -427,8 +431,15 @@ class paypal
 		$post['currencycode'] = $gateway['currency'];
 		$post['creditcardtype'] = $card_type;
 		$post['expdate'] = str_pad($credit_card['exp_month'], 2, "0", STR_PAD_LEFT) . $credit_card['exp_year'];
-		$post['billingperiod'] = 'Day';
-		$post['billingfrequency'] = $interval;
+		
+		if ($this->same_day_every_month == TRUE and $interval % 30 === 0) {
+			$post['billingperiod'] = 'Month';
+			$post['billingfrequency'] = ($interval / 30);
+		} else {
+			$post['billingperiod'] = 'Day';
+			$post['billingfrequency'] = $interval;
+		}
+		
 		$post['profilestartdate'] = date('c', strtotime($start_date));
 		$post['ipaddress'] = $customer['ip_address'];
 		
@@ -597,6 +608,16 @@ class paypal
 		} else {
 			$response['success'] = FALSE;
 			$response['reason'] = "The charge has failed.";
+		}
+		
+		// we'll need to adjust the interval upon each charge so that the next_charge_date is a month from now
+		if ($this->same_day_every_month === TRUE and $params['interval'] % 30 === 0) {
+			$months = $params['interval'] / 30;
+			$plural = ($months > 1) ? 's' : '';
+			$next_charge = date('Y-m-d',strtotime('today + ' . $months . ' month' . $plural));
+			
+			// we'll return the $next_charge in this response
+			$response['next_charge'] = $next_charge;			
 		}
 		
 		return $response;	

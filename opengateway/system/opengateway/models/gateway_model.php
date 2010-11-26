@@ -524,7 +524,14 @@ class Gateway_model extends Model
 		
 		// get the next payment date
 		if (date('Y-m-d', strtotime($start_date)) == date('Y-m-d')) {
-			$next_charge_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400));
+			// deal with the same_day_every_month mod for some gateways
+			if (isset($this->$gateway_name->same_day_every_month) and $this->$gateway_name->same_day_every_month == TRUE and $interval % 30 === 0) {
+				$months = $interval / 30;
+				$plural = ($months > 1) ? 's' : '';
+				$next_charge_date = date('Y-m-d',strtotime('today + ' . $months . ' month' . $plural));
+			} else {			
+				$next_charge_date = date('Y-m-d', strtotime($start_date) + ($interval * 86400));
+			}
 		}
 		else {
 			$next_charge_date = date('Y-m-d', strtotime($start_date));
@@ -911,7 +918,10 @@ class Gateway_model extends Model
 	* Process a credit card recurring charge
 	*
 	* Processes a credit card CHARGE transaction for a recurring subscription using the gateway_id to use the proper client gateway.
-	* Returns an array response from the appropriate payment library
+	* Returns an array response from the appropriate payment library.
+	*
+	* The gateway may return a 'next_charge' == YYYY-MM-DD in their response array, thus specifying the date of the next charge
+	* and not relying on OG's date calculator.
 	*
 	* @param int $client_id	The Client ID
 	* @param array $params The subscription array, from GetSubscription, for the recurring charge
@@ -954,7 +964,12 @@ class Gateway_model extends Model
 		if ($response['success'] == TRUE) {
 			// Save the last_charge and next_charge
 			$last_charge = date('Y-m-d');
-			$next_charge = $CI->recurring_model->GetNextChargeDate($params['subscription_id']);
+			if (!isset($response['next_charge'])) {
+				$next_charge = $CI->recurring_model->GetNextChargeDate($params['subscription_id']);
+			}
+			else {
+				$next_charge = $response['next_charge'];
+			}
 			
 			$CI->recurring_model->SetChargeDates($params['subscription_id'], $last_charge, $next_charge);
 			
