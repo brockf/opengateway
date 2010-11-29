@@ -491,7 +491,7 @@ class paypal_standard
 				
 				//die(print_r($response_charge));
 				
-				if ($response_charge['PAYMENTSTATUS'] != 'Completed' and $response_charge['PAYMENTSTATUS'] != 'Pending' and $response_charge['PAYMENTSTATUS'] != 'Processed') {
+				if (!isset($response_charge) or $response_charge['PAYMENTSTATUS'] != 'Completed' and $response_charge['PAYMENTSTATUS'] != 'Pending' and $response_charge['PAYMENTSTATUS'] != 'Processed') {
 					die('Your initial PayPal payment failed.  <a href="' . $data['cancel_url'] . '">Go back to merchant</a>.');
 				}
 				else {

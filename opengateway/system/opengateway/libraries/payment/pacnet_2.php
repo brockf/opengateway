@@ -27,6 +27,7 @@ class pacnet
 		$settings['requires_customer_information'] = 0;
 		$settings['requires_customer_ip'] = 0;
 		$settings['required_fields'] = array('enabled',
+											 'mode',
 											 'username',
 											 'password',
 											 'prn',
@@ -44,6 +45,14 @@ class pacnet
 														'options' => array(
 																		'1' => 'Enabled',
 																		'0' => 'Disabled')
+														),
+										'mode' => array(
+														'text' => 'Mode',
+														'type' => 'select',
+														'options' => array(
+																		'LIVE' => "Live",
+																		'TEST' => 'Test'
+																	)
 														),
 										'username' => array(
 														'text' => 'Raven Username',
@@ -126,7 +135,7 @@ class pacnet
 	
 	function TestConnection($client_id, $gateway) 
 	{
-		$response = $this->Process($gateway, array('UserName','Timestamp'),array(),'hello');
+		$response = $this->Process($gateway, array('UserName','RequestID','Timestamp'),array(),'hello');
 		
 		if (strstr($response['Response'],'Hello')) {
 			return TRUE;
@@ -160,7 +169,7 @@ class pacnet
 			$variables['CustomerIP'] = $customer['ip_address'];
 		}
 		
-		$response = $this->Process($gateway, array('UserName','Timestamp','Amount','CurrencyCode','Reference'), $variables, 'submit');
+		$response = $this->Process($gateway, array('UserName','RequestID','Timestamp','Amount','CurrencyCode','Reference'), $variables, 'submit');
 		
 		if (isset($response['Status']) and ($response['Status'] == 'Approved' or $response['Status'] == 'Submitted' or $response['Status'] == 'InProgress')) {
 			$CI->load->model('order_authorization_model');
@@ -208,7 +217,7 @@ class pacnet
 				$variables['CustomerIP'] = $customer['ip_address'];
 			}
 			
-			$response = $this->Process($gateway, array('UserName','Timestamp','Amount','CurrencyCode','Reference'), $variables, 'submit');
+			$response = $this->Process($gateway, array('UserName','RequestID','Timestamp','Amount','CurrencyCode','Reference'), $variables, 'submit');
 			
 			if (isset($response['Status']) and ($response['Status'] == 'Approved' or $response['Status'] == 'Submitted' or $response['Status'] == 'InProgress')) {
 				$CI->recurring_model->SaveApiAuthNumber($subscription_id, $response['TrackingNumber']);
@@ -247,7 +256,7 @@ class pacnet
 				$variables['CustomerIP'] = $customer['ip_address'];
 			}
 			
-			$response = $this->Process($gateway, array('UserName','Timestamp','Amount','CurrencyCode','Reference'), $variables, 'submit');
+			$response = $this->Process($gateway, array('UserName','RequestID','Timestamp','Amount','CurrencyCode','Reference'), $variables, 'submit');
 			
 			if (isset($response['Status']) and ($response['Status'] == 'Approved' or $response['Status'] == 'Submitted' or $response['Status'] == 'InProgress')) {
 				$CI->recurring_model->SaveApiAuthNumber($subscription_id, $response['TrackingNumber']);
@@ -279,7 +288,7 @@ class pacnet
 							'Reference' => md5(time())
 						);
 		
-		$response = $this->Process($gateway, array('UserName','Timestamp','Amount','CurrencyCode','Reference'), $variables, 'submit');
+		$response = $this->Process($gateway, array('UserName','RequestID','Timestamp','Amount','CurrencyCode','Reference'), $variables, 'submit');
 		
 		if (isset($response['Status']) and ($response['Status'] == 'Approved' or $response['Status'] == 'Submitted' or $response['Status'] == 'InProgress')) {
 			return TRUE;
@@ -305,7 +314,7 @@ class pacnet
 							'Reference' => md5(time())
 						);
 		
-		$response = $this->Process($gateway, array('UserName','Timestamp','Amount','CurrencyCode','Reference'), $variables, 'submit');
+		$response = $this->Process($gateway, array('UserName','RequestID','Timestamp','Amount','CurrencyCode','Reference'), $variables, 'submit');
 		
 		if (isset($response['Status']) and ($response['Status'] == 'Approved' or $response['Status'] == 'Submitted' or $response['Status'] == 'InProgress')) {
 			$response['success'] = TRUE;
@@ -332,12 +341,53 @@ class pacnet
 	
 	function Process($gateway, $signature_variables = array(), $variables = array(), $method = 'hello') 
 	{
-		$url = $this->GetAPIURL($gateway) . '/' . $method;
+		$url = $this->GetAPIURL($gateway, $gateway['mode']) . '/' . $method;
+
+		/*
+		
+		for API Version 2
 		
 		// start post_string
 		$post_string = '';
 		foreach ($variables as $key => $value) {
 			$post_string .= $key . '=' . urlencode($value) . '&';
+		}
+		
+		// add requestID
+		$variables['RequestID'] = preg_replace('/[^0-9]/','',microtime());
+		
+		// build signature
+		$variables['UserName'] = $gateway['username'];
+		$variables['Timestamp'] = gmdate('Y-m-d\TH:i:s.000\Z');
+		
+		$signature_string = '';
+		foreach ($signature_variables as $variable) {
+			$signature_string .= $variables[$variable] . ',';
+		}
+		$signature_string = rtrim($signature_string, ',');
+		
+		$sha1 = strtoupper(sha1($signature_string));
+		
+		$signature = strtoupper(sha1($sha1 . ',' . $gateway['password']));
+		
+		// finish $post_string
+		$post_string .= 'RAPIVersion=2&UserName=' . urlencode($variables['UserName']) . '&RequestID=' . urlencode($variables['RequestID']) . '&Timestamp=' . urlencode($variables['Timestamp']) . '&Signature=' . $signature;
+		
+		*/
+		
+		// start post_string
+		$post_string = '';
+		foreach ($variables as $key => $value) {
+			$post_string .= $key . '=' . urlencode($value) . '&';
+		}
+		
+		if (in_array('RequestID',$signature_variables)) {
+			foreach ($signature_variables as $k => $v) {
+				if ($v == 'RequestID') {
+					unset($signature_variables[$k]);
+				}
+			}
+			reset($signature_variables);
 		}
 		
 		// build signature
@@ -387,7 +437,13 @@ class pacnet
 		return $response;
 	}
 	
-	function GetAPIURL ($gateway) {
-		return $gateway['url_live'];
+	function GetAPIURL ($gateway, $mode = 'LIVE') 
+	{
+		if ($mode == 'LIVE') {
+			return $gateway['url_live'];
+		}
+		elseif ($mode == 'TEST') {
+			return 'https://demo.pacnetservices.com/realtime';
+		}
 	}
 }
