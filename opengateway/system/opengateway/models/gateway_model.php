@@ -1136,7 +1136,7 @@ class Gateway_model extends Model
 		}
 		else {
 			// remove from database completely
-			$this->db->delete('client_gateways',array('client_gateway_id' => $gateway_id));
+			$result = $this->db->delete('client_gateways',array('client_gateway_id' => $gateway_id));
 		}
 		
 		// Delete the client gateway params

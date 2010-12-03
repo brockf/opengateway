@@ -38,7 +38,7 @@ class Recurring_model extends Model
 	* @return int The new subscription ID
 	*/
 	
-	function SaveRecurring($client_id, $gateway_id, $customer_id, $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id = 0, $card_last_four = 0, $coupon_id)
+	function SaveRecurring($client_id, $gateway_id, $customer_id, $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id = 0, $card_last_four = 0, $coupon_id = 0)
 	{
 		$timestamp = date('Y-m-d H:i:s');
 		$insert_data = array(
