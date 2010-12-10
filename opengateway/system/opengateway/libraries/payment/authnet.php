@@ -240,7 +240,7 @@ class authnet
 			}
 		}
 		else {
-			$response = $this->CreateProfile($gateway, $subscription_id);
+			$response = $this->CreateProfile($gateway, $subscription_id, $customer);
 			
 			if(isset($response) and !empty($response['success'])) {
 				$profile_id = $response['profile_id'];	
@@ -399,11 +399,13 @@ class authnet
 		return TRUE;
 	}
 	
-	function CreateProfile($gateway, $subscription_id)
+	function CreateProfile($gateway, $subscription_id, $customer = array())
 	{
 		$CI =& get_instance();
 		
 		$post_url = $this->GetAPIUrl($gateway, 'arb');
+		
+		$email = (isset($customer['email']) and !empty($customer['email'])) ? "<email>" . $customer['email'] . "</email>" : '';
 		
 		$content =
 		"<?xml version=\"1.0\" encoding=\"utf-8\"?>" .
@@ -415,8 +417,11 @@ class authnet
 		".
 		"<profile>".
 		"<merchantCustomerId>".$subscription_id."</merchantCustomerId>".
+		$email.
 		"</profile>".
 		"</createCustomerProfileRequest>";
+		
+		mail('brock@cariboucms.com','request',$content);
 		
 		$request = curl_init($post_url); // initiate curl object
 		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
@@ -451,6 +456,18 @@ class authnet
 		$first_name = $customer['first_name'];
 		$last_name = $customer['last_name'];
 		
+		if (!empty($customer['address_1']) and strlen($customer['postal_code']) == 2) {
+			$customer_details =  "<company>" . $customer['company'] . "</company>".
+								 "<address>" . $customer['address_1'] . "</address>".
+								 "<city>" . $customer['city'] . "</city>".
+								 "<state>" . $customer['state'] . "</state>".
+								 "<zip>" . $customer['postal_code'] . "</zip>".
+								 "<phoneNumber>" . $customer['phone'] . "</phoneNumber>";
+		}
+		else {
+			$customer_details = '';
+		}
+		
 		$card_code = (isset($credit_card['cvv'])) ? "<cardCode>" . $credit_card['cvv'] . '</cardCode>' : '';
 		
 		$content =
@@ -466,6 +483,7 @@ class authnet
 		"<billTo>".
 		 "<firstName>".$first_name."</firstName>".
 		 "<lastName>".$last_name."</lastName>".
+	      $customer_details .
 		"</billTo>".
 		"<payment>".
 		 "<creditCard>".
