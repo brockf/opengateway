@@ -472,9 +472,14 @@ class Transactions extends Controller {
 		$this->load->model('gateway_model');
 		$gateways = $this->gateway_model->GetGateways($this->user->Get('client_id'),array());
 		
+		// load plans if they exist
+		$this->load->model('plan_model');
+		$plans = $this->plan_model->GetPlans($this->user->Get('client_id'),array());
+		
 		$data = array(
 					'recurring' => $recurring,
-					'gateways' => $gateways
+					'gateways' => $gateways,
+					'plans' => $plans
 				);
 		$this->load->view(branded_view('cp/update_cc'), $data);
 	}
@@ -502,8 +507,10 @@ class Transactions extends Controller {
 						);
 		$gateway_id = $this->input->post('gateway');
 		
+		$new_plan_id = $this->input->post('recurring_plan');
+		
 		$this->load->model('gateway_model');
-		$response = $this->gateway_model->UpdateCreditCard($this->user->Get('client_id'), $recurring_id, $credit_card, $gateway_id);
+		$response = $this->gateway_model->UpdateCreditCard($this->user->Get('client_id'), $recurring_id, $credit_card, $gateway_id, $new_plan_id);
 		
 		if (!is_array($response) or isset($response['error'])) {
 			$this->notices->SetError($this->lang->line('transaction_error') . $response['error_text'] . ' (#' . $response['error'] . ')');

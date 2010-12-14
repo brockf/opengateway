@@ -772,10 +772,11 @@ class Gateway_model extends Model
 	* @param string $credit_card['name'] The credit card cardholder name.  Required only is customer ID is not supplied.
 	* @param int $credit_card['cvv'] The Card Verification Value.  Optional
 	* @param int $gateway_id Set to a gateway_id to use a new gateway for this charge
+	* @param int $new_plan_id Set to a new plan_id if you want to change plans
 	*
 	* @return array With recurring_id, response_code and response_text
 	*/
-	function UpdateCreditCard ($client_id, $recurring_id, $credit_card = array(), $gateway_id = FALSE) {
+	function UpdateCreditCard ($client_id, $recurring_id, $credit_card = array(), $gateway_id = FALSE, $new_plan_id = FALSE) {
 		$CI =& get_instance();
 		$this->load->library('field_validation');
 		
@@ -873,7 +874,22 @@ class Gateway_model extends Model
 		// save new subscription record
 		$card_last_four = (isset($credit_card['card_num'])) ? substr($credit_card['card_num'],-4,4) : '0';
 		
-		$subscription_id = $CI->recurring_model->SaveRecurring($client_id, $gateway['gateway_id'], $recurring['customer']['id'], $recurring['interval'], $start_date, $end_date, $start_date, $recurring['number_occurrences'], $recurring['notification_url'], $recurring['amount'], $plan_id, $card_last_four);
+		// should we modify recurring info based on a new plan?  or use the old info?
+		if (!empty($new_plan_id) and $new_plan_id != $recurring['plan']['id']) {
+			$CI->load->model('plan_model');
+			$plan_details = $CI->plan_model->GetPlanDetails($client_id, $new_plan_id);
+		}
+		else {
+			$plan_details = FALSE;
+		}
+		
+		$recur_amount = (!empty($plan_details)) ? $plan_details->amount : $recurring['amount'];
+		$recur_interval = (!empty($plan_details)) ? $plan_details->interval : $recurring['interval'];
+		$recur_occurrences = (!empty($plan_details)) ? $plan_details->occurrences : $recurring['total_occurrences'];		
+		$recur_notification_url = (!empty($plan_details)) ? $plan_details->notification_url : $recurring['notification_url'];
+		$recur_plan_id = (!empty($plan_details)) ? $plan_details->plan_id : $plan_id;
+		
+		$subscription_id = $CI->recurring_model->SaveRecurring($client_id, $gateway['gateway_id'], $recurring['customer']['id'], $recur_interval, $start_date, $end_date, $start_date, $recur_occurrences, $recur_notification_url, $recur_amount, $recur_plan_id, $card_last_four);
 		
 		// get subscription
 		$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
@@ -881,7 +897,7 @@ class Gateway_model extends Model
 		$charge_today = (date('Y-m-d', strtotime($subscription['date_created'])) == date('Y-m-d', strtotime($subscription['start_date']))) ? TRUE : FALSE;
 		
 		// try creating a new subscription
-		$response = $CI->$gateway_name->Recur($client_id, $gateway, $recurring['customer'], $recurring['amount'], $charge_today, $start_date, $end_date, $recurring['interval'], $credit_card, $subscription_id, $recurring['total_occurrences'], FALSE, FALSE);
+		$response = $CI->$gateway_name->Recur($client_id, $gateway, $recurring['customer'], $recur_amount, $charge_today, $start_date, $end_date, $recur_interval, $credit_card, $subscription_id, $recur_occurrences, FALSE, FALSE);
 		
 		if ($response['response_code'] != 100) {
 			// clear it out completely

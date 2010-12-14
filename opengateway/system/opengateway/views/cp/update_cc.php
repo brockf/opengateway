@@ -37,6 +37,26 @@
 		</ul>
 	</fieldset>
 </div>
+
+<? if (is_array($plans)) { ?>
+<div>
+	<fieldset>
+		<legend>Recurring</legend>
+		<ul class="form">			
+			<li>
+				<label>Recurring Plan</label>
+				<select name="recurring_plan">
+				<option value="0">no plan</option>
+				<? foreach ($plans as $plan) { ?>
+				<option value="<?=$plan['id'];?>" <? if ($recurring['plan']['id'] == $plan['id']) { ?>selected="selected"<? } ?>><?=$plan['name'];?></option>
+				<? } ?>
+				</select>
+			</li>
+		</ul>
+	</fieldset>
+</div>
+<? } ?>
+
 <div id="transaction_cc">
 	<fieldset>
 		<legend>Credit Card Information</legend>
