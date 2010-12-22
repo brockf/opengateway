@@ -649,10 +649,15 @@ class Recurring_model extends Model
 		$CI->load->model('gateway_model');
 		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $subscription['gateway_id']);
 		
-		$gateway_name = $subscription['name'];
-		$this->load->library('payment/'.$gateway_name);
-		$cancelled = $this->$gateway_name->CancelRecurring($client_id, $subscription, $gateway);
-		
+		if ((float)$subscription['amount'] > 0) {
+			$gateway_name = $subscription['name'];
+			$this->load->library('payment/'.$gateway_name);
+			$cancelled = $this->$gateway_name->CancelRecurring($client_id, $subscription, $gateway);	
+		}
+		else {
+			$cancelled = TRUE;
+		}
+				
 		$this->MakeInactive($recurring_id);
 		
 		if ($expiring == FALSE) {
