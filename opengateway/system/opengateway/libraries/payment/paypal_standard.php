@@ -102,7 +102,8 @@ class paypal_standard
 		$post['method'] = 'SetExpressCheckout';
 		$post['returnurl'] = site_url('callback/paypal/confirm/' . $order_id);
 		$post['cancelurl'] = (!empty($cancel_url)) ? $cancel_url : 'http://www.paypal.com';
-		$post['noshipping'] = '0';
+		$post['noshipping'] = '1';
+		$post['addroverride'] = '1';
 		$post['allownote'] = '0';
 		$post['localecode'] = $client['country'];
 		$post['solutiontype'] = 'Sole';
@@ -117,6 +118,17 @@ class paypal_standard
 			$post['name'] = $customer['first_name'] . ' ' . $customer['last_name'];
 		}
 		
+		if (isset($customer['address_1']) and !empty($customer['address_1'])) {
+			$post['SHIPTONAME'] = $customer['first_name'] . ' ' . $customer['last_name'];
+			$post['SHIPTOSTREET'] = $customer['address_1'];
+			$post['SHIPTOSTREET2'] = $customer['address_2'];
+			$post['SHIPTOCITY'] = $customer['city'];
+			$post['SHIPTOSTATE'] = $customer['state'];
+			$post['SHIPTOZIP'] = $customer['postal_code'];
+			$post['SHIPTOCOUNTRYCODE'] = $customer['country'];
+			$post['SHIPTOPHONENUM'] = $customer['phone'];
+		}
+			
 		$post['paymentaction'] = 'sale';
 		$post['user'] = $gateway['user'];
 		$post['pwd'] = $gateway['pwd'];
@@ -177,7 +189,8 @@ class paypal_standard
 		$post['method'] = 'SetExpressCheckout';
 		$post['returnurl'] = site_url('callback/paypal/confirm_recur/' . $subscription_id);
 		$post['cancelurl'] = (!empty($cancel_url)) ? $cancel_url : 'http://www.paypal.com';
-		$post['noshipping'] = '0';
+		$post['noshipping'] = '1';
+		$post['addroverride'] = '1';
 		$post['allownote'] = '0';
 		$post['localecode'] = $client['country'];
 		$post['solutiontype'] = 'Sole';
@@ -201,6 +214,17 @@ class paypal_standard
 		$post['currencycode'] = $gateway['currency'];
 		$post['L_BILLINGTYPE0'] = 'RecurringPayments';
 		
+		if (isset($customer['address_1']) and !empty($customer['address_1'])) {
+			$post['SHIPTONAME'] = $customer['first_name'] . ' ' . $customer['last_name'];
+			$post['SHIPTOSTREET'] = $customer['address_1'];
+			$post['SHIPTOSTREET2'] = $customer['address_2'];
+			$post['SHIPTOCITY'] = $customer['city'];
+			$post['SHIPTOSTATE'] = $customer['state'];
+			$post['SHIPTOZIP'] = $customer['postal_code'];
+			$post['SHIPTOCOUNTRYCODE'] = $customer['country'];
+			$post['SHIPTOPHONENUM'] = $customer['phone'];
+		}
+		
 		// handle first charges unless there's a free trial
 		if ($charge_today === TRUE) {
 			// first recurring charge won't start until after the first interval
@@ -221,7 +245,7 @@ class paypal_standard
 		$post['L_BILLINGAGREEMENTDESCRIPTION0'] = $description;
 		
 		$CI->charge_data_model->Save('r' . $subscription_id, 'profile_description', $description);
-				
+					
 		$response = $this->Process($post_url, $post);
 		
 		if (!empty($response['TOKEN'])) {
