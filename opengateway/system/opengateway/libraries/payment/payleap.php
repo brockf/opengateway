@@ -66,6 +66,8 @@ class payleap {
 										'enabled',
 										'mode', 
 										'customer_id',
+										'username',
+										'password',
 										'accept_visa',
 										'accept_mc',
 										'accept_discover',
@@ -96,12 +98,12 @@ class payleap {
 														),
 										
 										'username' => array(
-														'text' => 'Rebill Username',
+														'text' => 'Username',
 														'type' => 'text'
 														),
 										
 										'password' => array(
-														'text' => 'Rebill Password',
+														'text' => 'Password',
 														'type' => 'text'
 														),
 										
