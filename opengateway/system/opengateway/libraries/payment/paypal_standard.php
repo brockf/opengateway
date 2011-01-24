@@ -71,7 +71,8 @@ class paypal_standard
 																		'EUR' => 'Euro',
 																		'GBP' => 'UK Pound',
 																		'AUD' => 'Australian Dollar',
-																		'JPY' => 'Japanese Yen'
+																		'JPY' => 'Japanese Yen',
+																		'NOK' => 'Norwegian Krones'
 																	)
 														)
 											);
@@ -134,6 +135,10 @@ class paypal_standard
 		$post['pwd'] = $gateway['pwd'];
 		$post['signature'] = $gateway['signature'];
 		$post['AMT'] = $amount; 
+		$post['L_DESC1'] = 'Invoice #' . $order_id;
+		$post['L_AMT1'] = $amount;
+		$post['L_QTY1'] = '1';
+		$post['ITEMAMT'] = $amount;
 		$post['invnum'] = $order_id;
 		$post['currencycode'] = $gateway['currency'];
 		
@@ -213,6 +218,10 @@ class paypal_standard
 		$post['invnum'] = $subscription_id;
 		$post['currencycode'] = $gateway['currency'];
 		$post['L_BILLINGTYPE0'] = 'RecurringPayments';
+		$post['L_DESC1'] = 'Recurring payment';
+		$post['L_AMT1'] = $amount;
+		$post['L_QTY1'] = '1';
+		$post['ITEMAMT'] = $amount;
 		
 		if (isset($customer['address_1']) and !empty($customer['address_1'])) {
 			$post['SHIPTONAME'] = $customer['first_name'] . ' ' . $customer['last_name'];

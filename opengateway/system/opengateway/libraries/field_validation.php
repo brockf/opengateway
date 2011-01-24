@@ -92,7 +92,7 @@ class Field_validation
 			return 'dummy';
 		}
 		
-		$patterns['amex'] = "/^(3[47][0-9]{13})*$/";
+		$patterns['amex'] = "/^(3[47][0-9]{13})$/";
 		$patterns['disc'] = "/^([6011]{4})([0-9]{12})$/";
 		$patterns['visa'] = "/^([4]{1})([0-9]{12,15})$/";
 		$patterns['mc'] = "/^([51|52|53|54|55]{2})([0-9]{14})$/";
