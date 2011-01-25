@@ -179,17 +179,21 @@ class payway {
 	
 		$this->init_payway();
 		
-		// Create A fake customer to test...
-		$requestParameters = array();
-	    $requestParameters[ "order.type" ] = 'registerAccount';
+		// Create A fake charge to test...
+	    $requestParameters = array();
+	    $requestParameters[ "order.type" ] = 'capture';
 	    $requestParameters[ "customer.username" ] = $gateway['username'];
 	    $requestParameters[ "customer.password" ] = $gateway['password'];
-	    $requestParameters[ "customer.merchant" ] = $gateway['merchant_id'];
-	    $requestParameters[ "customer.customerReferenceNumber" ] = '0000';
-	     $requestParameters[ "card.PAN" ] = '4564710000000004';
+	    $requestParameters[ "customer.merchant" ] = 'TEST';		
+	    $requestParameters[ "customer.orderNumber" ] = rand(1,10000);
+	    $requestParameters[ "customer.captureOrderNumber" ] = '0010';
+	    $requestParameters[ "card.PAN" ] = '4564710000000004';
+	    $requestParameters[ "card.CVN" ] = '';
 	    $requestParameters[ "card.expiryYear" ] = '19';
 	    $requestParameters[ "card.expiryMonth" ] = '02';
-	    $requestParameters[ "card.cardHolderName" ] = '';
+	    $requestParameters[ "card.currency" ] = 'AUD';						// How to handle? 
+	    $requestParameters[ "order.amount" ] = number_format( (float)rand(1,50) * 100, 0, '.', '' );;
+	    $requestParameters[ "order.ECI" ] = 'SSL';
 	    
 	    $requestText = $this->pw->formatRequestParameters( $requestParameters );
 
@@ -274,10 +278,10 @@ class payway {
 	    $requestParameters[ "order.type" ] = 'registerAccount';
 	    $requestParameters[ "customer.username" ] = $gateway['username'];
 	    $requestParameters[ "customer.password" ] = $gateway['password'];
-	    $requestParameters[ "customer.merchant" ] = $customerMerchant;		// How to handle????
+	    $requestParameters[ "customer.merchant" ] = $gateway['merchant_id'];
 	    $requestParameters[ "customer.customerReferenceNumber" ] = $customer['id'];
 	    $requestParameters[ "card.PAN" ] = $credit_card['card_num'];
-	    $requestParameters[ "card.expiryYear" ] = $credit_card['exp_year'];
+	    $requestParameters[ "card.expiryYear" ] = substr($credit_card['exp_year'], -2);
 	    $requestParameters[ "card.expiryMonth" ] = $credit_card['exp_month'];
 	    $requestParameters[ "card.cardHolderName" ] = $credit_card['name'];
 	    
@@ -333,11 +337,11 @@ class payway {
 	    $requestParameters[ "order.type" ] = 'capture';
 	    $requestParameters[ "customer.username" ] = $gateway['username'];
 	    $requestParameters[ "customer.password" ] = $gateway['password'];
-	    $requestParameters[ "customer.merchant" ] = $customerMerchant;		// How to handle????
+	    $requestParameters[ "customer.merchant" ] = $gateway['merchant_id'];
 	    $requestParameters[ "customer.orderNumber" ] = $order_id;
 	    $requestParameters[ "customer.captureOrderNumber" ] = $order_id;
 		$requestParemeters[ "customer.customerReferenceNumber" ] = $customer_id;
-	    $requestParameters[ "card.currency" ] = 'USD';						// How to handle? 
+	    $requestParameters[ "card.currency" ] = 'AUD';						// How to handle? 
 	    $requestParameters[ "order.amount" ] = number_format( (float)$amount * 100, 0, '.', '' );;
 	    $requestParameters[ "order.ECI" ] = 'SSL';
 	    
@@ -388,7 +392,7 @@ class payway {
 	    $requestParameters[ "order.type" ] = 'deregisterAccount';
 	    $requestParameters[ "customer.username" ] = $gateway['username'];
 	    $requestParameters[ "customer.password" ] = $gateway['password'];
-	    $requestParameters[ "customer.merchant" ] = $customerMerchant;		// How to handle????
+	    $requestParameters[ "customer.merchant" ] = $gateway['merchant_id'];
 	    $requestParameters[ "customer.customerReferenceNumber" ] = $subscription['customer_id'];
 	    
 	    $requestText = $this->pw->formatRequestParameters( $requestParameters );
@@ -419,14 +423,14 @@ class payway {
 	    $requestParameters[ "order.type" ] = 'capture';
 	    $requestParameters[ "customer.username" ] = $gateway['username'];
 	    $requestParameters[ "customer.password" ] = $gateway['password'];
-	    $requestParameters[ "customer.merchant" ] = $customerMerchant;		// How to handle????
+	    $requestParameters[ "customer.merchant" ] = $gateway['merchant_id'];
 	    $requestParameters[ "customer.orderNumber" ] = $order_id;
 	    $requestParameters[ "customer.captureOrderNumber" ] = $order_id;
 	    $requestParameters[ "card.PAN" ] = $credit_card['card_num'];
 	    $requestParameters[ "card.CVN" ] = isset($credit_card['cvv']) ? $credit_card['cvv'] : '';
-	    $requestParameters[ "card.expiryYear" ] = $credit_card['exp_year'];
+	    $requestParameters[ "card.expiryYear" ] = substr($credit_card['exp_year'], -2);
 	    $requestParameters[ "card.expiryMonth" ] = $credit_card['exp_month'];
-	    $requestParameters[ "card.currency" ] = 'USD';						// How to handle? 
+	    $requestParameters[ "card.currency" ] = 'AUD';						// How to handle? 
 	    $requestParameters[ "order.amount" ] = number_format( (float)$amount * 100, 0, '.', '' );;
 	    $requestParameters[ "order.ECI" ] = 'SSL';
 	    
@@ -440,7 +444,7 @@ class payway {
 	    if ($responseParameters[ "response.summaryCode" ] == 0)
 		{
 			$this->ci->load->model('order_authorization_model');
-			$this->ci->order_authorization_model->SaveAuthorization($order_id, $responseParameters['response.receiptNo'], $responseParameters['response.authId']);
+			$this->ci->order_authorization_model->SaveAuthorization($order_id, $responseParameters['response.receiptNo'], $responseParameters['response.receiptNo']);
 			$this->ci->charge_model->SetStatus($order_id, 1);
 			
 			$response_array = array('charge_id' => $order_id);
