@@ -218,9 +218,9 @@ class paypal_standard
 		$post['invnum'] = $subscription_id;
 		$post['currencycode'] = $gateway['currency'];
 		$post['L_BILLINGTYPE0'] = 'RecurringPayments';
-		$post['L_DESC1'] = 'Recurring payment';
-		$post['L_AMT1'] = $amount;
-		$post['L_QTY1'] = '1';
+		$post['L_DESC0'] = 'Recurring payment';
+		$post['L_AMT0'] = $amount;
+		$post['L_QTY0'] = '1';
 		$post['ITEMAMT'] = $amount;
 		
 		if (isset($customer['address_1']) and !empty($customer['address_1'])) {
