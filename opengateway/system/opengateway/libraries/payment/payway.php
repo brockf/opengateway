@@ -44,7 +44,7 @@ class payway {
 	 * if true, will echo out debug strings to verify
 	 * that things are working. 
 	 */
-	private $debug = false;
+	private $debug = true;
 	
 	//--------------------------------------------------------------------
 	
@@ -191,7 +191,7 @@ class payway {
 	    $requestParameters[ "card.CVN" ] = '';
 	    $requestParameters[ "card.expiryYear" ] = '19';
 	    $requestParameters[ "card.expiryMonth" ] = '02';
-	    $requestParameters[ "card.currency" ] = 'AUD';						// How to handle? 
+	    $requestParameters[ "card.currency" ] = 'AUD';
 	    $requestParameters[ "order.amount" ] = number_format( (float)rand(1,50) * 100, 0, '.', '' );;
 	    $requestParameters[ "order.ECI" ] = 'SSL';
 	    
@@ -341,7 +341,7 @@ class payway {
 	    $requestParameters[ "customer.orderNumber" ] = $order_id;
 	    $requestParameters[ "customer.captureOrderNumber" ] = $order_id;
 		$requestParemeters[ "customer.customerReferenceNumber" ] = $customer_id;
-	    $requestParameters[ "card.currency" ] = 'AUD';						// How to handle? 
+	    $requestParameters[ "card.currency" ] = 'AUD';
 	    $requestParameters[ "order.amount" ] = number_format( (float)$amount * 100, 0, '.', '' );;
 	    $requestParameters[ "order.ECI" ] = 'SSL';
 	    
