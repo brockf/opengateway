@@ -89,7 +89,7 @@ class Transactions extends Controller {
 		$total_amount = $this->charge_model->GetTotalAmount($this->user->Get('client_id'),$this->dataset->params);
 		
 		// sidebar
-		$this->navigation->SidebarButton('Recurring Charges','transactions/recurring');
+		$this->navigation->SidebarButton('Recurring Charges','transactions/all_recurring');
 		$this->navigation->SidebarButton('New Charge','transactions/create');
 		
 		$data = array(
