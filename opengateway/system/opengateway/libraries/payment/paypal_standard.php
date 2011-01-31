@@ -466,6 +466,11 @@ class paypal_standard
 				$CI->charge_model->SetStatus($charge['id'], 1);
 				TriggerTrip('charge', $client_id, $charge['id']);
 				
+				if (!empty($coupon_id)) {
+					// track coupon
+					$this->coupon_model->add_usage($coupon_id, FALSE, $charge['id'], $customer_id);
+				}
+				
 				// get return URL from original OpenGateway request
 				$CI->load->model('charge_data_model');
 				$data = $CI->charge_data_model->Get($charge['id']);
@@ -578,6 +583,11 @@ class paypal_standard
 				// trip a recurring charge?
 				if ($order_id) {
 					TriggerTrip('recurring_charge', $client_id, $order_id, $subscription['id']);
+				}
+				
+				if (!empty($coupon_id)) {
+					// track coupon
+					$this->coupon_model->add_usage($coupon_id, $subscription_id, $order_id, $customer_id);
 				}
 				
 				// redirect back to user's site

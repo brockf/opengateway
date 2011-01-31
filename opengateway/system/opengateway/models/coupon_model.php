@@ -7,7 +7,32 @@ class Coupon_model extends Model {
 		parent::__construct();
 	}
 	
-	/*
+	/**
+	* Add Usage
+	*
+	* Record a coupon usage
+	*
+	* @param int $coupon_id
+	* @param int $subscription_id
+	* @param int $charge_id
+	* @param int $customer_id
+	*
+	* @return boolean
+	*/
+	function add_usage ($coupon_id, $subscription_id, $charge_id, $customer_id) {
+		if (!empty($subscription_id)) {
+			// it's a subscription
+			$this->db->update('subscriptions',array('coupon_id' => $coupon_id),array('subscription_id' => $subscription_id, 'active' => '1'));
+		}
+		else {
+			// it's a charge
+			$this->db->update('orders',array('coupon_id' => $coupon_id),array('order_id' => $charge_id));
+		}
+		
+		return TRUE;
+	}
+	
+	/**
 	* Is Eligible?
 	*
 	* @param array $coupon

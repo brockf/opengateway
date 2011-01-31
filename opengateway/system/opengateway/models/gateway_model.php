@@ -276,6 +276,11 @@ class Gateway_model extends Model
 			if (!isset($response['not_completed']) or $response['not_completed'] == FALSE) {
 				$CI->charge_model->SetStatus($order_id, 1);
 				TriggerTrip('charge', $client_id, $response['charge_id']);
+				
+				if (!empty($coupon_id)) {
+					// track coupon
+					$this->coupon_model->add_usage($coupon_id, FALSE, $response['charge_id'], $customer_id);
+				}
 			}
 			else {
 				unset($response['not_completed']); // no need to show this to the end user
@@ -673,6 +678,11 @@ class Gateway_model extends Model
 				// trip a recurring charge?
 				if (!empty($response['charge_id'])) {
 					TriggerTrip('recurring_charge', $client_id, $response['charge_id'], $response['recurring_id']);
+				}
+				
+				if (!empty($coupon_id)) {
+					// track coupon
+					$this->coupon_model->add_usage($coupon_id, $subscription_id, $response['charge_id'], $customer_id);
 				}
 			}
 			else {
