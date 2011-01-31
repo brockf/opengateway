@@ -44,7 +44,7 @@ class payway {
 	 * if true, will echo out debug strings to verify
 	 * that things are working. 
 	 */
-	private $debug = true;
+	private $debug = false;
 	
 	//--------------------------------------------------------------------
 	
@@ -243,7 +243,14 @@ class payway {
 		if ($charge_today === TRUE) {
 			if ($gateway['mode'] != 'live') $response['client_id'] = '9876543211000';
 		
-			$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $response['client_id'], $amount);
+			$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $customer['id'], $amount);
+		
+			if ($this->debug)
+			{
+				echo '<h2>Recur: After ChargeRecurring</h2><br/>';
+				echo 'Customer ID = '. $customer['id'];
+		    	print_r($response);
+			}
 		
 			if($response['success'] == TRUE){
 				$this->ci->charge_model->SetStatus($order_id, 1);
@@ -294,6 +301,8 @@ class payway {
 	    
 	    if ($this->debug)
 	    {
+	    	echo '<h2>CreateProfile Request</h2>';
+	    	print_r($requestText);
 	    	echo '<h2>CreateProfile Response</h2>';
 	    	print_r($responseParameters);
 	    }
@@ -311,6 +320,7 @@ class payway {
 			*/			
 			$authkey = $customer['id'];
 			
+			$CI =& get_instance();
 			$CI->recurring_model->SaveApiCustomerReference($subscription_id, $authkey);
 			// Client successfully created at PayLeap. Now we ned to save the info here. 
 			return $response;
@@ -337,12 +347,11 @@ class payway {
 	    $requestParameters[ "order.type" ] = 'capture';
 	    $requestParameters[ "customer.username" ] = $gateway['username'];
 	    $requestParameters[ "customer.password" ] = $gateway['password'];
-	    $requestParameters[ "customer.merchant" ] = $gateway['merchant_id'];
+	    $requestParameters[ "customer.merchant" ] = ($gateway['mode'] == 'live') ? $gateway['merchant_id'] : 'TEST';
+	    $requestParameters[ 'customer.customerReferenceNumber' ] = $customer_id;
 	    $requestParameters[ "customer.orderNumber" ] = $order_id;
-	    $requestParameters[ "customer.captureOrderNumber" ] = $order_id;
-		$requestParemeters[ "customer.customerReferenceNumber" ] = $customer_id;
 	    $requestParameters[ "card.currency" ] = 'AUD';
-	    $requestParameters[ "order.amount" ] = number_format( (float)$amount * 100, 0, '.', '' );;
+	    $requestParameters[ "order.amount" ] = number_format( (float)$amount * 100, 0, '.', '' );
 	    $requestParameters[ "order.ECI" ] = 'SSL';
 	    
 	    $requestText = $this->pw->formatRequestParameters( $requestParameters );
@@ -352,13 +361,25 @@ class payway {
 	    // Parse the response string into an array
 	    $responseParameters = $this->pw->parseResponseParameters( $responseText );
 	    
-	    if ($responseParameters['response.statusCode'] == '00')
+	    
+	    if ($this->debug)
+	    {
+	    	echo '<h2>ChargeRecurring Request</h2><br/>';
+	    	echo 'Customer ID = '. $customer_id;
+	    	print_r($requestParameters);
+	    	print_r($requestText);
+	    	echo '<h2>ChargeRecurring Response</h2><br/>';
+	    	print_r($responseParameters);
+	    }
+	    
+	    if ($responseParameters['response.summaryCode'] == '0')
 		{
 			$response['success']			= TRUE;
 			$response['transaction_num']	= $responseParameters['response.receiptNo'];
-			$response['auth_code']			= $responseParameters['response.authId'];
+			$response['auth_code']			= $responseParameters['response.receiptNo'];
 			
 			// Save the Auth information
+			$CI =& get_instance();
 			$CI->load->model('order_authorization_model');
 			$CI->order_authorization_model->SaveAuthorization($order_id, $response['transaction_num'], $response['auth_code']);
 		} else 
@@ -392,7 +413,7 @@ class payway {
 	    $requestParameters[ "order.type" ] = 'deregisterAccount';
 	    $requestParameters[ "customer.username" ] = $gateway['username'];
 	    $requestParameters[ "customer.password" ] = $gateway['password'];
-	    $requestParameters[ "customer.merchant" ] = $gateway['merchant_id'];
+	    $requestParameters[ "customer.merchant" ] = ($gateway['mode'] == 'live') ? $gateway['merchant_id'] : 'TEST';
 	    $requestParameters[ "customer.customerReferenceNumber" ] = $subscription['customer_id'];
 	    
 	    $requestText = $this->pw->formatRequestParameters( $requestParameters );
@@ -423,7 +444,7 @@ class payway {
 	    $requestParameters[ "order.type" ] = 'capture';
 	    $requestParameters[ "customer.username" ] = $gateway['username'];
 	    $requestParameters[ "customer.password" ] = $gateway['password'];
-	    $requestParameters[ "customer.merchant" ] = $gateway['merchant_id'];
+	    $requestParameters[ "customer.merchant" ] = ($gateway['mode'] == 'live') ? $gateway['merchant_id'] : 'TEST';
 	    $requestParameters[ "customer.orderNumber" ] = $order_id;
 	    $requestParameters[ "customer.captureOrderNumber" ] = $order_id;
 	    $requestParameters[ "card.PAN" ] = $credit_card['card_num'];
