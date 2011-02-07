@@ -265,7 +265,7 @@ class Charge_model extends Model
 			}
 			
 			$start_date = date('Y-m-d H:i:s', strtotime($params['start_date']));
-			$this->db->where('timestamp >=', $start_date);
+			$this->db->where('orders.timestamp >=', $start_date);
 		}
 		
 		if(isset($params['end_date'])) {
@@ -275,7 +275,7 @@ class Charge_model extends Model
 			}
 			
 			$end_date = date('Y-m-d H:i:s', strtotime($params['end_date']));
-			$this->db->where('timestamp <=', $end_date);
+			$this->db->where('orders.timestamp <=', $end_date);
 		}
 		
 		if(isset($params['customer_id'])) {
