@@ -1336,8 +1336,11 @@ class Gateway_model extends Model
 	{
 		$this->db->order_by('display_name');
 		
-		$query = $this->db->get('external_apis');
-		if($query->num_rows() > 0) {
+		$this->db->from('external_apis');
+		
+		$query = $this->db->get();
+		
+		if ($query->num_rows() > 0) {
 			$gateways = array();
 			
 			foreach ($query->result_array() as $row) {
@@ -1347,7 +1350,6 @@ class Gateway_model extends Model
 			
 				$gateways[] = $settings;
 			}	
-			
 			return $gateways;
 		} else {
 			return FALSE;
