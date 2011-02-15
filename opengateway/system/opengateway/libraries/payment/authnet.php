@@ -454,7 +454,7 @@ class authnet
 		$first_name = $customer['first_name'];
 		$last_name = $customer['last_name'];
 		
-		if (!empty($customer['address_1']) and strlen($customer['postal_code']) == 2) {
+		if (!empty($customer['address_1']) and strlen($customer['state']) == 2) {
 			$customer_details =  "<company>" . $customer['company'] . "</company>".
 								 "<address>" . $customer['address_1'] . "</address>".
 								 "<city>" . $customer['city'] . "</city>".

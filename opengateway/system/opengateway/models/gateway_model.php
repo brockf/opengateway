@@ -895,7 +895,7 @@ class Gateway_model extends Model
 		
 		$recur_amount = (!empty($plan_details)) ? $plan_details->amount : $recurring['amount'];
 		$recur_interval = (!empty($plan_details)) ? $plan_details->interval : $recurring['interval'];
-		$recur_occurrences = (!empty($plan_details)) ? $plan_details->occurrences : $recurring['total_occurrences'];		
+		$recur_occurrences = (!empty($plan_details)) ? $plan_details->occurrences : $recurring['number_occurrences'];		
 		$recur_notification_url = (!empty($plan_details)) ? $plan_details->notification_url : $recurring['notification_url'];
 		$recur_plan_id = (!empty($plan_details)) ? $plan_details->plan_id : $plan_id;
 		
