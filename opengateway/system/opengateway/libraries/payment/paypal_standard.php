@@ -468,7 +468,8 @@ class paypal_standard
 				
 				if (!empty($coupon_id)) {
 					// track coupon
-					$this->coupon_model->add_usage($coupon_id, FALSE, $charge['id'], $customer_id);
+					$CI->load->model('coupon_model');
+					$CI->coupon_model->add_usage($coupon_id, FALSE, $charge['id'], $customer_id);
 				}
 				
 				// get return URL from original OpenGateway request
@@ -587,7 +588,8 @@ class paypal_standard
 				
 				if (!empty($coupon_id)) {
 					// track coupon
-					$this->coupon_model->add_usage($coupon_id, $subscription_id, $order_id, $customer_id);
+					$CI->load->model('coupon_model');
+					$CI->coupon_model->add_usage($coupon_id, $subscription_id, $order_id, $customer_id);
 				}
 				
 				// redirect back to user's site

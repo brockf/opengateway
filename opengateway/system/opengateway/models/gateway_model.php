@@ -279,7 +279,7 @@ class Gateway_model extends Model
 				
 				if (!empty($coupon_id)) {
 					// track coupon
-					$this->coupon_model->add_usage($coupon_id, FALSE, $response['charge_id'], $customer_id);
+					$CI->coupon_model->add_usage($coupon_id, FALSE, $response['charge_id'], $customer_id);
 				}
 			}
 			else {
@@ -682,7 +682,7 @@ class Gateway_model extends Model
 				
 				if (!empty($coupon_id)) {
 					// track coupon
-					$this->coupon_model->add_usage($coupon_id, $subscription_id, $response['charge_id'], $customer_id);
+					$CI->coupon_model->add_usage($coupon_id, $subscription_id, $response['charge_id'], $customer_id);
 				}
 			}
 			else {
