@@ -138,7 +138,6 @@ class paypal_standard
 		$post['L_DESC0'] = 'Invoice #' . $order_id;
 		$post['L_AMT0'] = $amount;
 		$post['L_QTY0'] = '1';
-		//$post['ITEMAMT'] = $amount;
 		$post['invnum'] = $order_id;
 		$post['currencycode'] = $gateway['currency'];
 		
@@ -218,7 +217,16 @@ class paypal_standard
 		$post['invnum'] = $subscription_id;
 		$post['currencycode'] = $gateway['currency'];
 		$post['L_BILLINGTYPE0'] = 'RecurringPayments';
-		$post['L_DESC0'] = 'Recurring payment';
+		
+		$item_description = 'Recurring payment';
+		
+		$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
+
+		if (isset($subscription['plan']['name'])) {
+			$item_description = $subscription['plan']['name'];
+		}
+		
+		$post['L_DESC0'] = $item_description;
 		$post['L_AMT0'] = $amount;
 		$post['L_QTY0'] = '1';
 		
@@ -243,8 +251,8 @@ class paypal_standard
 		}
 		
 		// get true recurring rate, first
-		$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
-		
+		// $subscription is loaded above
+				
 		$description = ($subscription['amount'] != $amount) ? 'Initial charge: ' . $gateway['currency'] . $amount . ', then ' : '';
 		$description .= $gateway['currency'] . money_format("%!i",$subscription['amount']) . ' every ' . $interval . ' days until ' . date('Y-m-d',strtotime($subscription['end_date']));
 		if ($charge_today === FALSE) {
