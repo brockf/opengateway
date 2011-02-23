@@ -35,24 +35,4 @@ $(document).ready(function () {
 	$('select[name="gateway"]').change(function () {
 		$('[name="gateway_type"][value="specify"]').attr('checked',true);
 	});
-	
-	// do we require the CC fields?
-	require_cc_fields();
-	
-	$('select[name="gateway"]').click(function () {
-		require_cc_fields();
-	});
 });
-
-function require_cc_fields () {
-	$('select[name="gateway"]').each(function () {
-		if ($(this).children(':selected').hasClass('no_credit_card')) {
-			$('#cc_number').removeClass('required');
-			$('#cc_name').removeClass('required');
-		}
-		else {
-			$('#cc_number').addClass('required');
-			$('#cc_name').addClass('required');
-		}
-	});
-}

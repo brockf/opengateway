@@ -147,29 +147,6 @@ class Gateway_model extends Model
 		$this->load->library('payment/'.$gateway_name);
 		$gateway_settings = $this->$gateway_name->Settings();
 		
-		// validate function arguments
-		if ($amount === FALSE or (empty($credit_card) and $gateway_settings['external'] == FALSE and $gateway_settings['no_credit_card'] == FALSE and (float)$amount != 0)) {
-			die($CI->response->Error(1004));
-		}
-		
-		if (!empty($credit_card)) {
-			// validate the Credit Card number
-			$credit_card['card_num'] = trim(str_replace(array(' ','-'),'',$credit_card['card_num']));
-			$credit_card['card_type'] = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
-			
-			if (!$credit_card['card_type']) {
-				die($this->response->Error(5008));
-			}
-			
-			if (!isset($credit_card['exp_month']) or empty($credit_card['exp_month'])) {
-				die($this->response->Error(5008));
-			}
-			
-			if (!isset($credit_card['exp_year']) or empty($credit_card['exp_year'])) {
-				die($this->response->Error(5008));
-			}
-		}
-		
 		// Validate the amount
 		$amount = $this->field_validation->ValidateAmount($amount);
 		
@@ -244,6 +221,29 @@ class Gateway_model extends Model
 		}
 		else {
 			$coupon_id = FALSE;
+		}
+		
+		// validate credit card
+		if ($amount === FALSE or (empty($credit_card) and $gateway_settings['external'] == FALSE and $gateway_settings['no_credit_card'] == FALSE and (float)$amount != 0)) {
+			die($CI->response->Error(1004));
+		}
+		
+		if (!empty($credit_card)) {
+			// validate the Credit Card number
+			$credit_card['card_num'] = trim(str_replace(array(' ','-'),'',$credit_card['card_num']));
+			$credit_card['card_type'] = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
+			
+			if (!$credit_card['card_type']) {
+				die($this->response->Error(5008));
+			}
+			
+			if (!isset($credit_card['exp_month']) or empty($credit_card['exp_month'])) {
+				die($this->response->Error(5008));
+			}
+			
+			if (!isset($credit_card['exp_year']) or empty($credit_card['exp_year'])) {
+				die($this->response->Error(5008));
+			}
 		}
 		
 		// Create a new order

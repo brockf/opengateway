@@ -46,13 +46,13 @@ begin processing transactions, you should <a href="<?=site_url('settings/new_gat
 				<label for="cc_number" class="full">Credit Card Number</label>
 			</li>
 			<li>
-				<input type="text" class="text full <? if ($default_gateway_settings['no_credit_card'] == FALSE) { ?> required <? } ?> number" id="cc_number" name="cc_number" />
+				<input type="text" class="text full number" id="cc_number" name="cc_number" />
 			</li>
 			<li>
 				<label for="cc_name" class="full">Credit Card Name</label>
 			</li>
 			<li>
-				<input type="text" class="text full <? if ($default_gateway_settings['no_credit_card'] == FALSE) { ?> required <? } ?> " id="cc_name" name="cc_name" />
+				<input type="text" class="text full" id="cc_name" name="cc_name" />
 			</li>
 			<li>
 				<label for="cc_expiry" class="full">Credit Card Expiry</label>
@@ -282,7 +282,7 @@ begin processing transactions, you should <a href="<?=site_url('settings/new_gat
 					<input type="radio" name="gateway_type" value="specify" /> Select gateway: 
 					<select name="gateway">
 						<? foreach ($gateways as $gateway) { ?>
-							<option value="<?=$gateway['id'];?>" <? if ($gateway['settings']['external'] == TRUE or $gateway['settings']['no_credit_card'] == TRUE) { ?> class="no_credit_card" <? } ?> <? if ($this->user->Get('default_gateway_id') == $gateway['id']) {?> selected="selected"<? } ?>><?=$gateway['gateway'];?></option>
+							<option value="<?=$gateway['id'];?>" <? if ($this->user->Get('default_gateway_id') == $gateway['id']) {?> selected="selected"<? } ?>><?=$gateway['gateway'];?></option>
 						<? } ?>
 					</select>
 				</li>
