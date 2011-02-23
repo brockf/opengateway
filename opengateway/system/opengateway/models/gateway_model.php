@@ -350,37 +350,36 @@ class Gateway_model extends Model
 		$CI->load->library('payment/'.$gateway_name);
 		$gateway_settings = $this->$gateway_name->Settings();
 		
-		// validate function arguments
-		if (empty($credit_card) and $gateway_settings['external'] == FALSE and $gateway_settings['no_credit_card'] == FALSE) {
-			die($CI->response->Error(1004));
-		}
-		
 		$this->load->library('field_validation');
 		
-		if (!empty($credit_card)) {
-			// Validate the Credit Card number
-			$credit_card['card_num'] = trim(str_replace(array(' ','-'),'',$credit_card['card_num']));
-			$credit_card['card_type'] = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
-			
-			if (!$credit_card['card_type']) {
-				die($this->response->Error(5008));
-			}
-			
-			if (!isset($credit_card['exp_month']) or empty($credit_card['exp_month'])) {
-				die($this->response->Error(5008));
-			}
-			
-			if (!isset($credit_card['exp_year']) or empty($credit_card['exp_year'])) {
-				die($this->response->Error(5008));
-			}
-		}
+		// credit card validation has been moved after the 2nd coupon check, in case this coupon makes it free
 		
 		// are we linking this to another sub via renewal?
 		if (!empty($renew)) {
 			$CI->load->model('recurring_model');
 			$renewed_subscription = $CI->recurring_model->GetSubscriptionDetails($client_id, $renew);
 			
-			$mark_as_renewed = $renewed_subscription['subscription_id'];
+			if (!empty($renewed_subscription)) {
+				$mark_as_renewed = $renewed_subscription['subscription_id'];
+				
+				
+				/**
+				* automatically set start date
+				* we don't do this because Membrr does it automatically, and want to give
+				* the developer more control.
+				* if (strtotime($renewed_subscription['next_charge_date']) > time()) {
+				* 	$recur['start_date'] = $renewed_subscription['next_charge_date'];
+				* }
+				* else {
+				* 	$recur['start_date'] = date('Y-m-d');
+				* }
+				* 
+				* $recur['free_trial'] = 0;
+				*/
+			}
+			else {
+				$mark_as_renewed = FALSE;
+			}
 		}
 		else {
 			$mark_as_renewed = FALSE;
@@ -609,6 +608,34 @@ class Gateway_model extends Model
 		// 2nd coupon check - adjust amounts
 		if (!empty($coupon_id)) {
 			$CI->coupon_model->subscription_adjust_amount($amount, $recur['amount'], $coupon['type_id'], $coupon['reduction_type'], $coupon['reduction_amt']);
+		}
+		
+		// validate function arguments
+		if (empty($credit_card) and ((float)$recur['amount'] > 0 or (float)$amount > 0) and $gateway_settings['external'] == FALSE and $gateway_settings['no_credit_card'] == FALSE) {
+			if (isset($created_customer) and $created_customer == TRUE and $response['response_code'] != 100) {
+				// charge was rejected, so let's delete the customer record we just created
+				$CI->customer_model->DeleteCustomer($client_id, $customer['customer_id']);
+			}
+			
+			die($CI->response->Error(1004));
+		}
+		
+		if (!empty($credit_card)) {
+			// Validate the Credit Card number
+			$credit_card['card_num'] = trim(str_replace(array(' ','-'),'',$credit_card['card_num']));
+			$credit_card['card_type'] = $this->field_validation->ValidateCreditCard($credit_card['card_num'], $gateway);
+			
+			if (!$credit_card['card_type']) {
+				die($this->response->Error(5008));
+			}
+			
+			if (!isset($credit_card['exp_month']) or empty($credit_card['exp_month'])) {
+				die($this->response->Error(5008));
+			}
+			
+			if (!isset($credit_card['exp_year']) or empty($credit_card['exp_year'])) {
+				die($this->response->Error(5008));
+			}
 		}
 		
 		// Save the subscription info
