@@ -444,7 +444,7 @@ class Recurring_model extends Model
 				$data[$i]['id'] = $row->subscription_id;
 				$data[$i]['gateway_id'] = $row->gateway_id;
 				$data[$i]['date_created'] = local_time($client_id, $row->timestamp);
-				$data[$i]['amount'] = money_format("%!i",$row->amount);
+				$data[$i]['amount'] = money_format("%!^i",$row->amount);
 				$data[$i]['interval'] = $row->charge_interval;
 				$data[$i]['start_date'] = local_time($client_id, $row->start_date);
 				$data[$i]['end_date'] = local_time($client_id, $row->end_date);
@@ -485,7 +485,7 @@ class Recurring_model extends Model
 					$data[$i]['plan']['id'] = $row->plan_id;
 					$data[$i]['plan']['type'] = $row->plan_type;
 					$data[$i]['plan']['name'] = $row->name;
-					$data[$i]['plan']['amount'] = money_format("%!i",$row->plan_amount);
+					$data[$i]['plan']['amount'] = money_format("%!^i",$row->plan_amount);
 					$data[$i]['plan']['interval'] = $row->plan_interval;
 					$data[$i]['plan']['notification_url'] = $row->plan_notification_url;
 				}
