@@ -295,7 +295,7 @@ class Gateway_model extends Model
 		}
 		
 		// pass back some values
-		$response['amount'] = currency_format("%!i",$amount);
+		$response['amount'] = money_format("%!i",$amount);
 		
 		return $response;
 	}
@@ -725,13 +725,13 @@ class Gateway_model extends Model
 		
 		// pass back some values
 		if ($charge_today === TRUE) {
-			$response['amount'] = currency_format("%!i",$amount);
+			$response['amount'] = money_format("%!i",$amount);
 		}
 		else {
 			$response['amount'] = '0.00';
 		}
 		
-		$response['recur_amount'] = currency_format("%!i",$recur['amount']);
+		$response['recur_amount'] = money_format("%!i",$recur['amount']);
 		$response['free_trial'] = (int)$free_trial;
 		$response['start_date'] = date('Y-m-d',strtotime($start_date));
 		
