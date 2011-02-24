@@ -176,7 +176,7 @@ class paypal_standard
 		$CI->load->helper('url');
 		$CI->load->model('client_model');
 		
-		$amount = money_format("%i",$amount);
+		$amount = currency_format("%i",$amount);
 		
 		$client = $CI->client_model->GetClient($client_id,$client_id);
 		
@@ -254,7 +254,7 @@ class paypal_standard
 		// $subscription is loaded above
 				
 		$description = ($subscription['amount'] != $amount) ? 'Initial charge: ' . $gateway['currency'] . $amount . ', then ' : '';
-		$description .= $gateway['currency'] . money_format("%!i",$subscription['amount']) . ' every ' . $interval . ' days until ' . date('Y-m-d',strtotime($subscription['end_date']));
+		$description .= $gateway['currency'] . currency_format("%!i",$subscription['amount']) . ' every ' . $interval . ' days until ' . date('Y-m-d',strtotime($subscription['end_date']));
 		if ($charge_today === FALSE) {
 			$description .= ' (free trial ends ' . $start_date . ')';
 		}

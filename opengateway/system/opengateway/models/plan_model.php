@@ -323,7 +323,7 @@ class Plan_model extends Model
 								'id' => $row->plan_id,
 								'type' => $row->type,
 								'name' => $row->name,
-								'amount' => money_format("%!i",$row->amount),
+								'amount' => currency_format("%!i",$row->amount),
 								'interval' => $row->interval,
 								'notification_url' => $row->notification_url,
 								'free_trial' => $row->free_trial,
