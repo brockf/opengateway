@@ -1,6 +1,6 @@
 <?php
 
-function currency_format($format, $number)
+function money_format($format, $number)
 {
     $regex  = '/%((?:[\^!\-]|\+|\(|\=.)*)([0-9]+)?'.
               '(?:#([0-9]+))?(?:\.([0-9]+))?([in%])/';
