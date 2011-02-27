@@ -411,7 +411,9 @@ class paypal_standard
 	{
 		$details = $this->GetProfileDetails($client_id, $gateway, $params);
 		if(!$details) {
-			return FALSE;
+			// if we didn't retrieve the profile properly, we'd rather let the subscription
+			// go then cancel it due to a one-time connection issue
+			return TRUE;
 		}
 		/*
 		* We can check to see if today was the last payment date
@@ -421,7 +423,7 @@ class paypal_standard
 		$status = $details['STATUS'];
 		$failed_payments = $details['FAILEDPAYMENTCOUNT'];
 		
-		if($failed_payments < 1 and $status != 'Cancelled') {		
+		if((int)$failed_payments < 1 and $status != 'Cancelled') {		
 			$response['success'] = TRUE;
 		} else {
 			$response['success'] = FALSE;
