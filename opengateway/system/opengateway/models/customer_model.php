@@ -266,6 +266,9 @@ class Customer_model extends Model
 					die($this->response->Error(1012));
 				}
 			}
+			else {
+				$update_data['state'] = $params['state'];
+			}
 		}
 		
 		if(isset($params['phone'])) {
