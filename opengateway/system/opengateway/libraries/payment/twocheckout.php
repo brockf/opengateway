@@ -10,7 +10,7 @@ class twocheckout {
 	
 	var $ci;
 	
-	var $debug = true;
+	var $debug = FALSE;
 	
 	//--------------------------------------------------------------------
 	
@@ -27,7 +27,7 @@ class twocheckout {
 	{
 		$settings = array();
 		
-		$settings['name'] = '2CheckOut';
+		$settings['name'] = '2Checkout';
 		$settings['class_name'] = 'twocheckout';
 		$settings['external'] = TRUE;
 		$settings['no_credit_card'] = TRUE;
@@ -62,8 +62,7 @@ class twocheckout {
 														'type' => 'select',
 														'options' => array(
 																		'live' => 'Live Mode',
-																		'test' => 'Test Mode',
-																		'dev' => 'Development Server'
+																		'test' => 'Test Mode'
 																		)
 														),
 										'username' => array(
@@ -198,7 +197,7 @@ class twocheckout {
 			print_r($response);
 		}
 
-		return $reponse;
+		return $response;
 	}
 	
 	//--------------------------------------------------------------------
