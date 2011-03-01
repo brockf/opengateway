@@ -246,7 +246,7 @@ class exact
 		$transaction = array(
 		'ExactID'			=> $gateway['terminal_id'],	
   		'Password'			=> $gateway['password'],
-		'Transaction_Type'  => '00',
+		'Transaction_Type'  => '40',
 	 	'Card_Number' 		=> $credit_card['card_num'],
 		'Expiry_Date'		=> str_pad($credit_card['exp_month'], 2, "0", STR_PAD_LEFT) . substr($credit_card['exp_year'],-2,2),
 		'CVD_Presence_Ind' 	=> (empty($credit_card['cvv'])) ? '9' : '1',
