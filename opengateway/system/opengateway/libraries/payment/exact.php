@@ -114,12 +114,11 @@ class exact
 		  		
 		$trxnResult = $this->Process($trxnProperties, $post_url);
 		
-		if($trxnResult->EXact_Resp_Code == '00'){
+		if (isset($trxnResult->ExactID)) {
 			return TRUE;
 		} else {
 			return FALSE;
 		}
-		
 	}
 	
 	function Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card)
