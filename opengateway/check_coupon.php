@@ -5,15 +5,15 @@
 * JSON Response
 */
 
-$api_id = '';
-$secret_key = '';
-$api_url = '';
+$api_id = 'R2MC7N8J5P9UWJS181Y2';
+$secret_key = 'BUZYKZSJ8MFQVOKY3A8CXBU84NXJSHRPLZWJ2NWG';
+$api_url = 'http://dev.opengateway.net/api/';
 
 $xml = '<?xml version="1.0" encoding="UTF-8"?>
 		 <request>
 	     <authentication>
-	     	<api_id>' . $this->api_id . '</api_id>
-	     	<secret_key>' . $this->secret_key . '</secret_key>
+	     	<api_id>' . $api_id . '</api_id>
+	     	<secret_key>' . $secret_key . '</secret_key>
 	     </authentication>
 	     <type>CouponValidate</type>';
 	     
@@ -28,6 +28,8 @@ if (isset($_POST['plan_id'])) {
 if (isset($_POST['amount'])) {
 	$xml .= '<amount>' . $_POST['amount'] . '</amount>';
 }
+
+$xml .= '</request>';
 	    	
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); 
@@ -38,7 +40,7 @@ curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
 
 $data = curl_exec($ch);
 
-$response = convert_to_array($xml);
+$response = convert_to_array($data);
 
 echo convert_to_json($response);
 

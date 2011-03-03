@@ -937,6 +937,74 @@ class API extends Controller {
 		
 		return $data;
 	}
+	
+	/**
+	* Coupon validate
+	*
+	* @param string $coupon
+	* @param string $plan_id (optional)
+	* @param string $amount (required if no plan_id)
+	*
+	* @return status (valid/invalid), amount
+	*/
+	function CouponValidate ($client_id, $params) {
+		if (!$params['coupon']) {
+			die($this->response->Error(3001));
+		}
+		
+		die('test');
+		
+		$coupon = $params['coupon'];
+		
+		// set customer_limit == FALSE to not do a customer check
+		$coupon['customer_limit'] = FALSE;
+		
+		$plan_id = (isset($params['plan_id'])) ? $params['plan_id'] : FALSE;
+		
+		if (isset($params['amount'])) {
+			$amount = (float)$params['amount'];
+		}
+		elseif (!empty($plan_id)) {
+			$this->load->model('plan_model');
+			$plan = $this->plan_model->GetPlan($client_id, $plan_id);
+			$amount = $plan['amount'];
+		}
+		else {
+			$amount = FALSE;
+		}
+		
+		// coupon check
+		if (!empty($coupon)) {
+			$this->load->model('coupon_model');
+			$coupon = $this->coupon_model->get_coupons($client_id, array('coupon_code' => $coupon));
+			
+			if (!empty($coupon) and $this->coupon_model->is_eligible($coupon, $plan_id, FALSE, FALSE)) {
+				$coupon = $coupon[0];
+				
+				$amount = $this->coupon_model->adjust_amount($amount, $coupon['type_id'], $coupon['reduction_type'], $coupon['reduction_amt']);
+				
+				$coupon_id = $coupon['id'];
+			}
+			else {
+				$coupon_id = FALSE;
+			}
+		}
+		else {
+			$coupon_id = FALSE;
+		}
+		
+		if (empty($coupon_id)) {
+			return array('status' => 'invalid');
+		}
+		else {
+			if (!empty($amount)) {
+				return array('status' => 'valid', 'amount' => $amount);
+			}
+			else {
+				return array('status' => 'valid');
+			}
+		}
+	}
 }
 
 
