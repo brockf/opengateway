@@ -5,9 +5,9 @@
 * JSON Response
 */
 
-$api_id = 'R2MC7N8J5P9UWJS181Y2';
-$secret_key = 'BUZYKZSJ8MFQVOKY3A8CXBU84NXJSHRPLZWJ2NWG';
-$api_url = 'http://dev.opengateway.net/api/';
+$api_id = '';
+$secret_key = '';
+$api_url = 'http://www.example.com/api/';
 
 $xml = '<?xml version="1.0" encoding="UTF-8"?>
 		 <request>
