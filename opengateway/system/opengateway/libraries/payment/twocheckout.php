@@ -67,7 +67,7 @@ class twocheckout {
 																		)
 														),
 										'username' => array(
-														'text' => 'AIP User ID',
+														'text' => 'API User ID',
 														'type' => 'text'
 														),
 										
@@ -135,8 +135,6 @@ class twocheckout {
 	{
 		$this->ci =& get_instance();
 		$this->ci->load->helper('url');
-		
-		// Save the Subscription data so we can pull it up later.
 		
 		// Return redirect information
 		$url = site_url('callback/twocheckout/form_redirect/'. $order_id);
@@ -264,7 +262,7 @@ class twocheckout {
 	public function ChargeRecurring($client_id, $gateway, $params) 
 	{
 		// 2CO Takes care of all of this for us. Instead of handling the results here, 
-		// we simply return false so that the system still knows about everything,
+		// we simply return true so that the system still knows about everything,
 		// but the system is actually updated in the 'recur_installment_success' callback.
 		return TRUE;
 	}
@@ -395,10 +393,10 @@ class twocheckout {
 		);
 		
 		// product info
-		$post['c_prod'] 		= $charge['type'];
-		$post['c_name']			= $charge['type'];
-		$post['c_description']	= $charge['type'];
-		$post['c_price']		= $charge['amount'];
+		//$post['c_prod'] 		= $charge['type'];
+		//$post['c_name']			= $charge['type'];
+		//$post['c_description']	= $charge['type'];
+		//$post['c_price']		= $charge['amount'];
 		
 		// Test/dev mode?
 		if ($gateway['mode'] != 'live')
@@ -407,10 +405,10 @@ class twocheckout {
 		}
 		
 		$post['fixed'] 				= 'Y';
-		$post['return_url']			= site_url('callback/twocheckout/confirm/' . $charge['id']);
+		$post['return_url'] = site_url('callback/twocheckout/confirm/' . $charge['id']);
 		$post['merchant_order_id']	= $charge['id'];
 		$post['pay_method'] 		= 'CC';
-		$post['skip_landing']		= '1';
+		$post['skip_landing']		= 'Y';
 		
 		// Billing info
 		if (isset($charge['customer']['first_name']))
@@ -461,7 +459,7 @@ class twocheckout {
 			'fixed'			=> 'Y',
 			'merchant_order_id'	=> $charge['id'],
 			'pay_method'	=> 'CC',
-			'skip_landing'	=> '1'
+			'skip_landing'	=> 'Y'
 		);
 		
 		// Billing info
@@ -644,6 +642,9 @@ class twocheckout {
 			$CI->load->model('recurring_model');
 			
 			$CI->recurring_model->MakeInactive($subscription['id']);
+			
+			$CI->recurring_model->CancelRecurring($client_id, $params['subscription_id'], TRUE);
+			TriggerTrip('recurring_fail', $client_id, FALSE, $params['subscription_id']);
 		}
 	}
 	

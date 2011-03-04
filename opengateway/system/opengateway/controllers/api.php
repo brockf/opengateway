@@ -982,7 +982,7 @@ class API extends Controller {
 				}
 				else {
 					$recur_amount = $amount;
-					$this->coupon_model->subscription_adjust_amount(&$amount, &$recur_amount, $coupon['type_id'], $coupon['reduction_type'], $coupon['reduction_amt']);
+					$this->coupon_model->subscription_adjust_amount($amount, $recur_amount, $coupon['type_id'], $coupon['reduction_type'], $coupon['reduction_amt']);
 				}
 				
 				$coupon_id = $coupon['id'];
