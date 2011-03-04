@@ -6,11 +6,11 @@ class twocheckout {
 	
 	var $base_url	= 'https://www.2checkout.com/api/';
 	var $accept		= 'application';
-	var $format		= 'xml';
+	var $format		= 'json';
 	
 	var $ci;
 	
-	var $debug = FALSE;
+	var $debug = false;
 	
 	//--------------------------------------------------------------------
 	
@@ -46,6 +46,7 @@ class twocheckout {
 										'mode', 
 										'username',
 										'password',
+										'merchant_id',
 										'currency'
 										);
 										
@@ -66,12 +67,16 @@ class twocheckout {
 																		)
 														),
 										'username' => array(
-														'text' => 'User ID (SID)',
+														'text' => 'AIP User ID',
 														'type' => 'text'
 														),
 										
 										'password' => array(
-														'text' => 'Secret Word (password)',
+														'text' => 'API Password',
+														'type' => 'text'
+														),
+										'merchant_id'	=> array(
+														'text' => 'Merchant ID',
 														'type' => 'text'
 														),
 										'currency'	=> array(
@@ -104,6 +109,7 @@ class twocheckout {
 	
 	//--------------------------------------------------------------------
 
+// WORKING
 	/**
 	 *	Verifies that our connection is working as expected by returning the
 	 * detailed company info for the user.
@@ -121,6 +127,8 @@ class twocheckout {
 	}
 	
 	//--------------------------------------------------------------------
+
+// WORKING
 	
 	/**
 	 * Charging with 2CO does NOT require the product to be setup within
@@ -130,54 +138,6 @@ class twocheckout {
 	{
 		$this->ci =& get_instance();
 		$this->ci->load->helper('url');
-	
-		$post = array(
-			'sid'			=> $gateway['username'],
-			'total'			=> $amount,
-			'cart_order_id'	=> 'Invoice # '. $order_id,
-			'id_type'		=> 1,
-		);
-		
-		// product info
-		if (isset($customer['plans'][0]))
-		{
-			$post['c_prod'] 		= $customer['plans'][0]['id'];
-			$post['c_name']			= $customer['plans'][0]['name'];
-			$post['c_description']	= $customer['plans'][0]['name'];
-			$post['c_price']		= $amount;
-		}
-		
-		// Test/dev mode?
-		if ($gateway['mode'] != 'live')
-		{
-			$post['demo'] = 'Y';
-		}
-		
-		$post['fixed'] = 'Y';
-		$post['return_url']	= site_url('callback/twocheckout/confirm/' . $order_id);
-		$post['merchant_order_id'] = $order_id;
-		$post['pay_method'] = 'CC';
-		$post['skip_landing']	= 1;
-		
-		// Billing info
-		if (isset($customer['first_name']))
-		{
-			$post['card_holder_name']	= $customer['first_name'] .' '. $customer['last_name'];
-		}
-		if (isset($customer['address_1']) and !empty($customer['address_1']))
-		{
-			$post['street_address']	 = $customer['address_1'];
-			$post['street_address2'] = $customer['address_2'];
-			$post['city']	= $customer['city'];
-			$post['state']	= $customer['state'];
-			$post['zip']	= $customer['postal_code'];
-			$post['country']	= $customer['country'];
-		}
-		$post['email']	= $customer['email'];
-		$post['phone']	= $customer['phone'];
-
-		//$response = $this->Process($this->GetAPIUrl($gateway), $post);
-		//$response = $this->Process('http://developers.2checkout.com/return_script/', $data);
 		
 		// Save the Subscription data so we can pull it up later.
 		
@@ -189,12 +149,13 @@ class twocheckout {
 						'redirect' 		=> $url, // redirect the user to this address
 						'charge_id' 	=> $order_id
 					);
-		$response = $this->ci->response->TransactionResponse(1, $response_array);
+		$response = $this->ci->response->TransactionResponse(100, $response_array);
 		
 		if ($this->debug)
 		{
 			echo '<h2>Charge TransactionResponse</h2>';
 			print_r($response);
+			die();
 		}
 
 		return $response;
@@ -202,23 +163,97 @@ class twocheckout {
 	
 	//--------------------------------------------------------------------
 	
+	/**
+	 *	Recur - called when an initial Recur charge comes through to
+	 *	to create a subscription.
+	 *
+	 */
 	public function Recur($client_id, $gateway, $customer, $amount, $charge_today, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences, $return_url, $cancel_url) 
 	{
+		$CI =& get_instance();
+		$CI->load->helper('url');
+		$CI->load->model('charge_data_model');
+
+		/*
+		 	First thing, we need to verify that the product exists at 2CO
+		 	or we need to create it. In this case, the product is a recurring 
+		 	plan with a certain name and price
+		*/
+	
+		// Get our subscription details
+		$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
 		
+		// Are we dealing with a plan or a one-time?
+		$plan_name = !empty($subscription['plan']['name']) ? $subscription['plan']['name'] : 'One Time Recurring Plan';
+
+		$plan_id = !empty($subscription['plan']['id']) ? $subscription['plan']['id'] : $subscription_id;
+
+		// Verify or create product
+		if (!$product_id = $this->api_product_exists($plan_name, $amount, $gateway))
+		{
+			$product_id = $this->api_create_product($plan_name, $plan_id, $amount, $start_date, $end_date, $interval, $gateway);
+		}
+		
+		/*
+			Save the data for use within the redirect
+		*/
+		$CI->charge_data_model->Save('r'.$subscription_id, 'product_id', $product_id);
+		
+		// save the initial charge amount (it may be different, so we treat it as a separate first charge)
+		$CI->charge_data_model->Save('r' . $subscription_id, 'first_charge', $amount);
+	
+		/*
+			Create an order for today's payment in our database.
+		*/
+		$CI->load->model('charge_model');
+		$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
+		$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
+		
+		/*
+			Since the actual recording of the success of the payment is handled
+			in the 'order_created' callback, we simply issue a redirect to take 
+			the user to the 2CO checkout form.
+		*/
+		$response_array = array(
+						'not_completed' => TRUE, // don't mark charge as complete
+						'redirect' 		=> $url = site_url('callback/twocheckout/form_redirect_recur/'. $subscription_id), // redirect the user to this address
+						'subscription_id' 	=> $subscription_id
+					);
+		$response = $CI->response->TransactionResponse(100, $response_array);
+
+		return $response;
 	}
 	
 	//--------------------------------------------------------------------
 	
 	public function CancelRecurring($client_id, $subscription, $gateway) 
 	{
+		$CI =& get_instance();
+	
+		// First, we need to get the details of the sale so we have the line_item_id
+		$sale_details = $this->Process('sales/detail_sale', array('invoice_id' => $subscription['api_payment_reference']), $gateway);
 		
+		if (!$sale_details || !isset($sale_details->lineitem_id))
+		{
+			return FALSE;
+		}
+		
+		// Now try to cancel
+		
+		$response = $this->Process('sales/stop_lineitem_recurring', array('lineitem_id' => $sale_details->lineitem_id), $gateway);
+
+		if ($response->response_code == 'OK') {
+			return TRUE;
+		} else {
+			return FALSE;
+		}
 	}
 	
 	//--------------------------------------------------------------------
 	
 	public function UpdateRecurring($client_id, $gateway, $subscription, $customer, $params) 
 	{
-		
+		return TRUE;
 	}
 	
 	//--------------------------------------------------------------------
@@ -231,37 +266,393 @@ class twocheckout {
 	
 	public function ChargeRecurring($client_id, $gateway, $params) 
 	{
+		// 2CO Takes care of all of this for us. Instead of handling the results here, 
+		// we simply return false so that the system still knows about everything,
+		// but the system is actually updated in the 'recur_installment_success' callback.
+		return TRUE;
+	}
+	
+	//--------------------------------------------------------------------
+
+/// WORKING	
+	public function Refund ($client_id, $gateway, $charge, $authorization)
+	{				
+		$data = array(
+			'invoice_id'	=> $authorization->tran_id,
+			'amount'		=> $charge['amount'],
+			'currency'		=> 'vendor',
+			'category'		=> '5',
+			'comment'		=> 'Issued by Vendor.'
+		);
 		
+		$response = $this->Process('sales/refund_invoice', $data, $gateway);
+
+		if ($response->response_code == 'OK') {
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+	}
+	
+/// WORKING	
+	
+	/**
+	 *	Retrieves the charge id from the parameters passed in. This is used
+	 * by the callback controller to retrieve the order information.
+	 *
+	 * @param	array	$params		An array of $_POST and $_GET params passed by the gateway
+	 * @return	int		$charge_id	The id of the charge to look up.
+	 */
+	public function GetChargeId($params) 
+	{
+		if (isset($params['vendor_order_id']))
+		{
+			return $params['vendor_order_id'];
+		}
+		
+		return 0;
 	}
 	
 	//--------------------------------------------------------------------
 	
+/// WORKING	
+	// Simply states whether this call is a recurring call or not
+	// by searching in the parameters passed from 2CO.
+	public function is_recurring($params) 
+	{
+		if (isset($params['recurring']) && $params['recurring'] == '1')
+		{
+			return true;
+		}
+		
+		return false;
+	}
+	
+	//--------------------------------------------------------------------
+	
+	
+	//--------------------------------------------------------------------
+	// !API CALLS
+	//--------------------------------------------------------------------
+/// WORKING	
+	public function api_product_exists($product_name, $amount, $gateway) 
+	{
+		$response = $this->Process('products/list_products', array('product_name' => $product_name), $gateway);
+		
+		foreach ($response->products as $product)
+		{
+			if ($product->name == $product_name && $product->price == $amount)
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	//--------------------------------------------------------------------
+
+/// WORKING
+	public function api_create_product($plan_name, $plan_id, $amount, $start_date, $end_date, $interval, $gateway) 
+	{
+		$data = array(
+			'name'				=> $plan_name,
+			'price'				=> $amount,
+			'vendor_product_id'	=> $plan_id,
+			'tangible'			=> 0,
+			'recurring'			=> 1,
+			'recurrence'		=> (int)($interval/7) .' Week',
+			'duration'			=> (int)((strtotime($end_date) - strtotime($start_date)) / 604800) .' Week',
+			'commission'		=> 0
+		);
+		
+		$response = $this->Process('products/create_product', $data, $gateway);
+		
+		if ($response->response_code = 'OK')
+		{
+			return $response->assigned_product_id;
+		}
+		
+		return false;
+	}
+	
+	//--------------------------------------------------------------------
+	
+	
 	//--------------------------------------------------------------------
 	// !CALLBACKS
 	//--------------------------------------------------------------------
+
+/// WORKING
 	
+	/**
+	 * Used by the Charge method to redirect the user to the 2CO sales page.
+	 */
 	public function Callback_form_redirect($client_id, $gateway, $charge, $params) 
+	{ 
+		$ci =& get_instance();
+	
+		$ci->load->helper('url');
+			
+		// Build the form info to send to 2CO
+		$post = array(
+			'sid'			=> $gateway['merchant_id'],
+			'total'			=> $charge['amount'],
+			'cart_order_id'	=> 'Invoice: '. $charge['id'],
+			'id_type'		=> '1'
+		);
+		
+		// product info
+		$post['c_prod'] 		= $charge['type'];
+		$post['c_name']			= $charge['type'];
+		$post['c_description']	= $charge['type'];
+		$post['c_price']		= $charge['amount'];
+		
+		// Test/dev mode?
+		if ($gateway['mode'] != 'live')
+		{
+			$post['demo'] = 'Y';
+		}
+		
+		$post['fixed'] 				= 'Y';
+		$post['return_url']			= site_url('callback/twocheckout/confirm/' . $charge['id']);
+		$post['merchant_order_id']	= $charge['id'];
+		$post['pay_method'] 		= 'CC';
+		$post['skip_landing']		= '1';
+		
+		// Billing info
+		if (isset($charge['customer']['first_name']))
+		{
+			$post['card_holder_name']	= $charge['customer']['first_name'] .' '. $charge['customer']['last_name'];
+		}
+		if (isset($charge['customer']['address_1']) and !empty($charge['customer']['address_1']))
+		{
+			$post['street_address']	 = $charge['customer']['address_1'];
+			$post['street_address2'] = $charge['customer']['address_2'];
+			$post['city']			= $charge['customer']['city'];
+			$post['state']			= $charge['customer']['state'];
+			$post['zip']			= $charge['customer']['postal_code'];
+			$post['country']		= $charge['customer']['country'];
+		}
+		$post['email']	= $charge['customer']['email'];
+		$post['phone']	= $charge['customer']['phone'];
+	
+		$data = '';
+		foreach ($post as $key => $value)
+		{
+			$data .= "&$key=$value";
+		}
+	
+		//redirect('http://developers.2checkout.com/return_script/?'. trim($data, '& '));
+		redirect('https://www.2checkout.com/checkout/spurchase?'. trim($data, '& '));
+	}
+	
+	//--------------------------------------------------------------------
+
+/// WORKING	
+	/**
+	 * Used by the Recur method to redirect the user to the 2CO sales page.
+	 */
+	public function Callback_form_redirect_recur($client_id, $gateway, $charge, $params) 
 	{
-		echo 'here';
+		$CI =& get_instance();
+		$CI->load->model('charge_data_model');
+		$CI->load->helper('url');
+		
+		$charge_data = $CI->charge_data_model->Get('r'. $charge['id']);
+	
+		// Build our form info for 2CO
+		$post = array(
+			'sid'			=> $gateway['merchant_id'],
+			'product_id'	=> $charge_data['product_id'],
+			'quantity'		=> '1',
+			'demo'			=> $gateway['mode'] != 'live' ? 'Y' : 'n',
+			'fixed'			=> 'Y',
+			'merchant_order_id'	=> $charge['id'],
+			'pay_method'	=> 'CC',
+			'skip_landing'	=> '1'
+		);
+		
+		// Billing info
+		if (isset($charge['customer']['first_name']))
+		{
+			$post['card_holder_name']	= $charge['customer']['first_name'] .' '. $charge['customer']['last_name'];
+		}
+		if (isset($charge['customer']['address_1']) and !empty($charge['customer']['address_1']))
+		{
+			$post['street_address']	 = $charge['customer']['address_1'];
+			$post['street_address2'] = $charge['customer']['address_2'];
+			$post['city']			= $charge['customer']['city'];
+			$post['state']			= $charge['customer']['state'];
+			$post['zip']			= $charge['customer']['postal_code'];
+			$post['country']		= $charge['customer']['country'];
+		}
+		
+		$post['email']	= $charge['customer']['email'];
+		$post['phone']	= $charge['customer']['phone'];
+		
+		$data = '';
+		foreach ($post as $key => $value)
+		{
+			$data .= "&$key=$value";
+		}
+		
+		//redirect('http://developers.2checkout.com/return_script/?'. trim($data, '& '));
+		redirect('https://www.2checkout.com/checkout/spurchase?'. trim($data, '& '));
+	}
+	
+	//--------------------------------------------------------------------
+
+/// WORKING
+	
+	/**
+	 * Called when a user succesffully creates either a Charge or a Recurring charge. 
+	 * Saves the information to the datase and lets us know it's a successfull charge.
+	 */
+	public function Callback_order_created($client_id, $gateway, $charge, $params) 
+	{	
+		$CI =& get_instance();
+		
+		// Is this a recurring order?
+		if ($params['recurring'] == '1')
+		{
+			$this->recurring_order_created($client_id, $gateway, $charge, $params);
+		} else 
+		{
+			// Make sure it's been successful
+			if ($params['invoice_status'] == 'approved' || $params['invoice_status'] == 'pending' || $params['invoice_status'] == 'deposited')
+			{
+				// We're good
+			
+		
+				// save authorization (transaction id #)
+				$CI->load->model('order_authorization_model');
+				$CI->order_authorization_model->SaveAuthorization($charge['id'], $params['invoice_id']);
+				
+				$CI->charge_model->SetStatus($charge['id'], 1);
+				TriggerTrip('charge', $client_id, $charge['id']);
+				
+				$coupon_id = isset($charge['coupon']) ? $charge['coupon']['coupon_id'] : null;
+				
+				if (!empty($coupon_id)) {
+					// track coupon
+					$CI->load->model('coupon_model');
+					$CI->coupon_model->add_usage($coupon_id, FALSE, $charge['id'], $customer_id);
+				}
+
+			}
+		}
+	}
+	
+	//--------------------------------------------------------------------
+
+/// WORKING	
+	/*
+		Called by 2CO whenever a recurring order is created.
+	*/
+	public function recurring_order_created($client_id, $gateway, $subscription, $params) 
+	{			
+		$CI =& get_instance();
+		$CI->load->model('recurring_model');
+		
+		$CI->load->model('charge_data_model');
+		$data = $CI->charge_data_model->Get('r' . $subscription['id']);
+		
+		// do we need a first charge?
+		if (date('Y-m-d',strtotime($subscription['start_date'])) == date('Y-m-d', strtotime($subscription['date_created']))) 
+			$CI->load->model('charge_model');
+		{
+			// get the first charge amount (it may be different)
+			$first_charge_amount = (isset($data['first_charge'])) ? $data['first_charge'] : $subscription['amount'];
+			
+			$customer_id = (isset($subscription['customer']['id'])) ? $subscription['customer']['id'] : FALSE;
+			$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $first_charge_amount, array(), $subscription['id'], $customer_id);
+			
+			// yes, the first charge is today
+			
+			// create today's order			
+			$CI->load->model('order_authorization_model');
+			
+			// we may not have the transaction ID if it's Pending
+			$CI->order_authorization_model->SaveAuthorization($order_id, $params['sale_id']);
+			
+			$CI->charge_model->SetStatus($order_id, 1);
+		}
+
+
+		$order_id = (isset($order_id)) ? $order_id : FALSE;
+	
+		$CI->recurring_model->SetActive($client_id, $subscription['id']);
+		
+		// trip it - were golden!
+		TriggerTrip('new_recurring', $client_id, $order_id, $subscription['id']);
+		
+		// trip a recurring charge?
+		if ($order_id) {
+			TriggerTrip('recurring_charge', $client_id, $order_id, $subscription['id']);
+		}
+		
+		// Save our Invoice ID so we can get details of line_items later.
+		$CI->recurring_model->SaveApiPaymentReference($subscription['id'], $params['invoice_id']);
+		
+		// Delete our temp data
+		$CI->charge_data_model->delete('r'. $charge['id']);
 		die();
 	}
 	
 	//--------------------------------------------------------------------
 	
-	public function Callback_confirm($client_id, $gateway, $charge, $params) 
+	/*
+		Called by 2CO on a successfull installment charge.
+		
+		This method saves the order authorization information.
+	*/
+	public function recurring_installment_success($client_id, $gateway, $subscription, $params) 
 	{
 		
 	}
 	
 	//--------------------------------------------------------------------
 	
+	/*
+		Called by 2CO on a failure to bill a recurring payment.
+		
+		This simply records the failure in the database.
+	*/
+	public function recurring_installment_fail($client_id, $gateway, $subscription, $params) 
+	{
+		$CI =& get_instance();
+		$CI->load->model('recurring_model');
+		
+		$CI->recurring_model->AddFailure($subscription['id'], 1);
+	}
+	
+	//--------------------------------------------------------------------
+
+	/*
+		Called by 2CO when a recurring plan has been stopped.
+	*/
+	public function recurring_installment_stopped($client_id, $gateway, $subscription, $params) 
+	{
+		// Make sure we have the data we need.
+		if (isset($params['vendor_order_id']) && !empty($params['vendor_order_id']))
+		{
+			// Mark the subscription as inactive
+			$CI =& get_instance();
+			$CI->load->model('recurring_model');
+			
+			$CI->recurring_model->MakeInactive($subscription['id']);
+		}
+	}
+	
+	//--------------------------------------------------------------------
 	
 	//--------------------------------------------------------------------
 	// !PROCESSORS
 	//--------------------------------------------------------------------
-	
-	public function Process($url_suffix, $data) 
-	{
+/// WORKING	
+	public function Process($url_suffix, $data, $gateway) 
+	{	
 		if(!is_array($data)) 
 		{
 			$resp = $this->return_response(array('Error' => 'Value passed in was not an array of at least one key/value pair.'));
@@ -285,9 +676,9 @@ class twocheckout {
 			curl_setopt($ch, CURLOPT_POST, true);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-			curl_setopt($ch, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
-			//curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-			//curl_setopt($ch, CURLOPT_USERPWD, "{$this->user}:{$this->pass}");
+			//curl_setopt($ch, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
+			curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+			curl_setopt($ch, CURLOPT_USERPWD, "{$gateway['username']}:{$gateway['password']}");
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);	// Verify it belongs to the server.
 			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);	// Check common exists and matches the server host name
 			
@@ -296,8 +687,13 @@ class twocheckout {
 			}
 			
 			$resp = curl_exec($ch);
-			print_r(curl_getinfo($ch));
-			echo curl_error($ch);
+			
+			if ($this->debug)
+			{
+				echo '<h2>CURL Response</h2><pre>';
+				print_r(curl_getinfo($ch));
+				echo 'CURL Error = '. curl_error($ch) ."<br/>";
+			}
 			curl_close($ch);
 		}
 		
@@ -309,9 +705,13 @@ class twocheckout {
 			die();
 		}
 
-		return $this->return_response($resp);
+		return json_decode($this->return_response($resp));
 	}
 	
+	//--------------------------------------------------------------------
+	
+	//--------------------------------------------------------------------
+	// ! PRIVATE METHODS
 	//--------------------------------------------------------------------
 	
 	/**
@@ -321,7 +721,7 @@ class twocheckout {
 	 * @return	array
 	 */
 	public function return_response($contents) 
-	{
+	{	
 		switch($this->format) {
 			case 'xml':
 				if(preg_match('/<response>/', $contents)) {
@@ -397,6 +797,40 @@ class twocheckout {
 		}
 		
 		return $post_url;
+	}
+	
+	//--------------------------------------------------------------------
+	
+	private function xml2array($xml) {
+        $xmlary = array();
+                
+        $reels = '/<(\w+)\s*([^\/>]*)\s*(?:\/>|>(.*)<\/\s*\\1\s*>)/s';
+        $reattrs = '/(\w+)=(?:"|\')([^"\']*)(:?"|\')/';
+
+        preg_match_all($reels, $xml, $elements);
+
+        foreach ($elements[1] as $ie => $xx) {
+                $xmlary[$ie]["name"] = $elements[1][$ie];
+                
+                if ($attributes = trim($elements[2][$ie])) {
+                        preg_match_all($reattrs, $attributes, $att);
+                        foreach ($att[1] as $ia => $xx)
+                                $xmlary[$ie]["attributes"][$att[1][$ia]] = $att[2][$ia];
+                }
+
+                $cdend = strpos($elements[3][$ie], "<");
+                if ($cdend > 0) {
+                        $xmlary[$ie]["text"] = substr($elements[3][$ie], 0, $cdend - 1);
+                }
+
+                if (preg_match($reels, $elements[3][$ie]))
+                        $xmlary[$ie]["elements"] = $his->xml2array($elements[3][$ie]);
+                else if ($elements[3][$ie]) {
+                        $xmlary[$ie]["text"] = $elements[3][$ie];
+                }
+        }
+
+        return $xmlary;
 	}
 }
 
@@ -492,13 +926,4 @@ class XmlConstruct extends XMLWriter
         return $this->outputMemory();
     }
 
-    /**
-     * Output the content of a current xml document.
-     * @access public
-     * @param null
-     */
-    public function output() {
-        #header('Content-type: text/xml');
-        return $this->getDocument();
-    }
 }

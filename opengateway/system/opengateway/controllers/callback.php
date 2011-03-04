@@ -16,9 +16,9 @@ class Callback extends Controller {
 		parent::Controller();
 	}
 
-	function process() {
+	function process() { 
 		// get gateway
-		$gateway = $this->uri->segment(2);
+		$gateway = $this->uri->segment(2); 
 		
 		// get action
 		$action = $this->uri->segment(3);
@@ -38,19 +38,37 @@ class Callback extends Controller {
 			$params[$key] = $value;
 		}
 		
-		// get charge
-		if ($action == 'confirm') {
-			// get client ID
-			$this->db->select('client_id');
-			$this->db->where('order_id',$charge_id);
-			$result = $this->db->get('orders');
-			$client = $result->row_array();
-			$client_id = $client['client_id'];
-			
-			$this->load->model('charge_model');
-			$charge = $this->charge_model->GetCharge($client_id, $charge_id);
+		// load the gateway
+		$gateway_name = $gateway;
+		$this->load->library('payment/'.$gateway);
+		$gateway_settings = $this->$gateway->Settings();
+		
+		if ($gateway_settings['external'] == FALSE) {
+			die('This gateway is not an external gateway.  Callbacks are futile.');
 		}
-		elseif ($action == 'confirm_recur') {
+		
+		/*
+			Since some gateway callbacks will not provide the order_id, 
+			We need to call a function in the gateway to retrieve the order id.
+		*/
+		if (empty($charge_id))
+		{	
+			$charge_id = $this->$gateway_name->GetChargeId($params);
+			
+			// It's very likely these same ones will be using the same callback URL
+			// for both recurring and non-recurring, so check for that functionality.
+			if (method_exists($this->$gateway_name, 'is_recurring'))
+			$recurring = $this->$gateway_name->is_recurring($params);
+		}
+		
+		
+		/*
+			Get the charge. 
+			
+			If $action contains 'recur' then we pull from the subscription_info,
+			Otherwise we pull it from the order.
+		*/
+		if (stristr($action, 'recur') !== FALSE || (isset($recurring) && $recurring === TRUE) ) {
 			// get client ID
 			$this->db->select('client_id');
 			$this->db->where('subscription_id',$charge_id);
@@ -62,25 +80,24 @@ class Callback extends Controller {
 			$charge = $this->recurring_model->GetRecurring($client_id, $charge_id);
 		}
 		else {
-			die('Invalid action.');
+			// get client ID
+			$this->db->select('client_id');
+			$this->db->where('order_id',$charge_id);
+			$result = $this->db->get('orders');
+			$client = $result->row_array();
+			$client_id = $client['client_id'];
+			
+			$this->load->model('charge_model');
+			$charge = $this->charge_model->GetCharge($client_id, $charge_id);
 		}
 		
 		// get gateway
 		$this->load->model('gateway_model');
 		$gateway = $this->gateway_model->GetGatewayDetails($client_id, $charge['gateway_id']);
-		
+
 		// is gateway enabled?
 		if (!$gateway or $gateway['enabled'] == '0') {
 			die($this->response->Error(5017));
-		}
-		
-		// load the gateway
-		$gateway_name = $gateway['name'];
-		$this->load->library('payment/'.$gateway_name);
-		$gateway_settings = $this->$gateway_name->Settings();
-		
-		if ($gateway_settings['external'] == FALSE) {
-			die('This gateway is not an external gateway.  Callbacks are futile.');
 		}
 		
 		// pass to gateway
