@@ -54,7 +54,7 @@ class Cron extends Controller {
 					}
 				
 					if ($trip_trigger == TRUE) {
-						// not begin renewed, send expiration notice
+						// not being renewed, send expiration notice
 						TriggerTrip('recurring_expire', $subscription['client_id'], FALSE, $subscription['subscription_id']);
 					}
 					

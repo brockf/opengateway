@@ -47,6 +47,7 @@ class Email_model extends Model
 	*/
 	
 	function GetTriggers() {
+		$this->db->order_by('human_name');
 		$query = $this->db->get('email_triggers');
 		foreach ($query->result_array() as $row) {
 			$return[] = $row;

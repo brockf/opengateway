@@ -1041,8 +1041,9 @@ class Gateway_model extends Model
 			$failures++;
 			$CI->recurring_model->AddFailure($params['subscription_id'], $failures);
 			
-			if($failures >= $num_allowed) {	
-				$CI->recurring_model->CancelRecurring($client_id, $params['subscription_id']);
+			if ($failures >= $num_allowed) {	
+				$CI->recurring_model->CancelRecurring($client_id, $params['subscription_id'], TRUE);
+				TriggerTrip('recurring_fail', $client_id, FALSE, $params['subscription_id']);
 			}
 		}
 		

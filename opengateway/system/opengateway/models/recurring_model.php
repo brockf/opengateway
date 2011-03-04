@@ -639,7 +639,7 @@ class Recurring_model extends Model
 	*
 	*/
 	
-	function CancelRecurring($client_id, $recurring_id, $expiring = FALSE)
+	function CancelRecurring($client_id, $recurring_id, $not_user_cancellation = FALSE)
 	{
 		// Get the subscription information
 		$subscription = $this->GetSubscriptionDetails($client_id, $recurring_id);
@@ -660,7 +660,7 @@ class Recurring_model extends Model
 				
 		$this->MakeInactive($recurring_id);
 		
-		if ($expiring == FALSE) {
+		if ($not_user_cancellation == FALSE) {
 			TriggerTrip('recurring_cancel', $client_id, FALSE, $recurring_id);
 		}
 		

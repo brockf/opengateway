@@ -68,7 +68,7 @@ class API extends Controller {
 		$this->load->model('request_type_model', 'request_type');
 		$request_type_model = $this->request_type->ValidateRequestType($request_type);
 		
-		if(!$request_type_model) {
+		if (!$request_type_model and !method_exists($this,$request_type)) {
 			die($this->response->Error(1002));
 		}
 		
@@ -952,12 +952,7 @@ class API extends Controller {
 			die($this->response->Error(3001));
 		}
 		
-		die('test');
-		
 		$coupon = $params['coupon'];
-		
-		// set customer_limit == FALSE to not do a customer check
-		$coupon['customer_limit'] = FALSE;
 		
 		$plan_id = (isset($params['plan_id'])) ? $params['plan_id'] : FALSE;
 		
@@ -977,11 +972,18 @@ class API extends Controller {
 		if (!empty($coupon)) {
 			$this->load->model('coupon_model');
 			$coupon = $this->coupon_model->get_coupons($client_id, array('coupon_code' => $coupon));
-			
+			$coupon = $coupon[0];
+			// set customer_limit == FALSE to not do a customer check
+			$coupon['customer_limit'] = FALSE;
+		
 			if (!empty($coupon) and $this->coupon_model->is_eligible($coupon, $plan_id, FALSE, FALSE)) {
-				$coupon = $coupon[0];
-				
-				$amount = $this->coupon_model->adjust_amount($amount, $coupon['type_id'], $coupon['reduction_type'], $coupon['reduction_amt']);
+				if (empty($plan_id)) {
+					$amount = $this->coupon_model->adjust_amount($amount, $coupon['type_id'], $coupon['reduction_type'], $coupon['reduction_amt']);
+				}
+				else {
+					$recur_amount = $amount;
+					$this->coupon_model->subscription_adjust_amount(&$amount, &$recur_amount, $coupon['type_id'], $coupon['reduction_type'], $coupon['reduction_amt']);
+				}
 				
 				$coupon_id = $coupon['id'];
 			}
