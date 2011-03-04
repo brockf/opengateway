@@ -109,7 +109,6 @@ class twocheckout {
 	
 	//--------------------------------------------------------------------
 
-// WORKING
 	/**
 	 *	Verifies that our connection is working as expected by returning the
 	 * detailed company info for the user.
@@ -127,8 +126,6 @@ class twocheckout {
 	}
 	
 	//--------------------------------------------------------------------
-
-// WORKING
 	
 	/**
 	 * Charging with 2CO does NOT require the product to be setup within
@@ -274,7 +271,6 @@ class twocheckout {
 	
 	//--------------------------------------------------------------------
 
-/// WORKING	
 	public function Refund ($client_id, $gateway, $charge, $authorization)
 	{				
 		$data = array(
@@ -293,8 +289,8 @@ class twocheckout {
 			return FALSE;
 		}
 	}
-	
-/// WORKING	
+
+	//--------------------------------------------------------------------	
 	
 	/**
 	 *	Retrieves the charge id from the parameters passed in. This is used
@@ -315,7 +311,6 @@ class twocheckout {
 	
 	//--------------------------------------------------------------------
 	
-/// WORKING	
 	// Simply states whether this call is a recurring call or not
 	// by searching in the parameters passed from 2CO.
 	public function is_recurring($params) 
@@ -334,7 +329,7 @@ class twocheckout {
 	//--------------------------------------------------------------------
 	// !API CALLS
 	//--------------------------------------------------------------------
-/// WORKING	
+
 	public function api_product_exists($product_name, $amount, $gateway) 
 	{
 		$response = $this->Process('products/list_products', array('product_name' => $product_name), $gateway);
@@ -352,7 +347,6 @@ class twocheckout {
 	
 	//--------------------------------------------------------------------
 
-/// WORKING
 	public function api_create_product($plan_name, $plan_id, $amount, $start_date, $end_date, $interval, $gateway) 
 	{
 		$data = array(
@@ -382,8 +376,6 @@ class twocheckout {
 	//--------------------------------------------------------------------
 	// !CALLBACKS
 	//--------------------------------------------------------------------
-
-/// WORKING
 	
 	/**
 	 * Used by the Charge method to redirect the user to the 2CO sales page.
@@ -449,7 +441,6 @@ class twocheckout {
 	
 	//--------------------------------------------------------------------
 
-/// WORKING	
 	/**
 	 * Used by the Recur method to redirect the user to the 2CO sales page.
 	 */
@@ -502,8 +493,6 @@ class twocheckout {
 	}
 	
 	//--------------------------------------------------------------------
-
-/// WORKING
 	
 	/**
 	 * Called when a user succesffully creates either a Charge or a Recurring charge. 
@@ -546,7 +535,6 @@ class twocheckout {
 	
 	//--------------------------------------------------------------------
 
-/// WORKING	
 	/*
 		Called by 2CO whenever a recurring order is created.
 	*/
@@ -596,7 +584,7 @@ class twocheckout {
 		$CI->recurring_model->SaveApiPaymentReference($subscription['id'], $params['invoice_id']);
 		
 		// Delete our temp data
-		$CI->charge_data_model->delete('r'. $charge['id']);
+		$CI->charge_data_model->delete('r'. $subscription['id']);
 		die();
 	}
 	
@@ -607,9 +595,23 @@ class twocheckout {
 		
 		This method saves the order authorization information.
 	*/
-	public function recurring_installment_success($client_id, $gateway, $subscription, $params) 
+	public function Callback_recurring_installment_success($client_id, $gateway, $subscription, $params) 
 	{
+		$CI =& get_instance();
+		$CI->load->model('recurring_model');
+		$CI->load->model('charge_model');
 		
+		// Record a new charge for this one.
+		$customer_id = (isset($subscription['customer']['id'])) ? $subscription['customer']['id'] : FALSE;
+		$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $subscription['amount'], array(), $subscription['id'], $customer_id);
+		
+		// trip a recurring charge?
+		if ($order_id) {
+			TriggerTrip('recurring_charge', $client_id, $order_id, $subscription['id']);
+		}
+		
+		// Save our Invoice ID so we can get details of line_items later.
+		$CI->recurring_model->SaveApiPaymentReference($subscription['id'], $params['invoice_id']);
 	}
 	
 	//--------------------------------------------------------------------
@@ -619,7 +621,7 @@ class twocheckout {
 		
 		This simply records the failure in the database.
 	*/
-	public function recurring_installment_fail($client_id, $gateway, $subscription, $params) 
+	public function Callback_recurring_installment_fail($client_id, $gateway, $subscription, $params) 
 	{
 		$CI =& get_instance();
 		$CI->load->model('recurring_model');
@@ -632,7 +634,7 @@ class twocheckout {
 	/*
 		Called by 2CO when a recurring plan has been stopped.
 	*/
-	public function recurring_installment_stopped($client_id, $gateway, $subscription, $params) 
+	public function Callback_recurring_installment_stopped($client_id, $gateway, $subscription, $params) 
 	{
 		// Make sure we have the data we need.
 		if (isset($params['vendor_order_id']) && !empty($params['vendor_order_id']))
@@ -650,7 +652,7 @@ class twocheckout {
 	//--------------------------------------------------------------------
 	// !PROCESSORS
 	//--------------------------------------------------------------------
-/// WORKING	
+
 	public function Process($url_suffix, $data, $gateway) 
 	{	
 		if(!is_array($data)) 
