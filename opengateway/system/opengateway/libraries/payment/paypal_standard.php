@@ -101,7 +101,7 @@ class paypal_standard
 		$post = array();
 		$post['version'] = '56.0';
 		$post['method'] = 'SetExpressCheckout';
-		$post['returnurl'] = site_url('callback/paypal/confirm/' . $order_id);
+		$post['returnurl'] = site_url('callback/paypal_standard/confirm/' . $order_id);
 		$post['cancelurl'] = (!empty($cancel_url)) ? $cancel_url : 'http://www.paypal.com';
 		$post['noshipping'] = '1';
 		$post['addroverride'] = '1';
@@ -191,7 +191,7 @@ class paypal_standard
 		$post = array();
 		$post['version'] = '56.0';
 		$post['method'] = 'SetExpressCheckout';
-		$post['returnurl'] = site_url('callback/paypal/confirm_recur/' . $subscription_id);
+		$post['returnurl'] = site_url('callback/paypal_standard/confirm_recur/' . $subscription_id);
 		$post['cancelurl'] = (!empty($cancel_url)) ? $cancel_url : 'http://www.paypal.com';
 		$post['noshipping'] = '1';
 		$post['addroverride'] = '1';

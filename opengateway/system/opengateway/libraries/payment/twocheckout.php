@@ -31,7 +31,7 @@ class twocheckout {
 		$settings['class_name'] = 'twocheckout';
 		$settings['external'] = TRUE;
 		$settings['no_credit_card'] = TRUE;
-		$settings['description'] = '2Checkout is a simple 3rd-party PayPal alternative for international merchants.  After account creation, you must setup your Notifications in your 2CO control panel.';
+		$settings['description'] = '2Checkout is a simple 3rd-party PayPal alternative for international merchants.  After account creation, you must setup your Notifications in your 2CO control panel.  More information is available at <a href="http://help.electricfunction.com/kb/opengateway/how-to-setup-a-gateway-with-2checkout">in the support area</a>.';
 		$settings['is_preferred'] = 1;
 		$settings['setup_fee'] = '$49';
 		$settings['monthly_fee'] = 'n/a';
@@ -643,8 +643,8 @@ class twocheckout {
 			
 			$CI->recurring_model->MakeInactive($subscription['id']);
 			
-			$CI->recurring_model->CancelRecurring($client_id, $params['subscription_id'], TRUE);
-			TriggerTrip('recurring_fail', $client_id, FALSE, $params['subscription_id']);
+			$CI->recurring_model->CancelRecurring($client_id, $subscription['id'], TRUE);
+			TriggerTrip('recurring_fail', $client_id, FALSE, $subscription['id']);
 		}
 	}
 	
