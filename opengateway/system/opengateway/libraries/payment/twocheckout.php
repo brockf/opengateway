@@ -135,9 +135,13 @@ class twocheckout {
 	{
 		$this->ci =& get_instance();
 		$this->ci->load->helper('url');
+		$this->ci->load->model('charge_data_model');
 		
 		// Return redirect information
 		$url = site_url('callback/twocheckout/form_redirect/'. $order_id);
+		
+		// save return redirect URL
+		$this->ci->charge_data_model->Save($order_id, 'return_url', $return_url);
 		
 		$response_array = array(
 						'not_completed' => TRUE, // don't mark charge as complete
@@ -196,6 +200,9 @@ class twocheckout {
 		
 		// save the initial charge amount (it may be different, so we treat it as a separate first charge)
 		$CI->charge_data_model->Save('r' . $subscription_id, 'first_charge', $amount);
+		
+		// save return redirect URL
+		$CI->charge_data_model->Save('r'.$subscription_id, 'return_url', $return_url);
 	
 		/*
 			Create an order for today's payment in our database.
@@ -409,7 +416,7 @@ class twocheckout {
 		}
 		
 		$post['fixed'] 				= 'Y';
-		$post['x_receipt_link_url'] = site_url('callback/twocheckout/confirm/' . $charge['id']);
+		$post['x_receipt_link_url'] = site_url('callback/twocheckout/redirect/' . $charge['id']);
 		$post['merchant_order_id']	= $charge['id'];
 		$post['pay_method'] 		= 'CC';
 		$post['skip_landing']		= 'Y';
@@ -463,7 +470,8 @@ class twocheckout {
 			'fixed'			=> 'Y',
 			'merchant_order_id'	=> $charge['id'],
 			'pay_method'	=> 'CC',
-			'skip_landing'	=> 'Y'
+			'skip_landing'	=> 'Y',
+			'x_receipt_link_url' => site_url('callback/twocheckout/redirect_recur/r' . $charge['id'])
 		);
 		
 		// Billing info
@@ -495,6 +503,26 @@ class twocheckout {
 	}
 	
 	//--------------------------------------------------------------------
+	
+	public function Callback_redirect ($client_id, $gateway, $charge, $params) {
+		$CI =& get_instance();
+		$CI->load->model('charge_data_model');
+		$CI->load->helper('url');
+		
+		$charge_data = $CI->charge_data_model->Get($charge['id']);
+		
+		return redirect($charge_data['return_url']);
+	}
+	
+	public function Callback_redirect_recur ($client_id, $gateway, $charge, $params) {
+		$CI =& get_instance();
+		$CI->load->model('charge_data_model');
+		$CI->load->helper('url');
+		
+		$charge_data = $CI->charge_data_model->Get('r'. $charge['id']);
+		
+		return redirect($charge_data['return_url']);
+	}
 	
 	/**
 	 * Called when a user succesffully creates either a Charge or a Recurring charge. 
