@@ -332,6 +332,10 @@ class twocheckout {
 	{
 		$response = $this->Process('products/list_products', array('product_name' => $product_name), $gateway);
 		
+		if (!isset($response->products) or empty($response->products)) {
+			return false;
+		}
+		
 		foreach ($response->products as $product)
 		{
 			if ($product->name == $product_name && $product->price == $amount)
