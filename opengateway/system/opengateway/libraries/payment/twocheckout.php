@@ -31,7 +31,7 @@ class twocheckout {
 		$settings['class_name'] = 'twocheckout';
 		$settings['external'] = TRUE;
 		$settings['no_credit_card'] = TRUE;
-		$settings['description'] = '2CO provides comprehensive e-commerce services to help you preserve cash and focus on growing your business, not managing your payments.';
+		$settings['description'] = '2Checkout is a simple 3rd-party PayPal alternative for international merchants.  After account creation, you must setup your Notifications in your 2CO control panel.';
 		$settings['is_preferred'] = 1;
 		$settings['setup_fee'] = '$49';
 		$settings['monthly_fee'] = 'n/a';
@@ -405,7 +405,7 @@ class twocheckout {
 		}
 		
 		$post['fixed'] 				= 'Y';
-		$post['return_url'] = site_url('callback/twocheckout/confirm/' . $charge['id']);
+		$post['x_receipt_link_url'] = site_url('callback/twocheckout/confirm/' . $charge['id']);
 		$post['merchant_order_id']	= $charge['id'];
 		$post['pay_method'] 		= 'CC';
 		$post['skip_landing']		= 'Y';

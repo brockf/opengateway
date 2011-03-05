@@ -949,7 +949,7 @@ class API extends Controller {
 	*/
 	function CouponValidate ($client_id, $params) {
 		if (!$params['coupon']) {
-			die($this->response->Error(3001));
+			die($this->response->Error(1004));
 		}
 		
 		$coupon = $params['coupon'];
