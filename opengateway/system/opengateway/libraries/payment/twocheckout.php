@@ -347,7 +347,7 @@ class twocheckout {
 		{
 			if ($product->name == $product_name && $product->price == $amount)
 			{
-				return true;
+				return $product->product_id;
 			}
 		}
 		
