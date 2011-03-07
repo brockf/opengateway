@@ -999,7 +999,7 @@ class API extends Controller {
 			return array('status' => 'invalid');
 		}
 		else {
-			if (!empty($amount)) {
+			if ($amount !== FALSE) {
 				return array('status' => 'valid', 'amount' => $amount);
 			}
 			else {
