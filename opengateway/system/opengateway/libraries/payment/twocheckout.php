@@ -347,7 +347,6 @@ class twocheckout {
 		{
 			if ($product->name == $product_name && $product->price == $amount)
 			{
-				mail('brock@cariboucms.com','product',print_r($product,true));
 				return $product->assigned_product_id;
 			}
 		}
