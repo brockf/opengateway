@@ -471,7 +471,7 @@ class twocheckout {
 			'merchant_order_id'	=> $charge['id'],
 			'pay_method'	=> 'CC',
 			'skip_landing'	=> 'Y',
-			'x_receipt_link_url' => site_url('callback/twocheckout/redirect_recur/r' . $charge['id'])
+			'x_receipt_link_url' => site_url('callback/twocheckout/redirect_recur/' . $charge['id'])
 		);
 		
 		// Billing info
