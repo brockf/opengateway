@@ -187,7 +187,7 @@ class paypal
 			case 'mc';
 				$card_type = 'MasterCard';
 			break;
-			case 'discover';
+			case 'disc';
 				$card_type = 'Discover';
 			break;
 			case 'amex';
@@ -401,7 +401,7 @@ class paypal
 			case 'mc';
 				$card_type = 'MasterCard';
 			break;
-			case 'discover';
+			case 'disc';
 				$card_type = 'Discover';
 			break;
 			case 'amex';
