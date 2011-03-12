@@ -8,17 +8,17 @@ class twocheckout {
 	var $accept		= 'application';
 	var $format		= 'json';
 	
-	var $ci;
+	var $CI;
 	
 	var $debug = false;
 	
 	//--------------------------------------------------------------------
 	
-	function payway() {
+	function __construct () {
 		// Init our settings
 		$this->settings = $this->Settings();
 		
-		$this->ci =& get_instance();
+		$this->CI =& get_instance();
 	}
 	
 	//--------------------------------------------------------------------
@@ -133,22 +133,21 @@ class twocheckout {
 	 */
 	public function Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card, $return_url, $cancel_url)
 	{
-		$this->ci =& get_instance();
-		$this->ci->load->helper('url');
-		$this->ci->load->model('charge_data_model');
+		$this->CI->load->helper('url');
+		$this->CI->load->model('charge_data_model');
 		
 		// Return redirect information
 		$url = site_url('callback/twocheckout/form_redirect/'. $order_id);
 		
 		// save return redirect URL
-		$this->ci->charge_data_model->Save($order_id, 'return_url', $return_url);
+		$this->CI->charge_data_model->Save($order_id, 'return_url', $return_url);
 		
 		$response_array = array(
 						'not_completed' => TRUE, // don't mark charge as complete
 						'redirect' 		=> $url, // redirect the user to this address
 						'charge_id' 	=> $order_id
 					);
-		$response = $this->ci->response->TransactionResponse(100, $response_array);
+		$response = $this->CI->response->TransactionResponse(100, $response_array);
 		
 		if ($this->debug)
 		{
@@ -169,9 +168,8 @@ class twocheckout {
 	 */
 	public function Recur($client_id, $gateway, $customer, $amount, $charge_today, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences, $return_url, $cancel_url) 
 	{
-		$CI =& get_instance();
-		$CI->load->helper('url');
-		$CI->load->model('charge_data_model');
+		$this->CI->load->helper('url');
+		$this->CI->load->model('charge_data_model');
 
 		/*
 		 	First thing, we need to verify that the product exists at 2CO
@@ -180,7 +178,7 @@ class twocheckout {
 		*/
 	
 		// Get our subscription details
-		$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
+		$subscription = $this->CI->recurring_model->GetRecurring($client_id, $subscription_id);
 		
 		// Are we dealing with a plan or a one-time?
 		$plan_name = !empty($subscription['plan']['name']) ? $subscription['plan']['name'] : 'One Time Recurring Plan';
@@ -196,20 +194,20 @@ class twocheckout {
 		/*
 			Save the data for use within the redirect
 		*/
-		$CI->charge_data_model->Save('r'.$subscription_id, 'product_id', $product_id);
+		$this->CI->charge_data_model->Save('r'.$subscription_id, 'product_id', $product_id);
 		
 		// save the initial charge amount (it may be different, so we treat it as a separate first charge)
-		$CI->charge_data_model->Save('r' . $subscription_id, 'first_charge', $amount);
+		$this->CI->charge_data_model->Save('r' . $subscription_id, 'first_charge', $amount);
 		
 		// save return redirect URL
-		$CI->charge_data_model->Save('r'.$subscription_id, 'return_url', $return_url);
+		$this->CI->charge_data_model->Save('r'.$subscription_id, 'return_url', $return_url);
 	
 		/*
 			Create an order for today's payment in our database.
 		*/
-		$CI->load->model('charge_model');
+		$this->CI->load->model('charge_model');
 		$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
-		$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
+		$order_id = $this->CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
 		
 		/*
 			Since the actual recording of the success of the payment is handled
@@ -221,7 +219,7 @@ class twocheckout {
 						'redirect' 		=> $url = site_url('callback/twocheckout/form_redirect_recur/'. $subscription_id), // redirect the user to this address
 						'subscription_id' 	=> $subscription_id
 					);
-		$response = $CI->response->TransactionResponse(100, $response_array);
+		$response = $this->CI->response->TransactionResponse(100, $response_array);
 
 		return $response;
 	}
@@ -230,8 +228,6 @@ class twocheckout {
 	
 	public function CancelRecurring($client_id, $subscription, $gateway) 
 	{
-		$CI =& get_instance();
-	
 		// First, we need to get the details of the sale so we have the line_item_id
 		$sale_details = $this->Process('sales/detail_sale', array('invoice_id' => $subscription['api_payment_reference']), $gateway);
 		
@@ -271,7 +267,7 @@ class twocheckout {
 		// 2CO Takes care of all of this for us. Instead of handling the results here, 
 		// we simply return true so that the system still knows about everything,
 		// but the system is actually updated in the 'recur_installment_success' callback.
-		return TRUE;
+		return array('success' => TRUE);
 	}
 	
 	//--------------------------------------------------------------------
@@ -391,9 +387,7 @@ class twocheckout {
 	 */
 	public function Callback_form_redirect($client_id, $gateway, $charge, $params) 
 	{ 
-		$ci =& get_instance();
-	
-		$ci->load->helper('url');
+		$this->CI->load->helper('url');
 			
 		// Build the form info to send to 2CO
 		$post = array(
@@ -455,11 +449,10 @@ class twocheckout {
 	 */
 	public function Callback_form_redirect_recur($client_id, $gateway, $charge, $params) 
 	{
-		$CI =& get_instance();
-		$CI->load->model('charge_data_model');
-		$CI->load->helper('url');
+		$this->CI->load->model('charge_data_model');
+		$this->CI->load->helper('url');
 		
-		$charge_data = $CI->charge_data_model->Get('r'. $charge['id']);
+		$charge_data = $this->CI->charge_data_model->Get('r'. $charge['id']);
 	
 		// Build our form info for 2CO
 		$post = array(
@@ -505,21 +498,19 @@ class twocheckout {
 	//--------------------------------------------------------------------
 	
 	public function Callback_redirect ($client_id, $gateway, $charge, $params) {
-		$CI =& get_instance();
-		$CI->load->model('charge_data_model');
-		$CI->load->helper('url');
+		$this->CI->load->model('charge_data_model');
+		$this->CI->load->helper('url');
 		
-		$charge_data = $CI->charge_data_model->Get($charge['id']);
+		$charge_data = $this->CI->charge_data_model->Get($charge['id']);
 		
 		return redirect($charge_data['return_url']);
 	}
 	
 	public function Callback_redirect_recur ($client_id, $gateway, $charge, $params) {
-		$CI =& get_instance();
-		$CI->load->model('charge_data_model');
-		$CI->load->helper('url');
+		$this->CI->load->model('charge_data_model');
+		$this->CI->load->helper('url');
 		
-		$charge_data = $CI->charge_data_model->Get('r'. $charge['id']);
+		$charge_data = $this->CI->charge_data_model->Get('r'. $charge['id']);
 		
 		return redirect($charge_data['return_url']);
 	}
@@ -530,12 +521,10 @@ class twocheckout {
 	 */
 	public function Callback_order_created($client_id, $gateway, $charge, $params) 
 	{	
-		$CI =& get_instance();
-		
 		// Is this a recurring order?
 		if ($params['recurring'] == '1')
 		{
-			$this->recurring_order_created($client_id, $gateway, $charge, $params);
+			$this->Callback_recurring_order_created($client_id, $gateway, $charge, $params);
 		} else 
 		{
 			// Make sure it's been successful
@@ -545,18 +534,18 @@ class twocheckout {
 			
 		
 				// save authorization (transaction id #)
-				$CI->load->model('order_authorization_model');
-				$CI->order_authorization_model->SaveAuthorization($charge['id'], $params['invoice_id']);
+				$this->CI->load->model('order_authorization_model');
+				$this->CI->order_authorization_model->SaveAuthorization($charge['id'], $params['invoice_id']);
 				
-				$CI->charge_model->SetStatus($charge['id'], 1);
+				$this->CI->charge_model->SetStatus($charge['id'], 1);
 				TriggerTrip('charge', $client_id, $charge['id']);
 				
 				$coupon_id = isset($charge['coupon']) ? $charge['coupon']['coupon_id'] : null;
 				
 				if (!empty($coupon_id)) {
 					// track coupon
-					$CI->load->model('coupon_model');
-					$CI->coupon_model->add_usage($coupon_id, FALSE, $charge['id'], $customer_id);
+					$this->CI->load->model('coupon_model');
+					$this->CI->coupon_model->add_usage($coupon_id, FALSE, $charge['id'], $customer_id);
 				}
 
 			}
@@ -568,39 +557,39 @@ class twocheckout {
 	/*
 		Called by 2CO whenever a recurring order is created.
 	*/
-	public function recurring_order_created($client_id, $gateway, $subscription, $params) 
+	public function Callback_recurring_order_created($client_id, $gateway, $subscription, $params) 
 	{			
-		$CI =& get_instance();
-		$CI->load->model('recurring_model');
+		$this->CI->load->model('recurring_model');
 		
-		$CI->load->model('charge_data_model');
-		$data = $CI->charge_data_model->Get('r' . $subscription['id']);
+		$this->CI->load->model('charge_data_model');
+		$data = $this->CI->charge_data_model->Get('r' . $subscription['id']);
 		
 		// do we need a first charge?
 		if (date('Y-m-d',strtotime($subscription['start_date'])) == date('Y-m-d', strtotime($subscription['date_created']))) 
-			$CI->load->model('charge_model');
 		{
+			$this->CI->load->model('charge_model');
+			
 			// get the first charge amount (it may be different)
 			$first_charge_amount = (isset($data['first_charge'])) ? $data['first_charge'] : $subscription['amount'];
 			
 			$customer_id = (isset($subscription['customer']['id'])) ? $subscription['customer']['id'] : FALSE;
-			$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $first_charge_amount, array(), $subscription['id'], $customer_id);
+			$order_id = $this->CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $first_charge_amount, array(), $subscription['id'], $customer_id);
 			
 			// yes, the first charge is today
 			
 			// create today's order			
-			$CI->load->model('order_authorization_model');
+			$this->CI->load->model('order_authorization_model');
 			
 			// we may not have the transaction ID if it's Pending
-			$CI->order_authorization_model->SaveAuthorization($order_id, $params['sale_id']);
+			$this->CI->order_authorization_model->SaveAuthorization($order_id, $params['sale_id']);
 			
-			$CI->charge_model->SetStatus($order_id, 1);
+			$this->CI->charge_model->SetStatus($order_id, 1);
 		}
 
 
 		$order_id = (isset($order_id)) ? $order_id : FALSE;
 	
-		$CI->recurring_model->SetActive($client_id, $subscription['id']);
+		$this->CI->recurring_model->SetActive($client_id, $subscription['id']);
 		
 		// trip it - were golden!
 		TriggerTrip('new_recurring', $client_id, $order_id, $subscription['id']);
@@ -611,10 +600,10 @@ class twocheckout {
 		}
 		
 		// Save our Invoice ID so we can get details of line_items later.
-		$CI->recurring_model->SaveApiPaymentReference($subscription['id'], $params['invoice_id']);
+		$this->CI->recurring_model->SaveApiPaymentReference($subscription['id'], $params['invoice_id']);
 		
 		// Delete our temp data
-		$CI->charge_data_model->delete('r'. $subscription['id']);
+		$this->CI->charge_data_model->delete('r'. $subscription['id']);
 		die();
 	}
 	
@@ -627,13 +616,15 @@ class twocheckout {
 	*/
 	public function Callback_recurring_installment_success($client_id, $gateway, $subscription, $params) 
 	{
-		$CI =& get_instance();
-		$CI->load->model('recurring_model');
-		$CI->load->model('charge_model');
+		// OG will automatically create successful orders, so there's no need to duplicate this here
+	
+		/*
+		$this->CI->load->model('recurring_model');
+		$this->CI->load->model('charge_model');
 		
 		// Record a new charge for this one.
 		$customer_id = (isset($subscription['customer']['id'])) ? $subscription['customer']['id'] : FALSE;
-		$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $subscription['amount'], array(), $subscription['id'], $customer_id);
+		$order_id = $this->CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $subscription['amount'], array(), $subscription['id'], $customer_id);
 		
 		// trip a recurring charge?
 		if ($order_id) {
@@ -641,7 +632,7 @@ class twocheckout {
 		}
 		
 		// Save our Invoice ID so we can get details of line_items later.
-		$CI->recurring_model->SaveApiPaymentReference($subscription['id'], $params['invoice_id']);
+		$this->CI->recurring_model->SaveApiPaymentReference($subscription['id'], $params['invoice_id']);*/
 	}
 	
 	//--------------------------------------------------------------------
@@ -653,10 +644,9 @@ class twocheckout {
 	*/
 	public function Callback_recurring_installment_fail($client_id, $gateway, $subscription, $params) 
 	{
-		$CI =& get_instance();
-		$CI->load->model('recurring_model');
+		$this->CI->load->model('recurring_model');
 		
-		$CI->recurring_model->AddFailure($subscription['id'], 1);
+		$this->CI->recurring_model->AddFailure($subscription['id'], 1);
 	}
 	
 	//--------------------------------------------------------------------
@@ -666,18 +656,13 @@ class twocheckout {
 	*/
 	public function Callback_recurring_installment_stopped($client_id, $gateway, $subscription, $params) 
 	{
-		// Make sure we have the data we need.
-		if (isset($params['vendor_order_id']) && !empty($params['vendor_order_id']))
-		{
-			// Mark the subscription as inactive
-			$CI =& get_instance();
-			$CI->load->model('recurring_model');
-			
-			$CI->recurring_model->MakeInactive($subscription['id']);
-			
-			$CI->recurring_model->CancelRecurring($client_id, $subscription['id'], TRUE);
-			TriggerTrip('recurring_fail', $client_id, FALSE, $subscription['id']);
-		}
+		// Mark the subscription as inactive
+		$this->CI->load->model('recurring_model');
+		
+		$this->CI->recurring_model->MakeInactive($subscription['id']);
+		
+		$this->CI->recurring_model->CancelRecurring($client_id, $subscription['id'], TRUE);
+		TriggerTrip('recurring_fail', $client_id, FALSE, $subscription['id']);
 	}
 	
 	//--------------------------------------------------------------------

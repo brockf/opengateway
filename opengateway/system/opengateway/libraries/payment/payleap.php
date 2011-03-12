@@ -57,7 +57,7 @@ class payleap {
 		$settings['setup_fee'] = '$29';
 		$settings['monthly_fee'] = '$29';
 		$settings['transaction_fee'] = '$0.25';
-		$settings['purchase_link'] = 'http://www.payleap.com/apply.html';
+		$settings['purchase_link'] = 'http://www.payleap.com/lp/opengateway';
 		$settings['allows_updates'] = 1;
 		$settings['allows_refunds'] = 0;
 		$settings['requires_customer_information'] = 1;
@@ -88,22 +88,21 @@ class payleap {
 														'type' => 'select',
 														'options' => array(
 																		'live' => 'Live Mode',
-																		'test' => 'Test Mode',
-																		'dev' => 'Development Server'
+																		'test' => 'Test Mode'
 																		)
 														),
 										'customer_id' => array(
-														'text' => 'Login ID',
+														'text' => 'Vendor Number',
 														'type' => 'text'
 														),
 										
 										'username' => array(
-														'text' => 'Username',
+														'text' => 'API Login',
 														'type' => 'text'
 														),
 										
 										'password' => array(
-														'text' => 'Password',
+														'text' => 'Transaction Key',
 														'type' => 'text'
 														),
 										
@@ -171,10 +170,10 @@ class payleap {
 			'Username'	=> $gateway['username'],
 			'Password'	=> $gateway['password'],
 			'Vendor'	=> $gateway['customer_id'],
-			'CustomerID'	=> '0001',
+			'CustomerID'	=> time() . rand(100,999),
 			'CustomerName'	=> 'Test Account',
-			'FirstName'		=> '',
-			'LastName'		=> '',
+			'FirstName'		=> 'John',
+			'LastName'		=> 'Smith',
 			'Title'			=> '',
 			'Department'	=> '',
 			'Street1'		=> '',
@@ -185,7 +184,7 @@ class payleap {
 			'Province'		=> '',
 			'Zip'			=> '',
 			'CountryID'		=> '',
-			'Email'			=> '',
+			'Email'			=> 'john@example.com',
 			'Mobile'		=> '',
 			'DayPhone'		=> '',
 			'NightPhone'	=> '',
@@ -195,15 +194,15 @@ class payleap {
 			'EmailCustomerFailure' => false,
 			'EmailMerchantFailure' => false,
 			'ContractID'	=> 'Test123',
-			'ContractName'	=> '',
+			'ContractName'	=> time() . rand(100,999),
 			'BillAmt'		=> '10.00',
 			'TaxAmt'		=> 0,
 			'TotalAmt'		=> '10.00',
-			'StartDate'		=> '02/28/2011',
-			'EndDate'		=> '02/02/2012',
-			'BillingPeriod'	=> 'DAY',
-			'BillingInterval'	=> 30,
-			'CcAccountNum'		=> '4111111111111111',
+			'StartDate'		=> '02/28/2013',
+			'EndDate'		=> '02/02/2015',
+			'BillingPeriod'	=> 'MONTH',
+			'BillingInterval' => '1',
+			'CcAccountNum' => '4111111111111111',
 			'CcExpDate'		=> '1212',
 			'CcNameOnCard'	=> '',
 			'CcStreet'		=> '',
@@ -212,8 +211,8 @@ class payleap {
 			'FailureInterval'	=> '',
 			'ExtData'		=> ''
 		);
-				
-		$response = $this->process($gateway, $data, 'AddRecurringCreditCard');
+		
+		$response = $this->process($gateway, $data, 'AddRecurringCreditCard', TRUE);
 		
 		if ($this->debug)
 		{
@@ -320,8 +319,8 @@ class payleap {
 	    	'TotalAmt'			=> $amount,
 	    	'StartDate'			=> $subscription['start_date'],
 	    	'EndDate'			=> $subscription['end_date'],
-	    	'BillingPeriod'		=> 'DAY',
-	    	'BillingInterval'	=> $subscription['charge_interval'],
+	    	'BillingPeriod'		=> 'MONTH',
+	    	'BillingInterval'	=> '1', // arbitrary, because we will send processes later
 	    	'CcAccountNum'		=> isset($credit_card['card_num']) ? $credit_card['card_num'] : '',
 	    	'CcNameOnCard'		=> isset($credit_card['name']) ? $credit_card['name'] : '',
 	    	'CcExpDate'			=> $credit_card['exp_month'] . substr($credit_card['exp_year'], -2, 2),
@@ -332,7 +331,7 @@ class payleap {
 	    	'ExtData'			=> ''
 	    );
     
-		$response = $this->process($gateway, $data, 'AddRecurringCreditCard');
+		$response = $this->process($gateway, $data, 'AddRecurringCreditCard', TRUE);
 		
 		$this->cust_key = $this->find_in_array('CustomerKey', $response);
 		$this->contract_key = $this->find_in_array('ContractKey', $response);
@@ -389,7 +388,7 @@ class payleap {
 			'ExtData'	=> ''
 		);
 		
-		$response = $this->process($gateway, $data, 'ProcessCreditCard');
+		$response = $this->process($gateway, $data, 'ProcessCreditCard', TRUE);
 		
 		$success = $this->find_in_array('error', $response);
 		
@@ -465,7 +464,7 @@ class payleap {
 	    	'ExtData'			=> ''
 	    );
     
-		$response = $this->process($gateway, $data, 'ManageContract');
+		$response = $this->process($gateway, $data, 'ManageContract', TRUE);
 				
 		if ($this->find_in_array('error', $response) == 'OK')
 		{
@@ -529,7 +528,7 @@ class payleap {
 	    	'ExtData'			=> ''
 	    );
     
-		$response = $this->process($gateway, $data, 'ManageContract');
+		$response = $this->process($gateway, $data, 'ManageContract', TRUE);
 				
 		if ($this->find_in_array('error', $response) == 'OK')
 		{
@@ -606,31 +605,41 @@ class payleap {
 	 * With PayLeap, it appears that we can do it all through GET/POST
 	 * calls, which is easier than SOAP :).
 	 *
-	 * @param	string	$url	The url to call
+	 * @param	string	$gatewayGateway details
 	 * @param	array	$vars	The POST data to send
 	 * @param	string	$action	The remote method to call (is appended to url)
 	 */
 	protected function process($gateway, $vars, $action, $type='rebill')
 	{
-		$url = $this->GetAPIUrl($gateway, $type);
-		
 		$header = array("MIME-Version: 1.0","Content-type: application/x-www-form-urlencoded","Contenttransfer-encoding: text"); 
 	
 		$post_fields = trim($this->to_post($vars, $gateway), '& ');
 	
 		$ch = curl_init(); // initiate curl object
 		
-		// set URL and other appropriate options 
-		if ($type=='rebill')
-		{
-			curl_setopt($ch, CURLOPT_URL, $url .'/'. $action .'?');
-		} else
-		{
-			curl_setopt($ch, CURLOPT_URL, $url .'/'. $action);
-			//curl_setopt($ch, CURLOPT_URL, 'http://test.payleap.com/SmartPayments/transact.asmx/ProcessCreditCard');
+		if ($gateway['mode'] == 'test') {
+			if ($type == 'rebill') {
+				$url = 'https://uat.payleap.com/MerchantServices.svc/';
+			}
+			else {
+				$url = 'https://uat.payleap.com/TransactServices.svc/';
+			}
 		}
+		else {
+			if ($type == 'rebill') {
+				$url = 'https://secure1.payleap.com/MerchantServices.svc/';
+			}
+			else {
+				$url = 'https://secure1.payleap.com/TransactServices.svc/';
+			}
+		}
+		
+		// set URL and other appropriate options 
+		$post_url = $url .'/'. $action .'?';
+		
+		curl_setopt($ch, CURLOPT_URL, $post_url);
 		curl_setopt($ch, CURLOPT_VERBOSE, 1); 
-		curl_setopt ($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); 
+		curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); 
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
 		curl_setopt($ch, CURLINFO_HEADER_OUT, true);
 		curl_setopt($ch, CURLOPT_HEADER, true);
@@ -757,7 +766,7 @@ class payleap {
                 }
 
                 if (preg_match($reels, $elements[3][$ie]))
-                        $xmlary[$ie]["elements"] = xml2array($elements[3][$ie]);
+                        $xmlary[$ie]["elements"] = $this->xml2array($elements[3][$ie]);
                 else if ($elements[3][$ie]) {
                         $xmlary[$ie]["text"] = $elements[3][$ie];
                 }

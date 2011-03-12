@@ -51,7 +51,7 @@ class Callback extends Controller {
 			Since some gateway callbacks will not provide the order_id, 
 			We need to call a function in the gateway to retrieve the order id.
 		*/
-		if (empty($charge_id))
+		if (empty($charge_id) and method_exists($this->$gateway_name, 'GetChargeId'))
 		{	
 			$charge_id = $this->$gateway_name->GetChargeId($params);
 			
