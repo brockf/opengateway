@@ -30,6 +30,7 @@ $config['support_url'] = 'http://help.electricfunction.com';
 $config['ssl_active'] = false;
 $config['cron_key'] = '0000000000000000';
 $config['currency_symbol'] = '$';
+$config['show_dashboard_chart'] = 'yes'; // set to 'no' to not show it
 
 $config['java_include_path'] = APPPATH . 'includes/';
 
