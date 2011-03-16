@@ -27,7 +27,7 @@ class Dashboard extends Controller {
 		
 		$data = array();
 		
-		if (!empty($revenue) and count($revenue) > 1) {
+		if ($this->config->item('show_dashboard_chart') !== 'no' and !empty($revenue) and count($revenue) > 1) {
 			$series = array();
 			foreach ($revenue as $day) {
 				$series[] = $day['revenue'];
@@ -70,7 +70,7 @@ class Dashboard extends Controller {
 			$Test->Render(BASEPATH . '../writeable/rev_chart_' . $this->user->Get('client_id') . '.png');
 		}
 		else {
-			$data['no_revenue'] = 'true';
+			$data['no_chart'] = 'true';
 		}
 		
 		// get log

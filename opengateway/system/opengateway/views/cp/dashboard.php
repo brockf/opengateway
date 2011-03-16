@@ -28,7 +28,7 @@
 	</ul>
 </div>
 <div style="clear:both"></div>
-<? if (isset($no_revenue)) { ?>
+<? if (isset($no_chart)) { ?>
 <p class="soft">You do not have enough revenue for a chart, yet.  When you do, we'll display a nice revenue graph here.</p>
 <? } else { ?>
 <img src="<?=site_url('writeable/rev_chart_' . $this->user->Get('client_id') . '.png');?>" alt="Revenue Chart" style="width:100%; height: 260px" />

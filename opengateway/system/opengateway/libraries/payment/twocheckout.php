@@ -67,7 +67,7 @@ class twocheckout {
 																		)
 														),
 										'username' => array(
-														'text' => 'API User ID',
+														'text' => 'API Username',
 														'type' => 'text'
 														),
 										
