@@ -111,32 +111,40 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 	$secret_key = $client->secret_key; // for notification security
 	
 	// notification_url needs triggering too, if it exists
-    if (isset($plan) and is_array($plan)) {
-    	if (!empty($plan['notification_url'])) {
-    		$CI->load->library('notifications');
-    		
-    		// build var array
-    		$array = array(
-    					'action' => $trigger_type,
-    					'client_id' => $client_id,
-    					'secret_key' => $secret_key
-    				);
-    		
-    		if (isset($variables['plan_id'])) {
-    			$array['plan_id'] = $variables['plan_id'];
-    		}
-    		if (isset($variables['customer_id'])) {
-    			$array['customer_id'] = $variables['customer_id'];
-    		}
-    		if (isset($variables['charge_id'])) {
-    			$array['charge_id'] = $variables['charge_id'];
-    		}
-    		if (isset($variables['recurring_id'])) {
-    			$array['recurring_id'] = $variables['recurring_id'];
-    		}
-    			
-    		$CI->notifications->QueueNotification($plan['notification_url'],$array);
-    	}
+	
+	// check for plan notification_url
+	$notification_url = FALSE;
+	if (isset($plan) and is_array($plan) and !empty($plan['notification_url'])) {
+		$notification_url = $plan['notification_url'];
+	}
+	elseif (isset($subscription) and is_array($subscription) and !empty($subscription['notification_url'])) {
+		$notification_url = $subscription['notification_url'];
+	}
+	
+    if (!empty($notification_url)) {
+		$CI->load->library('notifications');
+		
+		// build var array
+		$array = array(
+					'action' => $trigger_type,
+					'client_id' => $client_id,
+					'secret_key' => $secret_key
+				);
+		
+		if (isset($variables['plan_id'])) {
+			$array['plan_id'] = $variables['plan_id'];
+		}
+		if (isset($variables['customer_id'])) {
+			$array['customer_id'] = $variables['customer_id'];
+		}
+		if (isset($variables['charge_id'])) {
+			$array['charge_id'] = $variables['charge_id'];
+		}
+		if (isset($variables['recurring_id'])) {
+			$array['recurring_id'] = $variables['recurring_id'];
+		}
+			
+		$CI->notifications->QueueNotification($notification_url,$array);
     }
 	
     // check to see if this triggers any emails for the client
