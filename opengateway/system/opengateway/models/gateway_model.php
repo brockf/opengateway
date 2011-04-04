@@ -646,7 +646,7 @@ class Gateway_model extends Model
 		// get subscription
 		$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
 		// is there a charge for today?
-		$charge_today = (date('Y-m-d', strtotime($subscription['date_created'])) == date('Y-m-d', strtotime($subscription['start_date']))) ? TRUE : FALSE;
+		$charge_today = ((float)$amount != 0 and date('Y-m-d', strtotime($subscription['date_created'])) == date('Y-m-d', strtotime($subscription['start_date']))) ? TRUE : FALSE;
 		
 		// set last_charge as today, if today was a charge
 		if ($charge_today === TRUE) {
