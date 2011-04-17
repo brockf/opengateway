@@ -202,12 +202,16 @@ class twocheckout {
 		// save return redirect URL
 		$this->CI->charge_data_model->Save('r'.$subscription_id, 'return_url', $return_url);
 	
-		/*
-			Create an order for today's payment in our database.
-		*/
-		$this->CI->load->model('charge_model');
-		$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
-		$order_id = $this->CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
+		if ($charge_today === TRUE) {
+			/*
+				Create an order for today's payment in our database.
+			*/
+			$this->CI->load->model('charge_model');
+			$customer['customer_id'] = $customer['customer_id'];
+			$order_id = $this->CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
+			
+			// the order will be set as failed but the callback_order_created_recur function will set it OK
+		}
 		
 		/*
 			Since the actual recording of the success of the payment is handled
@@ -219,6 +223,11 @@ class twocheckout {
 						'redirect' 		=> $url = site_url('callback/twocheckout/form_redirect_recur/'. $subscription_id), // redirect the user to this address
 						'subscription_id' 	=> $subscription_id
 					);
+					
+		if (isset($order_id)) {
+			$response_array['charge_id'] = $order_id;
+		}
+							
 		$response = $this->CI->response->TransactionResponse(100, $response_array);
 
 		return $response;
@@ -231,7 +240,7 @@ class twocheckout {
 		// First, we need to get the details of the sale so we have the line_item_id
 		$sale_details = $this->Process('sales/detail_sale', array('invoice_id' => $subscription['api_payment_reference']), $gateway);
 		
-		if (!$sale_details || !isset($sale_details->lineitem_id))
+		if (!$sale_details or !isset($sale_details->lineitem_id))
 		{
 			return FALSE;
 		}
@@ -251,7 +260,7 @@ class twocheckout {
 	
 	public function UpdateRecurring($client_id, $gateway, $subscription, $customer, $params) 
 	{
-		return TRUE;
+		return FALSE;
 	}
 	
 	//--------------------------------------------------------------------
@@ -305,6 +314,9 @@ class twocheckout {
 		if (isset($params['vendor_order_id']))
 		{
 			return $params['vendor_order_id'];
+		}
+		elseif (isset($params['merchant_order_id'])) {
+			return $params['merchant_order_id'];
 		}
 		
 		return 0;
@@ -532,10 +544,9 @@ class twocheckout {
 			{
 				// We're good
 			
-		
 				// save authorization (transaction id #)
 				$this->CI->load->model('order_authorization_model');
-				$this->CI->order_authorization_model->SaveAuthorization($charge['id'], $params['invoice_id']);
+				$this->CI->order_authorization_model->SaveAuthorization($charge['id'], $charge['id']);
 				
 				$this->CI->charge_model->SetStatus($charge['id'], 1);
 				TriggerTrip('charge', $client_id, $charge['id']);
@@ -564,28 +575,22 @@ class twocheckout {
 		$this->CI->load->model('charge_data_model');
 		$data = $this->CI->charge_data_model->Get('r' . $subscription['id']);
 		
-		// do we need a first charge?
-		if (date('Y-m-d',strtotime($subscription['start_date'])) == date('Y-m-d', strtotime($subscription['date_created']))) 
-		{
+		// do we have a first charge to process?
+		$result = $this->CI->db->where('subscription_id',$subscription['id'])
+							   ->from('orders')
+							   ->get();
+							   						   
+		if ($result->num_rows() > 0) {
+			$order = $result->row_array();
+			
 			$this->CI->load->model('charge_model');
-			
-			// get the first charge amount (it may be different)
-			$first_charge_amount = (isset($data['first_charge'])) ? $data['first_charge'] : $subscription['amount'];
-			
-			$customer_id = (isset($subscription['customer']['id'])) ? $subscription['customer']['id'] : FALSE;
-			$order_id = $this->CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $first_charge_amount, array(), $subscription['id'], $customer_id);
-			
-			// yes, the first charge is today
-			
-			// create today's order			
 			$this->CI->load->model('order_authorization_model');
 			
 			// we may not have the transaction ID if it's Pending
-			$this->CI->order_authorization_model->SaveAuthorization($order_id, $params['sale_id']);
+			$this->CI->order_authorization_model->SaveAuthorization($order['order_id'], $params['sale_id']);
 			
-			$this->CI->charge_model->SetStatus($order_id, 1);
+			$this->CI->charge_model->SetStatus($order['order_id'], 1);
 		}
-
 
 		$order_id = (isset($order_id)) ? $order_id : FALSE;
 	
@@ -602,8 +607,9 @@ class twocheckout {
 		// Save our Invoice ID so we can get details of line_items later.
 		$this->CI->recurring_model->SaveApiPaymentReference($subscription['id'], $params['invoice_id']);
 		
-		// Delete our temp data
-		$this->CI->charge_data_model->delete('r'. $subscription['id']);
+		// (don't) Delete our temp data!
+		// we used to delete this and it screwed the post-order redirects
+		//$this->CI->charge_data_model->delete('r'. $subscription['id']);
 		die();
 	}
 	
