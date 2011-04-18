@@ -273,7 +273,7 @@ class paypal_standard
 			$response_array = array(
 							'not_completed' => TRUE, // don't mark charge as complete
 							'redirect' => $url, // redirect the user to this address
-							'subscription_id' => $subscription_id
+							'recurring_id' => $subscription_id
 						);
 			$response = $CI->response->TransactionResponse(100, $response_array);
 		}

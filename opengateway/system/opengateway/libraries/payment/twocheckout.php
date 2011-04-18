@@ -221,7 +221,7 @@ class twocheckout {
 		$response_array = array(
 						'not_completed' => TRUE, // don't mark charge as complete
 						'redirect' 		=> $url = site_url('callback/twocheckout/form_redirect_recur/'. $subscription_id), // redirect the user to this address
-						'subscription_id' 	=> $subscription_id
+						'recurring_id' 	=> $subscription_id
 					);
 					
 		if (isset($order_id)) {
