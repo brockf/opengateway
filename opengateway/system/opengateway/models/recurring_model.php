@@ -582,6 +582,16 @@ class Recurring_model extends Model
 			}
 		}
 		
+		if(isset($params['end_date'])) {
+			$this->load->library('field_validation');
+			if ($this->field_validation->ValidateDate($params['end_date'])) {
+				$update_data['end_date'] = $params['end_date'];			
+			}
+			else {
+				die($this->response->Error(5007));
+			}
+		}
+		
 		$subscription = $this->GetSubscriptionDetails($client_id, $params['recurring_id']);
 		//print_r($subscription);
 		if(isset($params['recur']['interval'])) {
