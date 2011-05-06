@@ -244,7 +244,7 @@ class paypal
 		
 		$response = $this->response_to_array($response);
 		
-		if ($response['ACK'] == 'Success') {
+		if ($response['ACK'] == 'Success' or $response['ACK'] == 'SuccessWithWarning') {
 			$CI->load->model('order_authorization_model');
 			$CI->order_authorization_model->SaveAuthorization($order_id, $response['TRANSACTIONID']);
 			
