@@ -64,8 +64,8 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 		$variables['date'] = date("Y-m-d h:i");
 		$variables['charge_id'] = $charge['id'];
 		$variables['card_last_four'] = $charge['card_last_four'];
-	} else 
-	{
+	}
+	else {
 		$variables['amount'] = '0.00';
 	}
 	
