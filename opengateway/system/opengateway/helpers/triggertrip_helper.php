@@ -64,6 +64,9 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 		$variables['date'] = date("Y-m-d h:i");
 		$variables['charge_id'] = $charge['id'];
 		$variables['card_last_four'] = $charge['card_last_four'];
+	} else 
+	{
+		$variables['amount'] = '0.00';
 	}
 	
 	if (isset($subscription) and is_array($subscription)) {
@@ -149,7 +152,7 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 	
     // check to see if this triggers any emails for the client
 	$emails = $CI->email_model->GetEmailsByTrigger($client_id, $trigger_type_id, $plan_id);
-	
+
 	if(!$emails) {
 		return FALSE;
 	}	
