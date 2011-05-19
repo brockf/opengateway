@@ -451,7 +451,7 @@ class twocheckout {
 		}
 	
 		//redirect('http://developers.2checkout.com/return_script/?'. trim($data, '& '));
-		redirect('https://www.2checkout.com/checkout/spurchase?'. trim($data, '& '));
+		redirect('https://www.2checkout.com/checkout/purchase?'. trim($data, '& '));
 	}
 	
 	//--------------------------------------------------------------------
@@ -504,7 +504,7 @@ class twocheckout {
 		}
 		
 		//redirect('http://developers.2checkout.com/return_script/?'. trim($data, '& '));
-		redirect('https://www.2checkout.com/checkout/spurchase?'. trim($data, '& '));
+		redirect('https://www.2checkout.com/checkout/purchase?'. trim($data, '& '));
 	}
 	
 	//--------------------------------------------------------------------
