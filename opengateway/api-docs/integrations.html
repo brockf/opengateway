@@ -117,20 +117,19 @@
 				
 				<p>At this point, your class should look something like below.</p>
 				
-				<pre class="request">
-				class my_gateway {
-				
-					var $settings;
-					
-					function __construct() 
-					{
-						$this->settings = $this->Settings();
-					}
-				
-					function Settings () {
-						$this->settings = array();
-					}
-				}
+				<pre class="request">class my_gateway {
+
+	var $settings;
+	
+	function __construct() 
+	{
+		$this->settings = $this->Settings();
+	}
+
+	function Settings () {
+		$this->settings = array();
+	}
+}
 				</pre>
 				
 				<h3>Required Methods</h3>
@@ -208,17 +207,17 @@
 					<ul>
 						<li><i>string</i> <b>name</b> - The system name of the gateway. Can not contain spaces.</li>
 						<li><i>string</i> <b>class_name</b> - The name of the gateway class.</li>
-						<li><i>boolean</i> <b>external</b> - ???</li>
-						<li><i>boolean</i> <b>no_credit_card</b> - ???</li>
+						<li><i>boolean</i> <b>external</b> - Set to TRUE if the gateway redirects to an external checkout (e.g., PayPal), else FALSE.</li>
+						<li><i>boolean</i> <b>no_credit_card</b> - Set to TRUE if the gateway Charge and Recur requests require credit card information in a <span class="request">credit_card</span> node.</li>
 						<li><i>string</i> <b>description</b> - The description that shows up in the gateway selection screen.</li>
-						<li><i>int</i> <b>is_preferred</b> - ???</li>
+						<li><i>int</i> <b>is_preferred</b> - Set to TRUE.</li>
 						<li><i>string</i> <b>setup_fee</b> - The dollar amount to setup an account. Shown in the gateway selection screen.</li>
 						<li><i>string</i> <b>monthly_fee</b> - The monthly fee the account costs. Shown in the gateway selection screen.</li>
 						<li><i>string</i> <b>transaction_fee</b> - The amount charged per transaction. Shown in the gateway selection screen.</li>
 						<li><i>string</i> <b>purchase_link</b> - The URL to visit to sign up for an account. Shown in the gateway selection screen.</li>
 						<li><i>int</i> <b>allows_updates</b> - If 0, the gateway API does not support updating client/subscription information. If 1, it does support it.</li>
 						<li><i>int</i> <b>allows_refunds</b> - If 0, the gateway API does not support refunding charges. If 1, it does support it.</li>
-						<li><i>int</i> <b>requires_customer_information</b> - ???</li>
+						<li><i>int</i> <b>requires_customer_information</b> - Set to TRUE if the Charge and Recur requests require either a <span class="request">customer_id</span> or a complete <span class="request">customer</span> node for a proper request.</li>
 						<li><i>int</i> <b>requires_customer_ip</b> - If 1, the customer's IP address is made available to pass to the gateway.</li>
 						<li><i>array</i> <b>required_fields</b> - An array of values that hold the information you will request during gateway setup. You can create any values you like here, but there are 2 required values: 
 							<ul>
@@ -234,23 +233,22 @@
 				
 				<p>Each item in the field_details array must specify the type, title and options available during setup. We will use the <i>enabled</i> and <i>mode</i> fields to demonstrate the proper format:</p>
 				
-				<pre>
-				'enabled' => array(
-					'text' => 'Enable this gateway?',
-					'type' => 'radio',
-					'options' => array(
-						'1' => 'Enabled',
-						'0' => 'Disabled')
-				),
-				'mode' => array(
-					'text' => 'Mode',
-					'type' => 'select',
-					'options' => array(
-						'live' => 'Live Mode',
-						'test' => 'Test Mode',
-						'dev' => 'Development Server'
-					)
-				)
+				<pre>'enabled' => array(
+	'text' => 'Enable this gateway?',
+	'type' => 'radio',
+	'options' => array(
+		'1' => 'Enabled',
+		'0' => 'Disabled')
+),
+'mode' => array(
+	'text' => 'Mode',
+	'type' => 'select',
+	'options' => array(
+		'live' => 'Live Mode',
+		'test' => 'Test Mode',
+		'dev' => 'Development Server'
+	)
+)
 				</pre>
 				
 				<p>The following keys are available to use in the field_detail arrays:
