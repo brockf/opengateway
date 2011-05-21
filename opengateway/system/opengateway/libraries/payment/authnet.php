@@ -486,7 +486,7 @@ class authnet
 		"<payment>".
 		 "<creditCard>".
 		  "<cardNumber>".$credit_card['card_num']."</cardNumber>".
-		  "<expirationDate>".$credit_card['exp_year']."-".str_pad($credit_card['exp_month'], 2, "0", STR_PAD_LEFT)."</expirationDate>". // required format for API is YYYY-MM
+		  "<expirationDate>".str_pad($credit_card['exp_year'], 4, "20", STR_PAD_LEFT)."-".str_pad($credit_card['exp_month'], 2, "0", STR_PAD_LEFT)."</expirationDate>". // required format for API is YYYY-MM
 		  $card_code.
 		 "</creditCard>".
 		"</payment>".
