@@ -1007,6 +1007,50 @@ class API extends Controller {
 			}
 		}
 	}
+	
+	/**
+	* Record Subscription Payment
+	*
+	* This is a hidden API call used for Membrr to record payments for subscriptions manually
+	* when extending an expiry date.
+	*
+	* @param int $recurring_id
+	* @param string $amount
+	*
+	* @return int $charge_id
+	*/
+	function RecordSubscriptionpayment ($client_id, $params) {
+		if (!isset($params['recurring_id']) or !isset($params['amount'])) {
+			die($this->response->Error(1004));
+		}
+		
+		$this->load->model('recurring_model');
+		$subscription = $this->recurring_model->GetRecurring($client_id, $params['recurring_id']);
+		
+		// get gateway_id from previous subscription payments, else make it 0
+		$result = $this->db->select('gateway_id')
+						   ->where('subscription_id',$params['recurring_id'])
+						   ->limit(1)
+				 		   ->get('subscriptions');
+				 		   
+		if ($result->num_rows() > 0) {
+			$gateway_id = $result->row()->gateway_id;
+		}	
+		else {
+			$gateway_id = 0;
+		}			 		   
+		
+		// record payment
+		$this->load->model('charge_model');
+		$charge_id = $this->charge_model->CreateNewOrder($client_id, $gateway_id, (float)$params['amount'], FALSE, $subscription['id'], $subscription['customer']['id']);
+		
+		if (empty($charge_id)) {
+			return array('error' => 'Unable to create order.');
+		}
+		else {
+			return array('charge_id' => $charge_id);
+		}
+	}
 }
 
 
