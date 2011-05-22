@@ -1048,6 +1048,8 @@ class API extends Controller {
 			return array('error' => 'Unable to create order.');
 		}
 		else {
+			$this->charge_model->SetStatus($charge_id, 1);
+		
 			return array('charge_id' => $charge_id);
 		}
 	}
