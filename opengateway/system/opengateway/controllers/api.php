@@ -1045,6 +1045,8 @@ class API extends Controller {
 		$charge_id = $this->charge_model->CreateNewOrder($client_id, $gateway_id, (float)$params['amount'], FALSE, $subscription['id'], $subscription['customer']['id']);
 		
 		if (empty($charge_id)) {
+			TriggerTrip('recurring_charge', $client_id, $charge_id, $subscription['id']);
+			
 			return array('error' => 'Unable to create order.');
 		}
 		else {
