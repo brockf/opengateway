@@ -65,9 +65,6 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 		$variables['charge_id'] = $charge['id'];
 		$variables['card_last_four'] = $charge['card_last_four'];
 	}
-	else {
-		$variables['amount'] = '0.00';
-	}
 	
 	if (isset($subscription) and is_array($subscription)) {
 		$variables['recurring_id'] = $subscription['id'];
@@ -79,6 +76,10 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 		if (isset($plan) and is_array($plan)) {
 			$variables['plan_id'] = $plan['id'];
 			$variables['plan_name'] = $plan['name'];
+		}
+		
+		if (!isset($variables['amount'])) {
+			$variables['amount'] = $subscription['amount'];
 		}
 	}
 	
@@ -96,6 +97,10 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 		$variables['customer_country'] = $customer['country'];
 		$variables['customer_email'] = $customer['email'];
 		$variables['customer_phone'] = $customer['phone'];
+	}
+	
+	if (!isset($variables['amount'])) {
+		$variables['amount'] = '0.00';
 	}
 	
 	// which events should go in the client log?
