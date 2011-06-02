@@ -985,6 +985,10 @@ class API extends Controller {
 					$this->coupon_model->subscription_adjust_amount($amount, $recur_amount, $coupon['type_id'], $coupon['reduction_type'], $coupon['reduction_amt']);
 				}
 				
+				// check for coupon free trial
+				$free_trial = (!empty($plan['free_trial'])) ? $plan['free_trial'] : FALSE;
+				$free_trial = $this->coupon_model->subscription_adjust_trial($free_trial, $coupon['type_id'], $coupon['trial_length']);
+				
 				$coupon_id = $coupon['id'];
 			}
 			else {
@@ -999,12 +1003,17 @@ class API extends Controller {
 			return array('status' => 'invalid');
 		}
 		else {
+			$return = array('status' => 'valid');
+			
 			if ($amount !== FALSE) {
-				return array('status' => 'valid', 'amount' => $amount);
+				$return['amount'] = $amount;
 			}
-			else {
-				return array('status' => 'valid');
+			
+			if ($free_trial !== FALSE) {
+				$return['free_trial'] = $free_trial;
 			}
+		
+			return $return;
 		}
 	}
 	
