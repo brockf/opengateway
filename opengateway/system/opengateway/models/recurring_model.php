@@ -466,6 +466,7 @@ class Recurring_model extends Model
 				$data[$i]['coupon'] = (isset($row->coupon_code)) ? $row->coupon_code : '';
 				
 				if($row->customer_id !== 0) {
+					$data[$i]['customer']['customer_id'] = $row->customer_id;
 					$data[$i]['customer']['id'] = $row->customer_id;
 					$data[$i]['customer']['internal_id'] = $row->internal_id;
 					$data[$i]['customer']['first_name'] = $row->first_name;
