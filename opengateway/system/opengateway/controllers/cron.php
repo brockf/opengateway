@@ -65,7 +65,7 @@ class Cron extends Controller {
 		
 		// get all the subscriptions with a next_charge date of today for the next charge
 		$today = date('Y-m-d');
-		$subscriptions = $this->recurring_model->GetAllSubscriptionsByDate('next_charge', $today);
+		$subscriptions = $this->recurring_model->GetAllSubscriptionsForCharging($today);
 		
 		$charge_success = array();
 		$charge_failure = array();

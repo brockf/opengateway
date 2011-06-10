@@ -1015,10 +1015,13 @@ class Gateway_model extends Model
 
 		$CI->load->model('recurring_model');
 		if ($response['success'] == TRUE) {
-			// Save the last_charge and next_charge
+			// save the last_charge and next_charge
 			$last_charge = date('Y-m-d');
+			
 			if (!isset($response['next_charge'])) {
-				$next_charge = $CI->recurring_model->GetNextChargeDate($params['subscription_id']);
+				// we now pass $params['next_charge'] so that, even if we run this charge late, the next charge is
+				// based off of the date it *should* have run
+				$next_charge = $CI->recurring_model->GetNextChargeDate($params['subscription_id'], $params['next_charge']);
 			}
 			else {
 				$next_charge = $response['next_charge'];

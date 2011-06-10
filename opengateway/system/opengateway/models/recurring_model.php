@@ -769,9 +769,28 @@ class Recurring_model extends Model
 		}		
 	}
 	
+	function GetAllSubscriptionsForCharging($date = FALSE)
+	{
+		if (!$date) {
+			$date = date('Y-m-d');
+		}
+		
+		$this->db->join('client_gateways', 'subscriptions.gateway_id = client_gateways.client_gateway_id', 'inner');
+		$this->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
+		$this->db->where('next_charge <=', $date);
+		$this->db->where('subscriptions.active', '1');
+		$query = $this->db->get('subscriptions');
+		
+		if ($query->num_rows > 0) {
+			return $query->result_array();
+		} else {
+			return FALSE;
+		}		
+	}
+	
 	function GetNextChargeDate($subscription_id, $from_date = FALSE)
 	{
-		if(!$from_date) {
+		if (!$from_date) {
 			$from_date = date('Y-m-d');
 		}
 		
