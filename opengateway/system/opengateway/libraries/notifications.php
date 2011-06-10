@@ -41,10 +41,13 @@ class Notifications {
 			curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields); 
 			curl_exec($ch); 
+			$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 			curl_close($ch);
 			
-			$CI->db->where('notification_id',$item['notification_id']);
-			$CI->db->delete('notifications');
+			if ($http_code >= 200 or $http_code < 300) {
+				$CI->db->where('notification_id',$item['notification_id']);
+				$CI->db->delete('notifications');
+			}
 			
 			$count++;
 		}
