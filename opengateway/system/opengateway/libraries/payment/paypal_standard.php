@@ -530,6 +530,14 @@ class paypal_standard
 			$response['reason'] = "The charge has failed.";
 		}
 		
+		// should we cancel this subscription?  i.e., will it expire before the next renew?
+		// this is only important because PayPal's charge scheduling sometimes jumps the gun
+		if (strtotime($params['end_date']) <= (strtotime($params['next_charge']) + (60*60*24*$params['charge_interval']))) {
+			// silently cancel the subscription
+			$CI->load->model('recurring_model');
+			$CI->recurring_model->CancelRecurring($client_id, $params['subscription_id'], TRUE);
+		}
+		
 		return $response;	
 	}
 	
