@@ -180,87 +180,150 @@ class paypal_standard
 		
 		$client = $CI->client_model->GetClient($client_id,$client_id);
 		
-		// save the return URL
+		// save the return and cancel URL
 		$CI->charge_data_model->Save('r' . $subscription_id, 'return_url', $return_url);
+		$CI->charge_data_model->Save('r' . $subscription_id, 'cancel_url', $cancel_url);
 		
 		// save the initial charge amount (it may be different, so we treat it as a separate first charge)
 		$CI->charge_data_model->Save('r' . $subscription_id, 'first_charge', $amount);
 		
 		$post_url = $this->GetAPIURL($gateway);
 		
-		$post = array();
-		$post['version'] = '56.0';
-		$post['method'] = 'SetExpressCheckout';
-		$post['returnurl'] = site_url('callback/paypal_standard/confirm_recur/' . $subscription_id);
-		$post['cancelurl'] = (!empty($cancel_url)) ? $cancel_url : 'http://www.paypal.com';
-		$post['noshipping'] = '1';
-		$post['addroverride'] = '1';
-		$post['allownote'] = '0';
-		$post['localecode'] = $client['country'];
-		$post['solutiontype'] = 'Sole';
-		$post['landingpage'] = 'Billing';
-		$post['channeltype'] = 'Merchant';
-		
-		if (isset($customer['email'])) {
-			$post['email'] = $customer['email'];
-		}
-		
-		if (isset($customer['first_name'])) {
-			$post['name'] = $customer['first_name'] . ' ' . $customer['last_name'];
-		}
-		
-		$post['PAYMENTACTION'] = 'sale';
-		$post['user'] = $gateway['user'];
-		$post['pwd'] = $gateway['pwd'];
-		$post['signature'] = $gateway['signature'];
-		$post['AMT'] = $amount; 
-		$post['invnum'] = $subscription_id;
-		$post['currencycode'] = $gateway['currency'];
-		$post['L_BILLINGTYPE0'] = 'RecurringPayments';
-		
-		$item_description = 'Recurring payment';
-		
-		$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
-
-		if (isset($subscription['plan']['name'])) {
-			$item_description = $subscription['plan']['name'];
-		}
-		
-		$post['L_DESC0'] = $item_description;
-		$post['L_AMT0'] = $amount;
-		$post['L_QTY0'] = '1';
-		
-		if (isset($customer['address_1']) and !empty($customer['address_1'])) {
-			$post['SHIPTONAME'] = $customer['first_name'] . ' ' . $customer['last_name'];
-			$post['SHIPTOSTREET'] = $customer['address_1'];
-			$post['SHIPTOSTREET2'] = $customer['address_2'];
-			$post['SHIPTOCITY'] = $customer['city'];
-			$post['SHIPTOSTATE'] = $customer['state'];
-			$post['SHIPTOZIP'] = $customer['postal_code'];
-			$post['SHIPTOCOUNTRYCODE'] = $customer['country'];
-			$post['SHIPTOPHONENUM'] = $customer['phone'];
-		}
-		
-		// handle first charges unless there's a free trial
-		if ($charge_today === TRUE) {
-			// first recurring charge won't start until after the first interval
-			// we'll run an instant payment first
-			// old start date
-			$adjusted_start_date = TRUE;
-			$start_date = date('Y-m-d',strtotime($start_date)+(60*60*24*$interval));
-		}
-		
-		// get true recurring rate, first
-		// $subscription is loaded above
+		// version 1.78 change
+		// if the total occurrences are 1, we'll send it as a single payment to PayPal
+		// otherwise, we'll send it as a normal PayPal recurring charge
+		if ((int)$total_occurrences == 1 and $charge_today === TRUE) {
+			$CI->charge_data_model->Save('r' . $subscription_id, 'paypal_charge_type', 'single');
+			
+			$post = array();
+			$post['version'] = '56.0';
+			$post['method'] = 'SetExpressCheckout';
+			$post['returnurl'] = site_url('callback/paypal_standard/confirm_recur/' . $subscription_id);
+			$post['cancelurl'] = (!empty($cancel_url)) ? $cancel_url : 'http://www.paypal.com';
+			$post['noshipping'] = '1';
+			$post['addroverride'] = '1';
+			$post['allownote'] = '0';
+			$post['localecode'] = $client['country'];
+			$post['solutiontype'] = 'Sole';
+			$post['landingpage'] = 'Billing';
+			$post['channeltype'] = 'Merchant';
+			
+			if (isset($customer['email'])) {
+				$post['email'] = $customer['email'];
+			}
+			
+			if (isset($customer['first_name'])) {
+				$post['name'] = $customer['first_name'] . ' ' . $customer['last_name'];
+			}
+			
+			if (isset($customer['address_1']) and !empty($customer['address_1'])) {
+				$post['SHIPTONAME'] = $customer['first_name'] . ' ' . $customer['last_name'];
+				$post['SHIPTOSTREET'] = $customer['address_1'];
+				$post['SHIPTOSTREET2'] = $customer['address_2'];
+				$post['SHIPTOCITY'] = $customer['city'];
+				$post['SHIPTOSTATE'] = $customer['state'];
+				$post['SHIPTOZIP'] = $customer['postal_code'];
+				$post['SHIPTOCOUNTRYCODE'] = $customer['country'];
+				$post['SHIPTOPHONENUM'] = $customer['phone'];
+			}
 				
-		$description = ($subscription['amount'] != $amount) ? 'Initial charge: ' . $gateway['currency'] . $amount . ', then ' : '';
-		$description .= $gateway['currency'] . money_format("%!^i",$subscription['amount']) . ' every ' . $interval . ' days until ' . date('Y-m-d',strtotime($subscription['end_date']));
-		if ($charge_today === FALSE) {
-			$description .= ' (free trial ends ' . $start_date . ')';
+			$post['paymentaction'] = 'sale';
+			$post['user'] = $gateway['user'];
+			$post['pwd'] = $gateway['pwd'];
+			$post['signature'] = $gateway['signature'];
+			$post['AMT'] = $amount; 
+			
+			$item_description = 'One-time payment';
+			
+			$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
+	
+			if (isset($subscription['plan']['name'])) {
+				$item_description = $subscription['plan']['name'];
+			}
+			
+			$post['L_DESC0'] = $item_description;
+			$post['L_AMT0'] = $amount;
+			$post['L_QTY0'] = '1';
+			$post['invnum'] = $subscription_id;
+			$post['currencycode'] = $gateway['currency'];
 		}
-		$post['L_BILLINGAGREEMENTDESCRIPTION0'] = $description;
+		else {
+			$CI->charge_data_model->Save('r' . $subscription_id, 'paypal_charge_type', 'subscription');
 		
-		$CI->charge_data_model->Save('r' . $subscription_id, 'profile_description', $description);
+			$post = array();
+			$post['version'] = '56.0';
+			$post['method'] = 'SetExpressCheckout';
+			$post['returnurl'] = site_url('callback/paypal_standard/confirm_recur/' . $subscription_id);
+			$post['cancelurl'] = (!empty($cancel_url)) ? $cancel_url : 'http://www.paypal.com';
+			$post['noshipping'] = '1';
+			$post['addroverride'] = '1';
+			$post['allownote'] = '0';
+			$post['localecode'] = $client['country'];
+			$post['solutiontype'] = 'Sole';
+			$post['landingpage'] = 'Billing';
+			$post['channeltype'] = 'Merchant';
+			
+			if (isset($customer['email'])) {
+				$post['email'] = $customer['email'];
+			}
+			
+			if (isset($customer['first_name'])) {
+				$post['name'] = $customer['first_name'] . ' ' . $customer['last_name'];
+			}
+			
+			$post['PAYMENTACTION'] = 'sale';
+			$post['user'] = $gateway['user'];
+			$post['pwd'] = $gateway['pwd'];
+			$post['signature'] = $gateway['signature'];
+			$post['AMT'] = $amount; 
+			$post['invnum'] = $subscription_id;
+			$post['currencycode'] = $gateway['currency'];
+			$post['L_BILLINGTYPE0'] = 'RecurringPayments';
+			
+			$item_description = 'Recurring payment';
+			
+			$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
+	
+			if (isset($subscription['plan']['name'])) {
+				$item_description = $subscription['plan']['name'];
+			}
+			
+			$post['L_DESC0'] = $item_description;
+			$post['L_AMT0'] = $amount;
+			$post['L_QTY0'] = '1';
+			
+			if (isset($customer['address_1']) and !empty($customer['address_1'])) {
+				$post['SHIPTONAME'] = $customer['first_name'] . ' ' . $customer['last_name'];
+				$post['SHIPTOSTREET'] = $customer['address_1'];
+				$post['SHIPTOSTREET2'] = $customer['address_2'];
+				$post['SHIPTOCITY'] = $customer['city'];
+				$post['SHIPTOSTATE'] = $customer['state'];
+				$post['SHIPTOZIP'] = $customer['postal_code'];
+				$post['SHIPTOCOUNTRYCODE'] = $customer['country'];
+				$post['SHIPTOPHONENUM'] = $customer['phone'];
+			}
+			
+			// handle first charges unless there's a free trial
+			if ($charge_today === TRUE) {
+				// first recurring charge won't start until after the first interval
+				// we'll run an instant payment first
+				// old start date
+				$adjusted_start_date = TRUE;
+				$start_date = date('Y-m-d',strtotime($start_date)+(60*60*24*$interval));
+			}
+			
+			// get true recurring rate, first
+			// $subscription is loaded above
+					
+			$description = ($subscription['amount'] != $amount) ? 'Initial charge: ' . $gateway['currency'] . $amount . ', then ' : '';
+			$description .= $gateway['currency'] . money_format("%!^i",$subscription['amount']) . ' every ' . $interval . ' days until ' . date('Y-m-d',strtotime($subscription['end_date']));
+			if ($charge_today === FALSE) {
+				$description .= ' (free trial ends ' . $start_date . ')';
+			}
+			$post['L_BILLINGAGREEMENTDESCRIPTION0'] = $description;
+			
+			$CI->charge_data_model->Save('r' . $subscription_id, 'profile_description', $description);
+		}
 					
 		$response = $this->Process($post_url, $post);
 		
@@ -329,6 +392,18 @@ class paypal_standard
 	function CancelRecurring($client_id, $subscription, $gateway)
 	{
 		$CI =& get_instance();
+		
+		// is this a real subscription, or an occurrences = 1 situation?
+		// get charge data
+		$CI->load->model('charge_data_model');
+		$data = $CI->charge_data_model->Get('r' . $subscription['subscription_id']);
+		
+		// we have to check for the existence of this key because older subscriptions
+		// prior to this version (1.78) won't include this data
+		if (isset($data['paypal_charge_type']) and $data['paypal_charge_type'] != 'subscription') {
+			return TRUE;
+		}
+		
 		$CI->load->model('recurring_model');
 		
 		$post_url = $this->GetAPIURL($gateway);
@@ -356,6 +431,18 @@ class paypal_standard
 	function UpdateRecurring($client_id, $gateway, $subscription, $customer, $params)
 	{
 		$CI =& get_instance();
+			
+		// is this a real subscription, or an occurrences = 1 situation?
+		// get charge data
+		$CI->load->model('charge_data_model');
+		$data = $CI->charge_data_model->Get('r' . $subscription['subscription_id']);
+		
+		// we have to check for the existence of this key because older subscriptions
+		// prior to this version (1.78) won't include this data
+		if (isset($data['paypal_charge_type']) and $data['paypal_charge_type'] != 'subscription') {
+			return FALSE;
+		}
+		
 		$CI->load->model('recurring_model');
 		
 		$post_url = $this->GetAPIURL($gateway);
@@ -409,8 +496,21 @@ class paypal_standard
 	
 	function ChargeRecurring($client_id, $gateway, $params)
 	{
+		// is this a real subscription, or an occurrences = 1 situation?
+		// get charge data
+		$CI =& get_instance();
+		$CI->load->model('charge_data_model');
+		$data = $CI->charge_data_model->Get('r' . $params['subscription_id']);
+		
+		// we have to check for the existence of this key because older subscriptions
+		// prior to this version (1.78) won't include this data
+		if (isset($data['paypal_charge_type']) and $data['paypal_charge_type'] != 'subscription') {
+			$response = array('success' => FALSE, 'reason' => 'Not a subscription.  Occurrences were zero when this subscription was created.');
+			return $response;
+		}
+		
 		$details = $this->GetProfileDetails($client_id, $gateway, $params);
-		if(!$details) {
+		if (empty($details)) {
 			// if we didn't retrieve the profile properly, we'd rather let the subscription
 			// go then cancel it due to a one-time connection issue
 			return TRUE;
@@ -489,17 +589,26 @@ class paypal_standard
 				header('Location: ' . $data['return_url']);
 				die();
 			}
+			else {
+				die('There was an error completing your payment with PayPal.  Please attempt to re-purchase or contact PayPal if you continue to have issues.  <a href="' . $data['cancel_url'] . '">Go back to merchant</a>.');
+			}
 		}
 	}
 	
 	function Callback_confirm_recur ($client_id, $gateway, $subscription, $params) {
 		$CI =& get_instance();
 		
+		// retrieve charge data
 		$CI->load->model('charge_data_model');
 		$data = $CI->charge_data_model->Get('r' . $subscription['id']);
 		
+		// this gets complex below, so we'll track the general success of this process
+		// with a simple boolean variable
+		$process_status = FALSE;
+		
 		$url = $this->GetAPIUrl($gateway);
 	
+		// regardless of it's a single or recurring charge at PayPal, we need to retrieve the token
 		$post = array();
 		$post['method'] = 'GetExpressCheckoutDetails';
 		$post['token'] = $params['token'];
@@ -511,7 +620,7 @@ class paypal_standard
 		$response = $this->Process($url, $post);
 		
 		if (isset($response['TOKEN']) and $response['TOKEN'] == $params['token']) {
-			// we're good	
+			// tokens match.  this is a legitimate PayPal request
 			
 			// do we need a first charge?
 			if (date('Y-m-d',strtotime($subscription['start_date'])) == date('Y-m-d', strtotime($subscription['date_created']))) {
@@ -537,8 +646,6 @@ class paypal_standard
 				
 				$response_charge = $this->Process($url, $post);
 				
-				//die(print_r($response_charge));
-				
 				if (!isset($response_charge) or $response_charge['PAYMENTSTATUS'] != 'Completed' and $response_charge['PAYMENTSTATUS'] != 'Pending' and $response_charge['PAYMENTSTATUS'] != 'Processed') {
 					die('Your initial PayPal payment failed.  <a href="' . $data['cancel_url'] . '">Go back to merchant</a>.');
 				}
@@ -560,29 +667,41 @@ class paypal_standard
 				$subscription['start_date'] = date('Y-m-d',strtotime($subscription['start_date'])+(60*60*24*$subscription['interval']));
 			}		
 			
-			// continue with creating payment profile
-			$post = $response; // most of the data is from here
-			unset($post['NOTE']);
+			// if this was sent to PayPal as a recurring payment, we'll create the profile here
+			if ($data['paypal_charge_type'] == 'subscription') {
+				// continue with creating payment profile
+				$post = $response; // most of the data is from here
+				unset($post['NOTE']);
+				
+				$post['METHOD'] = 'CreateRecurringPaymentsProfile';
+				$post['VERSION'] = '60';
+				$post['user'] = $gateway['user'];
+				$post['pwd'] = $gateway['pwd'];
+				$post['signature'] = $gateway['signature'];
+				$post['TOKEN'] = $response['TOKEN'];
+				$post['DESC'] = $data['profile_description'];
+				$post['PROFILESTARTDATE'] = date('c',strtotime($subscription['start_date']));
+				$post['BILLINGPERIOD'] = 'Day';
+				$post['BILLINGFREQUENCY'] = $subscription['interval'];
+				$post['AMT'] = $subscription['amount'];
+				
+				$response_sub = $this->Process($url, $post);
+				
+				if (isset($response_sub['PROFILEID'])) {
+					// success!	
+					$CI->recurring_model->SaveApiCustomerReference($subscription['id'], $response_sub['PROFILEID']);
+					
+					$process_status = TRUE;
+				}
+			}
+			else {
+				// we know we are good because the first charge was executed before and, if it failed
+				// we'd have die()'d above
+				$process_status = TRUE;
+			}
 			
-			$post['METHOD'] = 'CreateRecurringPaymentsProfile';
-			$post['VERSION'] = '60';
-			$post['user'] = $gateway['user'];
-			$post['pwd'] = $gateway['pwd'];
-			$post['signature'] = $gateway['signature'];
-			$post['TOKEN'] = $response['TOKEN'];
-			$post['DESC'] = $data['profile_description'];
-			$post['PROFILESTARTDATE'] = date('c',strtotime($subscription['start_date']));
-			$post['BILLINGPERIOD'] = 'Day';
-			$post['BILLINGFREQUENCY'] = $subscription['interval'];
-			$post['AMT'] = $subscription['amount'];
-			
-			$response_sub = $this->Process($url, $post);
-			
-			if (isset($response_sub['PROFILEID'])) {
+			if ($process_status === TRUE) {
 				// success!
-				
-				$CI->recurring_model->SaveApiCustomerReference($subscription['id'], $response_sub['PROFILEID']);
-				
 				$order_id = (isset($order_id)) ? $order_id : FALSE;
 			
 				$CI->recurring_model->SetActive($client_id, $subscription['id']);

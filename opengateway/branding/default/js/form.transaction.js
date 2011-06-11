@@ -35,4 +35,8 @@ $(document).ready(function () {
 	$('select[name="gateway"]').change(function () {
 		$('[name="gateway_type"][value="specify"]').attr('checked',true);
 	});
+	
+	$('select[name="recurring_plan"]').change(function () {
+		$('[name="recurring"][value="1"]').attr('checked',true);
+	});
 });
