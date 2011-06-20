@@ -17,17 +17,22 @@ function local_time ($client_id, $time) {
 	if (defined("_CONTROLPANEL") and strstr($time, ' ')) {
 		$format = 'M j, Y h:i a';
 	}
+
+	$formatted_date = date($format,gmt_to_local($timestamp, $timezone, $daylight_saving));
 	
-	$check_empty = $timestamp + date("Z");
+	// if the date is null, we won't return it
+	// any date before May 29, 1988 is null
+	$is_null = ($timestamp < 580881600) ? TRUE : FALSE;
 	
-	if (empty($check_empty) and defined("_CONTROLPANEL")) {
+	if ($is_null === TRUE and defined("_CONTROLPANEL")) {
 		return 'N/A';
 	}
-	elseif (empty($check_empty)) {
+	elseif ($is_null === TRUE) {
 		return '0';
 	}
-
-	return date($format,gmt_to_local($timestamp, $timezone, $daylight_saving));
+	else {
+		return $formatted_date;
+	}
 }
 
 function server_time ($time, $format = "Y-m-d", $today_or_more = false) {
