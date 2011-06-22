@@ -445,7 +445,6 @@ class Coupon_model extends Model {
 	public function update_coupon($client_id, $coupon_id, $name, $code, $start_date, $end_date, $max_uses, $customer_limit, $type_id, $reduction_type, $reduction_amt, $trial_length, $plans) 
 	{
 		$insert_fields = array(
-							'client_id'				=> $client_id,
 							'coupon_name'			=> $name,
 							'coupon_code'			=> $code,
 							'coupon_start_date'		=> $start_date,
@@ -458,30 +457,15 @@ class Coupon_model extends Model {
 							'coupon_trial_length'	=> $trial_length,
 						);
 		
-		// Grab arrays of data to be used after the initial creation
-		$plans = isset($fields['plans']) ? $fields['plans'] : null;
-		$trial_subs = isset($fields['trial_subs']) ? $fields['trial_subs'] : null;
-	
-		// Now unset these so they're not clogging up the system
-		unset($fields['plans']);
-		
-		// Add the created_on field
-		$insert_fields['created_on'] = date('Y-m-d H:i:s');
-		
 		// Now, time to try saving the coupon itself
 		$this->db->where('client_id', $client_id);
 		$this->db->where('coupon_id', $coupon_id);
 		$this->db->update('coupons', $insert_fields);
 				
-		if ($this->db->affected_rows())
-		{
-			// Save was successfull, so try to save our various associated parts.
-			if (!empty($plans) && count($plans)) { $this->save_related($id, 'coupons_plans', 'plan_id', $plans); }
-			
-			return TRUE;
-		}
+		// Save was successfull, so try to save our various associated parts.
+		if (!empty($plans) && count($plans)) { $this->save_related($coupon_id, 'coupons_plans', 'plan_id', $plans); }
 		
-		return FALSE;
+		return TRUE;
 	}
 	
 	//--------------------------------------------------------------------
@@ -530,9 +514,13 @@ class Coupon_model extends Model {
 		// Now save the new values
 		foreach ($items as $item)
 		{ 
-			$this->db->set(array('coupon_id' => $coupon_id, $field => $item));
-			$this->db->insert($table);
+			if (!empty($item)) {
+				$this->db->set(array('coupon_id' => $coupon_id, $field => $item));
+				$this->db->insert($table);
+			}
 		}
+		
+		return TRUE;
 	}
 	
 	//--------------------------------------------------------------------

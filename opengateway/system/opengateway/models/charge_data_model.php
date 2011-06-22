@@ -32,7 +32,7 @@ class Charge_data_model extends Model
 		$insert_data = array(
 							'order_id' => $order_id,
 							'order_data_key' => $key,
-							'order_data_value' => $value
+							'order_data_value' => (isset($value) ? $value : ''
 							);
 		
 		$this->db->insert('order_data', $insert_data);
