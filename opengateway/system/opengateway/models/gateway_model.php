@@ -362,7 +362,6 @@ class Gateway_model extends Model
 			if (!empty($renewed_subscription)) {
 				$mark_as_renewed = $renewed_subscription['subscription_id'];
 				
-				
 				/**
 				* automatically set start date
 				* we don't do this because Membrr does it automatically, and want to give
@@ -690,7 +689,10 @@ class Gateway_model extends Model
 		if ($response['response_code'] == 100) {
 			if (!empty($mark_as_renewed)) {
 				$CI->recurring_model->SetRenew($mark_as_renewed, $subscription_id);
-				$CI->recurring_model->MakeInactive($mark_as_renewed);
+				
+				// we used to only mark the old subscription as inactive, but now we will completely cancel it
+				// this stops double recurring for PayPal-esque plugins that are initiated on their end
+				$CI->recurring_model->CancelRecurring($client_id, $mark_as_renewed, TRUE);
 			}
 			
 			if (!isset($response['not_completed']) or $response['not_completed'] == FALSE) {
