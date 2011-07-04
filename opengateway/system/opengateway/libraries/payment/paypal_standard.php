@@ -318,7 +318,7 @@ class paypal_standard
 			$description = ($subscription['amount'] != $amount) ? 'Initial charge: ' . $gateway['currency'] . $amount . ', then ' : '';
 			$description .= $gateway['currency'] . money_format("%!^i",$subscription['amount']) . ' every ' . $interval . ' days until ' . date('Y-m-d',strtotime($subscription['end_date']));
 			if ($charge_today === FALSE) {
-				$description .= ' (free trial ends ' . $start_date . ')';
+				$description .= ' (first charge on ' . $start_date . ')';
 			}
 			$post['L_BILLINGAGREEMENTDESCRIPTION0'] = $description;
 			
