@@ -71,7 +71,9 @@ class eway
 										'accept_mc',
 										'accept_discover',
 										'accept_dc',
-										'accept_amex'
+										'accept_amex',
+										'username',
+										'password'
 										);
 										
 		$settings['field_details'] = array(
