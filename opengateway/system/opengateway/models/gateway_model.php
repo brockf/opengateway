@@ -208,6 +208,9 @@ class Gateway_model extends Model
 			$CI->load->model('coupon_model');
 			$coupon = $CI->coupon_model->get_coupons($client_id, array('coupon_code' => $coupon));
 			
+			// log coupon attempt
+			log_message('debug', 'Attempting to validate coupon "' . $coupon[0]['code'] . '" for one-time order of ' . $amount);
+			
 			if (!empty($coupon) and $CI->coupon_model->is_eligible($coupon, FALSE, isset($customer_id) ? $customer_id : FALSE, TRUE)) {
 				$coupon = $coupon[0];
 				

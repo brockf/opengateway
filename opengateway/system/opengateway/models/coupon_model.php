@@ -47,11 +47,16 @@ class Coupon_model extends Model {
 		if ($single_charge == TRUE and $coupon['type_id'] != '1') {
 			// this coupon is for recurrings
 			
+			log_message('debug','Coupon ineligible: Coupon is for recurring charges.');
+			
 			return FALSE;
 		}
 	
 		if ($coupon['end_date'] != FALSE and (strtotime($coupon['end_date'])+84600) < time()) {
 			// expired
+			
+			log_message('debug','Coupon ineligible: Coupon expired on ' . date('Y-m-d', strtotime($coupon['end_date'])) . '.');
+			
 			return FALSE;
 		}
 		
@@ -60,11 +65,17 @@ class Coupon_model extends Model {
 		
 		if (!empty($plans) and $plan_id == FALSE) {
 			// plan is required
+			
+			log_message('debug','Coupon ineligible: Coupon requires a plan and no plan was submitted.');
+			
 			return FALSE;
 		}
 		
 		if (!empty($plans) and !in_array($plan_id, $plans)) {
 			// not for this plan
+			
+			log_message('debug','Coupon ineligible: Coupon requires a plan and this recurring charge is not one of those plans.');
+			
 			return FALSE;
 		}
 		
@@ -84,6 +95,9 @@ class Coupon_model extends Model {
 			
 			if ($uses >= $coupon['max_uses']) {
 				// too many uses
+				
+				log_message('debug','Coupon ineligible: Coupon has exceeded maximum uses.');
+				
 				return FALSE;
 			}
 		}
@@ -106,9 +120,14 @@ class Coupon_model extends Model {
 			
 			if ($customer_uses >= $coupon['customer_limit']) {
 				// too many uses for this customer
+				
+				log_message('debug','Coupon ineligible: Coupon has exceeded maximum uses for this customer.');
+				
 				return FALSE;
 			}
 		}
+		
+		log_message('debug','Coupon ineligible: Coupon is OK.');
 		
 		return TRUE;
 	}
