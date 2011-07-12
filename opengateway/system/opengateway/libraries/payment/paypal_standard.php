@@ -384,6 +384,12 @@ class paypal_standard
 		// getting response from server
 		$response = curl_exec($ch);
 		
+		// Throw an error if we can't continue. Will help in debugging.
+		if (curl_error($ch))
+		{
+			show_error(curl_error($ch));
+		}
+		
 		$response = $this->response_to_array($response);
 		
 		return $response;
