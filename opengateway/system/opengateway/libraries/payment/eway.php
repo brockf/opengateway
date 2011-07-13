@@ -456,6 +456,7 @@ class eway
 		curl_setopt($ch, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $xml); // use HTTP POST to send form data
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: text/xml;charset=UTF-8'));
 		
 		// We need to make curl recognize the CA certificated so it can get by...
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);	// Verify it belongs to the server.
