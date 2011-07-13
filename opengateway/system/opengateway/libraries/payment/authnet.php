@@ -426,8 +426,9 @@ class authnet
 		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
 		curl_setopt($request, CURLOPT_HTTPHEADER, Array("Content-Type: text/xml"));
 		curl_setopt($request, CURLOPT_POSTFIELDS, $content); // use HTTP POST to send form data
+		curl_setopt($request, CURLOPT_SSL_VERIFYPEER, false);
 		$post_response = curl_exec($request); // execute curl post and store results in $post_response
-		
+//echo '<pre>'; die(var_dump($post_response));	
 		curl_close($request); // close curl object
 		
 		@$response = simplexml_load_string($post_response);
@@ -460,6 +461,7 @@ class authnet
 								 "<city>" . $customer['city'] . "</city>".
 								 "<state>" . $customer['state'] . "</state>".
 								 "<zip>" . $customer['postal_code'] . "</zip>".
+								 "<country>" . $customer['country'] . "</country>".
 								 "<phoneNumber>" . $customer['phone'] . "</phoneNumber>";
 		}
 		else {
@@ -498,6 +500,7 @@ class authnet
 		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
 		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
 		curl_setopt($request, CURLOPT_HTTPHEADER, Array("Content-Type: text/xml"));
+		curl_setopt($request, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($request, CURLOPT_POSTFIELDS, $content); // use HTTP POST to send form data
 		$post_response = curl_exec($request); // execute curl post and store results in $post_response
 		
@@ -612,10 +615,12 @@ class authnet
 		
 		$request = curl_init($post_url); // initiate curl object
 		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
+		curl_setopt($request, CURLOPT_VERBOSE, 1);
+		curl_setopt($request, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
 		curl_setopt($request, CURLOPT_POSTFIELDS, $post_string); // use HTTP POST to send form data
 		$post_response = curl_exec($request); // execute curl post and store results in $post_response
-		
+//	echo '<pre>'; die(print_r($post_response));	
 		curl_close ($request); // close curl object
 		
 		$response = explode('|',$post_response);
