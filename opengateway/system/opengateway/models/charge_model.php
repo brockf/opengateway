@@ -476,21 +476,23 @@ class Charge_model extends Model
 	/**
 	* Get Details of the last order for a customer.
 	*
-	* Returns array of order details for a specific order_id.
-	*
 	* @param int $client_id The client ID.
 	* @param int $customer_id The customer ID.
-	* 
+	* @param int $gateway_id Filter by gateway 
+	*
 	* @return array|bool Array with charge details or FALSE upon failure
 	*/
 	
-	function GetLatestCharge($client_id, $customer_id)
+	function GetLatestCharge($client_id, $customer_id, $gateway_id = FALSE)
 	{	
-		$this->db->join('order_authorizations', 'order_authorizations.order_id = orders.order_id', 'inner');
-		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
-		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$this->db->where('orders.client_id', $client_id);
 		$this->db->where('orders.customer_id', $customer_id);
+		
+		if (!empty($gateway_id)) {
+			$this->db->where('orders.gateway_id', $gateway_id);
+		}
+		
+		$this->db->where('orders.status','1');
 		$this->db->order_by('timestamp', 'DESC');
 		$this->db->limit(1);
 		$query = $this->db->get('orders');

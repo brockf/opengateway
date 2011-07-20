@@ -586,14 +586,17 @@ class API extends Controller {
 	
 	function GetLatestCharge($client_id, $params)
 	{
-		if(!isset($params['customer_id'])) {
+		if (!isset($params['customer_id'])) {
 			die($this->response->Error(6001));
 		}
 		
 		$this->load->model('charge_model');
 		
+		// passed a gateway paramater?
+		$gateway_id = (isset($params['gateway_id']) and !empty($params['gateway_id'])) ? $params['gateway_id'] : FALSE;
+		
 		$data = array();
-		if ($charge = $this->charge_model->GetLatestCharge($client_id, $params['customer_id'])) {	
+		if ($charge = $this->charge_model->GetLatestCharge($client_id, $params['customer_id'], $gateway_id)) {	
 			$data['charge'] = $charge;
 			
 			return $data;
