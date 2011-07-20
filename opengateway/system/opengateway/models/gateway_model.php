@@ -1011,6 +1011,12 @@ class Gateway_model extends Model
 			// Load the proper library
 			$gateway_name = $gateway['name'];
 			$this->load->library('payment/'.$gateway_name);
+			
+			// send to gateway for charging
+			// gateway responds with:
+			// 	success as TRUE or FALSE
+			//	reason (error if success == FALSE)
+			//	next_charge (if standard next_charge won't apply)
 			$response = $this->$gateway_name->AutoRecurringCharge($client_id, $order_id, $gateway, $params);
 		}
 		else {
@@ -1024,8 +1030,6 @@ class Gateway_model extends Model
 			$last_charge = date('Y-m-d');
 			
 			if (!isset($response['next_charge'])) {
-				// we now pass $params['next_charge'] so that, even if we run this charge late, the next charge is
-				// based off of the date it *should* have run
 				$next_charge = $CI->recurring_model->GetNextChargeDate($params['subscription_id'], $params['next_charge']);
 			}
 			else {

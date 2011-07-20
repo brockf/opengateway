@@ -607,6 +607,11 @@ class paypal
 		
 		if ((int)$failed_payments < 1 and $status != 'Cancelled') {		
 			$response['success'] = TRUE;
+			
+			if (isset($details['NEXTBILLINGDATE'])) {
+				$next_charge = date('Y-m-d', strtotime($details['NEXTBILLINGDATE']));
+				$response['next_charge'] = $next_charge;
+			}
 		} else {
 			$response['success'] = FALSE;
 			$response['reason'] = "The charge has failed.";
