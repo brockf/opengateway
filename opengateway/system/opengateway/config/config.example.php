@@ -36,7 +36,7 @@ $config['currency_symbol'] = '$';
 $config['show_dashboard_chart'] = 'yes';
 
 // No Receipt for Free Charges
-// set to TRUE to not send emails for recurring_charge, new_recurring, and charge if the charge
+// set to TRUE to not send emails for recurring_charge, and charge if the charge
 // has an amount of $0
 $config['no_receipt_for_free_charges'] = FALSE;
 
