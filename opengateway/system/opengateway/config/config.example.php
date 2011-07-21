@@ -30,7 +30,15 @@ $config['support_url'] = 'http://help.electricfunction.com';
 $config['ssl_active'] = false;
 $config['cron_key'] = '0000000000000000';
 $config['currency_symbol'] = '$';
-$config['show_dashboard_chart'] = 'yes'; // set to 'no' to not show it
+
+// Show Dashboard Chart
+// set to "no" to hide the dashboard revenue chart in your control panel
+$config['show_dashboard_chart'] = 'yes';
+
+// No Receipt for Free Charges
+// set to TRUE to not send emails for recurring_charge, new_recurring, and charge if the charge
+// has an amount of $0
+$config['no_receipt_for_free_charges'] = FALSE;
 
 $config['java_include_path'] = APPPATH . 'includes/';
 

@@ -154,6 +154,13 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 			
 		$CI->notifications->QueueNotification($notification_url,$array);
     }
+    
+    // should we send a receipt, even if it's free?
+    $test_amount = (isset($variables['amount'])) ? (float)$variables['amount'] : FALSE;
+	if (empty($test_amount) and in_array($trigger_type, array('recurring_charge','new_recurring')) and $CI->config->item('no_receipt_for_free_charges') === TRUE) {
+		log_message('debug','No email sent for ' . $trigger_type . ' because amount was 0 (config item set to TRUE).');
+		return TRUE;
+	}
 	
     // check to see if this triggers any emails for the client
 	$emails = $CI->email_model->GetEmailsByTrigger($client_id, $trigger_type_id, $plan_id);
