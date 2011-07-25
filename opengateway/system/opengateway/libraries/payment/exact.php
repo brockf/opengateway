@@ -133,13 +133,13 @@ class exact
 					'Transaction_Type'  => '00',
 				 	'Card_Number' 		=> $credit_card['card_num'],
 					'Expiry_Date'		=> str_pad($credit_card['exp_month'], 2, "0", STR_PAD_LEFT) . substr($credit_card['exp_year'],-2,2),
-					'CVD_Presence_Ind' 	=> (empty($credit_card['cvv'])) ? '9' : '1',
+					'CVD_Presence_Ind' 	=> (!isset($credit_card['cvv']) or empty($credit_card['cvv'])) ? '9' : '1',
 					'Customer_Ref' 		=> $order_id,
 					'DollarAmount' 		=> $amount
 		  		);
 		
 		if (isset($credit_card['cvv'])) {
-			$transaction['VerificationStr1'] = $credit_card['cvv'];
+			$transaction['VerificationStr2'] = $credit_card['cvv'];
 		}  
 		
 		if (isset($customer['customer_id'])) {
@@ -249,13 +249,13 @@ class exact
 		'Transaction_Type'  => '40',
 	 	'Card_Number' 		=> $credit_card['card_num'],
 		'Expiry_Date'		=> str_pad($credit_card['exp_month'], 2, "0", STR_PAD_LEFT) . substr($credit_card['exp_year'],-2,2),
-		'CVD_Presence_Ind' 	=> (empty($credit_card['cvv'])) ? '9' : '1',
+		'CVD_Presence_Ind' 	=> (!isset($credit_card['cvv']) or empty($credit_card['cvv'])) ? '9' : '1',
 		'Customer_Ref' 		=> $order_id,
 		'DollarAmount' 		=> $amount
 	    );
 		
 		if (isset($credit_card['cvv'])) {
-			$transaction['VerificationStr1'] = $credit_card['cvv'];
+			$transaction['VerificationStr2'] = $credit_card['cvv'];
 		}  
 		
 		if (isset($customer['customer_id'])) {
