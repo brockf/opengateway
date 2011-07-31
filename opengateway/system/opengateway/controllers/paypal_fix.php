@@ -28,28 +28,27 @@ class Paypal_fix extends Controller {
 		$this->db->from('subscriptions');
 		$this->db->join('client_gateways','client_gateways.client_gateway_id = subscriptions.gateway_id','inner');
 		$this->db->join('external_apis','external_apis.external_api_id = client_gateways.external_api_id','inner');
-		$this->db->where('external_apis.name','paypal');
-		$this->db->or_where('external_apis.name','paypal_standard');
+		$this->db->where('(`external_apis`.`name` = \'paypal\' or `external_apis`.`name` = \'paypal_standard\')',NULL,FALSE);
+		$this->db->where('subscriptions.active','1');
+		$this->db->where('subscriptions.last_charge <','2011-07-30');
 		$result = $this->db->get();
 		
 		$updated = 0;
 		
 		if ($result->num_rows() > 0) {
 			foreach ($result->result_array() as $sub) {
-				if ($sub['active'] == '1') {
-					$profile = $this->_get_profile($sub['gateway_id'], $sub['api_customer_reference']);
-	
-	
-					if (isset($profile['NEXTBILLINGDATE']) and !empty($profile['NEXTBILLINGDATE'])) {
-						$paypal_date = $profile['NEXTBILLINGDATE'];
-						$local_date = $sub['next_charge'];
-						$formatted_paypal_date = date('Y-m-d', strtotime($profile['NEXTBILLINGDATE']));
-						
-						// update local
-						$this->db->update('subscriptions', array('next_charge' => $formatted_paypal_date), array('subscription_id' => $sub['subscription_id']));
-						
-						$updated++;
-					}
+				$profile = $this->_get_profile($sub['gateway_id'], $sub['api_customer_reference']);
+
+
+				if (isset($profile['NEXTBILLINGDATE']) and !empty($profile['NEXTBILLINGDATE'])) {
+					$paypal_date = $profile['NEXTBILLINGDATE'];
+					$local_date = $sub['next_charge'];
+					$formatted_paypal_date = date('Y-m-d', strtotime($profile['NEXTBILLINGDATE']));
+					
+					// update local
+					$this->db->update('subscriptions', array('next_charge' => $formatted_paypal_date), array('subscription_id' => $sub['subscription_id']));
+					
+					$updated++;
 				}
 			}
 		}
