@@ -1001,6 +1001,7 @@ class Gateway_model extends Model
 		}
 		
 		// get the credit card last four digits
+		$params['credit_card'] = array();
 		$params['credit_card']['card_num'] = $params['card_last_four'];
 		
 		// Create a new order
