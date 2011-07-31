@@ -34,25 +34,27 @@ class Paypal_fix extends Controller {
 		
 		$updated = 0;
 		
-		foreach ($result->result_array() as $sub) {
-			if ($sub['active'] == '1') {
-				$profile = $this->_get_profile($sub['gateway_id'], $sub['api_customer_reference']);
-
-
-				if (isset($profile['NEXTBILLINGDATE']) and !empty($profile['NEXTBILLINGDATE'])) {
-					$paypal_date = $profile['NEXTBILLINGDATE'];
-					$local_date = $sub['next_charge'];
-					$formatted_paypal_date = date('Y-m-d', strtotime($profile['NEXTBILLINGDATE']));
-					
-					// update local
-					$this->db->update('subscriptions', array('next_charge' => $formatted_paypal_date), array('subscription_id' => $sub['subscription_id']));
-					
-					$updated++;
+		if ($result->num_rows() > 0) {
+			foreach ($result->result_array() as $sub) {
+				if ($sub['active'] == '1') {
+					$profile = $this->_get_profile($sub['gateway_id'], $sub['api_customer_reference']);
+	
+	
+					if (isset($profile['NEXTBILLINGDATE']) and !empty($profile['NEXTBILLINGDATE'])) {
+						$paypal_date = $profile['NEXTBILLINGDATE'];
+						$local_date = $sub['next_charge'];
+						$formatted_paypal_date = date('Y-m-d', strtotime($profile['NEXTBILLINGDATE']));
+						
+						// update local
+						$this->db->update('subscriptions', array('next_charge' => $formatted_paypal_date), array('subscription_id' => $sub['subscription_id']));
+						
+						$updated++;
+					}
 				}
 			}
 		}
 		
-		echo 'Updated ' . $updated . ' active subscriptions to proper billing dates.' . "\n\n";
+		echo 'Updated ' . $updated . ' active subscriptions to proper billing dates.<br /><br />';
 		
 		// update credit card last fours
 		$this->db->select('*');
@@ -61,26 +63,28 @@ class Paypal_fix extends Controller {
 		
 		$cc_updated = 0;
 		
-		foreach ($result->result_array() as $sub) {
-			if (empty($sub['card_last_four'])) {
-				$this->db->select('card_last_four')
-						 ->from('orders')
-						 ->where('card_last_four !=','')
-						 ->where('card_last_four !=','0')
-						 ->where('subscription_id',$sub['subscription_id']);
-				$order = $this->db->get();
-				
-				$card_last_four = $order->row()->card_last_four;	
-				
-				$this->db->update('subscriptions', array('card_last_four' => $card_last_four), array('subscription_id' => $sub['subscription_id']));					 
-			}
-			else {
-				$card_last_four = $sub['card_last_four'];
-			}
-		
-			$this->db->update('orders', array('card_last_four' => $card_last_four), array('subscription_id' => $sub['subscription_id']));
+		if ($result->num_rows() > 0) {
+			foreach ($result->result_array() as $sub) {
+				if (empty($sub['card_last_four'])) {
+					$this->db->select('card_last_four')
+							 ->from('orders')
+							 ->where('card_last_four !=','')
+							 ->where('card_last_four !=','0')
+							 ->where('subscription_id',$sub['subscription_id']);
+					$order = $this->db->get();
+					
+					$card_last_four = $order->row()->card_last_four;	
+					
+					$this->db->update('subscriptions', array('card_last_four' => $card_last_four), array('subscription_id' => $sub['subscription_id']));					 
+				}
+				else {
+					$card_last_four = $sub['card_last_four'];
+				}
 			
-			$cc_updated++;
+				$this->db->update('orders', array('card_last_four' => $card_last_four), array('subscription_id' => $sub['subscription_id']));
+				
+				$cc_updated++;
+			}
 		}
 		
 		echo 'Updated ' . $cc_updated . ' card last four numbers.';
