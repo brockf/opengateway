@@ -4,7 +4,7 @@ $CI =& get_instance();
 $CI->load->helper('url');
 
 // we set the version here so as not to start an infinite loop
-$this->db->update('version', array('db_version' => '1.83'));
+$CI->db->update('version', array('db_version' => '1.83'));
 
 // trigger PayPal fix
 $ch = curl_init();
