@@ -516,40 +516,63 @@ class paypal_standard
 		}
 		
 		$details = $this->GetProfileDetails($client_id, $gateway, $params);
-		if (empty($details)) {
+		if (!$details) {
 			// if we didn't retrieve the profile properly, we'd rather let the subscription
 			// go then cancel it due to a one-time connection issue
-			return TRUE;
+			return array('success' => TRUE);
 		}
+		
 		/*
 		* We can check to see if today was the last payment date
-		$last_payment = date('Y-m-d',strtotime($details['LASTPAYMENTDATE']));
 		*/
-		$today = date('Y-m-d');
-		$status = $details['STATUS'];
-		$failed_payments = $details['FAILEDPAYMENTCOUNT'];
+		$last_payment = date('Y-m-d',strtotime($details['LASTPAYMENTDATE']));
 		
-		if((int)$failed_payments < 1 and $status != 'Cancelled') {		
+		// in case we aren't running the cron on the day, we'll check for the 
+		// next_charge value in the database
+		$result = $this->db->select('next_charge')
+						   ->from('subscriptions')
+						   ->where('subscription_id',$params['subscription_id'])
+						   ->get();
+						   
+		if ($result->num_rows() == 0) {
+			$response['success'] = FALSE;
+			$response['reason'] = "The charge has failed.";
+			return $response;
+		}	
+		
+		$sub = $result->row_array();					   
+		$today = $sub['next_charge'];
+		
+		/*
+		* We used to check for failed payments but PayPal only marks them failed after like
+		15 days...
+		*/
+		$failed_payments = $details['FAILEDPAYMENTCOUNT'];
+		$status = $details['STATUS'];
+		
+		$response = array();
+		
+		if ($status != 'Cancelled' and $last_payment == $today) {		
 			$response['success'] = TRUE;
 			
 			if (isset($details['NEXTBILLINGDATE'])) {
 				$next_charge = date('Y-m-d', strtotime($details['NEXTBILLINGDATE']));
 				$response['next_charge'] = $next_charge;
 			}
+			
+			// should we cancel this subscription?  i.e., will it expire before the next renew?
+			// this is only important because PayPal's charge scheduling sometimes jumps the gun
+			if (strtotime($params['end_date']) <= (strtotime($params['next_charge']) + (60*60*24*$params['charge_interval']))) {
+				// silently cancel the subscription
+				$CI->load->model('billing/recurring_model');
+				$CI->recurring_model->CancelRecurring($client_id, $params['subscription_id'], TRUE);
+			}
 		} else {
 			$response['success'] = FALSE;
 			$response['reason'] = "The charge has failed.";
 		}
 		
-		// should we cancel this subscription?  i.e., will it expire before the next renew?
-		// this is only important because PayPal's charge scheduling sometimes jumps the gun
-		if (strtotime($params['end_date']) <= (strtotime($params['next_charge']) + (60*60*24*$params['charge_interval']))) {
-			// silently cancel the subscription
-			$CI->load->model('recurring_model');
-			$CI->recurring_model->CancelRecurring($client_id, $params['subscription_id'], TRUE);
-		}
-		
-		return $response;	
+		return $response;
 	}
 	
 	function Callback_confirm ($client_id, $gateway, $charge, $params) {

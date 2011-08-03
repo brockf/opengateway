@@ -573,7 +573,7 @@ class Recurring_model extends Model
 			$update_data['plan_id'] = $params['plan_id'];
 		}
 		
-		if(isset($params['next_charge_date'])) {
+		if (isset($params['next_charge_date'])) {
 			$this->load->library('field_validation');
 			if ($this->field_validation->ValidateDate($params['next_charge_date'])) {
 				$update_data['next_charge'] = $params['next_charge_date'];			
@@ -583,7 +583,7 @@ class Recurring_model extends Model
 			}
 		}
 		
-		if(isset($params['end_date'])) {
+		if (isset($params['end_date'])) {
 			$this->load->library('field_validation');
 			if ($this->field_validation->ValidateDate($params['end_date'])) {
 				$update_data['end_date'] = $params['end_date'];			
