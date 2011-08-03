@@ -264,6 +264,10 @@ class authnet
 				$payment_profile_id = $response['payment_profile_id'];	
 			}
 		}
+		else {
+			// Lonnie: update the payment profile ID with an update request
+			// using $payment_profile_id
+		}
 		
 		if (empty($payment_profile_id)) {
 			$add_text = (isset($response['reason'])) ? $response['reason'] : FALSE;
