@@ -1,5 +1,13 @@
 <?php
 
+/*
+	Developer Test Info:
+	
+	Visa: 4222222222222
+	Amount: A dollar amount equal to the response code you wish to mimic. 
+		Success: 1.00
+		Declined: 2.00
+*/
 class authnet
 {
 	var $settings;
@@ -220,7 +228,7 @@ class authnet
 		$CI->db->where('subscriptions.active', 1);
 		$CI->db->where('subscriptions.customer_id',$customer['customer_id']);
 		$current_profile = $CI->db->get('subscriptions');
-				
+			
 		if ($current_profile->num_rows() > 0) {
 			// save the profile ID
 			$current_profile = $current_profile->row_array();
@@ -229,15 +237,18 @@ class authnet
 			// get payment profile to see if a matching one exists
 			$payment_profiles = $this->GetCustomerProfile($profile_id, $gateway);
 			
+			// In case there are multiple profiles, make sure ours matches via last 4 of card.
 			if (isset($payment_profiles->profile->paymentProfiles)) {
 				foreach ($payment_profiles->profile->paymentProfiles as $payment_profile) {
 					$card_number = (string)$payment_profile->payment->creditCard->cardNumber;
 					
 					if (substr($card_number, -4, 4) == substr($credit_card['card_num'],-4,4)) {
 						$payment_profile_id = (string)$payment_profile->customerPaymentProfileId;
+						$current_payment_profile = $payment_profile;
 					}
 				}
 			}
+			
 		}
 		else {
 			$response = $this->CreateProfile($gateway, $subscription_id, $customer);
@@ -265,8 +276,8 @@ class authnet
 			}
 		}
 		else {
-			// Lonnie: update the payment profile ID with an update request
-			// using $payment_profile_id
+			// We have a payment profile ID, so update the customer's information at AuthNet.
+			$this->UpdateCustomerProfile($profile_id, $payment_profile_id, $gateway, $current_payment_profile, $customer);
 		}
 		
 		if (empty($payment_profile_id)) {
@@ -303,6 +314,92 @@ class authnet
 		
 		return $response;
 	}
+	
+	//--------------------------------------------------------------------
+	
+	/*
+		Method: UpdateCustomerProfile()
+		
+		Updates the customer's payment profile stored at Authorize.net with the latest 
+		customer information.
+		
+		Parameters:
+			$profile_id	- the customer's profile id.
+			$payment_profile_id	- The customer's payment profile id
+			$gateway	- The gateway info
+			$orig		- AN will blank out any fields that don't have a value, so we need our originals.
+			$new		- The new Customer profile information
+	*/
+	function UpdateCustomerProfile($profile_id, $payment_profile_id, $gateway, $orig, $new) {
+		$CI =& get_instance();
+		
+		$new = (object)$new;
+		
+		// Clean up our address into a single entity for transferring to AuthNet
+		if (isset($new->address_2) && !empty($new->address_2))
+		{
+			$new->address_1 = $new->address_1 .', '. $new->address_2;
+		}
+		
+		$post_url = $this->GetAPIUrl($gateway, 'arb');
+		
+		//--------------------------------------------------------------------
+		
+		$company	= isset($new->company) ? $new->company : $orig->billTo->company;
+		$address	= isset($new->address_1) ? $new->address_1 : $orig->billTo->address;
+		$city		= isset($new->city) ? $new->city : $orig->billTo->city;
+		$state		= isset($new->state) ? $new->state : $orig->billTo->state;
+		$zip		= isset($new->zip) ? $new->zip : $orig->billTo->zip;
+		$country 	= isset($new->country) ? $new->country : $orig->billTo->country;
+		$phoneNumber	= isset($new->phoneNumber) ? $new->phoneNumber : $orig->billTo->phoneNumber;
+		
+		//--------------------------------------------------------------------
+		
+		$content = '<?xml version="1.0" encoding="utf-8"?>
+					<updateCustomerPaymentProfileRequest
+					xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd">
+					<merchantAuthentication>
+						<name>' . $gateway['login_id'] . '</name>
+						<transactionKey>' . $gateway['transaction_key'] . '</transactionKey>
+					</merchantAuthentication>
+					<customerProfileId>' . $profile_id . '</customerProfileId>
+					<paymentProfile>
+						<billTo>';
+		
+		$content .= "<firstName>{$orig->first_name}</firstName>";
+		$content .= "<lastName>{$orig->last_name}</lastName>";
+		$content .= "<company>$company</company>";
+		$content .= "<address>$address</address>";
+		$content .= "<city>$city</city>";
+		$content .= "<state>$state</state>";
+		$content .= "<zip>$izp</zip>";
+		$content .= "<phoneNumber>$phoneNumber</phoneNumber>";
+		$content .= "<faxNumber>$faxNumber</faxNumber>";
+		
+		$content .= '	</billTo>
+						<payment>
+							<creditCard>';
+		
+		$content .= "<cardNumber>{$orig->payment->creditCard->cardNumber}</cardNumber>";
+		$content .= "<expirationDate>{$orig->payment->creditCard->expirationDate}</expirationDate>";
+		
+		$content .= '		</creditCard>
+						</payment>
+						<customerPaymentProfileId>'. $payment_profile_id . '</customerPaymentProfileId>
+					</paymentProfile>
+				</updateCustomerPaymentProfileRequest>';
+		
+		$request = curl_init($post_url); // initiate curl object
+		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
+		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
+		curl_setopt($request, CURLOPT_HTTPHEADER, Array("Content-Type: text/xml"));
+		curl_setopt($request, CURLOPT_POSTFIELDS, $content); // use HTTP POST to send form data
+		$post_response = curl_exec($request); // execute curl post and store results in $post_response
+		
+		curl_close($request); // close curl object
+	}
+	
+	//--------------------------------------------------------------------
 	
 	function Refund ($client_id, $gateway, $charge, $authorization)
 	{	
@@ -464,9 +561,12 @@ class authnet
 								 "<address>" . $customer['address_1'] . "</address>".
 								 "<city>" . $customer['city'] . "</city>".
 								 "<state>" . $customer['state'] . "</state>".
-								 "<zip>" . $customer['postal_code'] . "</zip>".
-								 "<country>" . $customer['country'] . "</country>".
-								 "<phoneNumber>" . $customer['phone'] . "</phoneNumber>";
+								 "<zip>" . $customer['postal_code'] . "</zip>";
+			if (isset($customer['country']) && ($customer['country'] == 'US' || $customer['country'] == 'CA'))
+			{
+				$customer_details .= "<country>" . $customer['country'] . "</country>";
+			}
+			$customer_details .= "<phoneNumber>" . $customer['phone'] . "</phoneNumber>";
 		}
 		else {
 			$customer_details = '';
@@ -497,7 +597,7 @@ class authnet
 		 "</creditCard>".
 		"</payment>".
 		"</paymentProfile>\n";
-		
+		 
 		$content .= "</createCustomerPaymentProfileRequest>";
 		
 		$request = curl_init($post_url); // initiate curl object
@@ -554,6 +654,8 @@ class authnet
 		return $response;
 	}
 	
+	//--------------------------------------------------------------------
+	
 	function AutoRecurringCharge ($client_id, $order_id, $gateway, $params) {
 		return $this->ChargeRecurring($client_id, $gateway, $order_id, $params['api_customer_reference'], $params['api_payment_reference'], $params['amount']);
 	}
@@ -609,7 +711,7 @@ class authnet
 	}
 	
 	function UpdateRecurring()
-	{
+	{ 
 		return TRUE;
 	}
 	
