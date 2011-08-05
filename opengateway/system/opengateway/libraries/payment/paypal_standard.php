@@ -529,7 +529,7 @@ class paypal_standard
 		
 		// in case we aren't running the cron on the day, we'll check for the 
 		// next_charge value in the database
-		$result = $this->db->select('next_charge')
+		$result = $CI->db->select('next_charge')
 						   ->from('subscriptions')
 						   ->where('subscription_id',$params['subscription_id'])
 						   ->get();

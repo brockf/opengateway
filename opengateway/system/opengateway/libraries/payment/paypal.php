@@ -591,6 +591,8 @@ class paypal
 	
 	function ChargeRecurring($client_id, $gateway, $params)
 	{
+		$CI =& get_instance();
+	
 		$details = $this->GetProfileDetails($client_id, $gateway, $params);
 		if (!$details) {
 			// if we didn't retrieve the profile properly, we'd rather let the subscription
@@ -605,7 +607,7 @@ class paypal
 		
 		// in case we aren't running the cron on the day, we'll check for the 
 		// next_charge value in the database
-		$result = $this->db->select('next_charge')
+		$result = $CI->db->select('next_charge')
 						   ->from('subscriptions')
 						   ->where('subscription_id',$params['subscription_id'])
 						   ->get();
