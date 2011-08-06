@@ -601,27 +601,6 @@ class paypal
 		}
 		
 		/*
-		* We can check to see if today was the last payment date
-		*/
-		$last_payment = date('Y-m-d',strtotime($details['LASTPAYMENTDATE']));
-		
-		// in case we aren't running the cron on the day, we'll check for the 
-		// next_charge value in the database
-		$result = $CI->db->select('next_charge')
-						   ->from('subscriptions')
-						   ->where('subscription_id',$params['subscription_id'])
-						   ->get();
-						   
-		if ($result->num_rows() == 0) {
-			$response['success'] = FALSE;
-			$response['reason'] = "The charge has failed.";
-			return $response;
-		}	
-		
-		$sub = $result->row_array();					   
-		$today = $sub['next_charge'];
-		
-		/*
 		* We used to check for failed payments but PayPal only marks them failed after like
 		15 days...
 		*/
@@ -630,7 +609,7 @@ class paypal
 		
 		$response = array();
 		
-		if ($status != 'Cancelled' and $last_payment == $today) {		
+		if ($status != 'Cancelled' and (int)$failed_payments === 0) {		
 			$response['success'] = TRUE;
 			
 			if (isset($details['NEXTBILLINGDATE'])) {
