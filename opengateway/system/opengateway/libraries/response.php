@@ -2,10 +2,16 @@
 
 class Response
 {	
+	public $format;
+	
 	function FormatResponse ($array = '', $format = 'xml')
 	{
 		// Load the CI object
 		$CI =& get_instance();
+		
+		if (!empty($format)) {
+			$this->format = $format;
+		}
 		
 		// Check to make sure an array was passed
 		if (is_array($array))
@@ -17,17 +23,17 @@ class Response
 			}
 			
 			// check the format
-			$format = (!$format) ? 'xml' : $format;
+			$this->format = (empty($this->format)) ? 'xml' : $this->format;
 			
-			if ($format == 'xml') {
+			if ($this->format == 'xml') {
 				//Load the XML library
 				$CI->load->library('arraytoxml');
 				$response = $CI->arraytoxml->toXML($response, 'response');
 			}
-			elseif ($format == 'php') {
+			elseif ($this->format == 'php') {
 				$response = serialize($response);
 			}
-			elseif ($format == 'json') {
+			elseif ($this->format == 'json') {
 				$response = json_encode($response);
 			}
 			

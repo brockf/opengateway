@@ -64,6 +64,8 @@ class API extends Controller {
 			$format = 'xml';
 		}
 		
+		$this->response->format = $format;
+		
 		// validate the request type
 		$this->load->model('request_type_model', 'request_type');
 		$request_type_model = $this->request_type->ValidateRequestType($request_type);
@@ -89,7 +91,7 @@ class API extends Controller {
 		}
 		
 		// Echo the response
-		echo $this->response->FormatResponse($response, $format);		
+		echo $this->response->FormatResponse($response);		
 	}
 	
 	function Charge($client_id, $params) {
