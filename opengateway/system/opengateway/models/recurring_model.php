@@ -830,10 +830,13 @@ class Recurring_model extends Model
 			$this->db->where('orders.client_id', $client_id);
 		}
 		
+		$date = date('Y-m-d', $date);
+		
 		$this->db->join('customers', 'customers.customer_id = subscriptions.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$this->db->where('subscriptions.active', 1);
-		$this->db->where('next_charge', date('Y-m-d', $date));
+		$this->db->where('next_charge', $date);
+		$this->db->where('end_date >', $date);
 		$query = $this->db->get('subscriptions');
 		if($query->num_rows() > 0) {
 			return $query->result_array();
