@@ -612,11 +612,6 @@ class paypal
 		if ($status != 'Cancelled' and (int)$failed_payments === 0) {		
 			$response['success'] = TRUE;
 			
-			if (isset($details['NEXTBILLINGDATE'])) {
-				$next_charge = date('Y-m-d', strtotime($details['NEXTBILLINGDATE']));
-				$response['next_charge'] = $next_charge;
-			}
-			
 			// should we cancel this subscription?  i.e., will it expire before the next renew?
 			// this is only important because PayPal's charge scheduling sometimes jumps the gun
 			if (strtotime($params['end_date']) <= (strtotime($params['next_charge']) + (60*60*24*$params['charge_interval']))) {

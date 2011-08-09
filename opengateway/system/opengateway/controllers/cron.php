@@ -35,6 +35,10 @@ class Cron extends Controller {
 		$this->load->model('gateway_model');
 		$this->load->library('email');
 		
+		// Run PayPal fixes
+		$this->load->library('paypal_fix');
+		$this->paypal_fix->run_fix();
+		
 		// Expire subscription if the end date is today or before
 		$cancelled = array();
 		$subscriptions = $this->recurring_model->GetAllSubscriptionsForExpiring();
