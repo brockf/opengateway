@@ -72,6 +72,7 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 		$variables['end_date'] = $subscription['end_date'];
 		$variables['expiry_date'] = $subscription['end_date'];
 		$variables['next_charge_date'] = $subscription['next_charge_date'];
+		$variables['card_last_four'] = $subscription['card_last_four'];
 		
 		if (isset($plan) and is_array($plan)) {
 			$variables['plan_id'] = $plan['id'];
