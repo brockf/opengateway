@@ -1069,7 +1069,14 @@ class API extends Controller {
 			$start = $subscription['next_charge_date'];
 			
 			$next_charge = date('Y-m-d', strtotime($start . ' + ' . $subscription['interval'] . ' days'));
-			$end_date = date('Y-m-d', strtotime($start . ' + ' . ($subscription['interval']*2) . ' days'));
+			
+			// if the end_date is less than the next charge date, we'll push it back 2 intervals
+			if (strtotime($subscription['end_date']) < strtotime($next_charge)) {
+				$end_date = date('Y-m-d', strtotime($start . ' + ' . ($subscription['interval']*2) . ' days'));
+			}
+			else {
+				$end_date = date('Y-m-d', strtotime($subscription['end_date']));
+			}
 			
 			$update = array(
 							'next_charge' => $next_charge,
