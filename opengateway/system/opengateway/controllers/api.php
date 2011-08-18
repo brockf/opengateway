@@ -1065,7 +1065,18 @@ class API extends Controller {
 			$this->charge_model->SetStatus($charge_id, 1);
 			TriggerTrip('recurring_charge', $client_id, $charge_id, $subscription['id']);
 		
-			return array('charge_id' => $charge_id);
+			// extend next_charge and end_date
+			$start = $subscription['next_charge'];
+			
+			$next_charge = date('Y-m-d', strtotime($start . ' + ' . $subscription['interval'] . ' days'));
+			$end_date = date('Y-m-d', strtotime($start . ' + ' . ($subscription['interval']*2) . ' days'));
+			
+			$update = array(
+							'next_charge' => $next_charge,
+							'end_date' => $end_date
+						);
+		
+			return array('charge_id' => $charge_id, 'next_charge' => $next_charge, 'end_date' => $end_date);
 		}
 	}
 }
