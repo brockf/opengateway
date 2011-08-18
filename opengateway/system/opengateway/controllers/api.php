@@ -1066,7 +1066,7 @@ class API extends Controller {
 			TriggerTrip('recurring_charge', $client_id, $charge_id, $subscription['id']);
 		
 			// extend next_charge and end_date
-			$start = $subscription['next_charge'];
+			$start = $subscription['next_charge_date'];
 			
 			$next_charge = date('Y-m-d', strtotime($start . ' + ' . $subscription['interval'] . ' days'));
 			$end_date = date('Y-m-d', strtotime($start . ' + ' . ($subscription['interval']*2) . ' days'));
