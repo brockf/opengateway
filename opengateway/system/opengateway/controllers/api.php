@@ -1084,7 +1084,7 @@ class API extends Controller {
 						);
 		
 			// update locally
-			$this->db->update('subscriptions', array('next_charge' => $next_charge), array('end_date' => $end_date), array('subscription_id' => $subscription['id']));
+			$this->db->update('subscriptions', array('next_charge' => $next_charge, 'end_date' => $end_date), array('subscription_id' => $subscription['id']));
 		
 			// return
 			return array('charge_id' => $charge_id, 'next_charge' => $next_charge, 'end_date' => $end_date);
