@@ -2,4 +2,4 @@
 
 $data = ioncube_server_data();
 
-print_r($data);
+echo '<html><body><pre>' . $data . '</pre></body></html>';
