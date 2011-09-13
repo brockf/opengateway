@@ -238,6 +238,7 @@ class paypal
 			$post['zip'] = $customer['postal_code'];
 			$post['countrycode'] = $customer['country'];
 			$post['phonenum'] = $customer['phone'];
+			$post['email'] = $customer['email'];
 		}
 		
 		$response = $this->Process($post_url, $post, $order_id);
