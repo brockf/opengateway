@@ -39,14 +39,24 @@ class Plan_model extends Model
 		
 		$this->load->library('field_validation');
 		
-		if(isset($plan['plan_type'])) {
+		if (isset($plan['plan_type'])) {
 			$plan_type_id = $this->GetPlanTypeId($plan['plan_type']);
 			$insert_data['plan_type_id'] = $plan_type_id;
 		} else {
-			die($this->response->Error(1004));
+			if (isset($plan['amount']) and (float)$plan['amount'] > 0) {
+				$plan_type_id = $this->GetPlanTypeId('paid');
+				$insert_data['plan_type_id'] = $plan_type_id;
+			}
+			elseif (isset($plan['amount']) and (float)$plan['amount'] == 0) {
+				$plan_type_id = $this->GetPlanTypeId('free');
+				$insert_data['plan_type_id'] = $plan_type_id;
+			}
+			else {
+				die($this->response->Error(1004));
+			}
 		}
 		
-		if(isset($plan['plan_type']) and $plan['plan_type'] == 'free') {
+		if (isset($plan['plan_type']) and $plan['plan_type'] == 'free') {
 			$insert_data['amount'] = 0;
 		} else {
 			if(isset($plan['amount'])) {
@@ -59,7 +69,7 @@ class Plan_model extends Model
 			}
 		}		
 		
-		if(isset($plan['interval'])) {
+		if (isset($plan['interval'])) {
 			if(!is_numeric($plan['interval']) || $plan['interval'] < 1) {
 				die($this->response->Error(5011));
 			}	
@@ -68,17 +78,17 @@ class Plan_model extends Model
 			die($this->response->Error(1004));
 		}
 		
-		if(isset($plan['notification_url'])) {	
+		if (isset($plan['notification_url'])) {	
 			$insert_data['notification_url'] = $plan['notification_url'];
 		}
 		
-		if(isset($plan['name'])) {	
+		if (isset($plan['name'])) {	
 			$insert_data['name'] = $plan['name'];
 		} else {
 			die($this->response->Error(1004));
 		}
 		
-		if(isset($plan['occurrences'])) {
+		if (isset($plan['occurrences'])) {
 			if (!is_numeric($plan['occurrences'])) {
 				die($this->response->Error(7003));
 			}
@@ -90,7 +100,7 @@ class Plan_model extends Model
 			$insert_data['occurrences'] = '0';
 		}
 		
-		if(isset($plan['free_trial'])) {
+		if (isset($plan['free_trial'])) {
 			if(!is_numeric($plan['free_trial']) || $plan['free_trial'] < 0) {
 				die($this->response->Error(7002));
 			}	
