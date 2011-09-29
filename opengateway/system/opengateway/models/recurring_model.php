@@ -798,6 +798,9 @@ class Recurring_model extends Model
 		$query = $this->db->get('subscriptions');
 		if($query->num_rows() > 0) {
 			$row = $query->row();
+			
+			$from_date = (empty($from_date)) ? $row->next_charge : $from_date;
+			
 			$next_charge = strtotime($from_date) + ($row->charge_interval * 86400);
 			return date('Y-m-d', $next_charge);
 		}
