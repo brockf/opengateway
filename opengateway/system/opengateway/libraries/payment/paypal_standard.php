@@ -539,6 +539,7 @@ class paypal_standard
 			if (strtotime($params['end_date']) <= (strtotime($params['next_charge']) + (60*60*24*$params['charge_interval']))) {
 				// silently cancel the subscription
 				$CI->load->model('billing/recurring_model');
+				$CI->db->update('subscriptions', array('next_charge' => '0000-00-00'), array('subscription_id' => $params['subscription_id']));
 				$CI->recurring_model->CancelRecurring($client_id, $params['subscription_id'], TRUE);
 			}
 		} else {
