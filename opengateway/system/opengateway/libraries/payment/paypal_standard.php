@@ -56,7 +56,7 @@ class paypal_standard
 														),
 										'pwd' => array(
 														'text' => 'API Password',
-														'type' => 'text'
+														'type' => 'password'
 														),
 										'signature' => array(
 														'text' => 'API Signature',

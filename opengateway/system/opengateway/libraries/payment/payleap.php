@@ -103,7 +103,7 @@ class payleap {
 										
 										'password' => array(
 														'text' => 'Transaction Key',
-														'type' => 'text'
+														'type' => 'password'
 														),
 										
 										'accept_visa' => array(

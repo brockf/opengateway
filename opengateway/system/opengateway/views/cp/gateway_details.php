@@ -18,6 +18,8 @@ to test mode in your gateway control panel.  "Test mode" below only indicates wh
 		<label for="<?=$name;?>"><?=$field['text'];?></label>
 		<? if ($field['type'] == 'text') { ?>
 			<input type="text" class="text required" name="<?=$name;?>" id="<?=$name;?>" value="<?=$values[$name];?>" />
+		<? } elseif ($field['type'] == 'password') { ?>
+			<input type="password" class="text required" name="<?=$name;?>" id="<?=$name;?>" value="<?=$values[$name];?>" />
 		<? } elseif ($field['type'] == 'radio') { ?>
 			<? foreach ($field['options'] as $value => $display) { ?>
 				<input type="radio" id="<?=$name;?>" name="<?=$name;?>" class="required" value="<?=$value;?>" <? if ($values[$name] == $value) { ?>checked="checked"<? } ?> />&nbsp;<?=$display;?>&nbsp;&nbsp;&nbsp;

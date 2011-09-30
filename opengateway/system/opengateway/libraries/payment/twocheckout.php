@@ -73,7 +73,7 @@ class twocheckout {
 										
 										'password' => array(
 														'text' => 'API Password',
-														'type' => 'text'
+														'type' => 'password'
 														),
 										'merchant_id'	=> array(
 														'text' => 'Merchant ID',

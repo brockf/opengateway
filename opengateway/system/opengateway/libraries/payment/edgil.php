@@ -79,7 +79,7 @@ class edgil
 														),
 										'password' => array(
 														'text' => 'Password',
-														'type' => 'text'
+														'type' => 'password'
 														),
 										'merchant_id' => array(
 														'text' => 'Merchant ID',

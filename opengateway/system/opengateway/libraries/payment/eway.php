@@ -105,7 +105,7 @@ class eway
 										
 										'password' => array(
 														'text' => 'Rebill Password',
-														'type' => 'text'
+														'type' => 'password'
 														),
 										
 										'accept_visa' => array(
@@ -303,7 +303,7 @@ class eway
 		$response = $this->Process($post_url,$xml);
 		
 		
-		if (1)
+		if ($this->debug)
 		{
 			echo '<pre>';
 			echo 'URL = '. $post_url .'<br/>';

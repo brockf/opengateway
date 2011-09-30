@@ -49,7 +49,7 @@ class exact
 														),
 										'password' => array(
 														'text' => 'Password',
-														'type' => 'text'
+														'type' => 'password'
 														),
 										'accept_visa' => array(
 														'text' => 'Accept VISA?',

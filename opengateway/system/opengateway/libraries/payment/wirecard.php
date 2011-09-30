@@ -67,7 +67,7 @@ class wirecard
 														),
 										'password' => array(
 														'text' => 'Password',
-														'type' => 'text'
+														'type' => 'password'
 														),
 										'businesscasesignature' => array(
 														'text' => 'Business Case Signature',

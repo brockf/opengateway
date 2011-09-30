@@ -60,7 +60,7 @@ class pacnet
 														),
 										'password' => array(
 														'text' => 'Raven Shared Secret Password',
-														'type' => 'text'
+														'type' => 'password'
 														),
 										'prn' => array(
 														'text' => 'Payment Routing Number',
