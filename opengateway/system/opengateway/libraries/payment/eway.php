@@ -302,8 +302,7 @@ class eway
 		
 		$response = $this->Process($post_url,$xml);
 		
-		
-		if ($this->debug)
+		if ($this->debug == TRUE)
 		{
 			echo '<pre>';
 			echo 'URL = '. $post_url .'<br/>';
