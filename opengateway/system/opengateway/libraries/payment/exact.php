@@ -298,7 +298,7 @@ class exact
 		$CI =& get_instance();
 		
 		$post_url = $gateway['url_live'];
-
+		
 		// Create the charge
 		
 		$trxnProperties = array(
@@ -315,7 +315,7 @@ class exact
 		
 		$post_response = $this->Process($trxnProperties, $post_url, $order_id);
 		
-		if($post_response->EXact_Resp_Code == '00') {
+		if ($post_response->EXact_Resp_Code == '00') {
 			$response['success'] = TRUE;
 			// Save the Auth information
 			$CI->load->model('order_authorization_model');
