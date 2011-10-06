@@ -569,10 +569,6 @@ class paypal
 			$post['zip'] = $customer['postal_code'];
 		}
 		
-		if(isset($params['recur']['interval'])) {
-			$post['totalbillingcycles'] = round((strtotime($subscription['end_date']) - strtotime($subscription['start_date'])) / ($params['recur']['interval'] * 86400), 0);
-		}
-		
 		$post_response = $this->Process($post_url, $post);
 		
 		$post_response = $this->response_to_array($post_response);
