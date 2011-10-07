@@ -5,7 +5,7 @@ class Notifications {
 		$CI =& get_instance();
 		
 		$insert = array(
-						'notification_id' => '',
+						'notification_id' => null,
 						'url' => $url,
 						'variables' => serialize($variables)
 				);
