@@ -105,7 +105,7 @@ class eway
 										
 										'password' => array(
 														'text' => 'Rebill Password',
-														'type' => 'password'
+														'type' => 'text'
 														),
 										
 										'accept_visa' => array(
@@ -166,7 +166,7 @@ class eway
 	function TestConnection($client_id, $gateway) 
 	{	
 		$customer = array(
-			'Title'		=> 'Mr.',
+			'Title'		=> 'Mr',
 	    	'FirstName' => 'Joe',
 	    	'LastName'	=> 'Bloggs',
 	    	'Address'	=> 'Blogg enterprises',
@@ -190,7 +190,7 @@ class eway
 	    );
 		
 		$response = $this->processSoap($gateway, $customer, 'CreateCustomer');
-		
+
 		if (isset($response['CREATECUSTOMERRESULT']))
 		{
 			return TRUE;
@@ -235,6 +235,8 @@ class eway
     
 		$response = $this->processSoap($gateway, $xml, 'CreateCustomer');
 		
+		//echo '<pre>here'; die(print_r($response));
+		
 		if(isset($response['CREATECUSTOMERRESULT']) && is_numeric($response['CREATECUSTOMERRESULT']))
 		{	
 			$response['success'] = true;
@@ -265,8 +267,8 @@ class eway
 	
 		// The Charge function is the only one to use the eWay Hosted Payments solution,
 		// so the url's are not stored in the database. Instead, they are provided here.
-		$post_url = $gateway['mode'] == 'prod' ? 'https://www.eway.com.au/gateway/xmlpayment.asp' : 'https://www.eway.com.au/gateway/xmltest/testpage.asp';
-		
+		$post_url = $gateway['mode'] == 'live' ? 'https://www.eway.com.au/gateway/xmlpayment.asp' : 'https://www.eway.com.au/gateway/xmltest/testpage.asp';
+	//echo '<pre>'; die(print_r($gateway));	
 		$post['ewaygateway']['ewayCustomerID'] = $gateway['customer_id'];
 		$post['ewaygateway']['ewayTotalAmount'] = number_format($amount,2,'','');
 		
@@ -301,6 +303,8 @@ class eway
 		$xml = str_replace('</ResultSet>','', $xml);
 		
 		$response = $this->Process($post_url,$xml);
+		
+//echo '<pre>'; die(print_r($response));
 		
 		if ($this->debug == TRUE)
 		{
@@ -355,11 +359,11 @@ class eway
 		$response = $this->CreateProfile($client_id, $gateway, $customer, $credit_card, $subscription_id, $amount, $order_id);
 		
 		// Process today's payment
-		if ($charge_today === TRUE) {
+		if ($charge_today == TRUE) {
 			if ($gateway['mode'] != 'live') $response['client_id'] = '9876543211000';
 		
 			$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $response['client_id'], $amount);
-		
+
 			if($response['success'] == TRUE){
 				$CI->charge_model->SetStatus($order_id, 1);
 				$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
@@ -416,7 +420,7 @@ class eway
 		);
 		
 		$response = $this->processSoap($gateway, $xml, 'ProcessPayment');
-		
+//echo '<pre>'; die(var_dump($response));		
 		if (isset($response['EWAYTRXNSTATUS']) && $response['EWAYTRXNSTATUS'] == 'True')
 		{
 			$response['success']			= TRUE;
@@ -462,7 +466,7 @@ class eway
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);	// Check common exists and matches the server host name
 		
 		$post_response = curl_exec($ch); // execute curl post and store results in $post_response
-		
+//echo '<pre>'; die(print_r($xml));		
 		if (curl_errno($ch) == CURLE_OK)
 		{
 			$response_xml = @simplexml_load_string($post_response);
@@ -491,6 +495,7 @@ class eway
 		$CI->load->library('arraytoxml');	
 
 		$url = $this->GetAPIUrl($gateway, 'rebill');
+		//$url = 'https://www.eway.com.au/gateway/managedpayment';
 		
 		$header = '<?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:man="https://www.eway.com.au/gateway/managedpayment">
@@ -505,20 +510,34 @@ class eway
 		$body = '<soap:Body>'. $this->to_xml($xml, $action, 'man') . '</soap:Body></soap:Envelope>';
 		
 		$request = trim($header) . trim($body);
-			
+
 		// Send the request via CURL
 		$ch = curl_init($url); // initiate curl object
 		curl_setopt($ch, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $request); // use HTTP POST to send form data
 		curl_setopt ($ch, CURLOPT_HTTPHEADER, array('SOAPAction: https://www.eway.com.au/gateway/managedpayment/'.$action, 'Content-type: text/xml')); 
+                
+            $fp = fopen('system/opengateway/libraries/payment/log.txt', 'w+');
+            fwrite($fp, print_r($xml, true)."\r\n");
+            fwrite($fp, $request."\r\n");
+            fwrite($fp, "https://www.eway.com.au/gateway/managedpayment/".$action."\r\n");
 		
 		// We need to make curl ignore the CA certificate so it can get by...
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);	// Verify it belongs to the server.
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);	// Check common exists and matches the server host name
-		
+
 		$post_response = curl_exec($ch); // execute curl post and store results in $post_response
-		
+                
+                fwrite($fp, $post_response."\r\n");
+
+/*               
+if ($action == 'CreateCustomer')
+{
+	echo '<pre>CreateCustomer<br/>'; die(str_replace('<', '&lt;', print_r($post_response)));			
+}
+*/
+
 		if (curl_errno($ch) == CURLE_OK)
 		{
 			// No CURL Errors, so translate the returned XML into a usable object to return
@@ -533,7 +552,7 @@ class eway
 			}
 			xml_parser_free($p);	// Free the parser
 			
-			// Combine into an organized array...
+			// Combine into an organized array…
 			$response = $this->format_xml_array($response, $index);
 			
 			return $response;
@@ -562,6 +581,7 @@ class eway
 	 * then it will return the rebill url.
 	 */
 	function GetAPIUrl ($gateway, $mode = FALSE) {
+		
 		if ($mode == FALSE) {
 			// Get the proper URL
 			switch($gateway['mode'])
@@ -582,7 +602,8 @@ class eway
 			switch($gateway['mode'])
 			{
 				case 'live':
-					$post_url = $gateway['arb_url_live'];
+					$post_url = 'https://www.eway.com.au/gateway/ManagedPaymentService/managedCreditCardPayment.asmx';
+					//$post_url = $gateway['arb_url_live'];
 				break;
 				case 'test':
 					$post_url = $gateway['arb_url_test'];
