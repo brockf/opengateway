@@ -789,3 +789,11 @@ p.soft {
 	font-style:italic;
 	font-size: 9pt;
 }
+
+pre.code {
+	background-color: #f0f0f0;
+	border: 1px solid #eee;
+	font-family: "Consolas","Bitstream Vera Sans Mono","Courier New",Courier,monospace;
+	padding: 5px 5px 5px 15px;
+	overflow-x: auto;
+}

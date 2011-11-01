@@ -574,15 +574,13 @@ class Settings extends Controller {
 	{
 		$data = array();
 		
-		$data['last_run'] = false;
-		
 		$data['cron_key'] = $this->config->item('cron_key');
+		$data['cp_link'] = base_url();
 		
 		// Cron dates
 		$query = $this->db->get('version');
 		
-		if ($query->num_rows())
-		{
+		if ($query->num_rows()) {
 			$data['dates'] = $query->result();
 			$data['dates'] = $data['dates'][0];
 		}
