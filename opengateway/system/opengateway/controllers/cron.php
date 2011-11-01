@@ -9,6 +9,22 @@ class Cron extends Controller {
 		set_time_limit(300);
 	}
 	
+	//--------------------------------------------------------------------
+	
+	function RunAll($key)
+	{
+		if ($this->config->item('cron_key') != $key) {
+			echo 'Invalid key.';
+			return FALSE;
+		}
+		
+		$this->SendNotifications($key);
+		$this->SubscriptionMaintenance($key);
+		die();
+	}
+	
+	//--------------------------------------------------------------------
+	
 	function SendNotifications ($key) {
 		if ($this->config->item('cron_key') != $key) {
 			echo 'Invalid key.';
@@ -21,8 +37,12 @@ class Cron extends Controller {
 		
 		echo $notified . ' notifications sent.';
 
+		$this->save_cron_date($key, 'cron_last_run_notifications');
+
 		return true;
 	}
+	
+	//--------------------------------------------------------------------
 	
 	function SubscriptionMaintenance($key)
 	{
@@ -173,6 +193,41 @@ class Cron extends Controller {
 		$response .= $expire_month." Monthly Expiration Reminders Sent. \n";
 		
 		echo $response;
+		
+		$this->save_cron_date($key, 'cron_last_run_subs');
+	}
+	
+	//--------------------------------------------------------------------
+	
+	function save_cron_date($key, $field)
+	{
+		if ($this->config->item('cron_key') != $key) {
+			echo 'Invalid key.';
+			return FALSE;
+		}
+		
+		// If the cron_last_run field doesn't exist… create it.
+		if (!$this->db->field_exists('cron_last_run_notifications', 'version'))
+		{
+			$this->load->dbforge();
+			
+			$col = array(
+				'cron_last_run_notifications'	=> array(
+					'type' 	=> 'DATETIME',
+					'null'	=> false,
+					'default'	=> '0000-00-00 00:00:00'
+				),
+				'cron_last_run_subs'	=> array(
+					'type' 	=> 'DATETIME',
+					'null'	=> false,
+					'default'	=> '0000-00-00 00:00:00'
+				)
+			);
+			
+			$this->dbforge->add_column('version', $col);
+		}
+		
+		$this->db->update('version', array($field => date('Y-m-d H:i:s')));
 	}
 }
 

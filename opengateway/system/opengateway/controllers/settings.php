@@ -563,4 +563,34 @@ class Settings extends Controller {
 		redirect('settings/api');
 		return true;
 	}
+	
+	//--------------------------------------------------------------------
+	
+	/**
+	 * Checks to see if the cronjob has been run and provides 
+	 * advice for setting it up.
+	 */
+	function cronjob()
+	{
+		$data = array();
+		
+		$data['last_run'] = false;
+		
+		$data['cron_key'] = $this->config->item('cron_key');
+		
+		// Cron dates
+		$query = $this->db->get('version');
+		
+		if ($query->num_rows())
+		{
+			$data['dates'] = $query->result();
+			$data['dates'] = $data['dates'][0];
+		}
+	
+		$this->navigation->SidebarButton('Run Manually','cron/runall/'. $data['cron_key']);
+		$this->load->view('cp/cronjobs', $data);
+	}
+	
+	//--------------------------------------------------------------------
+	
 }

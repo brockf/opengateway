@@ -55,6 +55,7 @@ function CPLoader () {
 	$CI->navigation->Add('#','Settings',false,true);
 	$CI->navigation->Add('settings/emails','Emails','#');
 	$CI->navigation->Add('settings/gateways','Gateways','#');
+	$CI->navigation->Add('settings/cronjob','Cronjobs','#');
 	$CI->navigation->Add('settings/api','API Access','#');
 	
 	
