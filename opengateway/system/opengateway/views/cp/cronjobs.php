@@ -2,7 +2,7 @@
 
 <h1>System Cronjobs</h1>
 
-<?php if (!isset($last_run) || empty($last_run)) : ?>
+<?php if (!isset($dates)) : ?>
 <p class="warning"><span>Your cronjob appears to have never been run! This is not good - we need this script to run at least once per day to take care of all the automated tasks involving subscriptions, like auto-charging subscriptions. You must configure the cronjobs below to run at least once per day, or ask your system administrator to do the same.</span></p>
 <?php endif; ?>
 

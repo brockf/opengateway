@@ -33,6 +33,20 @@ function CPLoader () {
 		die();
 	}
 	
+	// Check CronJobs
+	$query = $CI->db->get('version');
+	if ($query->num_rows())
+	{
+		$result = $query->row();
+		
+		$check_time = strtotime("-1 day");
+		
+		if (strtotime($result->cron_last_run_notifications) < $check_time || strtotime($result->cron_last_run_subs) < $check_time)
+		{
+			$CI->notices->SetError('Warning: Your cronjob is not running properly. <a href="'. site_url('settings/cronjob') .'">Click here for details</a>');
+		}
+	}
+	
 	// Build Navigation
 	$CI->navigation->Add('dashboard','Dashboard');
 	$CI->navigation->Add('transactions','Transactions');
