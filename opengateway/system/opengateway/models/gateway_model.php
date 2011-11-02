@@ -574,10 +574,14 @@ class Gateway_model extends Model
 			$check_year = ($credit_card['exp_year'] > 2000) ? $credit_card['exp_year'] : '20' . $credit_card['exp_year'];
 			$expiry = mktime(0,0,0, $credit_card['exp_month'], days_in_month($credit_card['exp_month'], $credit_card['exp_year']), $check_year);
 			
-			if ($expiry < strtotime($end_date)) {
-				// make the adjustment, this card will expire
-				$end_date = mktime(0,0,0, $credit_card['exp_month'], (days_in_month($credit_card['exp_month'], $credit_card['exp_year']) - 1), $credit_card['exp_year']);
-				$end_date = date('Y-m-d', $end_date);
+			$date = strtotime($next_charge_date);
+			while ($date < strtotime($end_date)) {
+				if ($expiry < $date) {
+					$end_date = date('Y-m-d', strtotime($date);
+					break;
+				}
+				
+				$date = $date + ($interval * 86400);
 			}
 		}
 		
