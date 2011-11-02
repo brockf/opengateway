@@ -5,8 +5,8 @@ $url = "http://localhost/api/";
 $post_string = '<?xml version="1.0" encoding="UTF-8"?>
 <request>
 	<authentication>
-		<api_id>EB4RTDHWE5F18BDC8ZJ3</api_id>
-		<secret_key>FLIDRBM9S8E8PP9DZ9T319HC8WQCTUSINFFKJ7W3</secret_key>
+		<api_id>test</api_id>
+		<secret_key>test</secret_key>
 	</authentication>
 	<type>GetCustomers</type>
 	<limit>500</limit>

@@ -4,7 +4,7 @@ class Response
 {	
 	public $format;
 	
-	function FormatResponse ($array = '', $format = 'xml')
+	function FormatResponse ($array = '', $format = FALSE)
 	{
 		// Load the CI object
 		$CI =& get_instance();

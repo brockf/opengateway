@@ -54,7 +54,7 @@ class API extends Controller {
 		$request_type = ucfirst($request_type);
 		
 		// Make sure a proper format was passed
-		if(isset($params['format'])) {
+		if (isset($params['format'])) {
 			$format = $params['format'];
 			if(!in_array($format, array('xml', 'json', 'php'))) {
 				echo $this->response->Error(1006);
