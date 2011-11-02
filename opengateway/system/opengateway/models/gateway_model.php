@@ -577,7 +577,7 @@ class Gateway_model extends Model
 			$date = strtotime($next_charge_date);
 			while ($date < strtotime($end_date)) {
 				if ($expiry < $date) {
-					$end_date = date('Y-m-d', strtotime($date);
+					$end_date = date('Y-m-d', strtotime($date));
 					break;
 				}
 				
