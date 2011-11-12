@@ -11,6 +11,9 @@
 
 <p><b>Cronjob Commands for *nix Servers:</b></p>
 
+<p>The following cronjobs should be setup in your web hosting control panel. If you are unsure how of how to do this, please contact your web host
+or your server administrator.</p>
+
 <pre class="code">
 */5 * * * wget -q -O /dev/null <?=rtrim($cp_link, '/');?>/cron/sendnotifications/<?=$cron_key;?> >/dev/null 2>&1
 5 5 * * * wget -q -O /dev/null <?=rtrim($cp_link, '/');?>/cron/subscriptionmaintenance/<?=$cron_key;?> >/dev/null 2>&1
