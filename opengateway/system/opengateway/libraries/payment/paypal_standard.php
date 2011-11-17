@@ -72,7 +72,8 @@ class paypal_standard
 																		'GBP' => 'UK Pound',
 																		'AUD' => 'Australian Dollar',
 																		'JPY' => 'Japanese Yen',
-																		'NOK' => 'Norwegian Krones'
+																		'NOK' => 'Norwegian Krones',
+																		'SGD' => 'Singapore Dollar'
 																	)
 														)
 											);
