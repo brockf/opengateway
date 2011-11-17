@@ -40,8 +40,28 @@ function CPLoader () {
 		$result = $query->row();
 		
 		$check_time = strtotime("-1 day");
-		
-		if (strtotime($result->cron_last_run_notifications) < $check_time || strtotime($result->cron_last_run_subs) < $check_time)
+		// If the cronjobs have never been run, then go ahead and run them manually.
+		if (!isset($result->cron_last_run_notifications) || 
+			!isset($result->cron_last_run_subs) ||
+			$result->cron_last_run_notifications == '0000-00-00 00:00:00' ||
+			$result->cron_last_run_subs == '0000-00-00 00:00:00' )
+		{
+			$cronkey = $CI->config->item('cron_key');
+			
+			$url = site_url('cron/RunAll/'. $cronkey);
+			
+			// Run the cron jobs via curl for max server compatility.
+			$ch = curl_init($url);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);   // Verify it belongs to the server.
+		    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);   // Check common exists and matches the server host name
+		    $post_response = curl_exec($ch);
+		    
+		    curl_close($ch);
+		}
+
+		// Otherwise, if it has been ran but not lately, throw a warning.
+		else if (strtotime($result->cron_last_run_notifications) < $check_time || strtotime($result->cron_last_run_subs) < $check_time)
 		{
 			$CI->notices->SetError('Warning: Your cronjob is not running properly. <a href="'. site_url('settings/cronjob') .'">Click here for details</a>');
 		}
