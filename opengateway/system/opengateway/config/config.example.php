@@ -47,6 +47,9 @@ if ($_SERVER["SERVER_PORT"] == "443" or (isset($_SERVER['HTTPS']) and $_SERVER['
 	$config['base_url'] = str_replace('http://','https://',$config['base_url']);
 }
 
+// how many items to process from the notifications queue at once
+$config['queue_process_limit'] = 20;
+
 /*
 |--------------------------------------------------------------------------
 | Encryption Key
