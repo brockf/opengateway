@@ -15,7 +15,9 @@ if (!empty($this->dataset->data)) {
 
 if (isset($row['plans'])) {
 	foreach ($row['plans'] as $plan) {
-		?><?=$plan['name'];?><br /><?
+		if ($plan['status'] != 'inactive') {
+			?><?=$plan['name'];?><br /><?
+		}
 	}
 }
 			
