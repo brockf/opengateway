@@ -662,7 +662,35 @@ class Gateway_model extends Model
 		
 		// if amount is greater than 0, we require a gateway to process
 		if ($recur['amount'] > 0) {
+			// recurring charges are not free
 			$response = $CI->$gateway_name->Recur($client_id, $gateway, $customer, $amount, $charge_today, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences, $return_url, $cancel_url);
+		}
+		elseif ($recur['amount'] <= 0 and $amount > 0) {
+			// recurring charges are free, but there is an initial charge
+			
+			// can't be an external gateway
+			if ($gateway_settings['external'] == TRUE) {
+				die($this->response->Error(5024));
+			}
+			
+			// must have a start date of today
+			if ($charge_today !== TRUE) {
+				die($this->response->Error(5025));
+			}
+			
+			$CI->load->model('charge_model');
+			$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
+			$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer_ip);
+			$response = $CI->$gateway_name->Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card, $return_url, $cancel_url);	
+			
+			// translate response codes into proper recurring terms
+			if ($response['response_code'] == 1) {
+				// set order OK
+				$CI->charge_model->SetStatus($order_id, 1);
+				
+				$response['response_code'] = 100;
+				$response['recurring_id'] = $subscription_id;
+			}
 		}
 		else {
 			// this is a free subscription
