@@ -290,6 +290,18 @@ class Coupon_model extends Model {
 			$this->db->where('coupons.client_id', $client_id);
 		}
 		
+		// limit
+		if (isset($filters['offset'])) {
+			$offset = $filters['offset'];
+		}
+		else {
+			$offset = 0;
+		}
+		
+		if(isset($filters['limit'])) {
+			$this->db->limit($filters['limit'], $offset);
+		}
+		
 		$this->db->where('coupon_deleted', 0);
 		$result = $this->db->get('coupons');
 		

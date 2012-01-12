@@ -78,7 +78,10 @@ class Transactions extends Controller {
 					);
 					
 		// set total rows by hand to reduce database load
-		$result = $this->db->select('COUNT(order_id) AS total_rows',FALSE)->from('orders')->get();
+		$result = $this->db->select('COUNT(order_id) AS total_rows',FALSE)
+						   ->from('orders')
+						   ->where('client_id', $this->user->Get('client_id'))
+						   ->get();
 		$this->dataset->total_rows((int)$result->row()->total_rows);
 		
 		$this->dataset->Initialize('charge_model','GetCharges',$columns);
@@ -176,7 +179,11 @@ class Transactions extends Controller {
 							);
 		
 		// set total rows by hand to reduce database load
-		$result = $this->db->select('COUNT(subscription_id) AS total_rows',FALSE)->where('active','1')->from('subscriptions')->get();
+		$result = $this->db->select('COUNT(subscription_id) AS total_rows',FALSE)
+						   ->where('active','1')
+						   ->where('client_id', $this->user->Get('client_id'))
+						   ->from('subscriptions')
+						   ->get();
 		$this->dataset->total_rows((int)$result->row()->total_rows);
 		
 		$this->dataset->Initialize('recurring_model','GetRecurrings',$columns);

@@ -63,6 +63,14 @@ class Coupons extends Controller {
 							'filter'	=> 'coupon_type'
 						)
 					);
+					
+		// set total rows by hand to reduce database load
+		$result = $this->db->select('COUNT(coupon_id) AS total_rows',FALSE)
+						   ->from('coupons')
+						   ->where('coupon_deleted','0')
+						   ->where('client_id', $this->user->Get('client_id'))
+						   ->get();
+		$this->dataset->total_rows((int)$result->row()->total_rows);			
 		
 		// initialize the dataset
 		$this->dataset->Initialize('coupon_model','get_coupons', $columns);
