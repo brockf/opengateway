@@ -20,14 +20,19 @@ begin processing transactions, you should <a href="<?=site_url('settings/new_gat
 				<label for="coupon" class="full">Coupon</label>
 			</li>
 			<li>
-				<select name="coupon" <? if ($coupons == FALSE) { ?>disabled="true"<? } ?>>
-					<? if ($coupons == FALSE) { ?><option value="">No available coupons</option> <? } ?>
+					<? if ($coupons == FALSE) { ?> <select name="coupon"><option value="">No available coupons</option></select> <? } ?>
 					<? if (!empty($coupons)) { ?>
-						<option value="">No coupon</option>
-						<? foreach ($coupons as $coupon) { ?>
-							<? if ($coupon['end_date'] === FALSE or (strtotime($coupon['end_date'])+84600) > time()) { ?>
-								<option value="<?=$coupon['code'];?>"><?=$coupon['code'];?> - <?=$coupon['name'];?></option>
-							<? } ?>
+						<? if ($coupons === TRUE) { ?>
+							<input type="text" name="coupon" value="" />
+						<? } else { ?> 
+							<select name="coupon">
+							<option value="">No coupon</option>
+								<? foreach ($coupons as $coupon) { ?>
+									<? if ($coupon['end_date'] === FALSE or (strtotime($coupon['end_date'])+84600) > time()) { ?>
+										<option value="<?=$coupon['code'];?>"><?=$coupon['code'];?> - <?=$coupon['name'];?></option>
+									<? } ?>
+								<? } ?>
+							</select>
 						<? } ?>
 					<? } ?>
 				</select>

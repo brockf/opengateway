@@ -239,8 +239,23 @@ class Transactions extends Controller {
 		}
 		
 		// coupons
-		$this->load->model('coupon_model');
-		$coupons = $this->coupon_model->get_coupons();
+		$result = $this->db->select('COUNT(coupon_id) AS total_rows',FALSE)
+						   ->from('coupons')
+						   ->where('coupon_deleted','0')
+						   ->where('client_id', $this->user->Get('client_id'))
+						   ->get();
+		$coupon_count = (int)$result->row()->total_rows;
+		
+		if ($coupon_count > 0 and $coupon_count < 100) {
+			$this->load->model('coupon_model');
+			$coupons = $this->coupon_model->get_coupons();
+		}
+		elseif ($coupon_count >= 100) {
+			$coupons = TRUE;
+		}
+		else {
+			$coupons == TRUE;
+		}
 		
 		$data = array(
 					'states' => $states,
