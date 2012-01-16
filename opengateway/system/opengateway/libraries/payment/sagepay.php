@@ -181,7 +181,7 @@ class sagepay
 				$post_values['BillingAddress2'] = ' - '.$customer['address_2'];
 			}
 			$post_values['BillingCity'] = $customer['city'];
-			if (!empty($customer['country']) and ($customer['country'] == 'US' or $customer['country'] == 'CA')) {
+			if (!empty($customer['country']) and ($customer['country'] == 'US')) {
 				// only for North American customers
 				$post_values['BillingState'] = $customer['state'];
 			}
