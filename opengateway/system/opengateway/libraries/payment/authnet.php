@@ -171,7 +171,8 @@ class authnet
 			"x_method"			=> "CC",
 			"x_card_num"		=> $credit_card['card_num'],
 			"x_exp_date"		=> $credit_card['exp_month'] . '/' . substr($credit_card['exp_year'],-2,2),
-			"x_amount"			=> $amount
+			"x_amount"			=> $amount,
+			"x_invoice_num"		=> $order_id
 		);
 			
 		if ($gateway['mode'] == 'test') {
