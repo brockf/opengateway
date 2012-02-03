@@ -166,7 +166,7 @@ class eway
 	function TestConnection($client_id, $gateway) 
 	{	
 		$customer = array(
-			'Title'		=> 'Mr',
+			'Title'		=> 'Mr.',
 	    	'FirstName' => 'Joe',
 	    	'LastName'	=> 'Bloggs',
 	    	'Address'	=> 'Blogg enterprises',
@@ -190,7 +190,7 @@ class eway
 	    );
 		
 		$response = $this->processSoap($gateway, $customer, 'CreateCustomer');
-
+die(print_r($response));
 		if (isset($response['CREATECUSTOMERRESULT']))
 		{
 			return TRUE;
