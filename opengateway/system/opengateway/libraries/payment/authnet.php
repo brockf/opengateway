@@ -373,9 +373,8 @@ class authnet
 		$content .= "<address>$address</address>";
 		$content .= "<city>$city</city>";
 		$content .= "<state>$state</state>";
-		$content .= "<zip>$izp</zip>";
+		$content .= "<zip>$zip</zip>";
 		$content .= "<phoneNumber>$phoneNumber</phoneNumber>";
-		$content .= "<faxNumber>$faxNumber</faxNumber>";
 		
 		$content .= '	</billTo>
 						<payment>
