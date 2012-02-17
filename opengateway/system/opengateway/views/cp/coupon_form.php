@@ -22,7 +22,7 @@
         <legend>Coupon Information</legend>
 
         <ul class="form">
-            <li style="list-style: none"><input type="hidden" id="coupon_id" name="coupon_id" value="<?= isset($coupon) ? $coupon['coupon_id'] : '' ?>"></li>
+            <li style="list-style: none"><input type="hidden" id="coupon_id" name="coupon_id" value="<?= isset($coupon) ? $coupon['id'] : '' ?>"></li>
 
             <li ><label  for="coupon_name">Coupon Name</label><input type="text" class="text required" style="width:250px" name="coupon_name" rel="" id="coupon_name" value="<?= isset($coupon) ? $coupon['name'] : '' ?>"></li>
 
