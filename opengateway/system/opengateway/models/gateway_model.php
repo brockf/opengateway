@@ -134,6 +134,10 @@ class Gateway_model extends Model
 		$CI =& get_instance();
 		$CI->load->library('field_validation');
 		
+		// Clean up our url's
+		if ($return_url) $return_url = htmlspecialchars_decode($return_url);
+		if ($cancel_url) $cancel_url = htmlspecialchars_decode($cancel_url);
+		
 		// Get the gateway info to load the proper library
 		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
 		
@@ -340,6 +344,10 @@ class Gateway_model extends Model
 	{		
 		$CI =& get_instance();
 		$CI->load->library('field_validation');
+		
+		// Clean up our url's
+		if ($return_url) $return_url = htmlspecialchars_decode($return_url);
+		if ($cancel_url) $cancel_url = htmlspecialchars_decode($cancel_url);
 		
 		// Get the gateway info to load the proper library
 		$gateway = $this->GetGatewayDetails($client_id, $gateway_id);
@@ -649,9 +657,10 @@ class Gateway_model extends Model
 		$CI->load->model('recurring_model');
 		$card_last_four = (isset($credit_card['card_num'])) ? substr($credit_card['card_num'],-4,4) : '0';
 		$subscription_id = $CI->recurring_model->SaveRecurring($client_id, $gateway['gateway_id'], $customer['customer_id'], $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $recur['amount'], $plan_id, $card_last_four, $coupon_id);
-		
+	
 		// get subscription
 		$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
+		
 		// is there a charge for today?
 		$charge_today = ((float)$amount > 0 and date('Y-m-d', strtotime($subscription['date_created'])) == date('Y-m-d', strtotime($subscription['start_date']))) ? TRUE : FALSE;
 		
@@ -661,7 +670,7 @@ class Gateway_model extends Model
 		}
 		
 		// if amount is greater than 0, we require a gateway to process
-		if ($recur['amount'] > 0) {
+		if ($recur['amount'] > 0) { 
 			// recurring charges are not free
 			$response = $CI->$gateway_name->Recur($client_id, $gateway, $customer, $amount, $charge_today, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences, $return_url, $cancel_url);
 		}
