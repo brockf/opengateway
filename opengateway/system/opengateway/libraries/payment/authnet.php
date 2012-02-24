@@ -220,6 +220,9 @@ class authnet
 	{		
 		$CI =& get_instance();
 		
+		// Get our customer array cleaned up so that invalide XML characters will not cause issues.
+		$this->EncodeArray($customer);
+		
 		// Create a new authnet profile if one doesn't exist
 		$CI->db->select('api_customer_reference');
 		$CI->db->join('client_gateways', 'subscriptions.gateway_id = client_gateways.client_gateway_id', 'inner');
@@ -229,7 +232,7 @@ class authnet
 		$CI->db->where('subscriptions.active', 1);
 		$CI->db->where('subscriptions.customer_id',$customer['customer_id']);
 		$current_profile = $CI->db->get('subscriptions');
-			
+		
 		if ($current_profile->num_rows() > 0) {
 			// save the profile ID
 			$current_profile = $current_profile->row_array();
@@ -251,7 +254,7 @@ class authnet
 			}
 			
 		}
-		else {
+		else {	
 			$response = $this->CreateProfile($gateway, $subscription_id, $customer);
 			
 			if(isset($response) and !empty($response['success'])) {
@@ -810,6 +813,30 @@ class authnet
 		}
 		
 		return $post_url;
+	}
+	
+	/**
+	 * Htmlspecialchars all individual items in an array.
+	 * 
+	 */
+	function EncodeArray(&$items = null)
+	{
+		if (!is_array($items) || !count($items))
+		{
+			return;
+		}
+		
+		foreach ($items as $item => &$value)
+		{
+			if (is_string($value))
+			{
+				$value = htmlspecialchars($value);
+			}
+			else if (is_array($value))
+			{
+				$value = $this->EncodeArray($value);
+			}
+		}
 	}
 	
 	/*
