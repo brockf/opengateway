@@ -160,7 +160,7 @@ class exact
 		  
 		$transaction_result = $this->Process($transaction, $post_url);
 		
-		if($transaction_result->EXact_Resp_Code == '00'){
+		if ($transaction_result->EXact_Resp_Code == '00' and $transaction_result->Transaction_Approved === TRUE){
 			$CI->load->model('order_authorization_model');
 			$CI->order_authorization_model->SaveAuthorization($order_id, $transaction_result->Transaction_Tag, $transaction_result->Authorization_Num);
 			$response_array = array('charge_id' => $order_id);
@@ -273,7 +273,7 @@ class exact
 		
 		$post_response = $this->Process($transaction, $post_url, $order_id);
 		
-		if($post_response->EXact_Resp_Code == '00') {
+		if ($post_response->EXact_Resp_Code == '00' and $post_response->Transaction_Approved === TRUE) {
 			$response['success'] = TRUE;
 			// Save the Auth information
 			$CI->load->model('recurring_model');
@@ -315,7 +315,7 @@ class exact
 		
 		$post_response = $this->Process($trxnProperties, $post_url, $order_id);
 		
-		if ($post_response->EXact_Resp_Code == '00') {
+		if ($post_response->EXact_Resp_Code == '00' and $post_response->Transaction_Approved === TRUE) {
 			$response['success'] = TRUE;
 			// Save the Auth information
 			$CI->load->model('order_authorization_model');
