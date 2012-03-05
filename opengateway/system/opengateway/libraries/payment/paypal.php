@@ -292,19 +292,32 @@ class paypal
 			}
 		}
 		
-		// get true recurring rate, first
-		$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
+		// we need to create a success variable
+		$profile_success = FALSE;
 		
-		// Create a new PayPal profile
-		$response = $this->CreateProfile($client_id, $gateway, $customer, $subscription['amount'], $credit_card, $start_date, $subscription_id, $total_occurrences, $interval);
-		
-		if (is_array($response) and $response['success'] == TRUE) {
-			$profile_id = $response['profile_id'];	
+		// if we only have 1 charge, we don't need a recurring profile
+		if ($charge_today != TRUE or $total_occurrences != 1) {
+			// setup recurring profile
 			
-			$CI->recurring_model->SaveApiCustomerReference($subscription_id, $profile_id);
+			// get true recurring rate, first
+			$subscription = $CI->recurring_model->GetRecurring($client_id, $subscription_id);
+			
+			// Create a new PayPal profile
+			$response = $this->CreateProfile($client_id, $gateway, $customer, $subscription['amount'], $credit_card, $start_date, $subscription_id, $total_occurrences, $interval);
+			
+			if (is_array($response) and $response['success'] == TRUE) {
+				$profile_id = $response['profile_id'];	
+				
+				$CI->recurring_model->SaveApiCustomerReference($subscription_id, $profile_id);
+				
+				$profile_success = TRUE;
+			}
+		}
+		else {
+			$profile_success = TRUE;
 		}
 		
-		if ($response['success'] == TRUE){
+		if ($profile_success == TRUE){
 				$response_array['recurring_id'] = $subscription_id;
 				$response = $CI->response->TransactionResponse(100, $response_array);
 		} else {
@@ -448,6 +461,12 @@ class paypal
 			$post['cvv2'] = $credit_card['cvv'];
 		}
 		
+		// specify # of occurrences if < 4
+		if ($total_occurrences < 4) {
+			// we subtract 1 because one charge already went through as the initial charge
+			$post['totalbillingcycles'] = ($total_occurrences - 1);
+		}
+		
 		// build customer address
 		$post['firstname'] = (isset($customer['first_name'])) ? $customer['first_name'] : '';
 		$post['lastname'] = (isset($customer['last_name'])) ? $customer['last_name'] : '';
@@ -485,6 +504,11 @@ class paypal
 	
 	function CancelRecurring($client_id, $subscription, $gateway)
 	{
+		// was this a one time charge?  if so, we didn't create a recurring profile...
+		if (empty($subscription['api_customer_reference'])) {
+			return TRUE;
+		}
+		
 		$CI =& get_instance();
 		$CI->load->model('recurring_model');
 		
@@ -514,7 +538,7 @@ class paypal
 		
 		$post_response = $this->response_to_array($post_response);
 		
-		if($post_response['ACK'] == 'Success') {
+		if ($post_response['ACK'] == 'Success') {
 			$response = TRUE;
 		} else {
 			$response = FALSE;
@@ -525,6 +549,11 @@ class paypal
 	
 	function UpdateRecurring($client_id, $gateway, $subscription, $customer, $params)
 	{
+		// was this a one time charge?  if so, we didn't create a recurring profile...
+		if (empty($subscription['api_customer_reference'])) {
+			return FALSE;
+		}
+		
 		$CI =& get_instance();
 		$CI->load->model('recurring_model');
 		
