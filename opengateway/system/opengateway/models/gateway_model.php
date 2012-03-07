@@ -627,11 +627,6 @@ class Gateway_model extends Model
 		
 		// validate function arguments
 		if (empty($credit_card) and ((float)$recur['amount'] > 0 or (float)$amount > 0) and $gateway_settings['external'] == FALSE and $gateway_settings['no_credit_card'] == FALSE) {
-			if (isset($created_customer) and $created_customer == TRUE and $response['response_code'] != 100) {
-				// charge was rejected, so let's delete the customer record we just created
-				$CI->customer_model->DeleteCustomer($client_id, $customer['customer_id']);
-			}
-			
 			die($CI->response->Error(1004));
 		}
 		
