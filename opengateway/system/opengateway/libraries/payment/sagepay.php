@@ -207,7 +207,7 @@ class sagepay
 				$post_values['DeliveryAddress2'] = ' - '.$customer['address_2'];
 			}
 			$post_values['DeliveryCity'] = $customer['city'];
-			if (!empty($customer['country']) and ($customer['country'] == 'US' or $customer['country'] == 'CA')) {
+			if (!empty($customer['country']) and ($customer['country'] == 'US')) {
 				// only for North American customers
 				$post_values['DeliveryState'] = $customer['state'];
 			}
