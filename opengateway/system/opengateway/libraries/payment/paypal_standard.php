@@ -68,6 +68,7 @@ class paypal_standard
 														'options' => array(
 																		'USD' => 'US Dollar',
 																		'CAD' => 'Canadian Dollar',
+																		'CHF' => 'Swiss Franc',
 																		'EUR' => 'Euro',
 																		'GBP' => 'UK Pound',
 																		'AUD' => 'Australian Dollar',
