@@ -86,6 +86,7 @@ class wirecard
 																		'DKK' => 'DKK - Danish Krone',
 																		'HKD' => 'HKD - Hong Kong Dollar',
 																		'IDR' => 'IDR - Rupiah',
+																		'ISK' => 'ISK - Icelandic Krona',
 																		'JPY' => 'JPY - Yen',
 																		'LUF' => 'LUF - Luxembourg Franc',
 																		'NOK' => 'NOK - Norwegian Krone',
