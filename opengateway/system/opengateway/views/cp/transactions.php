@@ -6,14 +6,14 @@ if (!empty($this->dataset->data)) {
 	foreach ($this->dataset->data as $row) {
 	?>
 		<tr>
-			<td><?=$row['id'];?></td>
+			<td><a href="<?=site_url('transactions/charge/' . $row['id']);?>"><?=$row['id'];?></a></td>
 			<td class="<? if ($row['refunded'] == '1') { ?>refunded<? } else { ?><?=$row['status'];?><? } ?>">&nbsp;</td>
 			<td><?=$row['date'];?></td>
 			<td><?=$this->config->item('currency_symbol');?><?=$row['amount'];?></td>
 			<td><? if (isset($row['customer'])) { ?><?=$row['customer']['last_name'];?>, <?=$row['customer']['first_name'];?><? } ?></td>
 			<td><? if (!empty($row['card_last_four'])) { ?>****<?=$row['card_last_four'];?><? } ?></td>
+			<td><?=$gateways[$row['gateway_id']];?></td>
 			<td class="options"><? if (isset($row['recurring_id'])) { ?><a href="<?=site_url('transactions/recurring/' . $row['recurring_id']);?>"><?=$row['recurring_id'];?></a><? } ?></td>
-			<td class="options"><a href="<?=site_url('transactions/charge/' . $row['id']);?>">details</a></td>
 		</tr>
 	<?
 	}

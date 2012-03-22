@@ -1290,7 +1290,7 @@ class Gateway_model extends Model
 	* @return mixed Array containg all gateways meeting criteria
 	*/
 	
-	function GetGateways ($client_id, $params)
+	function GetGateways ($client_id, $params = array())
 	{		
 		if(isset($params['deleted']) and $params['deleted'] == '1') {
 			$this->db->where('client_gateways.deleted', '1');

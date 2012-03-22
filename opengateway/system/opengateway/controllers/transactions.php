@@ -25,6 +25,32 @@ class Transactions extends Controller {
 		
 		$this->load->model('cp/dataset','dataset');
 		
+		// prepare gateway select
+		$this->load->model('gateway_model');
+		$gateways = $this->gateway_model->GetGateways($this->user->Get('client_id'));
+		
+		// we're gonna short gateway names
+		$this->load->helper('shorten');
+		
+		$gateway_options = array();
+		$gateway_values = array();
+		foreach ($gateways as $gateway) {
+			$gateway['gateway'] = shorten($gateway['gateway'], 15);
+		
+			$gateway_options[$gateway['id']] = $gateway['gateway'];
+			$gateway_values[$gateway['id']] = $gateway['gateway'];
+		}
+		
+		// now get deleted gateways and add them in so that, when viewing the
+		// transactions table, we have names for each gateway in this array
+		$gateways = $this->gateway_model->GetGateways($this->user->Get('client_id'), array('deleted' => '1'));
+		
+		foreach ($gateways as $gateway) {
+			$gateway['gateway'] = shorten($gateway['gateway'], 15);
+			
+			$gateway_values[$gateway['id']] = $gateway['gateway'];
+		}
+		
 		$columns = array(
 						array(
 							'name' => 'ID #',
@@ -37,7 +63,7 @@ class Transactions extends Controller {
 							'sort_column' => 'status',
 							'type' => 'select',
 							'options' => array('1' => 'ok', '2' => 'refunded', '0' => 'failed', '3' => 'failed-repeat'),
-							'width' => '10%',
+							'width' => '4%',
 							'filter' => 'status'),
 						array(
 							'name' => 'Date',
@@ -60,20 +86,22 @@ class Transactions extends Controller {
 							'width' => '20%',
 							'filter' => 'customer_last_name'),
 						array(
-							'name' => 'Credit Card',
+							'name' => 'Card',
 							'sort_column' => 'card_last_four',
 							'type' => 'text',
-							'width' => '12%',
+							'width' => '10%',
 							'filter' => 'card_last_four'),
 						array(
+							'name' => 'Gateway',
+							'type' => 'select',
+							'width' => '10%',
+							'options' => $gateway_options,
+							'filter' => 'gateway_id'),
+						array(
 							'name' => 'Recurring',
-							'width' => '12%',
+							'width' => '10%',
 							'type' => 'text',
 							'filter' => 'recurring_id'
-							),
-						array(
-							'name' => '',
-							'width' => '16%'
 							)
 					);
 					
@@ -96,7 +124,8 @@ class Transactions extends Controller {
 		$this->navigation->SidebarButton('New Charge','transactions/create');
 		
 		$data = array(
-					'total_amount' => $total_amount
+					'total_amount' => $total_amount,
+					'gateways' => $gateway_values
 					);
 		
 		$this->load->view(branded_view('cp/transactions.php'), $data);
