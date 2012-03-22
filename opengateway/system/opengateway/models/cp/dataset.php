@@ -23,11 +23,13 @@ class Dataset extends Model {
 	var $data;
 	var $actions;
 	var $params;
+	var $use_total_rows;
 
     function Dataset() {
         parent::Model();
         
         $this->rows_per_page = 50;
+        $this->use_total_rows = FALSE;
     }
     
     /**
@@ -41,6 +43,16 @@ class Dataset extends Model {
     	$this->total_rows = $total_rows;
     	
     	return;
+    }
+    
+    /**
+    * Use Total Rows
+    *
+    * Even when filtering, just use total rows
+    *
+    */
+    function use_total_rows () {
+    	$this->use_total_rows = TRUE;
     }
     
     /**
@@ -163,7 +175,7 @@ class Dataset extends Model {
     	
     	$this->data = $CI->data_model->$data_function($CI->user->Get('client_id'),$params);
     	
-    	if (empty($this->total_rows) or !empty($filter_params)) {
+    	if (empty($this->total_rows) or !empty($filter_params) and $this->use_total_rows != TRUE) {
 	    	unset($params);
 	    	$params = array();
 	    	

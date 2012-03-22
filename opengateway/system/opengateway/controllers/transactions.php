@@ -112,6 +112,11 @@ class Transactions extends Controller {
 						   ->get();
 		$this->dataset->total_rows((int)$result->row()->total_rows);
 		
+		if ($this->dataset->total_rows > 10000) {	
+			// we're going to have a memory error with this much data
+			$this->dataset->use_total_rows();
+		}
+		
 		$this->dataset->Initialize('charge_model','GetCharges',$columns);
 		
 		$this->load->model('charge_model');
