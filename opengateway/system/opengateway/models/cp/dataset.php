@@ -189,6 +189,15 @@ class Dataset extends Model {
 	    	
 	    	$this->total_rows = $total_rows;
 	    }
+	    else {
+	    	unset($params);
+	    	$params = array();
+	    	
+			$params = (!empty($filter_params)) ? array_merge($params, $filter_params) : $params;
+			
+			// store in a public variable
+			$this->params = $params;
+	    }
     	
     	// set $url_filters if they exist
     	$url_filters = (!empty($this->filter_values)) ? '/' . $CI->asciihex->AsciiToHex(base64_encode(serialize($this->filter_values))) . '/' : '';

@@ -137,7 +137,7 @@ class Charge_model extends Model
 		// Check which search paramaters are set
 		
 		if(isset($params['gateway_id'])) {
-			$this->db->where('gateway_id', $params['gateway_id']);
+			$this->db->where('orders.gateway_id', $params['gateway_id']);
 		}
 		
 		$this->load->library('field_validation');
