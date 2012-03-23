@@ -60,6 +60,14 @@ class Coupon_model extends Model {
 			return FALSE;
 		}
 		
+		if (strtotime($coupon['start_date']) > time()) {
+			// not yet started
+			
+			log_message('debug','Coupon ineligible: Coupon will not start until ' . date('Y-m-d', strtotime($coupon['start_date'])) . '.');
+			
+			return FALSE;
+		}
+		
 		// linked plans
 		$plans = $this->get_related($coupon['id'], 'coupons_plans', 'plan_id');
 		
