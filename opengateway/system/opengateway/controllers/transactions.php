@@ -112,7 +112,7 @@ class Transactions extends Controller {
 						   ->get();
 		$this->dataset->total_rows((int)$result->row()->total_rows);
 		
-		if ($this->dataset->total_rows > 10000) {	
+		if ($this->dataset->total_rows > 30000) {	
 			// we're going to have a memory error with this much data
 			$this->dataset->use_total_rows();
 		}
