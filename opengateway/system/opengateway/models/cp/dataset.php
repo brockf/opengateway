@@ -23,6 +23,7 @@ class Dataset extends Model {
 	var $data;
 	var $actions;
 	var $params;
+	var $total_rows;
 	var $use_total_rows;
 
     function Dataset() {
@@ -175,7 +176,7 @@ class Dataset extends Model {
     	
     	$this->data = $CI->data_model->$data_function($CI->user->Get('client_id'),$params);
     	
-    	if (empty($this->total_rows) or !empty($filter_params) and $this->use_total_rows != TRUE) {
+    	if ((empty($this->total_rows) or !empty($filter_params)) and $this->use_total_rows != TRUE) {
 	    	unset($params);
 	    	$params = array();
 	    	
