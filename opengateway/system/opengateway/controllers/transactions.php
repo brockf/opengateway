@@ -45,10 +45,12 @@ class Transactions extends Controller {
 		// transactions table, we have names for each gateway in this array
 		$gateways = $this->gateway_model->GetGateways($this->user->Get('client_id'), array('deleted' => '1'));
 		
-		foreach ($gateways as $gateway) {
-			$gateway['gateway'] = shorten($gateway['gateway'], 15);
-			
-			$gateway_values[$gateway['id']] = $gateway['gateway'];
+		if (!empty($gateways)) {
+			foreach ($gateways as $gateway) {
+				$gateway['gateway'] = shorten($gateway['gateway'], 15);
+				
+				$gateway_values[$gateway['id']] = $gateway['gateway'];
+			}
 		}
 		
 		$columns = array(
