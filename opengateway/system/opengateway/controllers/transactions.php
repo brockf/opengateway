@@ -35,10 +35,8 @@ class Transactions extends Controller {
 		$gateway_options = array();
 		$gateway_values = array();
 		foreach ($gateways as $gateway) {
-			$gateway['gateway'] = shorten($gateway['gateway'], 15);
-		
 			$gateway_options[$gateway['id']] = $gateway['gateway'];
-			$gateway_values[$gateway['id']] = $gateway['gateway'];
+			$gateway_values[$gateway['id']] = shorten($gateway['gateway'], 15);
 		}
 		
 		// now get deleted gateways and add them in so that, when viewing the
@@ -47,9 +45,9 @@ class Transactions extends Controller {
 		
 		if (!empty($gateways)) {
 			foreach ($gateways as $gateway) {
-				$gateway['gateway'] = shorten($gateway['gateway'], 15);
+				$gateway['gateway_short'] = shorten($gateway['gateway'], 15);
 				
-				$gateway_values[$gateway['id']] = $gateway['gateway'];
+				$gateway_values[$gateway['id']] = $gateway['gateway_short'];
 			}
 		}
 		

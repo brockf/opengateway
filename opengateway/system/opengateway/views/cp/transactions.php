@@ -1,4 +1,9 @@
 <?=$this->load->view(branded_view('cp/header'));?>
+
+<style>
+	td.filter select { width: 75px }
+</style>
+
 <h1>Latest transactions</h1>
 <?=$this->dataset->TableHead();?>
 <?
