@@ -644,43 +644,46 @@ class paypal_standard
 				
 				// get the first charge amount (it may be different)
 				$first_charge_amount = (isset($data['first_charge'])) ? $data['first_charge'] : $subscription['amount'];
+				$first_charge_amount = (float)$first_charge_amount;
 				
-				$customer_id = (isset($subscription['customer']['id'])) ? $subscription['customer']['id'] : FALSE;
-				$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $first_charge_amount, array(), $subscription['id'], $customer_id);
-				
-				// yes, the first charge is today
-				$post = $response; // most of the data is from here
-				unset($post['NOTE']);
-				
-				$post['METHOD'] = 'DoExpressCheckoutPayment';
-				$post['TOKEN'] = $response['TOKEN'];
-				$post['PAYMENTACTION'] = 'Sale';
-				$post['version'] = '56.0';
-				$post['user'] = $gateway['user'];
-				$post['pwd'] = $gateway['pwd'];
-				$post['signature'] = $gateway['signature'];
-				
-				$response_charge = $this->Process($url, $post);
-				
-				if (!isset($response_charge) or $response_charge['PAYMENTSTATUS'] != 'Completed' and $response_charge['PAYMENTSTATUS'] != 'Pending' and $response_charge['PAYMENTSTATUS'] != 'Processed') {
-					die('Your initial PayPal payment failed.  <a href="' . $data['cancel_url'] . '">Go back to merchant</a>.');
+				if (!empty($first_charge_amount)) {
+					$customer_id = (isset($subscription['customer']['id'])) ? $subscription['customer']['id'] : FALSE;
+					$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $first_charge_amount, array(), $subscription['id'], $customer_id);
+					
+					// yes, the first charge is today
+					$post = $response; // most of the data is from here
+					unset($post['NOTE']);
+					
+					$post['METHOD'] = 'DoExpressCheckoutPayment';
+					$post['TOKEN'] = $response['TOKEN'];
+					$post['PAYMENTACTION'] = 'Sale';
+					$post['version'] = '56.0';
+					$post['user'] = $gateway['user'];
+					$post['pwd'] = $gateway['pwd'];
+					$post['signature'] = $gateway['signature'];
+					
+					$response_charge = $this->Process($url, $post);
+					
+					if (!isset($response_charge) or $response_charge['PAYMENTSTATUS'] != 'Completed' and $response_charge['PAYMENTSTATUS'] != 'Pending' and $response_charge['PAYMENTSTATUS'] != 'Processed') {
+						die('Your initial PayPal payment failed.  <a href="' . $data['cancel_url'] . '">Go back to merchant</a>.');
+					}
+					else {
+						// create today's order
+						// we assume it's good because the profile is OK
+						
+						$CI->load->model('order_authorization_model');
+						
+						// we may not have the transaction ID if it's Pending
+						$response_charge['TRANSACTIONID'] = (isset($response_charge['TRANSACTIONID'])) ? $response_charge['TRANSACTIONID'] : 'pending_payment';
+						$CI->order_authorization_model->SaveAuthorization($order_id, $response_charge['TRANSACTIONID']);
+						
+						$CI->charge_model->SetStatus($order_id, 1);
+					}
+					
+					// we'll also adjust the profile start date
+					$adjusted_start_date = TRUE;
+					$subscription['start_date'] = date('Y-m-d',strtotime($subscription['start_date'])+(60*60*24*$subscription['interval']));
 				}
-				else {
-					// create today's order
-					// we assume it's good because the profile is OK
-					
-					$CI->load->model('order_authorization_model');
-					
-					// we may not have the transaction ID if it's Pending
-					$response_charge['TRANSACTIONID'] = (isset($response_charge['TRANSACTIONID'])) ? $response_charge['TRANSACTIONID'] : 'pending_payment';
-					$CI->order_authorization_model->SaveAuthorization($order_id, $response_charge['TRANSACTIONID']);
-					
-					$CI->charge_model->SetStatus($order_id, 1);
-				}
-				
-				// we'll also adjust the profile start date
-				$adjusted_start_date = TRUE;
-				$subscription['start_date'] = date('Y-m-d',strtotime($subscription['start_date'])+(60*60*24*$subscription['interval']));
 			}		
 			
 			// if this was sent to PayPal as a recurring payment, we'll create the profile here
