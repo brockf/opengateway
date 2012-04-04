@@ -375,7 +375,11 @@ class API extends Controller {
 		if ($recurrings = $this->recurring_model->GetRecurrings($client_id, $params)) {
 			unset($params['limit']);
 			$data['results'] = count($recurrings);
-			$data['total_results'] = count($this->recurring_model->GetRecurrings($client_id, $params));
+			
+			$total = $this->db->query('SELECT COUNT(subscription_id) AS `counted` FROM `subscriptions` WHERE `client_id` = \'' . $client_id . '\'');
+			$total = $total->row()->counted;
+			
+			$data['total_results'] = $total;
 			
 			while (list(,$recurring) = each($recurrings)) {
 				$data['recurrings']['recurring'][] = $recurring;
@@ -485,7 +489,11 @@ class API extends Controller {
 		if ($customers = $this->customer_model->GetCustomers($client_id, $params)) {
 			unset($params['limit']);
 			$data['results'] = count($customers);
-			$data['total_results'] = count($this->customer_model->GetCustomers($client_id, $params));
+			
+			$total = $this->db->query('SELECT COUNT(customer_id) AS `counted` FROM `customers` WHERE `client_id` = \'' . $client_id . '\'');
+			$total = $total->row()->counted;
+			
+			$data['total_results'] = $total;
 			
 			while (list(,$customer) = each($customers)) {
 				// sort through plans, first
@@ -552,7 +560,11 @@ class API extends Controller {
 		if ($charges = $this->charge_model->GetCharges($client_id, $params)) {
 			unset($params['limit']);
 			$data['results'] = count($charges);
-			$data['total_results'] = count($this->charge_model->GetCharges($client_id, $params));
+			
+			$total = $this->db->query('SELECT COUNT(order_id) AS `counted` FROM `orders` WHERE `client_id` = \'' . $client_id . '\'');
+			$total = $total->row()->counted;
+			
+			$data['total_results'] = $total;
 			
 			while (list(,$charge) = each($charges)) {
 				$data['charges']['charge'][] = $charge;
