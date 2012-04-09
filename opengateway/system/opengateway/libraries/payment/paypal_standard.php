@@ -180,6 +180,13 @@ class paypal_standard
 		
 		$amount = money_format("%!^i",$amount);
 		
+		// when we have a free trial, we want to throw out the initial charge.
+		// this happens for all other gateways but because we setup a billing agreement with PayPal,
+		// it's slightly different
+		if ($charge_today !== FALSE) {
+			$amount = $subscription['amount'];
+		}
+		
 		$client = $CI->client_model->GetClient($client_id,$client_id);
 		
 		// save the return and cancel URL
