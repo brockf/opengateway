@@ -98,7 +98,7 @@ class API extends Controller {
 		$this->load->model('gateway_model');
 		
 		// Make sure it came from a secure connection if SSL is active
-		if (empty($_SERVER["HTTPS"]) and $this->config->item('ssl_active') == TRUE) {
+		if (!$this->is_ssl() and $this->config->item('ssl_active') == TRUE) {
 			die($this->response->Error(1010));
 		}
 		
@@ -123,7 +123,7 @@ class API extends Controller {
 		$this->load->model('gateway_model');
 		
 		// Make sure it came from a secure connection if SSL is active
-		if (empty($_SERVER["HTTPS"]) and $this->config->item('ssl_active') == TRUE) {
+		if (!$this->is_ssl() and $this->config->item('ssl_active') == TRUE) {
 			die($this->response->Error(1010));
 		}
 		
@@ -159,7 +159,7 @@ class API extends Controller {
 	
 	function UpdateCreditCard ($client_id, $params) {
 		// Make sure it came from a secure connection if SSL is active
-		if (empty($_SERVER["HTTPS"]) and $this->config->item('ssl_active') == TRUE) {
+		if (!$this->is_ssl() and $this->config->item('ssl_active') == TRUE) {
 			die($this->response->Error(1010));
 		}
 		
@@ -1102,6 +1102,26 @@ class API extends Controller {
 			return array('charge_id' => $charge_id, 'next_charge' => $next_charge, 'end_date' => $end_date);
 		}
 	}
+	
+	function is_ssl () {
+    	if ($_SERVER['SERVER_PORT'] == 443) {
+    		return TRUE;
+    	}
+    	
+    	if (isset($_SERVER['HTTPS']) and $_SERVER['HTTPS'] == 'on') {
+    		return TRUE;
+    	}
+    	
+    	if (isset($_SERVER['HTTP_X_FORWARDED_PORT']) and $_SERVER['HTTP_X_FORWARDED_PORT'] == 443) {
+    		return TRUE;
+    	}
+    	
+    	if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) and $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+    		return TRUE;
+    	}
+    	
+    	return FALSE;
+    }
 }
 
 
