@@ -9,6 +9,36 @@ $api_id = '';
 $secret_key = '';
 $api_url = 'http://www.example.com/api/';
 
+if (isset($_POST['coupon'])) {
+	$coupon = $_POST['coupon'];
+}
+elseif (isset($_GET['coupon'])) {
+	$coupon = $_GET['coupon'];
+}
+else {
+	$coupon = FALSE;
+}
+
+if (isset($_POST['plan_id'])) {
+	$plan_id = $_POST['plan_id'];
+}
+elseif (isset($_GET['plan_id'])) {
+	$plan_id = $_GET['plan_id'];
+}
+else {
+	$plan_id = FALSE;
+}
+
+if (isset($_POST['amount'])) {
+	$amount = $_POST['amount'];
+}
+elseif (isset($_GET['amount'])) {
+	$amount = $_GET['amount'];
+}
+else {
+	$amount = FALSE;
+}
+
 $xml = '<?xml version="1.0" encoding="UTF-8"?>
 		 <request>
 	     <authentication>
@@ -17,16 +47,16 @@ $xml = '<?xml version="1.0" encoding="UTF-8"?>
 	     </authentication>
 	     <type>CouponValidate</type>';
 	     
-if (isset($_POST['coupon'])) {
-	$xml .= '<coupon>' . $_POST['coupon'] . '</coupon>';
+if ($coupon != FALSE) {
+	$xml .= '<coupon>' . $coupon . '</coupon>';
 }
 
-if (isset($_POST['plan_id'])) {
-	$xml .= '<plan_id>' . $_POST['plan_id'] . '</plan_id>';
+if ($plan_id != FALSE) {
+	$xml .= '<plan_id>' . $plan_id . '</plan_id>';
 }
 
-if (isset($_POST['amount'])) {
-	$xml .= '<amount>' . $_POST['amount'] . '</amount>';
+if ($amount != FALSE) {
+	$xml .= '<amount>' . $amount . '</amount>';
 }
 
 $xml .= '</request>';
