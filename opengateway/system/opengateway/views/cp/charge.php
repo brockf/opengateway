@@ -13,7 +13,7 @@
 	<tbody>
 		<tr>
 			<td style="width: 25%" class="label">Amount</td>
-			<td style="width: 75%"><?=$this->config->item('currency_symbol');?><?=$amount;?><? if ($refunded == "0") { ?> (<a href="<?=site_url('transactions/refund/'  . $id);?>">issue refund</a>)<? } ?></td>
+			<td style="width: 75%"><?=$this->config->item('currency_symbol');?><?=$amount;?><? if ($refunded == "0" and $status == "ok") { ?> (<a href="<?=site_url('transactions/refund/'  . $id);?>">issue refund</a>)<? } ?></td>
 		</tr>
 		<tr>
 			<td class="label">Coupon</td>
