@@ -183,7 +183,7 @@ class paypal_standard
 		// when we have a free trial, we want to throw out the initial charge.
 		// this happens for all other gateways but because we setup a billing agreement with PayPal,
 		// it's slightly different
-		if ($charge_today !== FALSE) {
+		if ($charge_today === FALSE) {
 			$amount = $subscription['amount'];
 		}
 		

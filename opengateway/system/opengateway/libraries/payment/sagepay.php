@@ -344,6 +344,7 @@ class sagepay
 	function Process($order_id, $post_url, $post_values)
 	{
 		$CI =& get_instance();
+		$CI->load->model('charge_model');
 		
 		// build NVP post string
 		$post_string = "";
