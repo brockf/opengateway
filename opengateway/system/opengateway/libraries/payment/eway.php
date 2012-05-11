@@ -59,7 +59,7 @@ class eway
 		$settings['monthly_fee'] = '$29';
 		$settings['transaction_fee'] = '$0.50';
 		$settings['purchase_link'] = 'https://www.eway.com.au/join/secure/signup.aspx';
-		$settings['allows_updates'] = 0;
+		$settings['allows_updates'] = 1;
 		$settings['allows_refunds'] = 0;
 		$settings['requires_customer_information'] = 1;
 		$settings['requires_customer_ip'] = 0;
@@ -303,8 +303,6 @@ die(print_r($response));
 		$xml = str_replace('</ResultSet>','', $xml);
 		
 		$response = $this->Process($post_url,$xml);
-		
-//echo '<pre>'; die(print_r($response));
 		
 		if ($this->debug == TRUE)
 		{
