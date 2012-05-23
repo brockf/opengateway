@@ -4,6 +4,10 @@ class paypal_standard
 {
 	var $settings;
 	
+	// if set to TRUE, any recurring interval of 30, 60, etc. will be converted to a monthly interval so that
+	// the charges come on the same day each month
+	public $same_day_every_month = FALSE;
+	
 	function paypal_standard() {
 		$this->settings = $this->Settings();
 	}
@@ -257,6 +261,7 @@ class paypal_standard
 			$post['currencycode'] = $gateway['currency'];
 		}
 		else {
+			// This is a normal recurring charge, not being treated as a 1-time charge. 
 			$CI->charge_data_model->Save('r' . $subscription_id, 'paypal_charge_type', 'subscription');
 		
 			$post = array();
@@ -325,7 +330,18 @@ class paypal_standard
 			// $subscription is loaded above
 					
 			$description = ($subscription['amount'] != $amount) ? 'Initial charge: ' . $gateway['currency'] . $amount . ', then ' : '';
-			$description .= $gateway['currency'] . money_format("%!^i",$subscription['amount']) . ' every ' . $interval . ' days until ' . date('Y-m-d',strtotime($subscription['end_date']));
+			
+			// Our description should reflect whether
+			// we're forcing payments every month
+			if ($this->same_day_every_month == true && $interval % 30 === 0)
+			{
+				$description .= $gateway['currency'] . money_format("%!^i",$subscription['amount']) . ' on the ' . date('jS') . ' of every month until ' . date('Y-m-d',strtotime('+'. $subscription['number_occurrences'] .' month'));
+			}
+			else
+			{
+				$description .= $gateway['currency'] . money_format("%!^i",$subscription['amount']) . ' every ' . $interval . ' days until ' . date('Y-m-d',strtotime($subscription['end_date']));
+			}
+			
 			if ($charge_today === FALSE) {
 				$description .= ' (first charge on ' . $start_date . ')';
 			}
@@ -333,7 +349,7 @@ class paypal_standard
 			
 			$CI->charge_data_model->Save('r' . $subscription_id, 'profile_description', $description);
 		}
-					
+				
 		$response = $this->Process($post_url, $post);
 		
 		if (!empty($response['TOKEN'])) {
@@ -536,6 +552,20 @@ class paypal_standard
 		
 		$response = array();
 		
+		// we'll need to adjust the interval upon each charge so that the next_charge_date is a month from now
+		if ($this->same_day_every_month === TRUE and $params['charge_interval'] % 30 === 0) {
+			$months = $params['charge_interval'] / 30;
+			$plural = ($months > 1) ? 's' : '';
+			$next_charge = date('Y-m-d',strtotime('today + ' . $months . ' month' . $plural));
+
+			// we'll return the $next_charge in this response
+			$response['next_charge'] = $next_charge;	
+		}
+		else 
+		{
+			$response['next_charge'] = $CI->recurring_model->GetNextChargeDate($params['subscription_id'], $params['next_charge']);
+		}
+		
 		if ($status != 'Cancelled' and (int)$failed_payments === 0) {		
 			$response['success'] = TRUE;
 			
@@ -544,14 +574,19 @@ class paypal_standard
 			if (strtotime($params['end_date']) <= (strtotime($params['next_charge']) + (60*60*24*$params['charge_interval']))) {
 				// silently cancel the subscription
 				$CI->load->model('billing/recurring_model');
-				$next_charge = $CI->recurring_model->GetNextChargeDate($params['subscription_id'], $params['next_charge']);
+				$next_charge = $response['next_charge'];
 				$CI->db->update('subscriptions', array('next_charge' => $next_charge), array('subscription_id' => $params['subscription_id']));
 				$CI->recurring_model->CancelRecurring($client_id, $params['subscription_id'], TRUE);
 			}
+			
+			// Update the next_charge date
+			$CI->db->update('subscriptions', array('next_charge' => $response['next_charge']), array('subscription_id' => $params['subscription_id']));
+			
 		} else {
 			$response['success'] = FALSE;
 			$response['reason'] = "The charge has failed.";
 		}
+		
 		
 		return $response;
 	}
@@ -620,7 +655,7 @@ class paypal_standard
 	
 	function Callback_confirm_recur ($client_id, $gateway, $subscription, $params) {
 		$CI =& get_instance();
-		
+
 		// retrieve charge data
 		$CI->load->model('charge_data_model');
 		$data = $CI->charge_data_model->Get('r' . $subscription['id']);
@@ -699,6 +734,18 @@ class paypal_standard
 				$post = $response; // most of the data is from here
 				unset($post['NOTE']);
 				
+				// If we're keeping charges on the same day every month, 
+				// we need to calculate the proper interval, but only
+				// if the interval is evenly divided by 30
+				if ($this->same_day_every_month === true && $subscription['interval'] % 30 === 0)
+				{
+					$interval = $subscription['interval'] / 30;
+				}
+				else 
+				{
+					$interval = $subscription['interval'];
+				}
+				
 				$post['METHOD'] = 'CreateRecurringPaymentsProfile';
 				$post['VERSION'] = '60';
 				$post['user'] = $gateway['user'];
@@ -707,8 +754,8 @@ class paypal_standard
 				$post['TOKEN'] = $response['TOKEN'];
 				$post['DESC'] = $data['profile_description'];
 				$post['PROFILESTARTDATE'] = date('c',strtotime($subscription['start_date']));
-				$post['BILLINGPERIOD'] = 'Day';
-				$post['BILLINGFREQUENCY'] = $subscription['interval'];
+				$post['BILLINGPERIOD'] =  $this->same_day_every_month === true ? 'Month' : 'Day';
+				$post['BILLINGFREQUENCY'] = $interval;
 				$post['AMT'] = $subscription['amount'];
 				
 				$response_sub = $this->Process($url, $post);
@@ -731,6 +778,14 @@ class paypal_standard
 				$order_id = (isset($order_id)) ? $order_id : FALSE;
 			
 				$CI->recurring_model->SetActive($client_id, $subscription['id']);
+				
+				// Update the end_date if necessary due to same_day_every_month
+				if ($this->same_day_every_month == true && $subscription['interval'] % 30 === 0)
+				{
+					$end_date = strtotime('+'. $subscription['number_occurrences'] .' month');
+					$CI->db->where('subscription_id', $subscription['id']);
+					$CI->db->update('subscriptions', array('end_date' => date('Y-m-d', $end_date)));
+				}
 				
 				// trip it - were golden!
 				TriggerTrip('new_recurring', $client_id, $order_id, $subscription['id']);
