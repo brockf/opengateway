@@ -6,8 +6,11 @@ class paypal
 	
 	// if set to TRUE, any recurring interval of 30, 60, etc. will be converted to a monthly interval so that
 	// the charges come on the same day each month
-	public $same_day_every_month = FALSE;
-		
+	public $same_day_every_month = TRUE;
+	
+	// If set to TRUE, it will log data sent to and received from PayPal in /writeable/gateway_log.txt.
+	private $debug = false;
+	
 	function paypal() {
 		$this->settings = $this->Settings();
 	}
@@ -218,7 +221,7 @@ class paypal
 		$post['user'] = $gateway['user'];
 		$post['pwd'] = $gateway['pwd'];
 		$post['signature'] = $gateway['signature'];
-		$post['amt'] = $amount; 
+		$post['amt'] = number_format($amount, 2); 
 		$post['acct'] = $credit_card['card_num'];
 		$post['creditcardtype'] = $card_type;
 		$post['expdate'] = str_pad($credit_card['exp_month'], 2, "0", STR_PAD_LEFT) . $credit_card['exp_year'];
@@ -242,10 +245,22 @@ class paypal
 			$post['email'] = $customer['email'];
 		}
 		
+		// Log our results...
+		if ($this->debug)
+		{
+			$this->log_it('PayPal Charge Params: ', $post);
+		}
+
 		$response = $this->Process($post_url, $post, $order_id);
 		
-		$response = $this->response_to_array($response);
+		if ($this->debug)
+		{
+			$response = $this->response_to_array($response);
+		}
 		
+		// Log our results...
+		$this->log_it('PayPal Charge Response: ', $response);
+
 		if ($response['ACK'] == 'Success' or $response['ACK'] == 'SuccessWithWarning') {
 			$CI->load->model('order_authorization_model');
 			$CI->order_authorization_model->SaveAuthorization($order_id, $response['TRANSACTIONID']);
@@ -305,6 +320,8 @@ class paypal
 			
 			// Create a new PayPal profile
 			$response = $this->CreateProfile($client_id, $gateway, $customer, $subscription['amount'], $credit_card, $start_date, $subscription_id, $total_occurrences, $interval);
+			
+			
 			
 			if (is_array($response) and $response['success'] == TRUE) {
 				$profile_id = $response['profile_id'];	
@@ -383,6 +400,11 @@ class paypal
 		// remove the extra ampersand
 		$data = substr($data, 0, strlen($data) - 1);
 		
+		if ($this->debug)
+		{
+			$this->log_it('PayPal Process Data: ', $data);
+		}
+		
 		// setting the curl parameters.
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
@@ -441,7 +463,7 @@ class paypal
 		$post['user'] = $gateway['user'];
 		$post['pwd'] = $gateway['pwd'];
 		$post['signature'] = $gateway['signature'];
-		$post['amt'] = $amount; 
+		$post['amt'] = number_format($amount, 2); 
 		$post['acct'] = $credit_card['card_num'];
 		$post['currencycode'] = $gateway['currency'];
 		$post['creditcardtype'] = $card_type;
@@ -581,7 +603,7 @@ class paypal
 		
 		if(isset($params['amount'])) {
 			$post['currencycode'] = $gateway['currency'];
-			$post['amt'] = $params['amount'];
+			$post['amt'] = number_format($params['amount'], 2);
 		}
 		
 		if(isset($params['customer_id'])){
@@ -719,4 +741,28 @@ class paypal
 
 		return $values;
 	}
+	
+	//--------------------------------------------------------------------
+	
+	/*
+		Method: log_it()
+		
+		Logs the transaction to a file. Helpful with debugging callback
+		transactions, since we can't actually see what's going on.
+		
+		Parameters:
+			$heading	- A string to be placed above the resutls
+			$params		- Typically an array to print_r out so that we can inspect it.
+	*/
+	public function log_it($heading, $params) 
+	{
+		$file = FCPATH .'writeable/gateway_log.txt';
+		
+		$content .= "# $heading\n";
+		$content .= date('Y-m-d H:i:s') ."\n\n";
+		$content .= print_r($params, true);
+		file_put_contents($file, $content, FILE_APPEND);
+	}
+	
+	//--------------------------------------------------------------------
 }
