@@ -253,13 +253,14 @@ class paypal
 
 		$response = $this->Process($post_url, $post, $order_id);
 		
-		if ($this->debug)
-		{
-			$response = $this->response_to_array($response);
-		}
 		
-		// Log our results...
-		$this->log_it('PayPal Charge Response: ', $response);
+		$response = $this->response_to_array($response);
+		
+		if ($this->debug)
+		{		
+			// Log our results...
+			$this->log_it('PayPal Charge Response: ', $response);
+		}
 
 		if ($response['ACK'] == 'Success' or $response['ACK'] == 'SuccessWithWarning') {
 			$CI->load->model('order_authorization_model');
