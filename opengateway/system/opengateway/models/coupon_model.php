@@ -1,5 +1,14 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
+// Define some vars to make this easier to
+// understand the flow of...
+define('CPN_CHARGE_PRICE_REDUCTION', 1);
+define('CPN_RECUR_TOTAL_PRICE_REDUCTION', 2);
+define('CPN_RECURRING_PRICE_REDUCTION', 3);
+define('CPN_RECUR_INITIAL_PRICE_REDUCTION', 4);
+define('CPN_RECUR_FREE_TRIAL', 5);
+
+
 class Coupon_model extends Model {
 	
 	function __construct()
@@ -44,7 +53,7 @@ class Coupon_model extends Model {
 			$coupon = $coupon[0];
 		}
 		
-		if ($single_charge == TRUE and $coupon['type_id'] != '1') {
+		if ($single_charge == TRUE and $coupon['type_id'] != CPN_CHARGE_PRICE_REDUCTION) {
 			// this coupon is for recurrings
 			
 			log_message('debug','Coupon ineligible: Coupon is for recurring charges.');
@@ -141,7 +150,7 @@ class Coupon_model extends Model {
 	}
 	
 	function subscription_adjust_trial ($free_trial, $type_id, $trial_length) {
-		if ($type_id == 5) {
+		if ($type_id == CPN_RECUR_FREE_TRIAL) {
 			$free_trial = $trial_length;
 		}
 		
@@ -149,7 +158,7 @@ class Coupon_model extends Model {
 	}
 	
 	function subscription_adjust_amount(&$amount, &$recur_amount, $type_id, $reduction_type, $reduction_amount) {
-		if ($type_id == 1) {
+		if ($type_id == CPN_CHARGE_PRICE_REDUCTION) {
 			// this isn't for recurring charges
 		}
 	
@@ -158,23 +167,23 @@ class Coupon_model extends Model {
 			
 			$multiplier = (100 - $reduction_amount) * 0.01;
 			
-			if ($type_id == 2 or $type_id == 4) {
+			if ($type_id == CPN_RECUR_TOTAL_PRICE_REDUCTION or $type_id == CPN_RECUR_INITIAL_PRICE_REDUCTION) {
 				// initial price
 				$amount = $amount * $multiplier;
 			}
 			
-			if ($type_id == 2 or $type_id == 3) {
+			if ($type_id == CPN_RECUR_TOTAL_PRICE_REDUCTION or $type_id == CPN_RECURRING_PRICE_REDUCTION) {
 				$recur_amount = $recur_amount * $multiplier;
-			}
+			} 
 		}
 		elseif ((int)$reduction_type === 1) {
 			// flat rate
-			if ($type_id == 2 or $type_id == 4) {
+			if ($type_id == CPN_RECUR_TOTAL_PRICE_REDUCTION or $type_id == CPN_RECUR_INITIAL_PRICE_REDUCTION) {
 				// initial price
 				$amount = $amount - $reduction_amount;
 			}
 			
-			if ($type_id == 2 or $type_id == 3) {
+			if ($type_id == CPN_RECUR_TOTAL_PRICE_REDUCTION or $type_id == CPN_RECURRING_PRICE_REDUCTION) {
 				$recur_amount = $recur_amount - $reduction_amount;
 			}
 		}
@@ -186,12 +195,12 @@ class Coupon_model extends Model {
 		if ($recur_amount < 0) {
 			$recur_amount = 0;
 		}
-		
+
 		return TRUE;
 	}
 	
 	function adjust_amount($amount, $type_id, $reduction_type, $reduction_amount) {
-		if ($type_id != 1) {
+		if ($type_id != CPN_CHARGE_PRICE_REDUCTION) {
 			// this isn't for single charges
 			return $amount;
 		}
@@ -312,7 +321,7 @@ class Coupon_model extends Model {
 		
 		$this->db->where('coupon_deleted', 0);
 		$result = $this->db->get('coupons');
-		
+	
 		if ($result->num_rows() === 0)
 		{
 			return FALSE;
