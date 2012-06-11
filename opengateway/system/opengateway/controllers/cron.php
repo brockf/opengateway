@@ -56,8 +56,13 @@ class Cron extends Controller {
 		$this->load->library('email');
 		
 		// Run PayPal fixes
-		$this->load->library('paypal_fix');
-		$this->paypal_fix->run_fix();
+		if ($this->run_paypal_fix())
+		{
+			$this->load->library('paypal_fix');
+			$this->paypal_fix->run_fix();
+
+			$this->db->update('version', array( 'paypal_fix_ran' => date('Y-m-d H:i:s') ) );
+		}
 		
 		// Expire subscription if the end date is today or before
 		$cancelled = array();
@@ -229,6 +234,44 @@ class Cron extends Controller {
 		
 		$this->db->update('version', array($field => date('Y-m-d H:i:s')));
 	}
+	
+	//--------------------------------------------------------------------
+	
+	private function run_paypal_fix() 
+	{
+		// Check the date that paypal_fix was last run. 
+		if (!$this->db->field_exists('paypal_fix_ran', 'version'))
+		{
+			// field doesn't exist so add it in.
+			$this->load->dbforge();
+			
+			$col = array(
+				'paypal_fix_ran'	=> array(
+					'type' 	=> 'DATETIME',
+					'null'	=> false,
+					'default'	=> '0000-00-00 00:00:00'
+				)
+			);
+			
+			$this->dbforge->add_column('version', $col);
+		}
+		
+		$query = $this->db->select('paypal_fix_ran')->get('version');
+		
+		$result = $query->row()->paypal_fix_ran;
+		$last_ran = date('Y-m-d', strtotime($result));
+		$today = date('Y-m-d');
+		
+		if ($last_ran == $today)
+		{	
+			return false;
+		}
+
+		return true;
+	}
+	
+	//--------------------------------------------------------------------
+	
 }
 
 
