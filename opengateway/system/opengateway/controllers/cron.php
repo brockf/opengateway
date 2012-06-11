@@ -50,7 +50,7 @@ class Cron extends Controller {
 			echo 'Invalid key.';
 			return FALSE;
 		}
-		
+
 		$this->load->model('recurring_model');
 		$this->load->model('gateway_model');
 		$this->load->library('email');
@@ -200,6 +200,7 @@ class Cron extends Controller {
 		echo $response;
 		
 		$this->save_cron_date($key, 'cron_last_run_subs');
+		die();
 	}
 	
 	//--------------------------------------------------------------------
@@ -259,10 +260,10 @@ class Cron extends Controller {
 		$query = $this->db->select('paypal_fix_ran')->get('version');
 		
 		$result = $query->row()->paypal_fix_ran;
-		$last_ran = date('Y-m-d', strtotime($result));
-		$today = date('Y-m-d');
-		
-		if ($last_ran == $today)
+		$last_ran = date('Y-m-d H:i:s', strtotime($result));
+		$today = date('Y-m-d') .' 05:05:00';
+
+		if (strtotime($last_ran) >= strtotime($today))
 		{	
 			return false;
 		}
