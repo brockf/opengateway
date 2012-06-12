@@ -332,7 +332,7 @@ class quantum {
 
 		$response = $this->process($gateway, $post, 'CreateTransaction');
 		
-		if ($response['ResponseSummary']['Status'] == 'Success')
+		if ($response['Result']['Status'] == 'APPROVED')
 		{ 
 			$response['success']			= TRUE;
 			$response['transaction_num']	= $response['Result']['TransactionID'];
@@ -344,7 +344,7 @@ class quantum {
 		} else 
 		{
 			$response['success'] 	= FALSE;
-			$response['reason']		= $response['ResponseSummary']['StatusDescription'];
+			$response['reason']		= $response['Result']['StatusDescription'];
 		}
 		
 		return $response;
