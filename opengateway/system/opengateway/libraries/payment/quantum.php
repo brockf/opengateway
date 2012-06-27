@@ -25,7 +25,7 @@ class quantum {
 	 * if true, will echo out debug strings to verify
 	 * that things are working. 
 	 */
-	private $debug = false;
+	private $debug = true;
 	
 	/**
 	 *
@@ -232,9 +232,9 @@ class quantum {
 	function createProfile($client_id, $gateway, $customer, $credit_card, $subscription_id, $amount, $order_id)
 	{
 		$CI =& get_instance();
-	
+	 
 		$post = array(
-			'CustomerID'		=> $customer['id'],
+			'CustomerID'		=> $customer['id'] . $subscription_id,
 			'FirstName'			=> $customer['first_name'],
 			'LastName'			=> $customer['last_name'],
 			'Address'			=> $customer['address_1'],
@@ -252,6 +252,12 @@ class quantum {
 		);
 		
 		$response = $this->process($gateway, $post, 'CustomerAdd');
+
+		if ($this->debug)
+		{
+			$this->log_it('CreateProfile Recurring Params', $post);
+			$this->log_it('CreateProfile Recurring Response', $response);
+		}
 
 		if ($response['ResponseSummary']['Status'] == 'Success')
 		{
@@ -332,6 +338,12 @@ class quantum {
 
 		$response = $this->process($gateway, $post, 'CreateTransaction');
 		
+		if ($this->debug)
+		{
+			$this->log_it('Charge Recurring Params', $post);
+			$this->log_it('Charge Recurring Response', $response);
+		}
+		
 		if ($response['Result']['Status'] == 'APPROVED')
 		{ 
 			$response['success']			= TRUE;
@@ -409,13 +421,14 @@ class quantum {
 		
 		if ($this->debug)
 		{
-			echo '<h2>'. $action .'</h2>';
+		/*	echo '<h2>'. $action .'</h2>';
 			echo 'Curl Response Code: '. curl_getinfo($ch, CURLINFO_HTTP_CODE) ."<br/>";
 			echo 'Curl Error: '. curl_error($ch)."<br/>";
 			echo "<pre>$action Request: "; echo str_replace('<', '&lt;', $header . $body . $footer);
 			echo "$action Response: ". str_replace('<', '&lt;', $post_response); 
 			
 			if ($action == 'CreateTransaction')	die();
+			*/
 		}
 		
 		if (curl_errno($ch) == CURLE_OK)
@@ -463,4 +476,26 @@ class quantum {
 	}
 	
 	//---------------------------------------------------------------
+	
+	/*
+		Method: log_it()
+		
+		Logs the transaction to a file. Helpful with debugging callback
+		transactions, since we can't actually see what's going on.
+		
+		Parameters:
+			$heading	- A string to be placed above the resutls
+			$params		- Typically an array to print_r out so that we can inspect it.
+	*/
+	public function log_it($heading, $params) 
+	{
+		$file = FCPATH .'writeable/gateway_log.txt';
+		
+		$content .= "# $heading\n";
+		$content .= date('Y-m-d H:i:s') ."\n\n";
+		$content .= print_r($params, true);
+		file_put_contents($file, $content, FILE_APPEND);
+	}
+	
+	//--------------------------------------------------------------------
 }
