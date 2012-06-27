@@ -22,6 +22,9 @@
  *		Test ManagedCustomerID	- 987654321000
  *		Test CCV				- 123
  * 
+ * To perform tests against the test account with the above card, you must use an even dollar amount
+ * to get a successful charge ($1.00). Anything else will be refused. ($0.99)
+ *
  * @package 	OpenGateway
  * @author		Dave Ryan
  * @modified	Lonnie Ezell
@@ -190,7 +193,7 @@ class eway
 	    );
 		
 		$response = $this->processSoap($gateway, $customer, 'CreateCustomer');
-die(print_r($response));
+
 		if (isset($response['CREATECUSTOMERRESULT']))
 		{
 			return TRUE;
