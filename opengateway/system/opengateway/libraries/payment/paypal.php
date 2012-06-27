@@ -6,14 +6,18 @@ class paypal
 	
 	// if set to TRUE, any recurring interval of 30, 60, etc. will be converted to a monthly interval so that
 	// the charges come on the same day each month
-	public $same_day_every_month = TRUE;
+	public $same_day_every_month = false;
 	
 	// If set to TRUE, it will log data sent to and received from PayPal in /writeable/gateway_log.txt.
 	private $debug = false;
 	
+	//--------------------------------------------------------------------
+	
 	function paypal() {
 		$this->settings = $this->Settings();
 	}
+
+	//--------------------------------------------------------------------
 
 	function Settings()
 	{
@@ -146,6 +150,8 @@ class paypal
 		return $settings;
 	}
 	
+	//--------------------------------------------------------------------
+	
 	function TestConnection($client_id, $gateway)
 	{
 		// Get the proper URL
@@ -178,6 +184,8 @@ class paypal
 			return FALSE;
 		}
 	}
+	
+	//--------------------------------------------------------------------
 	
 	function Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card)
 	{
@@ -277,6 +285,8 @@ class paypal
 		return $response;	
 	}
 	
+	//--------------------------------------------------------------------
+	
 	function Recur($client_id, $gateway, $customer, $amount, $charge_today, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences)
 	{		
 		$CI =& get_instance();
@@ -350,6 +360,8 @@ class paypal
 		return $response;
 	}
 	
+	//--------------------------------------------------------------------
+	
 	function Refund ($client_id, $gateway, $charge, $authorization)
 	{
 		$CI =& get_instance();
@@ -382,6 +394,8 @@ class paypal
 			return FALSE;
 		}
 	}
+	
+	//--------------------------------------------------------------------
 	
 	function Process($url, $post_data, $order_id = FALSE)
 	{
@@ -427,6 +441,8 @@ class paypal
 		return $response;
 		
 	}
+	
+	//--------------------------------------------------------------------
 
 	function CreateProfile($client_id, $gateway, $customer, $amount, $credit_card, $start_date, $subscription_id, $total_occurrences, $interval)
 	{
@@ -526,6 +542,8 @@ class paypal
 		return $response;
 	}
 	
+	//--------------------------------------------------------------------
+	
 	function CancelRecurring($client_id, $subscription, $gateway)
 	{
 		// was this a one time charge?  if so, we didn't create a recurring profile...
@@ -570,6 +588,8 @@ class paypal
 		
 		return $response;
 	}
+	
+	//--------------------------------------------------------------------
 	
 	function UpdateRecurring($client_id, $gateway, $subscription, $customer, $params)
 	{
@@ -635,9 +655,13 @@ class paypal
 		return $response;
 	}
 	
+	//--------------------------------------------------------------------
+	
 	function AutoRecurringCharge ($client_id, $order_id, $gateway, $params) {
 		return $this->ChargeRecurring($client_id, $gateway, $params);
 	}
+	
+	//--------------------------------------------------------------------
 	
 	function ChargeRecurring($client_id, $gateway, $params)
 	{
@@ -689,6 +713,8 @@ class paypal
 		return $response;	
 	}
 	
+	//--------------------------------------------------------------------
+	
 	function GetProfileDetails($client_id, $gateway, $params)
 	{
 		$CI =& get_instance();
@@ -727,6 +753,8 @@ class paypal
 			return FALSE;
 		}
 	}
+	
+	//--------------------------------------------------------------------
 	
 	private function response_to_array($string)
 	{
