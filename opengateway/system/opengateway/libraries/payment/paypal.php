@@ -6,7 +6,7 @@ class paypal
 	
 	// if set to TRUE, any recurring interval of 30, 60, etc. will be converted to a monthly interval so that
 	// the charges come on the same day each month
-	public $same_day_every_month = false;
+	public $same_day_every_month = true;
 	
 	// If set to TRUE, it will log data sent to and received from PayPal in /writeable/gateway_log.txt.
 	private $debug = false;
@@ -703,6 +703,7 @@ class paypal
 		// we'll need to adjust the interval upon each charge so that the next_charge_date is a month from now
 		if ($this->same_day_every_month === TRUE and $params['interval'] % 30 === 0) {
 			$months = $params['interval'] / 30;
+			if ($months == 0) $months = 1;
 			$plural = ($months > 1) ? 's' : '';
 			$next_charge = date('Y-m-d',strtotime('today + ' . $months . ' month' . $plural));
 			
