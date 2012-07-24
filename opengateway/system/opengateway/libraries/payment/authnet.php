@@ -566,13 +566,13 @@ class authnet
 		$first_name = $customer['first_name'];
 		$last_name = $customer['last_name'];
 		
-		if (!empty($customer['address_1']) and strlen($customer['state']) == 2) {
+		if (!empty($customer['address_1']) /*and strlen($customer['state']) == 2*/) {
 			$customer_details =  "<company>" . $customer['company'] . "</company>".
 								 "<address>" . $customer['address_1'] . "</address>".
 								 "<city>" . $customer['city'] . "</city>".
 								 "<state>" . $customer['state'] . "</state>".
 								 "<zip>" . $customer['postal_code'] . "</zip>";
-			if (isset($customer['country']) && ($customer['country'] == 'US' || $customer['country'] == 'CA'))
+			if (isset($customer['country'])/* && ($customer['country'] == 'US' || $customer['country'] == 'CA')*/)
 			{
 				$customer_details .= "<country>" . $customer['country'] . "</country>";
 			}
@@ -606,6 +606,7 @@ class authnet
 		  $card_code.
 		 "</creditCard>".
 		"</payment>".
+		"<validationMode>testMode</validationMode>".
 		"</paymentProfile>\n";
 		 
 		$content .= "</createCustomerPaymentProfileRequest>";
