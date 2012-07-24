@@ -8,6 +8,11 @@ class paypal_standard
 	// the charges come on the same day each month
 	public $same_day_every_month = FALSE;
 	
+	// If set to TRUE, it will log data sent to and received from PayPal in /writeable/gateway_log.txt.
+	private $debug	= false;
+	
+	//--------------------------------------------------------------------
+	
 	function paypal_standard() {
 		$this->settings = $this->Settings();
 	}
@@ -148,6 +153,13 @@ class paypal_standard
 		$post['currencycode'] = $gateway['currency'];
 		
 		$response = $this->Process($post_url, $post);
+		
+		if ($this->debug)
+		{
+			$this->log_it('PayPal Express Charge Params: ', $post);
+			$this->log_it('PayPal Express Charge Response: ', $response);
+		}
+		
 		
 		if (!empty($response['TOKEN'])) {
 			$CI->load->model('order_authorization_model');
@@ -349,8 +361,14 @@ class paypal_standard
 			
 			$CI->charge_data_model->Save('r' . $subscription_id, 'profile_description', $description);
 		}
-				
+		
 		$response = $this->Process($post_url, $post);
+		
+		if ($this->debug)
+		{
+			$this->log_it('PayPal Express Recur Params: ', $post);
+			$this->log_it('PayPal Express Recur Response: ', $response);
+		}
 		
 		if (!empty($response['TOKEN'])) {
 			// generate express checkout URL
@@ -450,6 +468,12 @@ class paypal_standard
 		
 		$post_response = $this->Process($post_url, $post);
 		
+		if ($this->debug)
+		{
+			$this->log_it('PayPal Express CancelRecurring Params: ', $post);
+			$this->log_it('PayPal Express CancelRecurring Response: ', $post_response);
+		}
+		
 		if($post_response['ACK'] == 'Success') {
 			$response = TRUE;
 		} else {
@@ -508,6 +532,12 @@ class paypal_standard
 				
 		$post_response = $this->Process($post_url, $post);
 		
+		if ($this->debug)
+		{
+			$this->log_it('PayPal Express UpdateRecurring Params: ', $post);
+			$this->log_it('PayPal Express UpdateRecurring Response: ', $response);
+		}
+		
 		if($post_response['ACK'] == 'Success') {
 			$response = TRUE;
 		} else {
@@ -533,6 +563,13 @@ class paypal_standard
 		// prior to this version (1.78) won't include this data
 		if (isset($data['paypal_charge_type']) and $data['paypal_charge_type'] != 'subscription') {
 			$response = array('success' => FALSE, 'reason' => 'Not a subscription.  Occurrences were zero when this subscription was created.');
+			
+			if ($this->debug)
+			{
+				$this->log_it('PayPal Express ChargeRecurring (Old Sub) Params: ', $params);
+				$this->log_it('PayPal Express ChargeRecurring (Old Sub) Response: ', $response);
+			}
+
 			return $response;
 		}
 		
@@ -587,6 +624,11 @@ class paypal_standard
 			$response['reason'] = "The charge has failed.";
 		}
 		
+		if ($this->debug)
+		{
+			$this->log_it('PayPal Express ChargeRecurring Profile Details: ', $details);
+			$this->log_it('PayPal Express ChargeRecurring Response: ', $response);
+		}
 		
 		return $response;
 	}
@@ -605,6 +647,12 @@ class paypal_standard
 		$post['signature'] = $gateway['signature'];
 				
 		$response = $this->Process($url, $post);
+		
+		if ($this->debug)
+		{
+			$this->log_it('PayPal Express Callback Confirm Params: ', $post);
+			$this->log_it('PayPal Express Callback Confirm Response: ', $response);
+		}
 		
 		if (isset($response['TOKEN']) and $response['TOKEN'] == $params['token']) {
 			// we're good
@@ -677,6 +725,12 @@ class paypal_standard
 				
 		$response = $this->Process($url, $post);
 		
+		if ($this->debug)
+		{
+			$this->log_it('PayPal Express Callback Confirm Recur Params: ', $post);
+			$this->log_it('PayPal Express Charge Callback Confirm Response: ', $response);
+		}
+		
 		if (isset($response['TOKEN']) and $response['TOKEN'] == $params['token']) {
 			// tokens match.  this is a legitimate PayPal request
 			
@@ -705,6 +759,12 @@ class paypal_standard
 					$post['signature'] = $gateway['signature'];
 					
 					$response_charge = $this->Process($url, $post);
+					
+					if ($this->debug)
+					{
+						$this->log_it('PayPal Express Callback Confirm Recur - First Charge Params: ', $post);
+						$this->log_it('PayPal Express Callback Confirm Recur - First Charge Response: ', $response_charge);
+					}
 					
 					if (!isset($response_charge) or $response_charge['PAYMENTSTATUS'] != 'Completed' and $response_charge['PAYMENTSTATUS'] != 'Pending' and $response_charge['PAYMENTSTATUS'] != 'Processed') {
 						die('Your initial PayPal payment failed.  <a href="' . $data['cancel_url'] . '">Go back to merchant</a>.');
@@ -759,6 +819,12 @@ class paypal_standard
 				$post['AMT'] = $subscription['amount'];
 				
 				$response_sub = $this->Process($url, $post);
+				
+				if ($this->debug)
+				{
+					$this->log_it('PayPal Express Create Payment Profile Params: ', $post);
+					$this->log_it('PayPal Express Create Payment Profile Response: ', $response_sub);
+				}
 				
 				if (isset($response_sub['PROFILEID'])) {
 					// success!	
@@ -828,6 +894,12 @@ class paypal_standard
 		
 		$post_response = $this->Process($post_url, $post);
 		
+		if ($this->debug)
+		{
+			$this->log_it('PayPal Express GetProfileDetails Params: ', $post);
+			$this->log_it('PayPal Express GetProfileDetails Response: ', $post_response);
+		}
+		
 		if ($post_response['ACK'] == 'Success') {
 			return $post_response;
 		} else {
@@ -867,4 +939,28 @@ class paypal_standard
 
 		return $values;
 	}
+	
+	//--------------------------------------------------------------------
+	
+	/*
+		Method: log_it()
+		
+		Logs the transaction to a file. Helpful with debugging callback
+		transactions, since we can't actually see what's going on.
+		
+		Parameters:
+			$heading	- A string to be placed above the resutls
+			$params		- Typically an array to print_r out so that we can inspect it.
+	*/
+	public function log_it($heading, $params) 
+	{
+		$file = FCPATH .'writeable/gateway_log.txt';
+		
+		$content .= "# $heading\n";
+		$content .= date('Y-m-d H:i:s') ."\n\n";
+		$content .= print_r($params, true);
+		file_put_contents($file, $content, FILE_APPEND);
+	}
+	
+	//--------------------------------------------------------------------
 }
