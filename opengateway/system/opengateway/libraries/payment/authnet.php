@@ -606,8 +606,8 @@ class authnet
 		  $card_code.
 		 "</creditCard>".
 		"</payment>".
-		"<validationMode>testMode</validationMode>".
-		"</paymentProfile>\n";
+		"</paymentProfile>".
+		"<validationMode>testMode</validationMode>\n";
 		 
 		$content .= "</createCustomerPaymentProfileRequest>";
 		
