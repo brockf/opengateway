@@ -12,9 +12,15 @@ class authnet
 {
 	var $settings;
 	
+	private $debug = true;
+	
+	//---------------------------------------------------------------
+	
 	function authnet() {
 		$this->settings = $this->Settings();
 	}
+	
+	//---------------------------------------------------------------
 
 	function Settings()
 	{
@@ -116,6 +122,8 @@ class authnet
 		return $settings;
 	}
 	
+	//---------------------------------------------------------------
+	
 	function TestConnection($client_id, $gateway) 
 	{
 		$post_url = $this->GetAPIUrl($gateway);
@@ -153,6 +161,8 @@ class authnet
 		
 		return $response;
 	}
+	
+	//---------------------------------------------------------------
 	
 	function Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card)
 	{	
@@ -205,6 +215,12 @@ class authnet
 		
 		$response = $this->Process($order_id, $post_url, $post_string);
 		
+		if ($this->debug)
+		{
+			$this->log_it('Charge Params: ', $post_string);
+			$this->log_it('Charge Response: ', $response);
+		}
+		
 		if($response['success']){
 			$response_array = array('charge_id' => $order_id);
 			$response = $CI->response->TransactionResponse(1, $response_array);
@@ -215,6 +231,8 @@ class authnet
 		
 		return $response;
 	}
+	
+	//---------------------------------------------------------------
 	
 	function Recur ($client_id, $gateway, $customer, $amount, $charge_today, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences = FALSE)
 	{		
@@ -504,10 +522,14 @@ class authnet
 		}
 	}
 	
+	//---------------------------------------------------------------
+	
 	function CancelRecurring($client_id, $subscription)
 	{	
 		return TRUE;
 	}
+	
+	//---------------------------------------------------------------
 	
 	function CreateProfile($gateway, $subscription_id, $customer = array())
 	{
@@ -544,6 +566,12 @@ class authnet
 		
 		@$response = simplexml_load_string($post_response);
 		
+		if ($this->debug)
+		{
+			$this->log_it('CreateProfile Params: ', $content);
+			$this->log_it('CreateProfile Response: ', $response);
+		}
+		
 		$return = array();
 		
 		if($response->messages->resultCode == 'Ok') {
@@ -556,6 +584,8 @@ class authnet
 		
 		return $return;		
 	}
+	
+	//---------------------------------------------------------------
 	
 	function CreatePaymentProfile($profile_id, $gateway, $credit_card, $customer)
 	{
@@ -624,6 +654,12 @@ class authnet
 		
 		@$response = simplexml_load_string($post_response);
 		
+		if ($this->debug)
+		{
+			$this->log_it('CreatePaymentProfile Params: ', $content);
+			$this->log_it('CreatePaymentProfile Response: ', $response);
+		}
+		
 		$return = array();
 		
 		if($response->messages->resultCode == 'Ok') {
@@ -636,6 +672,8 @@ class authnet
 		
 		return $return;
 	}
+	
+	//---------------------------------------------------------------
 	
 	function GetCustomerProfile ($profile_id, $gateway) {
 		$CI =& get_instance();
@@ -665,6 +703,12 @@ class authnet
 		
 		@$response = simplexml_load_string($post_response);
 		
+		if ($this->debug)
+		{
+			$this->log_it('GetCustomerProfile Params: ', $content);
+			$this->log_it('GetCustomerProfile Response: ', $response);
+		}
+		
 		return $response;
 	}
 	
@@ -673,6 +717,8 @@ class authnet
 	function AutoRecurringCharge ($client_id, $order_id, $gateway, $params) {
 		return $this->ChargeRecurring($client_id, $gateway, $order_id, $params['api_customer_reference'], $params['api_payment_reference'], $params['amount']);
 	}
+	
+	//---------------------------------------------------------------
 	
 	function ChargeRecurring($client_id, $gateway, $order_id, $profile_id, $payment_profile_id, $amount)
 	{		
@@ -712,6 +758,12 @@ class authnet
 		
 		@$post_response = simplexml_load_string($post_response);
 		
+		if ($this->debug)
+		{
+			$this->log_it('ChargeRecurring Params: ', $content);
+			$this->log_it('ChargeRecurring Response: ', $post_response);
+		}
+		
 		if($post_response->messages->resultCode == 'Ok') {
 			// Get the auth code
 			$post_response = explode(',', $post_response->directResponse);
@@ -726,10 +778,14 @@ class authnet
 		return $response;	
 	}
 	
+	//---------------------------------------------------------------
+	
 	function UpdateRecurring()
 	{ 
 		return TRUE;
 	}
+	
+	//---------------------------------------------------------------
 	
 	function Process($order_id, $post_url, $post_string, $test = FALSE)
 	{
@@ -781,6 +837,8 @@ class authnet
 
 	}
 	
+	//---------------------------------------------------------------
+	
 	function GetAPIUrl ($gateway, $mode = FALSE) {
 		if ($mode == FALSE) {
 			// Get the proper URL
@@ -816,6 +874,8 @@ class authnet
 		return $post_url;
 	}
 	
+	//---------------------------------------------------------------
+	
 	/**
 	 * Htmlspecialchars all individual items in an array.
 	 * 
@@ -839,6 +899,31 @@ class authnet
 			}
 		}
 	}
+	
+	//---------------------------------------------------------------
+	
+	/*
+		Method: log_it()
+		
+		Logs the transaction to a file. Helpful with debugging callback
+		transactions, since we can't actually see what's going on.
+		
+		Parameters:
+			$heading	- A string to be placed above the resutls
+			$params		- Typically an array to print_r out so that we can inspect it.
+	*/
+	public function log_it($heading, $params) 
+	{
+		$file = FCPATH .'writeable/gateway_log.txt';
+		
+		$content .= "\n\n//---------------------------------------------------------------\n";
+		$content .= "\n\n[{$this->settings['name']}] $heading\n";
+		$content .= date('Y-m-d H:i:s') ."\n\n";
+		$content .= print_r($params, true);
+		file_put_contents($file, $content, FILE_APPEND);
+	}
+	
+	//--------------------------------------------------------------------
 	
 	/*
 	function Auth($client_id, $order_id, $gateway, $customer, $params, $credit_card)
