@@ -2,6 +2,8 @@
 
 class Cron extends Controller {
 
+	private $debug = false;
+
 	function Cron()
 	{
 		parent::Controller();	
@@ -28,7 +30,16 @@ class Cron extends Controller {
 	function SendNotifications ($key) {
 		if ($this->config->item('cron_key') != $key) {
 			echo 'Invalid key.';
+			if ($this->debug)
+			{
+				$this->log_it('Invalid Key for SendNotifications Cronjob: '. $key);
+			}
 			return FALSE;
+		}
+		
+		if ($this->debug)
+		{
+			$this->log_it('Starting SendNotifications Cron');
 		}
 		
 		$this->load->library('notifications');
@@ -39,6 +50,11 @@ class Cron extends Controller {
 
 		$this->save_cron_date($key, 'cron_last_run_notifications');
 
+		if ($this->debug)
+		{
+			$this->log_it('Finished SendNotifications Cron');
+		}
+		
 		return true;
 	}
 	
@@ -48,7 +64,18 @@ class Cron extends Controller {
 	{
 		if ($this->config->item('cron_key') != $key) {
 			echo 'Invalid key.';
+			
+			if ($this->debug)
+			{
+				$this->log_it('Invalid Key for SubscriptionMaintenance cronjob: '. $key);
+			}
+			
 			return FALSE;
+		}
+		
+		if ($this->debug)
+		{
+			$this->log_it('Starting SubscriptionMaintenance Cron');
 		}
 
 		$this->load->model('recurring_model');
@@ -200,6 +227,12 @@ class Cron extends Controller {
 		echo $response;
 		
 		$this->save_cron_date($key, 'cron_last_run_subs');
+		
+		if ($this->debug)
+		{
+			$this->log_it('Finished SubscriptionMaintenance Cron');
+		}
+		
 		die();
 	}
 	
@@ -210,6 +243,11 @@ class Cron extends Controller {
 		if ($this->config->item('cron_key') != $key) {
 			echo 'Invalid key.';
 			return FALSE;
+		}
+		
+		if ($this->debug)
+		{
+			$this->log_it('Saving Cron Date. Key: '. $key .', Field: '. $field);
 		}
 		
 		// If the cron_last_run field doesn't exist… create it.
@@ -240,6 +278,11 @@ class Cron extends Controller {
 	
 	private function run_paypal_fix() 
 	{
+		if ($this->debug)
+		{
+			$this->log_it('Starting run_paypal_fix Cron');
+		}
+	
 		// Check the date that paypal_fix was last run. 
 		if (!$this->db->field_exists('paypal_fix_ran', 'version'))
 		{
@@ -263,6 +306,11 @@ class Cron extends Controller {
 		$last_ran = date('Y-m-d H:i:s', strtotime($result));
 		$today = date('Y-m-d') .' 05:05:00';
 
+		if ($this->debug)
+		{
+			$this->log_it('Finished run_paypal_fix Cron');
+		}
+
 		if (strtotime($last_ran) >= strtotime($today))
 		{	
 			return false;
@@ -273,6 +321,28 @@ class Cron extends Controller {
 	
 	//--------------------------------------------------------------------
 	
+	/*
+		Method: log_it()
+		
+		Logs the transaction to a file. Helpful with debugging callback
+		transactions, since we can't actually see what's going on.
+		
+		Parameters:
+			$heading	- A string to be placed above the resutls
+			$params		- Typically an array to print_r out so that we can inspect it.
+	*/
+	public function log_it($heading, $params=null) 
+	{
+		$file = FCPATH .'writeable/og_cron_log.txt';
+		
+		$content .= "# $heading\n";
+		$content .= date('Y-m-d H:i:s') ."\n\n";
+		if (!empty($params))
+			$content .= print_r($params, true);
+		file_put_contents($file, $content, FILE_APPEND);
+	}
+	
+	//--------------------------------------------------------------------
 }
 
 
