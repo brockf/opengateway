@@ -592,6 +592,7 @@ class paypal_standard
 		// we'll need to adjust the interval upon each charge so that the next_charge_date is a month from now
 		if ($this->same_day_every_month === TRUE and $params['charge_interval'] % 30 === 0) {
 			$months = $params['charge_interval'] / 30;
+			if ($months == 0) $months = 1;
 			$plural = ($months > 1) ? 's' : '';
 			$next_charge = date('Y-m-d',strtotime('today + ' . $months . ' month' . $plural));
 
