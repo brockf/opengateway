@@ -179,7 +179,7 @@ class sagepay
 			"TxType" => $txtype,
 			"Vendor" => $gateway['vendor'],
 			"VendorTxCode" => 'opengateway-' . $order_id,
-			"Amount" => $amount,
+			"Amount" => number_format($amount, 2),
 			"Currency" => $gateway['currency'],
 			"Description" => "API Payment at " . date('Y-m-d H:i:s') . " via " . $this->ci->config->item('server_name'),
 			"CardHolder" => $credit_card['name'],
@@ -305,7 +305,7 @@ class sagepay
 	//--------------------------------------------------------------------
 	
 	function Recur ($client_id, $gateway, $customer, $amount, $charge_today, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences = FALSE, $return_url = '', $cancel_url = '')
-	{		
+	{
 		$CI =& get_instance();
 		
 		// if a payment is to be made today, process it.
@@ -331,7 +331,8 @@ class sagepay
 					'not_completed' => TRUE, // don't mark charge as complete
 					'redirect' 		=> $url = site_url('callback/sagepay/form_redirect/'. $response['charge_id']), // redirect the user to this address
 					'recurring_id' 	=> $subscription_id,
-					'charge_id'		=> $response['charge_id']
+					'charge_id'		=> $response['charge_id'],
+					'type'			=> '3DAUTH'
 				);
 
 				$response = $this->ci->response->TransactionResponse(100, $response_array);
@@ -359,8 +360,42 @@ class sagepay
 			// we need to process an initial AUTHENTICATE transaction in order to send REPEATs later
 			
 			// generate a fake random Order ID - this isn't a true order
-			$order_id = rand(100000,1000000);
-			$response = $this->Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card, $return_url, $cancel_url, 'AUTHENTICATE');
+			// If 3DAuth is added, then we have to create a real order
+			// but we'll do it with a $0 value. 
+			if ($gateway['3dsecure'] == '1')
+			{
+				$CI->load->model('charge_model');
+				$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
+			}
+			else
+			{
+				$order_id = rand(100000,1000000);
+			}
+			$response = $this->Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card, $return_url, $cancel_url);
+			
+			/*
+				If this is a 3D Secure response, we need to redirect the 
+				user off to the 3DSecure validation service. At this point, 
+				the data has already been saved, so let's just save something
+				so that we know this is a reucrring item.
+			*/
+			if (isset($response['type']) && $response['type'] == '3DAUTH')
+			{
+				$CI->load->model('charge_data_model');
+				$CI->charge_data_model->Save('r'. $subscription_id, 'charge_id', $response['charge_id']);
+				
+				$response_array = array(
+					'not_completed' => TRUE, // don't mark charge as complete
+					'redirect' 		=> $url = site_url('callback/sagepay/form_redirect/'. $response['charge_id']), // redirect the user to this address
+					'recurring_id' 	=> $subscription_id,
+					'charge_id'		=> $response['charge_id'],
+					'type'			=> '3DAUTH'
+				);
+
+				$response = $this->ci->response->TransactionResponse(100, $response_array);
+		
+				return $response;
+			}
 			
 			if ($response['response_code'] == '1') {
 				$response_array = array('recurring_id' => $subscription_id);
@@ -402,7 +437,12 @@ class sagepay
 	
 	//--------------------------------------------------------------------
 	
-	function AutoRecurringCharge ($client_id, $order_id, $gateway, $params) {		
+	function AutoRecurringCharge ($client_id, $order_id, $gateway, $params) {
+		if ($this->debug)
+		{
+			$this->log_it('AutoRecurringCharge Params', $params);
+		}
+		
 		return $this->ChargeRecurring($client_id, $gateway, $order_id, $params['api_customer_reference'], $params['api_payment_reference'], $params['api_auth_number'], $params['amount']);
 	}
 	
@@ -421,7 +461,7 @@ class sagepay
 			"TxType" => 'REPEAT',
 			"Vendor" => $gateway['vendor'],
 			"VendorTxCode" => 'opengateway-' . $order_id,
-			"Amount" => $amount,
+			"Amount" => number_format($amount, 2),
 			"Currency" => $gateway['currency'],
 			"Description" => "API Payment at " . date('Y-m-d H:i:s') . " via " . $CI->config->item('server_name'),
 			"RelatedVPSTxId" => $VPSTxId,
@@ -432,6 +472,12 @@ class sagepay
 		);
 
 		$response = $this->Process($order_id, $post_url, $post_values);
+		
+		if ($this->debug)
+		{
+			$this->log_it('ChargeRecurring Post', $post_values);
+			$this->log_it('ChargeRecurring Response', $response);
+		}
 		
 		if ($response['success'] == TRUE){
 			return $response;
@@ -466,6 +512,11 @@ class sagepay
 	*/
 	public function Callback_form_redirect($client_id, $gateway, $charge, $params) 
 	{
+		if ($this->debug)
+		{
+			$this->log_it('In Callback_form_redirect', null);
+		}
+	
 		// PUll out the information for our form
 		$this->ci->load->model('charge_data_model');
 		
@@ -498,6 +549,12 @@ class sagepay
 		</body>
 		</html>";
 		
+		if ($this->debug)
+		{
+			$this->log_it('Form Redirect URL: ', $return_url);
+			$this->log_it('Form Redirect Form', $form);
+		}
+		
 		// Clean up the data that we shouldn't keep on hand. 
 		$this->ci->db->where('order_id', $charge['id'])->where('order_data_key', 'MD')->or_where('order_data_key', 'PAReq')->or_where('order_data_key', 'ACSURL')->delete('order_data');
 		
@@ -517,43 +574,56 @@ class sagepay
 		
 		$response = $this->Process($charge['id'], $post_url, $post);
 		
+		$VPSTxId = isset($response['VPSTxId']) ? $response['VPSTxId'] : false;
+		$TxAuthNo = isset($response['TxAuthNo']) ? $response['TxAuthNo'] : false;
+		$SecurityKey = isset($response['SecurityKey']) ? $response['SecurityKey'] : false;
+		
 		$this->ci->load->model('charge_data_model');
 		$data = $this->ci->charge_data_model->Get($charge['id']);
 		
 		if ($this->debug)
 		{
+			$this->log_it('Callback_confirm data', $data);
+			$this->log_it('Callback_confirm charge', $charge);
 			$this->log_it('Callback_confirm Params', $params);
 			$this->log_it('Callback_Confirm Response', $response);
 		}
 
 		// A successful transaction
-		if ($response['Status'] == 'OK' )
+		if ($response['Status'] == 'OK' || ($response['Status'] == 'AUTHENTICATED' && $response['3DSecureStatus'] == 'OK'))
 		{
 			/*
 				Recurring Charge
 			*/ 
-			if (isset($charge['type']) && $charge['type'] == 'recurring_charge')
+			if ((isset($charge['type']) && $charge['type'] == 'recurring_charge') || (isset($charge['type']) && $charge['type'] == 'recurring_repeat'))
 			{
+				// Do we have a recurring id passed in the $charge var? 
+				$subscription_id = $charge['recurring_id'];
+			
 				// We need to find our subscription id by backtracing based
 				// on the charge id. 
 				$query = $this->ci->db->where('order_data_value', $charge['id'])->get('order_data');
 				
-				if ($query->num_rows() > 0)
+				if (isset($subscription_id) || $query->num_rows() > 0)
 				{
-					$subscription_id = str_replace('r', '', $query->row()->order_id);
-					
+					if (empty($subscription_id))
+						$subscription_id = str_replace('r', '', $query->row()->order_id);
+		
 					$this->ci->charge_model->SetStatus($charge['id'], 1);
+					
+					// Since we didn't get to save these for REPEATS earlier, we'll save them now
+					// these authorizations were saved during $this->Process()
+					$this->ci->load->model('recurring_model');
+					$this->ci->recurring_model->SaveApiCustomerReference($subscription_id, $VPSTxId);
+					$this->ci->recurring_model->SaveApiPaymentReference($subscription_id, $charge['id'] . '|' . $TxAuthNo);
+					$this->ci->recurring_model->SaveApiAuthNumber($subscription_id, $SecurityKey);
+					
+					// Set the subscription to active
+					$this->ci->load->model('recurring_model');
+					$this->ci->recurring_model->SetActive($client_id, $subscription_id);
+					
 					$response_array = array('charge_id' => $charge['id'], 'recurring_id' => $subscription_id);
 					$response = $this->ci->response->TransactionResponse(100, $response_array);
-				}
-				
-				// Since we didn't get to save these for REPEATS earlier, we'll save them now
-				// these authorizations were saved during $this->Process()
-				if ($response['response_code'] != '2') {
-					$this->ci->load->model('recurring_model');
-					$this->ci->recurring_model->SaveApiCustomerReference($subscription_id, $response['VPSTxId']);
-					$this->ci->recurring_model->SaveApiPaymentReference($subscription_id, $charge['id'] . '|' . $response['TxAuthNo']);
-					$this->ci->recurring_model->SaveApiAuthNumber($subscription_id, $response['SecurityKey']);
 				}
 			}
 		
@@ -562,13 +632,13 @@ class sagepay
 			*/
 			// save authorization (transaction id #)
 			$this->ci->load->model('order_authorization_model');
-			$this->ci->order_authorization_model->SaveAuthorization($charge['id'], $results['VPSTxId'], $results['TxAuthNo']);
+			$this->ci->order_authorization_model->SaveAuthorization($charge['id'], $VPSTxId, $TxAuthNo);
 			
 			$this->ci->charge_model->SetStatus($charge['id'], 1);
 			TriggerTrip('charge', $client_id, $charge['id']);
 			
 			// Save our SecurityKey so that we can do refunds...
-			if (isset($response['SecurityKey']) && !empty($response['SecurityKey']))
+			if (isset($SecurityKey) && !empty($SecurityKey))
 			{
 				$this->ci->charge_data_model->Save($charge['id'], 'token', $params['Token']);
 			}
@@ -750,3 +820,4 @@ class sagepay
 	
 	//--------------------------------------------------------------------
 }
+
