@@ -42,7 +42,7 @@ class Paypal_fix {
 			}
 		}
 		
-		echo 'Updated ' . $updated . ' active subscriptions to proper billing dates.<br /><br />';
+		return 'Updated ' . $updated . ' active subscriptions to proper billing dates.<br /><br />';
 	}
 	
 	function _get_profile ($gateway_id, $profile_id)
