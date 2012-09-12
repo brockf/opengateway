@@ -61,6 +61,7 @@ class OpenGateway
 	* @return bool TRUE;
 	*/
     public function Param($name, $value, $parent = FALSE)  {
+    /*
     	// prep value for XML
     	$value = (is_numeric($value)) ? $value : $this->xmlEntities($this->utf8tohtml($value));
     
@@ -71,6 +72,14 @@ class OpenGateway
         }
         
         return TRUE;
+        */
+        if($parent) {
+       	   $this->params->$parent->$name = $this->xmlEntities($this->utf8tohtml($value));
+        } else {
+      	   $this->params->$name = $this->xmlEntities($this->utf8tohtml($value));
+        }
+        
+        return true;
     }
     
     /**
@@ -150,7 +159,7 @@ class OpenGateway
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $xml); 
 		
 		$data = curl_exec($ch);
-		
+	//die($data);
 		if (curl_errno($ch)) {
 		    print curl_error($ch);
 		}
