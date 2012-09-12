@@ -166,6 +166,7 @@ class Settings extends Controller {
 	* Handle New/Edit Email Post
 	*/
 	function post_email ($action, $id = false) {		
+	
 		if ($this->input->post('email_body') == '') {
 			$this->notices->SetError('Email Body is a required field.');
 			$error = true;
@@ -195,7 +196,7 @@ class Settings extends Controller {
 		
 		$params = array(
 						'email_subject' => $this->input->post('email_subject',true),
-						'email_body' => $this->input->post('email_body',true),
+						'email_body' => $this->input->post('email_body',false),
 						'from_name' => $this->input->post('from_name',true),
 						'from_email' => $this->input->post('from_email',true),
 						'plan' => $this->input->post('plan',true),
