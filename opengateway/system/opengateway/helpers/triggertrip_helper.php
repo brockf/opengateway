@@ -82,6 +82,12 @@ function TriggerTrip($trigger_type, $client_id, $charge_id = false, $subscriptio
 		if (!isset($variables['amount'])) {
 			$variables['amount'] = $subscription['amount'];
 		}
+		
+		// if this is a delayed recurring charge, then there won't be a 
+		// date variable yet... so let's create one
+		if (!isset($variables['date'])) {
+			$variables['date'] = date('Y-m-d h:i');
+		}
 	}
 	
 	if (isset($customer) and is_array($customer)) {
