@@ -1,6 +1,6 @@
 <?php
 /**
-* Notices Model 
+* Notices Model
 *
 * Set and retrieve the notices and errors that appear at the top of the control panel
 *
@@ -10,10 +10,10 @@
 
 */
 class Notices extends Model {
-    function Notices() {
-        parent::Model();
+    function __construct() {
+        parent::__construct();
     }
-    
+
     /**
     * Set Error
     *
@@ -23,15 +23,15 @@ class Notices extends Model {
     *
     * @return boolean TRUE upon success
     */
-    function SetError($message) {    	
+    function SetError($message) {
     	$errors = $this->GetErrors(false);
-    	
+
     	$errors[] = $message;
-    	
+
     	$errors = serialize($errors);
-    	
+
     	$this->session->set_userdata(array('errors' => $errors));
-    	
+
     	return true;
     }
 
@@ -46,7 +46,7 @@ class Notices extends Model {
     */
 	function GetErrors ($clear = true) {
 		$errors = $this->session->userdata('errors');
-		
+
 		if (!empty($errors) and is_array(unserialize($errors))) {
 			if ($clear == true) {
 				$this->session->set_userdata(array('errors' => ''));
@@ -57,7 +57,7 @@ class Notices extends Model {
 			return array();
 		}
 	}
-	
+
 	/**
     * Set Notice
     *
@@ -69,13 +69,13 @@ class Notices extends Model {
     */
    	function SetNotice($message) {
     	$notices = $this->GetNotices(false);
-    	
+
     	$notices[] = $message;
-    	
+
     	$notices = serialize($notices);
-    	
+
     	$this->session->set_userdata(array('notices' => $notices));
-    	
+
     	return true;
     }
 
@@ -90,7 +90,7 @@ class Notices extends Model {
     */
 	function GetNotices ($clear = true) {
 		$notices = $this->session->userdata('notices');
-		
+
 		if (!empty($notices) and is_array(unserialize($notices))) {
 			if ($clear == true) {
 				$this->session->set_userdata(array('notices' => ''));

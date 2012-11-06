@@ -1,6 +1,6 @@
 <?php
 /**
-* Navigation Model 
+* Navigation Model
 *
 * Dynamically generates the navigation, pagetitle, and sidebar elements of the page
 *
@@ -17,10 +17,10 @@ class Navigation extends Model {
 	var $sidebar_buttons;
 	var $sidebar_notes;
 
-    function Navigation() {
-        parent::Model();
+    function __construct() {
+        parent::__construct();
     }
-    
+
     /**
     * Add Element
     *
@@ -46,12 +46,12 @@ class Navigation extends Model {
 	    						'link' => $link,
 	    						'name' => $name,
 	    						'external' => $external
-	    				);	
+	    				);
 	    }
-	    
+
 	    return true;
     }
-    
+
     /**
     * Output Navigation
     *
@@ -61,40 +61,40 @@ class Navigation extends Model {
     */
     function Output () {
     	$CI =& get_instance();
-    	
+
     	$return = '';
-    	
+
     	while (list(,$link) = each($this->elements)) {
     		$classes = array();
     		if (strstr($CI->router->fetch_class() . '/',$link['link'])) {
     			$classes[] = 'active';
     		}
-    		
+
     		if (isset($this->children[$link['link']])) {
     			$classes[] = 'parent';
     		}
-    		
+
     		$displaylink = ($link['external'] == false) ? site_url($link['link']) : $link['link'];
-    		
+
     		$return .= '<li ' . $this->ArrayToClass($classes) . '><a href="' . $displaylink . '">' . $link['name'] . '</a>';
-    		
+
     		if (isset($this->children[$link['link']])) {
     			$return .= '<ul class="children">';
-    			
+
     			while (list(,$child) = each($this->children[$link['link']])) {
     				$displaylink = ($child['external'] == false) ? site_url($child['link']) : $child['link'];
     				$return .= '<li><a href="' . $displaylink . '">' . $child['name'] . '</a></li>';
     			}
-    			
+
     			$return .= '<div style="clear:both"></div></ul>';
     		}
-    		
+
     		$return .= '</li>';
     	}
-    	
+
     	return $return;
     }
-    
+
     /**
     * Page Title
     *
@@ -113,7 +113,7 @@ class Navigation extends Model {
     		return $this->pagetitle;
     	}
     }
-    
+
     /**
     * Sidebar Button
     *
@@ -134,7 +134,7 @@ class Navigation extends Model {
     								);
     	return true;
     }
-    
+
     /**
     * Sidebar Note
     *
@@ -150,10 +150,10 @@ class Navigation extends Model {
     								'text' => $text,
     								'class' => $class
     								);
-    								
+
     	return true;
     }
-    
+
     /**
     * Get Sidebar
     *
@@ -163,22 +163,22 @@ class Navigation extends Model {
     */
     function GetSidebar () {
     	$return = '';
-    	
+
     	if (is_array($this->sidebar_buttons)) {
 	    	foreach ($this->sidebar_buttons as $button) {
 	    		$return .= '<p class="button"><a class="' . $button['class'] . '" href="' . $button['link'] . '">' . $button['text'] . '</a></p>';
 	    	}
 	    }
-    	
+
     	if (is_array($this->sidebar_notes)) {
 	    	foreach ($this->sidebar_notes as $note) {
 	    		$return .= '<p class="' . $note['class'] . '">' . $note['text'] . '</p>';
 	    	}
-	    }	
-    	
+	    }
+
     	return $return;
     }
-    
+
     /**
     * Array to Class
     *
@@ -190,7 +190,7 @@ class Navigation extends Model {
     */
     function ArrayToClass ($array) {
     	$classes = implode(' ',$array);
-    	
+
     	if (!empty($classes)) {
     		return 'class="' . $classes . '"';
     	}

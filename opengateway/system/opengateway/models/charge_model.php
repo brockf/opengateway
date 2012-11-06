@@ -1,6 +1,6 @@
 <?php
 /**
-* Charge Model 
+* Charge Model
 *
 * Contains all the methods used to create and search orders.
 *
@@ -11,11 +11,11 @@
 */
 class Charge_model extends Model
 {
-	function Charge_model()
+	function __construct()
 	{
-		parent::Model();
+		parent::__construct();
 	}
-	
+
 	/**
 	* Create a new order.
 	*
@@ -29,7 +29,7 @@ class Charge_model extends Model
 	* @param int $customer_id The customer ID to link this order to
 	* @param float $customer_ip The IP address of the purchasing customer
 	* @param int $coupon_id
-	* 
+	*
 	* @return int $order_id The new order id
 	*/
 	function CreateNewOrder($client_id, $gateway_id, $amount, $credit_card = array(), $subscription_id = 0, $customer_id = FALSE, $customer_ip = FALSE, $coupon_id = FALSE)
@@ -44,12 +44,12 @@ class Charge_model extends Model
 							'timestamp'		  => $timestamp,
 							'refunded' 		  => '0',
 							'refund_date'	  => '0000-00-00 00:00:00'
-							);	
-		
+							);
+
 		if (isset($credit_card['card_num'])) {
 			$insert_data['card_last_four']  = substr($credit_card['card_num'],-4,4);
-		}					
-							
+		}
+
 		if (isset($customer_ip) and !empty($customer_ip)) {
 			$insert_data['customer_ip_address'] = $customer_ip;
 		}
@@ -57,12 +57,12 @@ class Charge_model extends Model
 		if (isset($customer_id)) {
 			$insert_data['customer_id'] = $customer_id;
 		}
-							
+
 		$this->db->insert('orders', $insert_data);
-		
-		return $this->db->insert_id();	
+
+		return $this->db->insert_id();
 	}
-	
+
 	/**
 	* Mark Refunded
 	*
@@ -78,10 +78,10 @@ class Charge_model extends Model
 							'refunded' => '1',
 							'refund_date' => date('Y-m-d H:i:s')
 							);
-							
+
 		$this->db->update('orders', $update_data, array('order_id' => $charge_id));
 	}
-	
+
 	/**
 	* Get Revenue by Day
 	*
@@ -97,7 +97,7 @@ class Charge_model extends Model
 		$this->db->where('orders.status','1');
 		$this->db->group_by('DATE(orders.timestamp)');
 		$result = $this->db->get('orders');
-		
+
 		$revenue = array();
 		foreach ($result->result_array() as $row) {
 			$revenue[] = array(
@@ -105,10 +105,10 @@ class Charge_model extends Model
 							'day' => $row['day']
 						);
 		}
-		
+
 		return $revenue;
 	}
-	
+
 	/**
 	* Get total matching revenue
 	*
@@ -125,75 +125,75 @@ class Charge_model extends Model
 	* @param string $params['customer_last_name'] The last name of the customer.  Optional.
 	* @param int $params['status'] Set to ok/failed to filter results.  Optional.
 	* @param boolean $params['recurring_only'] Returns only orders that are part of a recurring subscription. Optional.
-	* 
+	*
 	* @return string|bool Total amount
 	*/
-	
+
 	function GetTotalAmount($client_id, $params)
 	{
 		// Make sure they only get their own charges
 		$this->db->where('orders.client_id', $client_id);
-		
+
 		// Check which search paramaters are set
-		
+
 		if(isset($params['gateway_id'])) {
 			$this->db->where('orders.gateway_id', $params['gateway_id']);
 		}
-		
+
 		$this->load->library('field_validation');
-		
+
 		if(isset($params['start_date'])) {
 			$valid_date = $this->field_validation->ValidateDate($params['start_date']);
 			if(!$valid_date) {
 				die($this->response->Error(5007));
 			}
-			
+
 			$start_date = date('Y-m-d H:i:s', strtotime($params['start_date']));
 			$this->db->where('timestamp >=', $start_date);
 		}
-		
+
 		if(isset($params['end_date'])) {
 			$valid_date = $this->field_validation->ValidateDate($params['start_date']);
 			if(!$valid_date) {
 				die($this->response->Error(5007));
 			}
-			
+
 			$end_date = date('Y-m-d H:i:s', strtotime($params['end_date']));
 			$this->db->where('timestamp <=', $end_date);
 		}
-		
+
 		if(isset($params['customer_id'])) {
 			$this->db->where('orders.customer_id', $params['customer_id']);
 		}
-		
+
 		if(isset($params['amount'])) {
 			$this->db->where('orders.amount', $params['amount']);
 		}
-		
+
 		if(isset($params['id'])) {
 			$this->db->where('orders.order_id', $params['id']);
 		}
-		
+
 		if(isset($params['customer_id'])) {
 			$this->db->where('orders.customer_id', $params['customer_id']);
 		}
-		
+
 		if(isset($params['customer_last_name'])) {
 			$this->db->like('customers.last_name',$params['customer_last_name']);
 		}
-		
+
 		if(isset($params['customer_internal_id'])) {
 			$this->db->where('customers.internal_id', $params['customer_internal_id']);
 		}
-		
+
 		if(isset($params['recurring_only']) && $params['recurring_only'] == 1) {
 			$this->db->where('orders.subscription_id <>', 0);
 		}
-		
+
 		if (isset($params['recurring_id'])) {
 			$this->db->where('orders.subscription_id', $params['recurring_id']);
 		}
-		
+
 		if (isset($params['status'])) {
 			if ($params['status'] == '1' or $params['status'] == 'ok') {
 				$this->db->where('orders.status','1');
@@ -206,20 +206,20 @@ class Charge_model extends Model
 				$this->db->where('orders.status','0');
 			}
 		}
-		
+
 		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
-		
+
 		$this->db->select_sum('amount','total_amount');
 		$query = $this->db->get('orders');
-		
+
 		$array = $query->result_array();
-		
+
 		$total = $array[0]['total_amount'];
-				
+
 		return $total;
 	}
-	
+
 	/**
 	* Search Orders.
 	*
@@ -241,79 +241,79 @@ class Charge_model extends Model
 	* @param int $params['limit'] Limits the number of results returned. Optional.
 	* @param string $params['sort'] Variable used to sort the results.  Possible values are date, customer_first_name, customer_last_name, amount. Optional
 	* @param string $params['sort_dir'] Used when a sort param is supplied.  Possible values are asc and desc. Optional.
-	* 
+	*
 	* @return array|bool Charge results or FALSE upon failure
 	*/
-	
+
 	function GetCharges($client_id, $params)
 	{
 		// Make sure they only get their own charges
 		$this->db->where('orders.client_id', $client_id);
-		
+
 		// Check which search paramaters are set
-		
+
 		if(isset($params['gateway_id'])) {
 			$this->db->where('orders.gateway_id', $params['gateway_id']);
 		}
-		
+
 		$this->load->library('field_validation');
-		
+
 		if(isset($params['start_date'])) {
 			$valid_date = $this->field_validation->ValidateDate($params['start_date']);
 			if(!$valid_date) {
 				die($this->response->Error(5007));
 			}
-			
+
 			$start_date = date('Y-m-d H:i:s', strtotime($params['start_date']));
 			$this->db->where('orders.timestamp >=', $start_date);
 		}
-		
+
 		if(isset($params['end_date'])) {
 			$valid_date = $this->field_validation->ValidateDate($params['start_date']);
 			if(!$valid_date) {
 				die($this->response->Error(5007));
 			}
-			
+
 			$end_date = date('Y-m-d H:i:s', strtotime($params['end_date']));
 			$this->db->where('orders.timestamp <=', $end_date);
 		}
-		
+
 		if(isset($params['customer_id'])) {
 			$this->db->where('orders.customer_id', $params['customer_id']);
 		}
-		
+
 		if(isset($params['amount'])) {
 			$this->db->where('orders.amount', $params['amount']);
 		}
-		
+
 		if(isset($params['id'])) {
 			$this->db->where('orders.order_id', $params['id']);
 		}
-		
+
 		if(isset($params['customer_id'])) {
 			$this->db->where('orders.customer_id', $params['customer_id']);
 		}
-		
+
 		if(isset($params['customer_last_name'])) {
 			$this->db->like('customers.last_name',$params['customer_last_name']);
 		}
-		
+
 		if(isset($params['customer_internal_id'])) {
 			$this->db->where('customers.internal_id', $params['customer_internal_id']);
 		}
-		
+
 		if(isset($params['recurring_only']) && $params['recurring_only'] == 1) {
 			$this->db->where('orders.subscription_id <>', 0);
 		}
-		
+
 		if (isset($params['recurring_id'])) {
 			$this->db->where('orders.subscription_id', $params['recurring_id']);
 		}
-		
+
 		if (isset($params['card_last_four'])) {
 			$this->db->where('orders.card_last_four', $params['card_last_four']);
 		}
-		
+
 		if (isset($params['status'])) {
 			if ($params['status'] == '1' or $params['status'] == 'ok') {
 				$this->db->where('orders.status','1');
@@ -331,27 +331,27 @@ class Charge_model extends Model
 				$this->db->where('orders.status','0');
 			}
 		}
-		
+
 		if (isset($params['offset'])) {
 			$offset = $params['offset'];
 		}
 		else {
 			$offset = 0;
 		}
-		
+
 		if(isset($params['limit'])) {
 			$this->db->limit($params['limit'], $offset);
 		}
-		
+
 		if(isset($params['sort_dir']) and ($params['sort_dir'] == 'asc' or $params['sort_dir'] == 'desc' )) {
 			$sort_dir = $params['sort_dir'];
 		}
 		else {
 			$sort_dir = 'DESC';
 		}
-		
+
 		$params['sort'] = isset($params['sort']) ? $params['sort'] : '';
-		
+
 		switch($params['sort'])
 		{
 			case 'date':
@@ -362,33 +362,33 @@ class Charge_model extends Model
 				break;
 			case 'customer_last_name':
 				$sort = 'customers.last_name';
-				break;	
+				break;
 			case 'amount':
 				$sort = 'orders.amount';
 				break;
 			default:
 				$sort = 'orders.timestamp';
-				break;	
+				break;
 		}
-		
+
 		$sort_dir = isset($params['sort_dir']) ? $params['sort_dir'] : 'DESC';
-		
-		
-		$this->db->order_by($sort, $sort_dir);	
-		
+
+
+		$this->db->order_by($sort, $sort_dir);
+
 		$this->db->select('customers.*');
 		$this->db->select('countries.*');
 		$this->db->select('orders.*');
 		$this->db->select('coupons.coupon_code AS coupon_code');
 		$this->db->select('subscriptions.start_date');
-		
+
 		$this->db->join('customers', 'customers.customer_id = orders.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$this->db->join('subscriptions', 'subscriptions.subscription_id = orders.subscription_id', 'left');
 		$this->db->join('coupons','coupons.coupon_id = orders.coupon_id','left');
-		
+
 		$query = $this->db->get('orders');
-		
+
 		$data = array();
 		if($query->num_rows() > 0) {
 			$i=0;
@@ -403,11 +403,11 @@ class Charge_model extends Model
 				if ($row->refunded == '1') {
 					$data[$i]['refund_date'] = local_time($client_id, $row->refund_date);
 				}
-				
+
 				if($row->subscription_id != 0) {
 					$data[$i]['recurring_id'] = $row->subscription_id;
 				}
-				
+
 				// was this a recurring charge (other than the first charge)
 				if ($row->subscription_id != 0 and date('Y-m-d',strtotime($row->start_date)) != date('Y-m-d',strtotime($row->timestamp))) {
 					$data[$i]['type'] = 'recurring_repeat';
@@ -418,9 +418,9 @@ class Charge_model extends Model
 				else {
 					$data[$i]['type'] = 'single_charge';
 				}
-				
+
 				$data[$i]['coupon'] = (isset($row->coupon_code)) ? $row->coupon_code : '';
-				
+
 				if($row->customer_id != 0) {
 					$data[$i]['customer']['id'] = $row->customer_id;
 					$data[$i]['customer']['internal_id'] = $row->internal_id;
@@ -438,16 +438,16 @@ class Charge_model extends Model
 					$data[$i]['customer']['date_created'] = local_time($client_id, $row->date_created);
 					$data[$i]['customer']['status'] = ($row->active == 1) ? 'active' : 'deleted';
 				}
-				
+
 				$i++;
 			}
 		} else {
 			return FALSE;
 		}
-		
+
 		return $data;
 	}
-	
+
 	/**
 	* Get Details of a specific order.
 	*
@@ -455,16 +455,16 @@ class Charge_model extends Model
 	*
 	* @param int $client_id The client ID.
 	* @param int $charge_id The order ID to search for.
-	* 
+	*
 	* @return array|bool Array with charge info, FALSE upon failure.
 	*/
-	
+
 	function GetCharge($client_id, $charge_id)
 	{
 		$params = array('id' => $charge_id);
-		
+
 		$data = $this->GetCharges($client_id, $params);
-		
+
 		if (!empty($data)) {
 			return $data[0];
 		}
@@ -472,39 +472,39 @@ class Charge_model extends Model
 			return FALSE;
 		}
 	}
-	
+
 	/**
 	* Get Details of the last order for a customer.
 	*
 	* @param int $client_id The client ID.
 	* @param int $customer_id The customer ID.
-	* @param int $gateway_id Filter by gateway 
+	* @param int $gateway_id Filter by gateway
 	*
 	* @return array|bool Array with charge details or FALSE upon failure
 	*/
-	
+
 	function GetLatestCharge($client_id, $customer_id, $gateway_id = FALSE)
-	{	
+	{
 		$this->db->where('orders.client_id', $client_id);
 		$this->db->where('orders.customer_id', $customer_id);
-		
+
 		if (!empty($gateway_id)) {
 			$this->db->where('orders.gateway_id', $gateway_id);
 		}
-		
+
 		$this->db->where('orders.status','1');
 		$this->db->order_by('timestamp', 'DESC');
 		$this->db->limit(1);
 		$query = $this->db->get('orders');
 		if($query->num_rows() > 0) {
 			$row = $query->row();
-			return $this->GetCharge($client_id, $row->order_id);	
+			return $this->GetCharge($client_id, $row->order_id);
 		} else {
 			return FALSE;
 		}
 	}
-	
-	
+
+
 	/**
 	* Set the status of an order to either 1 or 0
 	*
@@ -513,26 +513,26 @@ class Charge_model extends Model
 	*
 	* @return bool TRUE upon success.
 	*/
-	
+
 	function SetStatus($order_id, $status = 0)
 	{
 		$update_data['status'] = $status;
 		$this->db->where('order_id', $order_id);
 		$this->db->update('orders', $update_data);
-		
+
 		return TRUE;
 	}
-	
+
 	/**
 	* Get order authorization details
-	* 
+	*
 	* Returns order authorization information.
 	*
 	* @param int $order_id The Order ID
 	*
 	* @return mixed Array containg authorization details
 	*/
-	
+
 	function GetChargeGatewayInfo($order_id)
 	{
 		$this->db->select('order_authorizations.*');

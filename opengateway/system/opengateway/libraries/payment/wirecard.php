@@ -266,7 +266,7 @@ class wirecard
 			
 		$response = $this->Process($gateway, $transaction);
 		
-		if (isset($response['W_RESPONSE']['W_JOB']['FNC_CC_BOOKBACK']['CC_TRANSACTION']['PROCESSING_STATUS']['FunctionResult']) and $response['W_RESPONSE']['W_JOB']['FNC_CC_BOOKBACK']['CC_TRANSACTION']['PROCESSING_STATUS']['FunctionResult'] == 'ACK') {
+		if (isset($response['W_RESPONSE']['W_JOB']['FNC_CC_BOOKBACK']['CC_TRANSACTION']['PROCESSING_STATUS']['FunctionResult']) and ($response['W_RESPONSE']['W_JOB']['FNC_CC_BOOKBACK']['CC_TRANSACTION']['PROCESSING_STATUS']['FunctionResult'] == 'ACK' || $response['W_RESPONSE']['W_JOB']['FNC_CC_BOOKBACK']['CC_TRANSACTION']['PROCESSING_STATUS']['FunctionResult'] == 'PENDING')) {
 			return TRUE;
 		}
 		else {

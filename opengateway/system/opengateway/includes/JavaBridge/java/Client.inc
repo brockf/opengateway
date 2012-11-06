@@ -55,7 +55,7 @@ class java_SimpleFactory {
 }
 class java_ProxyFactory extends java_SimpleFactory {
   function java_ProxyFactory($client) {
-	parent::java_SimpleFactory($client);
+	parent::__construct($client);
   }
   function create($result, $signature) {
 	return new java_JavaProxy($result, $signature);
@@ -71,19 +71,19 @@ class java_ProxyFactory extends java_SimpleFactory {
 }
 class java_ArrayProxyFactory extends java_ProxyFactory {
   function java_ArrayProxyFactory($client) {
-	parent::java_ProxyFactory($client);
+	parent::__construct($client);
   }
   function create($result, $signature) {
 	return new java_ArrayProxy($result, $signature);
-  }	
+  }
 }
 class java_IteratorProxyFactory extends java_ProxyFactory {
   function java_IteratorProxyFactory($client) {
-	parent::java_ProxyFactory($client);
+	parent::__construct($client);
   }
   function create($result, $signature) {
 	return new java_IteratorProxy($result, $signature);
-  }	
+  }
 }
 class java_ExceptionProxyFactory extends java_SimpleFactory {
   function java_ExceptionProxyFactory($client) {
@@ -101,7 +101,7 @@ class java_ExceptionProxyFactory extends java_SimpleFactory {
 }
 class java_ThrowExceptionProxyFactory extends java_ExceptionProxyFactory {
   function java_ThrowExceptionProxyFactory($client) {
-	parent::java_ExceptionProxyFactory($client);
+	parent::__construct($client);
   }
   function getProxy($result, $signature, $wrap) {
 	$proxy = $this->create($result, $signature);
@@ -135,7 +135,7 @@ class java_Arg {
   var $exception; 				// string representation for php4
   var $factory, $val;
   var $signature; // class type
-  
+
   function java_Arg($client) {
 	$this->client = $client;
 	$this->factory = $client->simpleFactory;
@@ -194,7 +194,7 @@ class java_CompositeArg extends java_Arg {
   var $counter;
 
   function java_CompositeArg($client, $type) {
-	parent::java_Arg($client);
+	parent::__construct($client);
 	$this->type = $type;
 	$this->val = array();
 	$this->counter = 0;
@@ -217,7 +217,7 @@ class java_ApplyArg extends java_CompositeArg {
   var $m, $p, $v, $n; 			// see PROTOCOL.TXT
 
   function java_ApplyArg($client, $type, $m, $p, $v, $n) {
-	parent::java_CompositeArg($client, $type);
+	parent::__construct($client, $type);
 	$this->m = $m;
 	$this->p = $p;
 	$this->v = $v;
@@ -227,7 +227,7 @@ class java_ApplyArg extends java_CompositeArg {
 /**@deprecated*/
 class java_Handler {
   var $client;
-  
+
   function java_Handler($client) {
 	$this->client = $client;
   }
@@ -290,10 +290,10 @@ class java_Client /* implements IDocHandler */ {
   var $parser;
 
   var $simpleArg, $compositeArg;
-  var $simpleFactory, 
-	$proxyFactory, $iteratorProxyFacroty, 
+  var $simpleFactory,
+	$proxyFactory, $iteratorProxyFacroty,
 	$arrayProxyFactory, $exceptionProxyFactory, $throwExceptionProxyFactory;
-  
+
   var $arg;
   var $asyncCtx;
   var $globalRef;
@@ -303,7 +303,7 @@ class java_Client /* implements IDocHandler */ {
   // the cache
   var $methodCache = array(), $currentCacheKey, $currentArgumentsFormat;
   var $cachedJavaPrototype;
-  
+
   // send buffer
   var $sendBuffer, $preparedToSendBuffer;
 
@@ -313,7 +313,7 @@ class java_Client /* implements IDocHandler */ {
   function java_Client() {
 	$this->RUNTIME = array();
 	// named pipes are enabled if shared memory is accessible
-	if(JAVA_PIPE_DIR && function_exists("posix_mkfifo")) 
+	if(JAVA_PIPE_DIR && function_exists("posix_mkfifo"))
 	  $this->RUNTIME['PIPE_DIR']=JAVA_PIPE_DIR;
 	else
 	  $this->RUNTIME['PIPE_DIR']=null;
@@ -341,7 +341,7 @@ class java_Client /* implements IDocHandler */ {
 	$this->asyncHandler = new java_AsyncHandler($this);
   }
 
-  function __destruct() { 
+  function __destruct() {
 	if(JAVA_DEBUG) echo "the client destroyed\n";
 	$this->protocol->flush();
 	$this->protocol->keepAlive();
@@ -366,7 +366,7 @@ class java_Client /* implements IDocHandler */ {
 
   function handleRequests() {
 	if(!JAVA_CACHE_ENABLED) { $this->handler->handleRequests(); return 1;}
-	  
+
 	do {
 	  $tail_call = false;
 	  $this->stack=array($this->arg=$this->simpleArg);
@@ -436,7 +436,7 @@ class java_Client /* implements IDocHandler */ {
 	  $this->link($arg, $newArg);
 	  array_push($this->stack, $this->arg = $newArg);
 	  break;
-	case 'X': 
+	case 'X':
 	  $newArg = new java_CompositeArg($this, $st['t']);
 	  $this->link($arg, $newArg);
 	  array_push($this->stack, $this->arg = $newArg);
@@ -478,7 +478,7 @@ class java_Client /* implements IDocHandler */ {
 	  break;
 	case 'F':
 	  break;
-	case 'O': 
+	case 'O':
 	  $arg->setFactory($this->getProxyFactory($st['p']));
 	  $arg->setResult($this->asyncCtx=$this->getExact($st['v']));
 	  $arg->setSignature($st['m']);
@@ -490,7 +490,7 @@ class java_Client /* implements IDocHandler */ {
 	  if(JAVA_DEBUG) {echo "setresult exception:"; echo sprintf("%x", $this->asyncCtx); echo "\n";}
 	  $arg->setException($st['m']);
 	  break;
-	default: 
+	default:
 	  $this->parser->parserError();
 	}
   }
@@ -505,7 +505,7 @@ class java_Client /* implements IDocHandler */ {
   function createParserString() {
 	return new java_ParserString();
   }
-  
+
   function writeArg($arg) {
 	if(is_string($arg)) {
 	  $this->protocol->writeString($arg);
@@ -526,7 +526,7 @@ class java_Client /* implements IDocHandler */ {
 		if(is_string($key)) {
 		  if(!$wrote_begin) {
 			$wrote_begin=1;
-			$this->protocol->writeCompositeBegin_h(); 		
+			$this->protocol->writeCompositeBegin_h();
 		  }
 		  $this->protocol->writePairBegin_s($key);
 		  $this->writeArg($val);
@@ -596,7 +596,7 @@ class java_Client /* implements IDocHandler */ {
 	try {
   	$res = $arg->getResult(true);
 	  if((!$object && !function_exists($name)) || ($object && !method_exists($object, $name))) throw new JavaException("java.lang.NoSuchMethodException", "$name");
-	  
+
 	  $res = call_user_func_array($ob, $res);
 	  $this->protocol->resultBegin();
 	  $this->writeArg($res);
@@ -613,7 +613,7 @@ class java_Client /* implements IDocHandler */ {
 	  $this->protocol->resultBegin();
 	  $this->protocol->writeException($t->__java, $trace);
 	  $this->protocol->resultEnd();
-	}	  
+	}
   }
   function cast($object, $type) {
     switch($type[0]) {
@@ -631,7 +631,7 @@ class java_Client /* implements IDocHandler */ {
 	  return $this->invokeMethod(0, "castToArray", array($object));
 	case 'O': case 'o':			// eh?
 	  return $object;
-	default: 
+	default:
 	  throw new java_RuntimeException("$type illegal");
 	}
   }

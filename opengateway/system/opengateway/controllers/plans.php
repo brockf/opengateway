@@ -1,6 +1,6 @@
 <?php
 /**
-* Plans Controller 
+* Plans Controller
 *
 * Manage plans, create new plans, edit plans
 *
@@ -11,20 +11,20 @@
 */
 class Plans extends Controller {
 
-	function Plans()
+	function __construct()
 	{
-		parent::Controller();
-		
+		parent::__construct();
+
 		// perform control-panel specific loads
 		CPLoader();
 	}
-	
+
 	function index()
-	{	
+	{
 		$this->navigation->PageTitle('Plans');
-		
+
 		$this->load->model('cp/dataset','dataset');
-		
+
 		$columns = array(
 						array(
 							'name' => 'ID #',
@@ -65,18 +65,18 @@ class Plans extends Controller {
 							'width' => '6%'
 							)
 					);
-		
+
 		$this->dataset->Initialize('plan_model','GetPlans',$columns);
-		
+
 		// add actions
 		$this->dataset->Action('Delete','plans/delete');
-		
+
 		// sidebar
 		$this->navigation->SidebarButton('Create a plan','plans/new_plan');
-		
+
 		$this->load->view(branded_view('cp/plans.php'));
 	}
-	
+
 	/**
 	* Delete Plans
 	*
@@ -90,20 +90,20 @@ class Plans extends Controller {
 	function delete ($plans, $return_url) {
 		$this->load->model('plan_model');
 		$this->load->library('asciihex');
-		
+
 		$plans = unserialize(base64_decode($this->asciihex->HexToAscii($plans)));
 		$return_url = base64_decode($this->asciihex->HexToAscii($return_url));
-		
+
 		foreach ($plans as $plan) {
 			$this->plan_model->DeletePlan($this->user->Get('client_id'),$plan);
 		}
-		
+
 		$this->notices->SetNotice($this->lang->line('plans_deleted'));
-		
+
 		redirect($return_url);
 		return true;
 	}
-	
+
 	/**
 	* New Plan
 	*
@@ -114,26 +114,26 @@ class Plans extends Controller {
 	function new_plan ()
 	{
 		$this->navigation->PageTitle('New Plan');
-		
+
 		$this->load->model('email_model');
-		
+
 		$triggers = $this->email_model->GetTriggers();
-		
+
 		$data = array(
 					'triggers' => $triggers,
 					'form_title' => 'Create New Plan',
 					'form_action' => 'plans/post/new'
 					);
-				
+
 		$this->load->view(branded_view('cp/plan_form.php'),$data);
 	}
-	
+
 	/**
 	* Handle New/Edit Plan Post
 	*/
-	function post ($action = 'new', $id = false) {		
+	function post ($action = 'new', $id = false) {
 		$this->load->library('field_validation');
-	
+
 		if ($this->input->post('name') == '') {
 			$this->notices->SetError('Plan Name is a required field.');
 			$error = true;
@@ -154,18 +154,18 @@ class Plans extends Controller {
 			$this->notices->SetError('Free Trial is in an improper format.');
 			$error = true;
 		}
-		
+
 		// check uniqueness of plan name
 		$this->load->model('plan_model');
 		if ($action == 'new') {
 			$plans = $this->plan_model->GetPlans($this->user->Get('client_id'),array('name' => $this->input->post('name',true)));
-		
+
 			if (is_array($plans)) {
 				$this->notices->SetError('Plan name is not unique.');
 				$error = true;
 			}
 		}
-		
+
 		if (isset($error)) {
 			if ($action == 'new') {
 				redirect('plans/new_plan');
@@ -174,9 +174,9 @@ class Plans extends Controller {
 			else {
 				redirect('plans/edit/' . $id);
 				return false;
-			}	
+			}
 		}
-		
+
 		$params = array(
 						'name' => $this->input->post('name',true),
 						'plan_type' => ($this->input->post('plan_type') == 'free') ? 'free' : 'paid',
@@ -186,7 +186,7 @@ class Plans extends Controller {
 						'occurrences' => ($this->input->post('occurrences_radio') == '0') ? '0' : $this->input->post('occurrences',true),
 						'free_trial' => ($this->input->post('free_trial_radio') == '0') ? '0' : $this->input->post('free_trial',true),
 					);
-		
+
 		if ($action == 'new') {
 			$email_id = $this->plan_model->NewPlan($this->user->Get('client_id'), $params);
 			$this->notices->SetNotice($this->lang->line('plan_added'));
@@ -195,12 +195,12 @@ class Plans extends Controller {
 			$this->plan_model->UpdatePlan($this->user->Get('client_id'), $id, $params);
 			$this->notices->SetNotice($this->lang->line('plan_updated'));
 		}
-		
+
 		redirect('plans');
-		
+
 		return true;
 	}
-	
+
 	/**
 	* Edit Plan
 	*
@@ -212,14 +212,14 @@ class Plans extends Controller {
 	*/
 	function edit($id) {
 		$this->navigation->PageTitle('Edit Plan');
-		
+
 		$this->load->model('plan_model');
 		$this->load->model('email_model');
-		
+
 		$triggers = $this->email_model->GetTriggers();
-		
+
 		$plan = $this->plan_model->GetPlan($this->user->Get('client_id'),$id);
-		
+
 		$form = array(
 				'name' => $plan['name'],
 				'type' => $plan['type'],
@@ -229,14 +229,14 @@ class Plans extends Controller {
 				'occurrences' => $plan['occurrences'],
 				'free_trial' => $plan['free_trial']
 				);
-				
+
 		$data = array(
 					'form_title' => 'Edit Plan',
 					'form_action' => 'plans/post/edit/' . $plan['id'],
 					'form' => $form,
 					'triggers' => $triggers
 				);
-				
+
 		$this->load->view(branded_view('cp/plan_form.php'),$data);
 	}
 }

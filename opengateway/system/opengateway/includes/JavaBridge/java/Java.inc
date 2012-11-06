@@ -1,5 +1,5 @@
 <?php
-  
+
 
 if(!function_exists("java_get_base")) {
   $version = phpversion();
@@ -25,7 +25,7 @@ if(!function_exists("java_get_base")) {
 	  parent::__construct(is_object($ob)?$ob->__toString():(string)$ob);
 	}
   };
-  function Java($name) { 
+  function Java($name) {
 	static $classMap = array();
 	if(array_key_exists($name, $classMap)) return $classMap[$name];
 	return $classMap[$name]=new JavaClass(array($name), false);
@@ -49,7 +49,7 @@ function defineHostFromInitialQuery($java_base) {
 	  $path = $url["path"];
 	  define ("JAVA_HOSTS", "$host:$port");
 	  $dir = dirname($path);
-	  define ("JAVA_SERVLET", "$dir/JavaBridge.phpjavabridge"); 
+	  define ("JAVA_SERVLET", "$dir/JavaBridge.phpjavabridge");
 	  return true;
 	}
   }
@@ -58,23 +58,23 @@ function defineHostFromInitialQuery($java_base) {
 define ("JAVA_PEAR_VERSION", "4.2.1");
 if(!defined("JAVA_HOSTS")) {
   if(!defineHostFromInitialQuery($JAVA_BASE)) {
-	define("JAVA_HOSTS", "127.0.0.1:8080"); 
-	define("JAVA_SERVLET", "On"); 
+	define("JAVA_HOSTS", "127.0.0.1:8080");
+	define("JAVA_SERVLET", "On");
   }
  } else {
-  if(!defined("JAVA_SERVLET")) 
-	define("JAVA_SERVLET", "On"); 
+  if(!defined("JAVA_SERVLET"))
+	define("JAVA_SERVLET", "On");
  }
 if(!defined("JAVA_LOG_LEVEL"))
-  define ("JAVA_LOG_LEVEL", null); 
+  define ("JAVA_LOG_LEVEL", null);
 if(!defined("JAVA_PIPE_DIR"))
-  define("JAVA_PIPE_DIR", file_exists("/dev/shm") ? "/dev/shm" 
+  define("JAVA_PIPE_DIR", file_exists("/dev/shm") ? "/dev/shm"
 		 : file_exists("/tmp" ? "/tmp" : null ));
-if(!defined("JAVA_DEBUG")) 
+if(!defined("JAVA_DEBUG"))
   define("JAVA_DEBUG", false);
-if(!defined("JAVA_CACHE_ENABLED")) 
+if(!defined("JAVA_CACHE_ENABLED"))
   define("JAVA_CACHE_ENABLED", false);
-  
+
 
 class java_SimpleFactory {
   var $client;
@@ -88,7 +88,7 @@ class java_SimpleFactory {
 }
 class java_ProxyFactory extends java_SimpleFactory {
   function java_ProxyFactory($client) {
-	parent::java_SimpleFactory($client);
+	parent::__construct($client);
   }
   function create($result, $signature) {
 	return new java_JavaProxy($result, $signature);
@@ -104,23 +104,23 @@ class java_ProxyFactory extends java_SimpleFactory {
 }
 class java_ArrayProxyFactory extends java_ProxyFactory {
   function java_ArrayProxyFactory($client) {
-	parent::java_ProxyFactory($client);
+	parent::__construct($client);
   }
   function create($result, $signature) {
 	return new java_ArrayProxy($result, $signature);
-  }	
+  }
 }
 class java_IteratorProxyFactory extends java_ProxyFactory {
   function java_IteratorProxyFactory($client) {
-	parent::java_ProxyFactory($client);
+	parent::__construct($client);
   }
   function create($result, $signature) {
 	return new java_IteratorProxy($result, $signature);
-  }	
+  }
 }
 class java_ExceptionProxyFactory extends java_SimpleFactory {
   function java_ExceptionProxyFactory($client) {
-	parent::java_SimpleFactory($client);
+	parent::__construct($client);
   }
   function create($result, $signature) {
 	static $count = 0;
@@ -134,7 +134,7 @@ class java_ExceptionProxyFactory extends java_SimpleFactory {
 }
 class java_ThrowExceptionProxyFactory extends java_ExceptionProxyFactory {
   function java_ThrowExceptionProxyFactory($client) {
-	parent::java_ExceptionProxyFactory($client);
+	parent::__construct($client);
   }
   function getProxy($result, $signature, $wrap) {
 	$proxy = $this->create($result, $signature);
@@ -157,9 +157,9 @@ class java_CacheEntry {
 }
 class java_Arg {
   var $client;
-  var $exception; 				
+  var $exception;
   var $factory, $val;
-  var $signature; 
+  var $signature;
   function java_Arg($client) {
 	$this->client = $client;
 	$this->factory = $client->simpleFactory;
@@ -199,7 +199,7 @@ class java_Arg {
   function setSignature($signature) {
 	$this->signature = $signature;
 	$key = $this->client->currentCacheKey;
-	if($key && $key[0]!='~') {			
+	if($key && $key[0]!='~') {
 	  if(JAVA_DEBUG) {
 		echo "updating cache $key, argformat: {$this->client->currentArgumentsFormat}, classType: {$this->signature}\n";
 	  }
@@ -210,11 +210,11 @@ class java_Arg {
 }
 class java_CompositeArg extends java_Arg {
   var $parentArg;
-  var $idx;						
-  var $type;					
+  var $idx;
+  var $type;
   var $counter;
   function java_CompositeArg($client, $type) {
-	parent::java_Arg($client);
+	parent::__construct($client);
 	$this->type = $type;
 	$this->val = array();
 	$this->counter = 0;
@@ -234,9 +234,9 @@ class java_CompositeArg extends java_Arg {
   }
 }
 class java_ApplyArg extends java_CompositeArg {
-  var $m, $p, $v, $n; 			
+  var $m, $p, $v, $n;
   function java_ApplyArg($client, $type, $m, $p, $v, $n) {
-	parent::java_CompositeArg($client, $type);
+	parent::__construct($client, $type);
 	$this->m = $m;
 	$this->p = $p;
 	$this->v = $v;
@@ -261,12 +261,12 @@ class java_Handler {
 	  $this->client->stack=array($this->client->arg=$this->client->simpleArg);
 	  $client->idx = 0;
 	  $client->parser->parse();
-	  
+
 
 	  if((count($client->stack)) > 1) {
 		$arg = array_pop($client->stack);
 		$client->apply($arg);
-		$tail_call = 1;			
+		$tail_call = 1;
 	  } else {
 		$tail_call = 0;
 	  }
@@ -294,7 +294,7 @@ class java_AsyncHandler extends java_Handler {
 	$this->arg->setResult(++$this->client->asyncCtx);
   }
 }
-class java_Client 
+class java_Client
  {
   var $RUNTIME;
   const RECV_SIZE=8192;
@@ -302,8 +302,8 @@ class java_Client
   var $result, $exception;
   var $parser;
   var $simpleArg, $compositeArg;
-  var $simpleFactory, 
-	$proxyFactory, $iteratorProxyFacroty, 
+  var $simpleFactory,
+	$proxyFactory, $iteratorProxyFacroty,
 	$arrayProxyFactory, $exceptionProxyFactory, $throwExceptionProxyFactory;
   var $arg;
   var $asyncCtx;
@@ -312,12 +312,12 @@ class java_Client
   var $methodCache = array(), $currentCacheKey, $currentArgumentsFormat;
   var $cachedJavaPrototype;
   var $sendBuffer, $preparedToSendBuffer;
-  
+
 
   var $defaultHandler, $asyncHandler, $handler;
   function java_Client() {
 	$this->RUNTIME = array();
-	if(JAVA_PIPE_DIR && function_exists("posix_mkfifo")) 
+	if(JAVA_PIPE_DIR && function_exists("posix_mkfifo"))
 	  $this->RUNTIME['PIPE_DIR']=JAVA_PIPE_DIR;
 	else
 	  $this->RUNTIME['PIPE_DIR']=null;
@@ -333,12 +333,12 @@ class java_Client
 	$this->simpleArg = new java_Arg($this);
 	$this->globalRef = new java_GlobalRef();
 	$this->asyncCtx = 0;
-	
+
 
 	$this->handler = $this->defaultHandler = new java_Handler($this);
 	$this->asyncHandler = new java_AsyncHandler($this);
   }
-  function __destruct() { 
+  function __destruct() {
 	if(JAVA_DEBUG) echo "the client destroyed\n";
 	$this->protocol->flush();
 	$this->protocol->keepAlive();
@@ -363,12 +363,12 @@ class java_Client
 	  $this->stack=array($this->arg=$this->simpleArg);
 	  $this->idx = 0;
 	  $this->parser->parse();
-	  
+
 
 	  if((count($this->stack)) > 1) {
 		$arg = array_pop($this->stack);
 		$this->apply($arg);
-		$tail_call = 1;			
+		$tail_call = 1;
 	  } else {
 		$tail_call = 0;
 	  }
@@ -415,7 +415,7 @@ class java_Client
   function begin($name, $st) {
 	$arg = $this->arg;
 	switch($name[0]) {
-	case 'A':						
+	case 'A':
 
 	  $object = $this->globalRef->get($this->getExact($st['v']));
 	  $newArg = new java_ApplyArg($this, 'A',
@@ -426,22 +426,22 @@ class java_Client
 	  $this->link($arg, $newArg);
 	  array_push($this->stack, $this->arg = $newArg);
 	  break;
-	case 'X': 
+	case 'X':
 	  $newArg = new java_CompositeArg($this, $st['t']);
 	  $this->link($arg, $newArg);
 	  array_push($this->stack, $this->arg = $newArg);
 	  break;
 	case 'P':
-	  if($arg->type=='H') { 
+	  if($arg->type=='H') {
 
 		$s = $st['t'];
-		if($s[0]=='N') { 
+		if($s[0]=='N') {
 
 		  $arg->setIndex($this->getExact($st['v']));
 		} else {
 		  $arg->setIndex($this->parser->getData($st['v']));
 		}
-	  } else {					
+	  } else {
 
 		$arg->setNextIndex();
 	  }
@@ -453,7 +453,7 @@ class java_Client
 	  $s=$st['v'];
 	  $arg->setResult($s[0]=='T');
 	  break;
-	case 'L':					
+	case 'L':
 	  $sign = $st['p'];
 	  $val = $this->getExact($st['v']);
 	  if($sign[0]=='A') $val*=-1;
@@ -464,15 +464,15 @@ class java_Client
 	  break;
 	case 'V':
 	  if(JAVA_DEBUG) {echo "setresult VOID:"; echo "\n";}
-	  
 
-	case 'N':					
+
+	case 'N':
 	  $arg->setVoidSignature();
 	  $arg->setResult(null);
 	  break;
 	case 'F':
 	  break;
-	case 'O': 
+	case 'O':
 	  $arg->setFactory($this->getProxyFactory($st['p']));
 	  $arg->setResult($this->asyncCtx=$this->getExact($st['v']));
 	  $arg->setSignature($st['m']);
@@ -484,7 +484,7 @@ class java_Client
 	  if(JAVA_DEBUG) {echo "setresult exception:"; echo sprintf("%x", $this->asyncCtx); echo "\n";}
 	  $arg->setException($st['m']);
 	  break;
-	default: 
+	default:
 	  $this->parser->parserError();
 	}
   }
@@ -519,7 +519,7 @@ class java_Client
 		if(is_string($key)) {
 		  if(!$wrote_begin) {
 			$wrote_begin=1;
-			$this->protocol->writeCompositeBegin_h(); 		
+			$this->protocol->writeCompositeBegin_h();
 		  }
 		  $this->protocol->writePairBegin_s($key);
 		  $this->writeArg($val);
@@ -605,7 +605,7 @@ class java_Client
 	  $this->protocol->resultBegin();
 	  $this->protocol->writeException($t->__java, $trace);
 	  $this->protocol->resultEnd();
-	}	  
+	}
   }
   function cast($object, $type) {
 	switch($type[0]) {
@@ -621,9 +621,9 @@ class java_Client
 	  return null;
 	case 'A': case 'a':
 	  return $this->invokeMethod(0, "castToArray", array($object));
-	case 'O': case 'o':			
+	case 'O': case 'o':
 	  return $object;
-	default: 
+	default:
 	  throw new java_RuntimeException("$type illegal");
 	}
   }
@@ -637,7 +637,7 @@ class java_Client
 	return $this->protocol->getServerName();
   }
 }
-  
+
 
 class java_GlobalRef {
   var $map;
@@ -653,7 +653,7 @@ class java_GlobalRef {
 	return $this->map[--$id];
   }
 }
-  
+
 
 class java_NativeParser {
   var $parser, $handler;
@@ -687,7 +687,7 @@ class java_NativeParser {
   function parse() {
 	do {
 	  $this->event = false;
-	  $buf = $this->buf = $this->handler->read(java_Client::RECV_SIZE); 
+	  $buf = $this->buf = $this->handler->read(java_Client::RECV_SIZE);
 	  $len = strlen($buf);
 	  if(!xml_parse($this->parser, $buf, $len==0)) {
 		die(sprintf("protocol error: %s, %s at col %d. Check the back end log for details.",
@@ -701,7 +701,7 @@ class java_NativeParser {
 	die(sprintf("protocol error: %s. Check the back end log for details.", $this->buf));
   }
 }
-  
+
 
 class java_Parser {
   var $ENABLE_NATIVE = true;
@@ -727,7 +727,7 @@ class java_Parser {
 	$this->parser->parserError();
   }
 }
-  
+
 
 class java_SocketChannel {
   var $peer, $protocol;
@@ -812,9 +812,9 @@ class java_SocketHandler {
 class java_HttpHandler extends java_SocketHandler {
   var $headers;
   var $redirect;
-  var $context, $ssl, $port; 
-  var $host; 
-  var $socket; 
+  var $context, $ssl, $port;
+  var $host;
+  var $socket;
   function createPipeChannel($host, $pipe_dir) {
 	if(!is_null($pipe_dir) && ($host == "127.0.0.1" || (substr($host,0,9) == "localhost")))
 	  return new java_PipeChannel(tempnam($pipe_dir, ".php_java_bridge"));
@@ -824,7 +824,7 @@ class java_HttpHandler extends java_SocketHandler {
 	fclose($this->socket);
   }
   function open() {
-  
+
 
 	$socket = fsockopen("{$this->ssl}{$this->host}", $this->port, $errno, $errstr, 30);
 	if (!$socket) throw new java_RuntimeException("Could not connect to the J2EE server {$this->ssl}{$this->host}:{$this->port}. Please start it, for example with the command: \"java -jar JavaBridge.jar SERVLET:8080 3 JavaBridge.log\" or, if the back end has been compiled to native code, with \"modules/java SERVLET:8080 3 JavaBridge.log\". Error message: $errstr ($errno)\n");
@@ -871,7 +871,7 @@ class java_HttpHandler extends java_SocketHandler {
   function getWebAppInternal() {
 	$context = $this->protocol->webContext;
 	if(isset($context)) return $context;
-	
+
 
 	return (JAVA_SERVLET == "User" &&
 			array_key_exists('PHP_SELF', $_SERVER) &&
@@ -882,7 +882,7 @@ class java_HttpHandler extends java_SocketHandler {
   function getWebApp() {
 	$context = $this->getWebAppInternal();
 	if(is_null($context)) $context = JAVA_SERVLET;
-	if(is_null($context) || $context[0]!="/") 
+	if(is_null($context) || $context[0]!="/")
 	  $context = "/JavaBridge/JavaBridge.phpjavabridge";
 	return $context;
   }
@@ -931,7 +931,7 @@ class java_HttpHandler extends java_SocketHandler {
 		} else if(!strncasecmp("X_JAVABRIDGE_CONTEXT", $str, 20)) {
 		  $this->headers["context"]=trim(substr($str, 21));
 		}
-	  } else if($str[0]=='S') {	
+	  } else if($str[0]=='S') {
 		if(!strncasecmp("SET-COOKIE", $str, 10)) {
 		  $str=substr($str, 12);
 		  $ar = explode(";", $str);
@@ -941,7 +941,7 @@ class java_HttpHandler extends java_SocketHandler {
 		  if(isset($p)) $path=$p[1];
 		  $this->doSetCookie($cookie[0], $cookie[1], $path);
 		}
-	  } else if($str[0]=='C') { 
+	  } else if($str[0]=='C') {
 		if(!strncasecmp("CONTENT-LENGTH", $str, 14)) {
 		  $this->headers["content_length"]=trim(substr($str, 15));
 		}
@@ -961,7 +961,7 @@ class java_HttpHandler extends java_SocketHandler {
 	return new java_SocketChannel($peer, $this->protocol);
   }
   function redirect() {
-	if(!isset($this->headers["redirect"])) { 
+	if(!isset($this->headers["redirect"])) {
 	  throw new java_RuntimeException("no Pipe- or SocketContextServer available.");
 	}
 	if(!isset($this->protocol->socketHandler)) {
@@ -990,7 +990,7 @@ class java_Protocol {
 		  $override = $_ENV['X_JAVABRIDGE_OVERRIDE_HOSTS'];
 		  if(!is_null($override) && $override!='/') return $override;
 	  }
-	  return 
+	  return
 		(array_key_exists('HTTP_X_JAVABRIDGE_OVERRIDE_HOSTS_REDIRECT', $_SERVER)
 		 ?$_SERVER['HTTP_X_JAVABRIDGE_OVERRIDE_HOSTS_REDIRECT']
 		 :(array_key_exists('X_JAVABRIDGE_OVERRIDE_HOSTS_REDIRECT', $_SERVER)
@@ -1001,7 +1001,7 @@ class java_Protocol {
 	static $host;
 	if(!isset($host)) {
 	  $hosts = explode(";", JAVA_HOSTS);
-	  $host = explode(":", $hosts[0]); 
+	  $host = explode(":", $hosts[0]);
 	}
 	return $host;
   }
@@ -1040,7 +1040,7 @@ class java_Protocol {
 	return new java_HttpHandler($this, $ssl, $host, $port);
   }
   function createSimpleHandler($channelName) {
-	if(is_string($channelName)) 
+	if(is_string($channelName))
 	  list($host, $channelName) = explode(":", $channelName);
 	else
 	  $host = "127.0.0.1";
@@ -1092,7 +1092,7 @@ class java_Protocol {
 	if(JAVA_DEBUG) {
 	  echo "sending::: "; echo $this->client->sendBuffer; echo "\n";
 	}
-	if(JAVA_CACHE_ENABLED) 
+	if(JAVA_CACHE_ENABLED)
 	  $this->sendData();
 	else
 	  $this->client->handler->sendData();
@@ -1215,7 +1215,7 @@ class java_Protocol {
 	$this->client->currentArgumentsFormat.=$format="<O v=\"%x\"/>";
 	$this->write(sprintf($format, $object));
   }
-  
+
 
   function writeException($object, $str) {
 	$this->write(sprintf("<E v=\"%x\" m=\"%s\"/>",$object, htmlspecialchars($str, ENT_COMPAT)));
@@ -1250,7 +1250,7 @@ class java_Protocol {
 	return $this->serverName;
   }
 }
-  
+
 
 class java_ParserString {
   var $string, $off, $length;
@@ -1269,7 +1269,7 @@ class java_ParserTag {
   }
 }
 class java_SimpleParser {
-  var $SLEN=256; 
+  var $SLEN=256;
   var $handler;
   var $tag, $buf, $len, $s;
   var $type;
@@ -1280,7 +1280,7 @@ class java_SimpleParser {
 	$this->s = str_repeat(" ", $this->SLEN);
 	$this->type = $this->VOJD;
   }
-  var $BEGIN=0, $KEY=1, $VAL=2, $ENTITY=3, $VOJD=5, $END=6; 
+  var $BEGIN=0, $KEY=1, $VAL=2, $ENTITY=3, $VOJD=5, $END=6;
   var $level=0, $eor=0; var $in_dquote, $eot=false;
   var $pos=0, $c=0, $i=0, $i0=0, $e;
   function RESET() {
@@ -1295,8 +1295,8 @@ class java_SimpleParser {
 	if($this->i>=$this->len-1) {
 	  $this->s=str_repeat($this->s,2);
 	  $this->len*=2;
-	} 
-	$this->s[$this->i++]=$c; 
+	}
+	$this->s[$this->i++]=$c;
   }
   function CALL_BEGIN() {
 	$pt=&$this->tag[1]->strings;
@@ -1315,7 +1315,7 @@ class java_SimpleParser {
 	$name=$t->string[$t->off];
 	$this->handler->end($name);
   }
-  function PUSH($t) { 
+  function PUSH($t) {
 	$str = &$this->tag[$t]->strings;
 	$n = &$this->tag[$t]->n;
 	$this->s[$this->i]='|';
@@ -1329,14 +1329,14 @@ class java_SimpleParser {
   }
   function parse() {
 	while($this->eor==0) {
-	  if($this->c>=$this->pos) { 
-		$this->buf=$this->handler->read(java_Client::RECV_SIZE); 
+	  if($this->c>=$this->pos) {
+		$this->buf=$this->handler->read(java_Client::RECV_SIZE);
 		if(is_null($this->buf) || strlen($this->buf) == 0) die("protocol error. Check the back end log for details.");
 		$this->pos=strlen($this->buf);
 		if($this->pos==0) break;
-		$this->c=0; 
+		$this->c=0;
 	  }
-	  switch(($ch=$this->buf[$this->c])) 
+	  switch(($ch=$this->buf[$this->c]))
 		{
 
 		case '<': if($this->in_dquote) {$this->APPEND($ch); break;}
@@ -1345,8 +1345,8 @@ class java_SimpleParser {
 		  break;
 		case '\t': case '\f': case '\n': case '\r': case ' ': if($this->in_dquote) {$this->APPEND($ch); break;}
 		  if($this->type==$this->BEGIN) {
-			$this->PUSH($this->type); 
-			$this->type = $this->KEY; 
+			$this->PUSH($this->type);
+			$this->type = $this->KEY;
 		  }
 		  break;
 		case '=': if($this->in_dquote) {$this->APPEND($ch); break;}
@@ -1356,7 +1356,7 @@ class java_SimpleParser {
 		case '/': if($this->in_dquote) {$this->APPEND($ch); break;}
 		  if($this->type==$this->BEGIN) { $this->type=$this->END; $this->level--; }
 		  $this->level--;
-		  $this->eot=true; 
+		  $this->eot=true;
 		  break;
 		case '>': if($this->in_dquote) {$this->APPEND($ch); break;}
 		  if($this->type==$this->END){
@@ -1366,30 +1366,30 @@ class java_SimpleParser {
 			if($this->type==$this->VAL) $this->PUSH($this->type);
 			$this->CALL_BEGIN();
 		  }
-		  $this->tag[0]->n=$this->tag[1]->n=$this->tag[2]->n=0; $this->i0=$this->i=0;	  		
+		  $this->tag[0]->n=$this->tag[1]->n=$this->tag[2]->n=0; $this->i0=$this->i=0;
 
 		  $this->type=$this->VOJD;
-		  if($this->level==0) $this->eor=1; 
+		  if($this->level==0) $this->eor=1;
 		  break;
 		case ';':
 		  if($this->type==$this->ENTITY) {
 			switch ($this->s[$this->e+1]) {
-			case 'l': $this->s[$this->e]='<'; $this->i=$this->e+1; break; 
+			case 'l': $this->s[$this->e]='<'; $this->i=$this->e+1; break;
 
-			case 'g': $this->s[$this->e]='>'; $this->i=$this->e+1; break; 
+			case 'g': $this->s[$this->e]='>'; $this->i=$this->e+1; break;
 
-			case 'a': $this->s[$this->e]=($this->s[$this->e+2]=='m'?'&':'\''); $this->i=$this->e+1; break; 
+			case 'a': $this->s[$this->e]=($this->s[$this->e+2]=='m'?'&':'\''); $this->i=$this->e+1; break;
 
-			case 'q': $this->s[$this->e]='"'; $this->i=$this->e+1; break; 
+			case 'q': $this->s[$this->e]='"'; $this->i=$this->e+1; break;
 
 			default: $this->APPEND($ch);
 			}
-			$this->type=$this->VAL; 
+			$this->type=$this->VAL;
 		  } else {
 			$this->APPEND($ch);
 		  }
 		  break;
-		case '&': 
+		case '&':
 		  $this->type = $this->ENTITY;
 		  $this->e=$this->i;
 		  $this->APPEND($ch);
@@ -1403,7 +1403,7 @@ class java_SimpleParser {
 		  break;
 		default:
 		  $this->APPEND($ch);
-		} 
+		}
 
 	  $this->c++;
 	}
@@ -1416,7 +1416,7 @@ class java_SimpleParser {
 	die(sprintf("protocol error: %s. Check the back end log for details.", $this->s));
   }
 }
-  
+
 
 
 
@@ -1461,13 +1461,13 @@ function java_instanceof($ob, $clazz) {
   $client=__javaproxy_Client_getClient();
   return $client->invokeMethod(0, "instanceOf", array($ob, $clazz));
 }
-function java_cast($object, $type) { 
+function java_cast($object, $type) {
 	if(!$object instanceof java_JavaType) throw new java_IllegalArgumentException($object);
-	return $object->__cast($type); 
+	return $object->__cast($type);
 }
 function java_require($arg) {
   $client=__javaproxy_Client_getClient();
-  return $client->invokeMethod(0, "updateJarLibraryPath", 
+  return $client->invokeMethod(0, "updateJarLibraryPath",
 						array($arg, ini_get("extension_dir")));
 }
 function java_session_array($args) {
@@ -1497,7 +1497,7 @@ function java_closure_array($args) {
 	throw new java_IllegalArgumentException($args[2]);
   $client=__javaproxy_Client_getClient();
   $args[0] = isset($args[0]) ? $client->globalRef->add($args[0]) : 0;
-  
+
 
   $client->protocol->invokeBegin(0, "makeClosure", "5", "6");
   $n = count($args);
@@ -1515,7 +1515,7 @@ function java_closure() {
 function java_begin_document() {
   if(JAVA_CACHE_ENABLED) return false;
   $client = __javaproxy_Client_getClient();
-  if($client->isAsync()) 
+  if($client->isAsync())
 	throw new java_RuntimeException("begin_document not allowed while in stream mode");
   $rc = $client->invokeMethod(0, "beginDocument", array());
   $client->setAsyncHandler();
@@ -1524,7 +1524,7 @@ function java_begin_document() {
 function java_end_document() {
   if(JAVA_CACHE_ENABLED) return false;
   $client = __javaproxy_Client_getClient();
-  if(!$client->isAsync()) 
+  if(!$client->isAsync())
 	throw new java_RuntimeException("end_document not allowed when not in stream mode");
   $client->setDefaultHandler();
   return $client->invokeMethod(0, "endDocument", array());
@@ -1533,7 +1533,7 @@ class java_JavaProxy {
   var $__serialID, $__java;
   var $__signature;
   var $__client;
-  function java_JavaProxy($java, $signature){ 
+  function java_JavaProxy($java, $signature){
 	$this->__java=$java;
 	$this->__signature=$signature;
 	$this->__client = __javaproxy_Client_getClient();
@@ -1557,17 +1557,17 @@ class java_JavaProxy {
 	$this->__client = __javaproxy_Client_getClient();
 	$this->__java = $this->__client->invokeMethod(0, "deserialize", $args);
   }
-  function __destruct() { 
-	if(isset($this->__client)) 
+  function __destruct() {
+	if(isset($this->__client))
 	  $this->__client->unref($this->__java);
   }
-  function __get($key) { 
+  function __get($key) {
 	return $this->__client->getProperty($this->__java, $key);
   }
   function __set($key, $val) {
 	$this->__client->setProperty($this->__java, $key, $val);
   }
-  function __call($method, $args) { 
+  function __call($method, $args) {
 	return $this->__client->invokeMethod($this->__java, $method, $args);
   }
   function __toString() {
@@ -1577,7 +1577,7 @@ class java_JavaProxy {
 class java_objectIterator implements Iterator {
   var $proxy;
   var $__java, $client;
-  var $phpMap; 
+  var $phpMap;
   var $hasNext;
   function java_ObjectIterator($javaProxy) {
 	$this->proxy = $javaProxy;
@@ -1585,7 +1585,7 @@ class java_objectIterator implements Iterator {
   }
   function rewind() {
 	$proxy = array($this->proxy);
-	$this->phpMap = 
+	$this->phpMap =
 	  $phpMap = $this->client->invokeMethod(0, "getPhpMap", $proxy);
 	$this->__java = $phpMap->__java;
   }
@@ -1595,21 +1595,21 @@ class java_objectIterator implements Iterator {
 	  $this->client->invokeMethod($this->__java, "hasMore", array());
   }
   function next() {
-	return $this->hasNext = 
+	return $this->hasNext =
 	  $this->client->invokeMethod($this->__java, "moveForward", array());
   }
   function key() {
-	return 
+	return
 	  $this->client->invokeMethod($this->__java, "currentKey", array());
   }
   function current() {
-	return 
+	return
 	  $this->client->invokeMethod($this->__java, "currentData", array());
   }
 }
 class java_IteratorProxy extends java_JavaProxy implements IteratorAggregate {
   function java_IteratorProxy($java, $signature) {
-	parent::java_JavaProxy($java, $signature);
+	parent::__construct($java, $signature);
   }
   function getIterator() {
 	return new java_ObjectIterator($this);
@@ -1622,7 +1622,7 @@ class java_ArrayProxy extends java_IteratorProxy implements ArrayAccess {
   function offsetExists($idx) {
 	$ar = array($this, $idx);
 	return $this->__client->invokeMethod(0,"offsetExists", $ar);
-  }  
+  }
   function offsetGet($idx) {
 	$ar = array($this, $idx);
 	return $this->__client->invokeMethod(0,"offsetGet", $ar);
@@ -1637,7 +1637,7 @@ class java_ArrayProxy extends java_IteratorProxy implements ArrayAccess {
   }
 }
 class java_ExceptionProxy extends java_JavaProxy {
-  function java_ExceptionProxy($java, $signature){ 
+  function java_ExceptionProxy($java, $signature){
 	parent::java_JavaProxy($java, $signature);
   }
   function __toExceptionString($trace) {
@@ -1653,7 +1653,7 @@ abstract class java_AbstractJava implements IteratorAggregate,ArrayAccess,java_J
   var $__factory;
   var $__java, $__signature;
   function __createDelegate() {
-	$proxy = $this->__delegate = 
+	$proxy = $this->__delegate =
 	  $this->__factory->create($this->__java, $this->__signature);
 	$this->__java = $proxy->__java;
 	$this->__signature = $proxy->__signature;
@@ -1674,7 +1674,7 @@ abstract class java_AbstractJava implements IteratorAggregate,ArrayAccess,java_J
 	$this->__java = $this->__delegate->__java;
 	$this->__client = $this->__delegate->__client;
   }
-  function __get($key) { 
+  function __get($key) {
  	if(!isset($this->__delegate)) $this->__createDelegate();
 	return $this->__delegate->__get($key);
   }
@@ -1682,7 +1682,7 @@ abstract class java_AbstractJava implements IteratorAggregate,ArrayAccess,java_J
  	if(!isset($this->__delegate)) $this->__createDelegate();
 	$this->__delegate->__set($key, $val);
   }
-  function __call($method, $args) { 
+  function __call($method, $args) {
 	if(!isset($this->__delegate)) $this->__createDelegate();
 	return $this->__delegate->__call($method, $args);
   }
@@ -1728,22 +1728,22 @@ class Java extends java_AbstractJava {
 	$args2 = array();
 	for($i=0; $i<$len; $i++) {
 	  switch(gettype($val = $args[$i])) {
-	  case 'boolean': array_push($args2, $val); $sig.='@b'; break; 
-	  case 'integer': array_push($args2, $val); $sig.='@i'; break; 
-	  case 'double': array_push($args2, $val); $sig.='@d'; break; 
-	  case 'string': array_push($args2, htmlspecialchars($val, ENT_COMPAT)); $sig.='@s'; break; 
-	  case 'array':$sig="~INVALID"; break; 
+	  case 'boolean': array_push($args2, $val); $sig.='@b'; break;
+	  case 'integer': array_push($args2, $val); $sig.='@i'; break;
+	  case 'double': array_push($args2, $val); $sig.='@d'; break;
+	  case 'string': array_push($args2, htmlspecialchars($val, ENT_COMPAT)); $sig.='@s'; break;
+	  case 'array':$sig="~INVALID"; break;
 	  case 'object':
 		if($val instanceof java_JavaType) {
 		  array_push($args2, $val->__java);
-		  $sig.="@o{$val->__signature}"; 
+		  $sig.="@o{$val->__signature}";
 		}
 		else {
 		  $sig="~INVALID";
 		}
 		break;
-	  case 'resource': array_push($args2, $val); $sig.='@r'; break; 
-	  case 'NULL': array_push($args2, $val); $sig.='@N'; break; 
+	  case 'resource': array_push($args2, $val); $sig.='@r'; break;
+	  case 'NULL': array_push($args2, $val); $sig.='@N'; break;
 	  case 'unknown type': array_push($args2, $val); $sig.='@u'; break;
 	  default: throw new java_IllegalArgumentException($val);
 	  }
@@ -1783,38 +1783,38 @@ class Java extends java_AbstractJava {
 	  $preparedToSendBuffer = null;
 	  --$asyncCtx;
 	} else {
-	  if(!$this->__delegate) { 
+	  if(!$this->__delegate) {
 		if(JAVA_DEBUG) {
 		  echo "unref java:"; echo $this->__java; echo "\n";
 		}
 		$client->unref($this->__java);
 	  }
-	}	
+	}
   }
-  function __call($method, $args) { 
+  function __call($method, $args) {
 	$client = $this->__client;
 	$sig="@{$this->__signature}@$method";
 	$len = count($args);
 	$args2=array($this->__java);
 	for($i=0; $i<$len; $i++) {
 	  switch(gettype($val = $args[$i])) {
-	  case 'boolean': array_push($args2, $val); $sig.='@b'; break; 
-	  case 'integer': array_push($args2, $val); $sig.='@i'; break; 
-	  case 'double': array_push($args2, $val); $sig.='@d'; break; 
-	  case 'string': array_push($args2, htmlspecialchars($val, ENT_COMPAT)); $sig.='@s'; break; 
-	  case 'array':$sig="~INVALID"; break; 
+	  case 'boolean': array_push($args2, $val); $sig.='@b'; break;
+	  case 'integer': array_push($args2, $val); $sig.='@i'; break;
+	  case 'double': array_push($args2, $val); $sig.='@d'; break;
+	  case 'string': array_push($args2, htmlspecialchars($val, ENT_COMPAT)); $sig.='@s'; break;
+	  case 'array':$sig="~INVALID"; break;
 	  case 'object':
 		if($val instanceof java_JavaType) {
 		  array_push($args2, $val->__java);
-		  $sig.="@o{$val->__signature}"; 
+		  $sig.="@o{$val->__signature}";
 		}
 		else {
 		  $sig="~INVALID";
 		}
 		break;
-	  case 'resource': array_push($args2, $val); $sig.='@r'; break; 
-	  case 'NULL': array_push($args2, $val); $sig.='@N'; break; 
-	  case 'unknown type': array_push($args2, $val); $sig.='@u'; break; 
+	  case 'resource': array_push($args2, $val); $sig.='@r'; break;
+	  case 'NULL': array_push($args2, $val); $sig.='@N'; break;
+	  case 'unknown type': array_push($args2, $val); $sig.='@u'; break;
 	  default: throw new java_IllegalArgumentException($val);
 	  }
 	}
@@ -1893,13 +1893,13 @@ class java_exception extends Exception implements java_JavaType {
 	$this->__java = $this->__delegate->__java;
 	$this->__client = $this->__delegate->__client;
   }
-  function __get($key) { 
+  function __get($key) {
 	return $this->__delegate->__get($key);
   }
   function __set($key, $val) {
 	$this->__delegate->__set($key, $val);
   }
-  function __call($method, $args) { 
+  function __call($method, $args) {
 	return $this->__delegate->__call($method, $args);
   }
   function __toString() {

@@ -1,6 +1,6 @@
 <?php
 /**
-* Dataset Model 
+* Dataset Model
 *
 * Creates dataset tables for the control panel, including jQuery-powered filtering
 *
@@ -26,13 +26,13 @@ class Dataset extends Model {
 	var $total_rows;
 	var $use_total_rows;
 
-    function Dataset() {
-        parent::Model();
-        
+    function __construct() {
+        parent::__construct();
+
         $this->rows_per_page = 50;
         $this->use_total_rows = FALSE;
     }
-    
+
     /**
     * Set Total Rows Manually
     *
@@ -42,10 +42,10 @@ class Dataset extends Model {
     */
     function total_rows ($total_rows) {
     	$this->total_rows = $total_rows;
-    	
+
     	return;
     }
-    
+
     /**
     * Use Total Rows
     *
@@ -55,7 +55,7 @@ class Dataset extends Model {
     function use_total_rows () {
     	$this->use_total_rows = TRUE;
     }
-    
+
     /**
     * Initialize Dataset
     *
@@ -70,9 +70,9 @@ class Dataset extends Model {
     */
     function Initialize ($data_model, $data_function, $columns, $base_url = false) {
     	$CI =& get_instance();
-    	
+
     	$CI->load->library('asciihex');
-    	
+
     	// prep columns
     	// possible types: "id", "date", "select", "text"
 	    foreach ($columns as $column) {
@@ -87,36 +87,36 @@ class Dataset extends Model {
 	    					'field_end_date' => isset($column['field_end_date']) ? $column['field_end_date'] : '',
 	    					'options' => isset($column['options']) ? $column['options'] : array(),
 	    				);
-	    			
-	    	// error checking			
+
+	    	// error checking
 	    	if (isset($column['type']) and $column['type'] == 'date' and isset($column['filter']) and (!isset($column['field_start_date']) or !isset($column['field_end_date']))) {
 	    		die(show_error('Unable to create a "date" filter without field_start_date and field_end_date.'));
 	    	}
 	    	elseif (isset($column['type']) and $column['type'] == 'select' and !isset($column['options'])) {
 	    		die(show_error('Unable to create a "select" filter without options.'));
 	    	}
-	    	
-	    	// so do we have filters?			
+
+	    	// so do we have filters?
 	    	if (isset($column['filter'])) {
 	    		$this->filters = true;
-	    	}	
+	    	}
     	}
     	reset($this->columns);
-    	
+
     	$has_filters = ($CI->uri->segment(4) != '' or (strlen($CI->uri->segment(3)) > 10)) ? '1' : '0';
-    	
+
     	// get filter values
 		$this->filter_values = ($has_filters) ? unserialize(base64_decode($CI->asciihex->HexToAscii($CI->uri->segment(3)))) : false;
-    	
+
     	// get data
     	$params = array();
-    	
+
     	$params['limit'] = $this->rows_per_page;
     	$this->offset = ($has_filters) ? $CI->uri->segment(4) : $CI->uri->segment(3);
     	$this->offset = (empty($this->offset)) ? '0' : $this->offset;
-    	
+
     	$params['offset'] = $this->offset;
-    	
+
     	if ($this->filters == true) {
     		foreach ($this->columns as $column) {
     			if ($column['filters'] == true) {
@@ -131,9 +131,9 @@ class Dataset extends Model {
     		}
     		reset($this->columns);
     	}
-    	
+
     	$params = (!empty($filter_params)) ? array_merge($params, $filter_params) : $params;
-    	
+
     	// do an XML export?
     	if ($CI->uri->segment(5) == 'export') {
     		$xml_params = '';
@@ -144,7 +144,7 @@ class Dataset extends Model {
 				//}
 			}
 			reset($params);
-    	
+
 			$postfields = '<?xml version="1.0" encoding="UTF-8"?>
 <request>
 	<authentication>
@@ -154,67 +154,67 @@ class Dataset extends Model {
 	<type>' . $data_function . '</type>
 ' . $xml_params . '
 </request>';
-			
+
 			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); 
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 			curl_setopt($ch, CURLOPT_URL,base_url() . 'api');
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_TIMEOUT, 10);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);
-			
+
 			$result = curl_exec($ch);
 			curl_close($ch);
-			
+
 			header("Content-type: text/xml");
 			header("Content-length: " . strlen($result));
 			header('Content-Disposition: attachment;filename="export.xml"');
 			echo $result;
 			die();
     	}
-    
+
     	$CI->load->model($data_model,'data_model');
-    	
+
     	$this->data = $CI->data_model->$data_function($CI->user->Get('client_id'),$params);
-    	
+
     	if ((empty($this->total_rows) or !empty($filter_params)) and $this->use_total_rows != TRUE) {
 	    	unset($params);
 	    	$params = array();
-	    	
+
 			$params = (!empty($filter_params)) ? array_merge($params, $filter_params) : $params;
-			
+
 			// store in a public variable
 			$this->params = $params;
-	    	
+
 	    	$total_rows = count($CI->data_model->$data_function($CI->user->Get('client_id'),$params));
-	    	
+
 	    	$this->total_rows = $total_rows;
 	    }
 	    else {
 	    	unset($params);
 	    	$params = array();
-	    	
+
 			$params = (!empty($filter_params)) ? array_merge($params, $filter_params) : $params;
-			
+
 			// store in a public variable
 			$this->params = $params;
 	    }
-    	
+
     	// set $url_filters if they exist
     	$url_filters = (!empty($this->filter_values)) ? '/' . $CI->asciihex->AsciiToHex(base64_encode(serialize($this->filter_values))) . '/' : '';
 		$this->base_url = ($base_url == false) ? site_url($CI->router->fetch_class() . '/' . $CI->router->fetch_method() . $url_filters) : $base_url;
-		
+
 		$config['base_url'] = $this->base_url;
 		$config['total_rows'] = $this->total_rows;
 		$config['per_page'] = $this->rows_per_page;
 		$config['uri_segment'] = ($has_filters) ? 4 : 3;
 		$config['num_links'] = '10';
-		
+
 		$CI->load->library('pagination');
 		$CI->pagination->initialize($config);
-		
-		return true; 
+
+		return true;
     }
-    
+
     /**
     * Add Action
     *
@@ -230,10 +230,10 @@ class Dataset extends Model {
     							'name' => $name,
     							'link' => $link
     						);
-    						
+
     	return true;
     }
-    
+
     /**
     * Output Table Head
     *
@@ -243,16 +243,16 @@ class Dataset extends Model {
     */
     function TableHead () {
     	$CI =& get_instance();
-    	
+
     	$output = '';
-    	
+
     	$output .= '<form id="dataset_form" method="get" action="' . $this->base_url . '">
     				<div class="pagination">';
     	$output .= $CI->pagination->create_links();
-    	
+
     	$actions = '';
     	$i = 1;
-    	
+
     	// build action buttons
     	if (!empty($this->actions)) {
     		$actions .= 'With selected: ';
@@ -261,40 +261,40 @@ class Dataset extends Model {
     			$i++;
     		}
     	}
-    	
+
     	if ($this->filters == true) {
     		$output .= '<div class="dataset_actions">' . $actions . '</div><div class="apply_filters"><input type="submit" name="" value="Filter Dataset" />&nbsp;&nbsp;<input id="reset_filters" type="reset" name="" value="Clear Filters" />&nbsp;&nbsp;<input id="dataset_export_button" type="button" name="" value="Export" /></div>';
     	}
-    	
+
     	$output .= '</div>
     				<table class="dataset" cellpadding="0" cellspacing="0">
     				<thead><tr>';
-    				
+
     	// add empty header cell if we have checkboxes
     	if (!empty($this->actions)) {
     		$output .= '<td style="width:5%">&nbsp;</td>';
     	}
-    	
+
     	// add column headers
     	while (list($key,$column) = each($this->columns)) {
    			$output .= '<td style="width:' . $column['width'] . '">' . $column['name'] . '</td>';
     	}
     	reset($this->columns);
-    	
+
     	$output .= '</tr></thead><tbody>';
-    	
+
     	if ($this->filters == true) {
     		$output .= '<tr class="filters">';
-    		
+
     		// add check_all/uncheck_all checkbox
 	    	if (!empty($this->actions)) {
 	    		$output .= '<td style="width:5%"><input type="checkbox" name="check_all" id="check_all" value="check_all" /></td>';
 	    	}
-    		
+
     		while (list(,$column) = each($this->columns)) {
 				if ($column['filters'] == true) {
 					$output .= '<td class="filter">';
-					
+
 					if ($column['type'] == 'text') {
 						$value = (isset($this->filter_values[$column['filter_name']])) ? $this->filter_values[$column['filter_name']] : '';
 						$output .= '<input type="text" class="text" name="' . $column['filter_name'] . '" value="' . $value . '" />';
@@ -306,34 +306,34 @@ class Dataset extends Model {
 					elseif ($column['type'] == 'date') {
 						$value = (isset($this->filter_values[$column['filter_name'] . '_start'])) ? $this->filter_values[$column['filter_name'] . '_start'] : '';
 						$output .= '<input type="text" class="text date_start datepick" name="' . $column['filter_name'] . '_start" value="' . $value . '" />';
-						
+
 						$value = (isset($this->filter_values[$column['filter_name'] . '_end'])) ? $this->filter_values[$column['filter_name'] . '_end'] : '';
 						$output .= '<input type="text" class="text date_end datepick" name="' . $column['filter_name'] . '_end" value="' . $value . '" />';
 					}
 					elseif ($column['type'] == 'select') {
 						$output .= '<select name="' . $column['filter_name'] . '"><option value=""></option>';
-						
+
 						while (list($value,$name) = each($column['options'])) {
 							$selected = (isset($this->filter_values[$column['filter_name']]) and $this->filter_values[$column['filter_name']] == $value) ? ' selected="selected"' : '';
 							$output .= '<option value="' . $value . '"' . $selected . '>' . $name . '</option>';
 						}
-						
+
 						$output .= '</select>';
 					}
-					
+
 					$output .= '</td>';
 				}
 				else {
 					$output .= '<td></td>';
 				}
     		}
-    		
+
     		$output .= '</tr>';
     	}
-    	
+
     	return $output;
     }
-    
+
     /**
     * Output Table Close
     *
@@ -343,16 +343,16 @@ class Dataset extends Model {
     */
     function TableClose () {
     	$CI =& get_instance();
-    	
+
     	$output = '</table>';
-    	
+
     	$output .= '<div class="pagination">';
     	$output .= $CI->pagination->create_links();
     	$output .= '</div></form>
 			    	<div class="hidden" id="class">' . $CI->router->fetch_class() . '</div>
 					<div class="hidden" id="method">' . $CI->router->fetch_method() . '</div>
 					<div class="hidden" id="page">' . $this->offset . '</div>';
-    	
+
     	return $output;
     }
 }

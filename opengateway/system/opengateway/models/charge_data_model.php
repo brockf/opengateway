@@ -11,11 +11,11 @@
 */
 class Charge_data_model extends Model
 {
-	function Charge_data_model()
+	function __construct()
 	{
-		parent::Model();
+		parent::__construct();
 	}
-	
+
 	/**
 	* Save charge data
 	*
@@ -26,7 +26,7 @@ class Charge_data_model extends Model
 	* @param string $value
 	*
 	*/
-	
+
 	function Save ($order_id, $key, $value)
 	{
 		$insert_data = array(
@@ -34,10 +34,10 @@ class Charge_data_model extends Model
 							'order_data_key' => $key,
 							'order_data_value' => (isset($value)) ? $value : ''
 							);
-		
+
 		$this->db->insert('order_data', $insert_data);
 	}
-	
+
 	/**
 	* Get charge data
 	*
@@ -47,7 +47,7 @@ class Charge_data_model extends Model
 	*
 	* @return mixed Array containg authorization details
 	*/
-	
+
 	function Get ($order_id)
 	{
 		$this->db->where('order_id', $order_id);
@@ -62,7 +62,7 @@ class Charge_data_model extends Model
 			return FALSE;
 		}
 	}
-	
+
 	/**
 	* Delete Order Data
 	*

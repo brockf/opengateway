@@ -194,8 +194,9 @@ class Stripe_gw {
 		Returns:
 			$response	- A TransactionResponse object.
 	*/
-	public function Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card)
+	public function Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card, $return_url=null, $cancel_url=null, $custom=array())
 	{
+	die('<pre>'. print_r($custom, true));
 		$CI =& get_instance();
 		
 		$key = $gateway[$gateway['mode'] .'_api_key'];

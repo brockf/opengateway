@@ -1,6 +1,6 @@
 <?php
 /**
-* States Model 
+* States Model
 *
 * Contains all the methods used to get State/Province details.
 *
@@ -12,11 +12,11 @@
 
 class States_model extends Model
 {
-	function States_Model()
+	function __construct()
 	{
-		parent::Model();
+		parent::__construct();
 	}
-	
+
 	/**
 	* Get State Name by Code.
 	*
@@ -26,18 +26,18 @@ class States_model extends Model
 	*
 	* @return string The abbreviation
 	*/
-	
-	function GetStateByCode($state) 
+
+	function GetStateByCode($state)
 	{
 		$this->db->where('name_short', strtoupper($state));
 		$query = $this->db->get('states');
 		if($query->num_rows() > 0) {
 			return $query->row()->name_short;
 		}
-		
+
 		return FALSE;
 	}
-	
+
 	/**
 	* Get State Code by Name.
 	*
@@ -47,18 +47,18 @@ class States_model extends Model
 	*
 	* @return string The abbreviation
 	*/
-	
-	function GetStateByName($state) 
+
+	function GetStateByName($state)
 	{
 		$this->db->where('name_long', ucwords($state));
 		$query = $this->db->get('states');
 		if($query->num_rows() > 0) {
 			return $query->row()->name_short;
 		}
-		
+
 		return FALSE;
 	}
-	
+
 	/**
 	* Get All States
 	*
@@ -69,7 +69,7 @@ class States_model extends Model
 	function GetStates () {
 		$this->db->order_by('name_long','ASC');
 		$result = $this->db->get('states');
-		
+
 		$states = array();
 		foreach ($result->result_array() as $state) {
 			$states[] = array(
@@ -77,10 +77,10 @@ class States_model extends Model
 							'name' => $state['name_long']
 						);
 		}
-		
+
 		return $states;
 	}
-	
+
 	/**
 	* Get All Countries
 	*
@@ -91,7 +91,7 @@ class States_model extends Model
 	function GetCountries () {
 		$this->db->order_by('name','ASC');
 		$result = $this->db->get('countries');
-		
+
 		$countries = array();
 		foreach ($result->result_array() as $country) {
 			$countries[] = array(
@@ -99,7 +99,7 @@ class States_model extends Model
 							'name' => $country['name']
 						);
 		}
-		
+
 		return $countries;
-	}	
+	}
 }

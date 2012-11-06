@@ -1,6 +1,6 @@
 <?php
 /**
-* Account Controller 
+* Account Controller
 *
 * Update account details, logout
 *
@@ -11,31 +11,31 @@
 */
 class Account extends Controller {
 
-	function Account()
+	function __construct()
 	{
-		parent::Controller();
-		
+		parent::__construct();
+
 		// perform control-panel specific loads
 		CPLoader();
 	}
-	
+
 	/**
 	* Update Account
 	*
 	* Update your account details, password, etc.
 	*
 	* @return string view
-	*/	
+	*/
 	function index() {
 		$this->navigation->PageTitle('Update My Account');
-		
+
 		$this->load->model('states_model');
 		$countries = $this->states_model->GetCountries();
 		$states = $this->states_model->GetStates();
-		
+
 		$client = $this->client_model->GetClient($this->user->Get('client_id'),$this->user->Get('client_id'));
 		$client['gmt_offset'] = $client['timezone'];
-		
+
 		$data = array(
 					'form_title' => 'Update My Account',
 					'form_action' => 'account/post',
@@ -43,10 +43,10 @@ class Account extends Controller {
 					'countries' => $countries,
 					'form' => $client
 					);
-				
+
 		$this->load->view(branded_view('cp/account_form.php'),$data);
 	}
-	
+
 	/**
 	* Post Account Update
 	*
@@ -56,7 +56,7 @@ class Account extends Controller {
 	*/
 	function post () {
 		$this->load->library('field_validation');
-	
+
 		if ($this->input->post('first_name') == '') {
 			$this->notices->SetError('First Name is a required field.');
 			$error = true;
@@ -73,9 +73,9 @@ class Account extends Controller {
 			$this->notices->SetError('Email is in an improper format.');
 			$error = true;
 		}
-		
+
 		$password = $this->input->post('password'); // put password in variable for later functions
-		
+
 		if (!empty($password) and $this->input->post('password') != $this->input->post('password2')) {
 			$this->notices->SetError('Your passwords do not match.');
 			$error = true;
@@ -84,12 +84,12 @@ class Account extends Controller {
 			$this->notices->SetError('You must supply a password of at least 6 characters to change the password.');
 			$error = true;
 		}
-		
+
 		if (isset($error)) {
 			redirect('account/');
-			return false;	
+			return false;
 		}
-		
+
 		$params = array(
 						'first_name' => $this->input->post('first_name'),
 						'last_name' => $this->input->post('last_name'),
@@ -104,19 +104,19 @@ class Account extends Controller {
 						'email' => $this->input->post('email'),
 						'timezone' => $this->input->post('timezones')
 						);
-						
+
 		if (!empty($password)) {
 			$params['password'] = $this->input->post('password');
 		}
-		
+
 		$this->client_model->UpdateClient($this->user->Get('client_id'), $this->user->Get('client_id'), $params);
 		$this->notices->SetNotice($this->lang->line('account_updated'));
-		
+
 		redirect('account');
-		
+
 		return true;
 	}
-	
+
 	/**
 	* Logout
 	*
@@ -126,7 +126,7 @@ class Account extends Controller {
 	*/
 	function logout() {
 		$this->user->Logout();
-		
+
 		redirect('dashboard/login');
 		return true;
 	}

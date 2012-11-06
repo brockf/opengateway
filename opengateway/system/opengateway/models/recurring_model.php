@@ -1,7 +1,7 @@
 <?php
 
 /**
-* Recurring Model 
+* Recurring Model
 *
 * Contains all the methods used to create, update, and search recurring charges.
 *
@@ -13,11 +13,11 @@
 
 class Recurring_model extends Model
 {
-	function Recurring_model()
+	function __construct()
 	{
-		parent::Model();
+		parent::__construct();
 	}
-	
+
 	/**
 	* Create a new recurring subscription.
 	*
@@ -37,7 +37,7 @@ class Recurring_model extends Model
 	*
 	* @return int The new subscription ID
 	*/
-	
+
 	function SaveRecurring($client_id, $gateway_id, $customer_id, $interval, $start_date, $end_date, $next_charge_date, $total_occurrences, $notification_url, $amount, $plan_id = 0, $card_last_four = 0, $coupon_id = 0)
 	{
 		$timestamp = date('Y-m-d H:i:s');
@@ -60,13 +60,13 @@ class Recurring_model extends Model
 							'coupon_id'			=> $coupon_id,
 							'cancel_date'		=> '0000-00-00 00:00:00',
 							'timestamp'			=> $timestamp
-			  				);  					  				
-			  				
+			  				);
+
 		$this->db->insert('subscriptions', $insert_data);
-		
+
 		return $this->db->insert_id();
 	}
-	
+
 	/**
 	* Set Active
 	*
@@ -79,10 +79,10 @@ class Recurring_model extends Model
 	*/
 	function SetActive ($client_id, $recurring_id) {
 		$this->db->update('subscriptions',array('active' => '1'),array('subscription_id' => $recurring_id));
-		
+
 		return TRUE;
 	}
-	
+
 	/**
 	* Set Renewed
 	*
@@ -95,10 +95,10 @@ class Recurring_model extends Model
 	*/
 	function SetRenew ($old_subscription_id, $new_subscription_id) {
 		$this->db->update('subscriptions',array('renewed' => $new_subscription_id),array('subscription_id' => $old_subscription_id));
-		
+
 		return TRUE;
 	}
-	
+
 	/**
 	* Set Updated
 	*
@@ -111,10 +111,10 @@ class Recurring_model extends Model
 	*/
 	function SetUpdated ($old_subscription_id, $new_subscription_id) {
 		$this->db->update('subscriptions',array('updated' => $new_subscription_id),array('subscription_id' => $old_subscription_id));
-		
+
 		return TRUE;
 	}
-	
+
 	/**
 	* Add a customer profile ID.
 	*
@@ -128,13 +128,13 @@ class Recurring_model extends Model
 	function SaveApiCustomerReference($subscription_id, $api_customer_reference)
 	{
 		$update_data = array('api_customer_reference' => $api_customer_reference);
-		
+
 		$this->db->where('subscription_id', $subscription_id);
 		$this->db->update('subscriptions', $update_data);
-		
+
 		return TRUE;
 	}
-	
+
 	/**
 	* Add a customer payment ID.
 	*
@@ -148,13 +148,13 @@ class Recurring_model extends Model
 	function SaveApiPaymentReference($subscription_id, $api_payment_reference)
 	{
 		$update_data = array('api_payment_reference' => $api_payment_reference);
-		
+
 		$this->db->where('subscription_id', $subscription_id);
 		$this->db->update('subscriptions', $update_data);
-		
+
 		return TRUE;
 	}
-	
+
 	/**
 	* Add a Auth number.
 	*
@@ -166,11 +166,11 @@ class Recurring_model extends Model
 	function SaveApiAuthNumber($subscription_id, $api_auth_number)
 	{
 		$update_data = array('api_auth_number' => $api_auth_number);
-		
+
 		$this->db->where('subscription_id', $subscription_id);
 		$this->db->update('subscriptions', $update_data);
 	}
-	
+
 	/**
 	* Make a subscription inactive
 	*
@@ -183,13 +183,13 @@ class Recurring_model extends Model
 	function MakeInactive($subscription_id)
 	{
 		$subscription = $this->GetSubscriptionDetails(FALSE,$subscription_id,TRUE);
-		
+
 		if ($subscription['active'] == '0') {
 			return FALSE;
 		}
-		
+
 		$update_data = array('active' => 0, 'cancel_date' => date('Y-m-d H:i:s'));
-		
+
 		// set end date
 		if ($subscription['next_charge'] != '0000-00-00' and strtotime($subscription['next_charge']) > time() and strtotime($subscription['next_charge']) < strtotime($subscription['end_date'])) {
 			// there's a next charge date which won't be renewed, so we'll end it then
@@ -208,30 +208,30 @@ class Recurring_model extends Model
 			//$end_date = date('Y-m-d H:i:s');
 			$end_date = date('Y-m-d');
 		}
-		
+
 		$update_data['end_date'] = $end_date;
-		
+
 		$update_data['end_date'] = $end_date;
-		
+
 		$this->db->where('subscription_id', $subscription_id);
 		$this->db->update('subscriptions', $update_data);
-		
+
 		return TRUE;
 	}
-	
+
 	/**
 	* Delete Recurring Completely (Charge Failed)
 	*
 	* @param int $subscription_id
 	*/
-	
+
 	function DeleteRecurring ($subscription_id) {
 		$this->db->where('subscription_id',$subscription_id);
 		$this->db->delete('subscriptions');
-		
+
 		return TRUE;
 	}
-	
+
 	/**
 	* Add a failure to a subscription
 	*
@@ -243,22 +243,22 @@ class Recurring_model extends Model
 	function AddFailure($subscription_id, $failures = 0)
 	{
 		$update_data = array('number_charge_failures' => $failures);
-		
+
 		$this->db->where('subscription_id', $subscription_id);
 		$this->db->update('subscriptions', $update_data);
-		
+
 		return TRUE;
 	}
-	
+
 	/**
 	* Get subscription details
 	*
 	* Returns an array of details about the subscription.
 	*
-	* @param int $client_id The client ID 
+	* @param int $client_id The client ID
 	* @param int $subscription_id The subscription_id
 	* @param boolean $force Force with NULL client_id
-	* 
+	*
 	* @return array Subscription details
 	*/
 	function GetSubscriptionDetails($client_id, $subscription_id, $force = FALSE)
@@ -269,18 +269,18 @@ class Recurring_model extends Model
 			$this->db->where('subscriptions.client_id', $client_id);
 		}
 		$this->db->where('subscription_id', $subscription_id);
-		
+
 		$this->db->from('subscriptions');
-		
+
 		$query = $this->db->get();
-		
+
 		if($query->num_rows() > 0) {
 			return $query->row_array();
 		} else {
 			die($this->response->Error(5000));
 		}
 	}
-	
+
 	/**
 	* Retrieve details for a specific subscription
 	*
@@ -288,16 +288,16 @@ class Recurring_model extends Model
 	*
 	* @param int $client_id The client ID.
 	* @param int $recurring_id The ID # of the recurring transaction to pull;
-	* 
+	*
 	* @return array|bool Details for a specific subscription or FALSE upon failure
 	*/
-	
+
 	function GetRecurring ($client_id, $recurring_id)
 	{
 		$params = array('id' => $recurring_id);
-		
+
 		$data = $this->GetRecurrings($client_id, $params, TRUE);
-		
+
 		if (!empty($data)) {
 			return $data[0];
 		}
@@ -305,7 +305,7 @@ class Recurring_model extends Model
 			return FALSE;
 		}
 	}
-	
+
 	/**
 	* Search subscriptions.
 	*
@@ -324,50 +324,50 @@ class Recurring_model extends Model
 	* @param int $params['limit'] Limits the number of results returned. Optional.
 	* @param string $params['sort'] Variable used to sort the results.  Possible values are date, customer_first_name, customer_last_name, amount. Optional
 	* @param string $params['sort_dir'] Used when a sort param is supplied.  Possible values are asc and desc. Optional.
-	* 
+	*
 	* @return mixed Array containing results
 	*/
 	function GetRecurrings ($client_id, $params, $any_status = FALSE)
 	{
 		// Make sure they only get their own charges
 		$this->db->where('subscriptions.client_id', $client_id);
-		
+
 		// Check which search paramaters are set
-		
+
 		if(isset($params['id'])) {
 			$this->db->where('subscription_id', $params['id']);
 		}
-		
+
 		if(isset($params['gateway_id'])) {
 			$this->db->where('gateway_id', $params['gateway_id']);
 		}
-		
+
 		if(isset($params['created_after'])) {
 			$start_date = date('Y-m-d H:i:s', strtotime($params['created_after']));
 			$this->db->where('subscriptions.timestamp >=', $start_date);
 		}
-		
+
 		if(isset($params['created_before'])) {
 			$end_date = date('Y-m-d H:i:s', strtotime($params['created_before']));
 			$this->db->where('subscriptions.timestamp <=', $end_date);
 		}
-		
+
 		if(isset($params['customer_id'])) {
 			$this->db->where('subscriptions.customer_id', $params['customer_id']);
 		}
-		
+
 		if(isset($params['customer_last_name'])) {
 			$this->db->where('customers.last_name', $params['customer_last_name']);
 		}
-		
+
 		if(isset($params['customer_internal_id'])) {
 			$this->db->where('customers.internal_id', $params['customer_internal_id']);
 		}
-		
+
 		if(isset($params['amount'])) {
 			$this->db->where('subscriptions.amount', $params['amount']);
 		}
-		
+
 		if (isset($params['active'])) {
 			if($params['active'] == '1' or $params['active'] == '0') {
 				$this->db->where('subscriptions.active', $params['active']);
@@ -376,31 +376,31 @@ class Recurring_model extends Model
 		elseif ($any_status == FALSE) {
 			$this->db->where('subscriptions.active','1');
 		}
-		
+
 		if(isset($params['plan_id'])) {
 			$this->db->where('subscriptions.plan_id', $params['plan_id']);
 		}
-		
+
 		if (isset($params['offset'])) {
 			$offset = $params['offset'];
 		}
 		else {
 			$offset = 0;
 		}
-		
+
 		if(isset($params['limit'])) {
 			$this->db->limit($params['limit'], $offset);
 		}
-		
+
 		if(isset($params['sort_dir']) and ($params['sort_dir'] == 'asc' or $params['sort_dir'] == 'desc' )) {
 			$sort_dir = $params['sort_dir'];
 		}
 		else {
 			$sort_dir = 'desc';
 		}
-		
+
 		$params['sort'] = isset($params['sort']) ? $params['sort'] : '';
-		
+
 		switch($params['sort'])
 		{
 			case 'date':
@@ -411,16 +411,16 @@ class Recurring_model extends Model
 				break;
 			case 'customer_last_name':
 				$sort = 'last_name';
-				break;	
+				break;
 			case 'amount':
 				$sort = 'amount';
 				break;
 			default:
 				$sort = 'subscription_id';
-				break;	
+				break;
 		}
-		$this->db->order_by($sort, $sort_dir);	
-		
+		$this->db->order_by($sort, $sort_dir);
+
 		$this->db->join('customers', 'customers.customer_id = subscriptions.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$this->db->join('plans', 'plans.plan_id = subscriptions.plan_id', 'left');
@@ -464,7 +464,7 @@ class Recurring_model extends Model
 				$data[$i]['status'] = ($row->sub_active == '1') ? 'active' : 'inactive';
 				$data[$i]['card_last_four'] = $row->card_last_four;
 				$data[$i]['coupon'] = (isset($row->coupon_code)) ? $row->coupon_code : '';
-				
+
 				if($row->customer_id !== 0) {
 					$data[$i]['customer']['customer_id'] = $row->customer_id;
 					$data[$i]['customer']['id'] = $row->customer_id;
@@ -481,7 +481,7 @@ class Recurring_model extends Model
 					$data[$i]['customer']['email'] = $row->email;
 					$data[$i]['customer']['phone'] = $row->phone;
 				}
-			
+
 				if($row->plan_id != 0) {
 					$data[$i]['plan']['id'] = $row->plan_id;
 					$data[$i]['plan']['type'] = $row->plan_type;
@@ -490,16 +490,16 @@ class Recurring_model extends Model
 					$data[$i]['plan']['interval'] = $row->plan_interval;
 					$data[$i]['plan']['notification_url'] = $row->plan_notification_url;
 				}
-				
+
 				$i++;
 			}
 		} else {
 			return FALSE;
 		}
-		
+
 		return $data;
 	}
-	
+
 	/**
 	* Updates a subscription based on moving it to a new plan
 	*
@@ -514,11 +514,11 @@ class Recurring_model extends Model
 	*/
 	function ChangeRecurringPlan ($client_id, $recurring_id, $new_plan_id) {
 		$CI =& get_instance();
-		
+
 		$CI->load->model('plan_model');
-		
+
 		$plan_details = $CI->plan_model->GetPlanDetails($client_id, $new_plan_id);
-		
+
 		$update = array(
 					'plan_id' => $plan_details->plan_id,
 					'amount' => $plan_details->amount,
@@ -526,10 +526,10 @@ class Recurring_model extends Model
 					'notification_url' => $plan_details->notification_url,
 					'recurring_id' => $recurring_id
 					);
-					
+
 		return $this->UpdateRecurring($client_id, $update);
 	}
-	
+
 	/**
 	* Update an existing subscription.
 	*
@@ -544,7 +544,7 @@ class Recurring_model extends Model
 	* @param int $params['plan_id'] The new plan ID. Optional.
 	*
 	* @return bool TRUE upon success, FALSE upon failure
-	* 
+	*
 	*/
 	function UpdateRecurring($client_id, $params)
 	{
@@ -555,7 +555,7 @@ class Recurring_model extends Model
 		if(isset($params['notification_url'])) {
 			$update_data['notification_url'] = $params['notification_url'];
 		}
-		
+
 		if(isset($params['customer_id'])) {
 			$update_data['customer_id'] = $params['customer_id'];
 			$CI =& get_instance();
@@ -564,82 +564,82 @@ class Recurring_model extends Model
 		} else {
 			$customer = FALSE;
 		}
-		
+
 		if(isset($params['amount'])) {
 			$update_data['amount'] = $params['amount'];
 		}
-		
+
 		if(isset($params['plan_id'])) {
 			$update_data['plan_id'] = $params['plan_id'];
 		}
-		
+
 		if (isset($params['next_charge_date'])) {
 			$this->load->library('field_validation');
 			if ($this->field_validation->ValidateDate($params['next_charge_date'])) {
-				$update_data['next_charge'] = $params['next_charge_date'];			
+				$update_data['next_charge'] = $params['next_charge_date'];
 			}
 			else {
 				die($this->response->Error(5007));
 			}
 		}
-		
+
 		if (isset($params['end_date'])) {
 			$this->load->library('field_validation');
 			if ($this->field_validation->ValidateDate($params['end_date'])) {
-				$update_data['end_date'] = $params['end_date'];			
+				$update_data['end_date'] = $params['end_date'];
 			}
 			else {
 				die($this->response->Error(5007));
 			}
 		}
-		
+
 		$subscription = $this->GetSubscriptionDetails($client_id, $params['recurring_id']);
 		//print_r($subscription);
 		if(isset($params['recur']['interval'])) {
 			$update_data['charge_interval'] = $params['recur']['interval'];
 			// Get the subcription details
-			
+
 			$start_date = $subscription['start_date'];
 			$end_date = $subscription['end_date'];
 			// Figure the total number of occurrences
 			$update_data['number_occurrences'] = round((strtotime($end_date) - strtotime($start_date)) / ($params['recur']['interval'] * 86400), 0);
 		}
-		
+
 		if(!isset($update_data)) {
 			die($this->response->Error(6003));
 		}
-		
+
 		// Make sure they update their own subscriptions
 		$this->db->where('client_id', $client_id);
 		$this->db->where('subscription_id', $params['recurring_id']);
-		
+
 		$this->db->update('subscriptions', $update_data);
-		
+
 		// Update the subscription with the gateway
 		$CI =& get_instance();
 		$CI->load->model('gateway_model');
 
 		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $subscription['gateway_id']);
 		$gateway_type = $gateway['name'];
-		
+
 		$this->load->library('payment/'.$gateway_type);
-		
+
 		// get the settings for the gateway
 		$settings = $this->$gateway_type->Settings();
-		
+
 		if($settings['allows_updates'] === 0) {
 			die($this->response->Error(5016));
 		}
-		
+
 		$update_success = $this->$gateway_type->UpdateRecurring($client_id, $gateway, $subscription, $customer, $params);
-		
+
 		if(!$update_success) {
 			return FALSE;
 		}
-		
+
 		return TRUE;
 	}
-	
+
 	/*
 	* Cancels the recurring billing
 	*
@@ -649,39 +649,39 @@ class Recurring_model extends Model
 	* @return bool TRUE upon success, FALSE upon fail
 	*
 	*/
-	
+
 	function CancelRecurring($client_id, $recurring_id, $not_user_cancellation = FALSE)
 	{
 		// Get the subscription information
 		$subscription = $this->GetSubscriptionDetails($client_id, $recurring_id);
-		
+
 		// Get the gateway info to load the proper library
 		$CI =& get_instance();
 		$CI->load->model('gateway_model');
 		$gateway = $CI->gateway_model->GetGatewayDetails($client_id, $subscription['gateway_id']);
-		
+
 		if ((float)$subscription['amount'] > 0) {
 			$gateway_name = $subscription['name'];
 			$this->load->library('payment/'.$gateway_name);
-			$cancelled = $this->$gateway_name->CancelRecurring($client_id, $subscription, $gateway);	
+			$cancelled = $this->$gateway_name->CancelRecurring($client_id, $subscription, $gateway);
 		}
 		else {
 			$cancelled = TRUE;
 		}
-				
+
 		$this->MakeInactive($recurring_id);
-		
+
 		if ($not_user_cancellation == FALSE) {
 			TriggerTrip('recurring_cancel', $client_id, FALSE, $recurring_id);
 		}
-		
+
 		if ($cancelled) {
 			return TRUE;
 		} else {
 			return FALSE;
 		}
-	}	
-	
+	}
+
 	function GetPlansByCustomer($customer_id)
 	{
 		$this->db->join('plans', 'plans.plan_id = subscriptions.plan_id', 'inner');
@@ -695,7 +695,7 @@ class Recurring_model extends Model
 			return FALSE;
 		}
 	}
-	
+
 	function GetAllSubscriptionsByGatewayID($gateway_id)
 	{
 		$this->db->join('client_gateways', 'subscriptions.gateway_id = client_gateways.client_gateway_id', 'inner');
@@ -703,119 +703,119 @@ class Recurring_model extends Model
 		$this->db->where('subscriptions.gateway_id', $gateway_id);
 		$this->db->where('subscriptions.active', 1);
 		$query = $this->db->get('subscriptions');
-		
+
 		if($query->num_rows > 0) {
 			return $query->result_array();
 		} else {
 			return FALSE;
 		}
-		
+
 	}
-	
+
 	function GetAllSubscriptionsByChargeDate($date = FALSE)
 	{
 		if(!$date) {
 			$date = date('Y-m-d');
 		}
-		
+
 		$this->db->join('client_gateways', 'subscriptions.gateway_id = client_gateways.client_gateway_id', 'inner');
 		$this->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
 		$this->db->where('next_charge', $date);
 		$this->db->where('subscriptions.active', 1);
 		$query = $this->db->get('subscriptions');
-		
+
 		if($query->num_rows > 0) {
 			return $query->result_array();
 		} else {
 			return FALSE;
 		}
-		
+
 	}
-	
+
 	function GetAllSubscriptionsForExpiring() {
 		$this->db->join('client_gateways', 'subscriptions.gateway_id = client_gateways.client_gateway_id', 'inner');
 		$this->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
 		$this->db->where('end_date <= NOW()');
 		$this->db->where('subscriptions.active', 1);
 		$query = $this->db->get('subscriptions');
-		
+
 		if($query->num_rows > 0) {
 			return $query->result_array();
 		} else {
 			return FALSE;
 		}
 	}
-	
+
 	function GetAllSubscriptionsByDate($date_type = FALSE, $date = FALSE)
 	{
 		if(!$date) {
 			$date = date('Y-m-d');
 		}
-		
+
 		if(!$date_type) {
 			$date_type = 'next_charge';
 		}
-		
+
 		$this->db->join('client_gateways', 'subscriptions.gateway_id = client_gateways.client_gateway_id', 'inner');
 		$this->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
 		$this->db->where($date_type, $date);
 		$this->db->where('subscriptions.active', 1);
 		$query = $this->db->get('subscriptions');
-		
+
 		if($query->num_rows > 0) {
 			return $query->result_array();
 		} else {
 			return FALSE;
-		}		
+		}
 	}
-	
+
 	function GetAllSubscriptionsForCharging($date = FALSE)
 	{
 		if (!$date) {
 			$date = date('Y-m-d');
 		}
-		
+
 		$this->db->join('client_gateways', 'subscriptions.gateway_id = client_gateways.client_gateway_id', 'inner');
 		$this->db->join('external_apis', 'client_gateways.external_api_id = external_apis.external_api_id', 'inner');
 		$this->db->where('next_charge <=', $date);
 		$this->db->where('subscriptions.active', '1');
 		$query = $this->db->get('subscriptions');
-		
+
 		if ($query->num_rows > 0) {
 			return $query->result_array();
 		} else {
 			return FALSE;
-		}		
+		}
 	}
-	
+
 	function GetNextChargeDate($subscription_id, $from_date = FALSE)
 	{
 		if (!$from_date) {
 			$from_date = date('Y-m-d');
 		}
-		
+
 		$this->db->where('subscription_id', $subscription_id);
 		$query = $this->db->get('subscriptions');
 		if($query->num_rows() > 0) {
 			$row = $query->row();
-			
+
 			$from_date = (empty($from_date)) ? $row->next_charge : $from_date;
-			
+
 			$next_charge = strtotime($from_date) + ($row->charge_interval * 86400);
 			return date('Y-m-d', $next_charge);
 		}
-		
-		return FALSE;	
+
+		return FALSE;
 	}
-	
+
 	function SetChargeDates($subscription_id, $last_charge, $next_charge)
 	{
 		$update_data = array('last_charge' => $last_charge, 'next_charge' => $next_charge);
-		
+
 		$this->db->where('subscription_id', $subscription_id);
 		$this->db->update('subscriptions', $update_data);
 	}
-	
+
 	/**
 	* Get Details of the last order for a customer.
 	*
@@ -823,18 +823,18 @@ class Recurring_model extends Model
 	*
 	* @param int $client_id The client ID.
 	* @param int $customer_id The customer ID.
-	* 
+	*
 	* @return array|bool Array with charge details or FALSE upon failure
 	*/
-	
+
 	function GetChargesByDate($date, $client_id = FALSE)
-	{		
+	{
 		if ($client_id) {
 			$this->db->where('orders.client_id', $client_id);
 		}
-		
+
 		$date = date('Y-m-d', $date);
-		
+
 		$this->db->join('customers', 'customers.customer_id = subscriptions.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$this->db->where('subscriptions.active', 1);
@@ -856,16 +856,16 @@ class Recurring_model extends Model
 	*
 	* @param int $client_id The client ID.
 	* @param int $customer_id The customer ID.
-	* 
+	*
 	* @return array|bool Array with charge details or FALSE upon failure
 	*/
-	
+
 	function GetChargesByExpiryDate($date, $client_id = FALSE)
-	{		
+	{
 		if ($client_id) {
 			$this->db->where('orders.client_id', $client_id);
 		}
-		
+
 		$this->db->join('customers', 'customers.customer_id = subscriptions.customer_id', 'left');
 		$this->db->join('countries', 'countries.country_id = customers.country', 'left');
 		$this->db->where('subscriptions.active', 1);
@@ -877,7 +877,7 @@ class Recurring_model extends Model
 			return FALSE;
 		}
 	}
-	
+
 	/**
 	* Get Details of the last order for a customer.
 	*
@@ -885,12 +885,12 @@ class Recurring_model extends Model
 	*
 	* @param int $client_id The client ID.
 	* @param int $customer_id The customer ID.
-	* 
+	*
 	* @return array|bool Array with charge details or FALSE upon failure
 	*/
-	
+
 	function CancelRecurringByGateway($client_id, $gateway_id)
-	{	
+	{
 		$this->db->select('subscription_id');
 		$this->db->where('client_id', $client_id);
 		$this->db->where('gateway_id', $gateway_id);
@@ -899,9 +899,9 @@ class Recurring_model extends Model
 			foreach($query->result() as $row) {
 				$this->CancelRecurring($client_id, $row->subscription_id);
 			}
-			
+
 			return TRUE;
-			
+
 		} else {
 			return FALSE;
 		}

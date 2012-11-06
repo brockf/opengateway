@@ -12,9 +12,9 @@
 
 class Gateway_model extends Model
 {
-	function Gateway_model()
+	function __construct()
 	{
-		parent::Model();
+		parent::__construct();
 	}
 
 	/**

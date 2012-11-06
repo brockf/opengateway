@@ -1,6 +1,6 @@
 <?php
 /**
-* Dataset Controller 
+* Dataset Controller
 *
 * Handles miscellaneous dataset features
 *
@@ -11,11 +11,11 @@
 */
 class Dataset extends Controller {
 
-	function Dataset()
+	function __construct()
 	{
-		parent::Controller();
+		parent::__construct();
 	}
-	
+
 	/**
 	* Prep Filters
 	*
@@ -24,23 +24,23 @@ class Dataset extends Controller {
 	* @return string Encoded string.
 	*/
 	function prep_filters()
-	{	
+	{
 		$serialize = array();
-	
+
 		$values = explode('&',$this->input->post('filters'));
 		foreach ($values as $value) {
 			list($name,$value) = explode('=',$value);
-			
+
 			if ($value != '' and $value != 'filter+results') {
 				$serialize[$name] = $value;
-			}	
+			}
 		}
-		
+
 		$this->load->library('asciihex');
-	
+
 		echo $this->asciihex->AsciiToHex(base64_encode(serialize($serialize)));
 	}
-	
+
 	/**
 	* Prep Actions
 	*
@@ -51,19 +51,19 @@ class Dataset extends Controller {
 	function prep_actions()
 	{
 		$serialize = array();
-	
+
 		$values = explode('&',$this->input->post('items'));
 		foreach ($values as $value) {
 			list($name,$value) = explode('=',$value);
 			$name = str_replace('check_','',$name);
-			
+
 			if ($value == 1) {
 				$serialize[] = $name;
 			}
 		}
-		
+
 		$this->load->library('asciihex');
-	
+
 		echo $this->asciihex->AsciiToHex(base64_encode(serialize($serialize))) . '/' . $this->asciihex->AsciiToHex(base64_encode($this->input->post('return_url')));
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 /**
-* Request Type Model 
+* Request Type Model
 *
 * Contains all the methods used to validate and get required fields for request types.
 *
@@ -11,11 +11,11 @@
 */
 class Request_type_model extends Model
 {
-	function Request_type_model()
+	function __construct()
 	{
-		parent::Model();
+		parent::__construct();
 	}
-	
+
 	/**
 	* Validate Request Type.
 	*
@@ -25,7 +25,7 @@ class Request_type_model extends Model
 	*
 	* @return string The model
 	*/
-	
+
 	function ValidateRequestType($request_type = FALSE)
 	{
 		if($request_type) {
@@ -43,7 +43,7 @@ class Request_type_model extends Model
 			}
 		}
 	}
-	
+
 	/**
 	* Get Required Fields.
 	*
@@ -53,7 +53,7 @@ class Request_type_model extends Model
 	*
 	* @return mixed Array containing the required field.
 	*/
-	
+
 	function GetRequiredFields($request_type)
 	{
 		$this->db->select('required_fields.field_name');
@@ -61,7 +61,7 @@ class Request_type_model extends Model
 		$this->db->where('request_types.name', $request_type);
 		$query = $this->db->get('request_types');
 		if($query->num_rows() > 0) {
-			return $query->result_array();	
+			return $query->result_array();
 		}else {
 			return FALSE;
 		}

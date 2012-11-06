@@ -1,6 +1,6 @@
 <?php
 /**
-* Order Authorization Model 
+* Order Authorization Model
 *
 * Contains all the methods used to save and retrieve order authorization details.
 *
@@ -11,11 +11,11 @@
 */
 class Order_authorization_model extends Model
 {
-	function Order_authorization_model()
+	function __construct()
 	{
-		parent::Model();
+		parent::__construct();
 	}
-	
+
 	/**
 	* Save order authorization details.
 	*
@@ -26,7 +26,7 @@ class Order_authorization_model extends Model
 	* @param string $authorization_code Authorization code. Optional
 	*
 	*/
-	
+
 	function SaveAuthorization($order_id, $tran_id = '', $authorization_code = '', $security_key = '')
 	{
 		$insert_data = array(
@@ -35,10 +35,10 @@ class Order_authorization_model extends Model
 							'authorization_code' => (!empty($authorization_code)) ? $authorization_code : '',
 							'security_key' => (!empty($security_key)) ? $security_key : ''
 							);
-		
+
 		$this->db->insert('order_authorizations', $insert_data);
 	}
-	
+
 	/**
 	* Get Authorization Details.
 	*
@@ -48,7 +48,7 @@ class Order_authorization_model extends Model
 	*
 	* @return mixed Array containg authorization details
 	*/
-	
+
 	function GetAuthorization($order_id)
 	{
 		$this->db->where('order_id', $order_id);

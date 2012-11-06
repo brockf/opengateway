@@ -1,6 +1,6 @@
 <?php
 /**
-* Authentication Model 
+* Authentication Model
 *
 * Contains the methods used to authenticate clients and allow access to the API.
 *
@@ -11,11 +11,11 @@
 */
 class Authentication_model extends Model
 {
-	function Authentication_model()
+	function __construct()
 	{
-		parent::Model();
+		parent::__construct();
 	}
-	
+
 	/**
 	* Authenticate the client.
 	*
@@ -23,11 +23,11 @@ class Authentication_model extends Model
 	* or deleted.  Returns object containg client details on success or FALSE on authentication failure.
 	*
 	* @param string $api_id The API identifier used by the client
-	* @param string $secret_key 
-	* 
+	* @param string $secret_key
+	*
 	* @return mixed Object containg all client details on success of FALSE on failure.
 	*/
-	
+
 	function Authenticate($api_id = '', $secret_key = '')
 	{
 		// pull the client from the db
@@ -36,7 +36,7 @@ class Authentication_model extends Model
 		$this->db->where('deleted', 0);
 		$this->db->limit(1);
 		$query = $this->db->get('clients');
-		
+
 		// make sure it's a valid API ID
 		if($query->num_rows() === 0) {
 			return FALSE;
