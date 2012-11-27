@@ -111,14 +111,14 @@ class paypal_standard
 
 		$post = array();
 		$post['version'] = '95.0';
-		$post['method'] = 'SetExpressCheckout';
-		$post['returnurl'] = site_url('callback/paypal_standard/confirm/' . $order_id);
-		$post['cancelurl'] = (!empty($cancel_url)) ? $cancel_url : 'http://www.paypal.com';
-		$post['noshipping'] = '1';
-		$post['addroverride'] = '1';
-		$post['allownote'] = '0';
-		$post['localecode'] = $client['country'];
-		$post['solutiontype'] = 'Sole';
+		$post['METHOD'] = 'SetExpressCheckout';
+		$post['RETURNURL'] = site_url('callback/paypal_standard/confirm/' . $order_id);
+		$post['CANCELURL'] = (!empty($cancel_url)) ? $cancel_url : 'http://www.paypal.com';
+		$post['NOSHIPPING'] = '1';
+		$post['ADDOVERRIDE'] = '1';
+		$post['ALLOWNOTE'] = '0';
+		$post['LOCALECODE'] = $client['country'];
+		$post['SOLUTIONTYPE'] = 'Sole';
 		$post['landingpage'] = 'Billing';
 		$post['channeltype'] = 'Merchant';
 
@@ -131,26 +131,26 @@ class paypal_standard
 		}
 
 		if (isset($customer['address_1']) and !empty($customer['address_1'])) {
-			$post['SHIPTONAME'] = $customer['first_name'] . ' ' . $customer['last_name'];
-			$post['SHIPTOSTREET'] = $customer['address_1'];
-			$post['SHIPTOSTREET2'] = $customer['address_2'];
-			$post['SHIPTOCITY'] = $customer['city'];
-			$post['SHIPTOSTATE'] = $customer['state'];
-			$post['SHIPTOZIP'] = $customer['postal_code'];
-			$post['SHIPTOCOUNTRYCODE'] = $customer['country'];
-			$post['SHIPTOPHONENUM'] = $customer['phone'];
+			$post['PAYMENTREQUEST_0_SHIPTONAME'] = $customer['first_name'] . ' ' . $customer['last_name'];
+			$post['PAYMENTREQUEST_0_SHIPTOSTREET'] = $customer['address_1'];
+			$post['PAYMENTREQUEST_0_SHIPTOSTREET2'] = $customer['address_2'];
+			$post['PAYMENTREQUEST_0_SHIPTOCITY'] = $customer['city'];
+			$post['PAYMENTREQUEST_0_SHIPTOSTATE'] = $customer['state'];
+			$post['PAYMENTREQUEST_0_SHIPTOZIP'] = $customer['postal_code'];
+			$post['PAYMENTREQUEST_0_SHIPTOCOUNTRYCODE'] = $customer['country'];
+			$post['PAYMENTREQUEST_0_SHIPTOPHONENUM'] = $customer['phone'];
 		}
 
-		$post['paymentaction'] = 'sale';
+		$post['PAYMENTREQUEST_0_PAYMENTACTION'] = 'sale';
 		$post['user'] = $gateway['user'];
 		$post['pwd'] = $gateway['pwd'];
 		$post['signature'] = $gateway['signature'];
-		$post['AMT'] = $amount;
-		$post['L_DESC0'] = 'Invoice #' . $order_id;
-		$post['L_AMT0'] = $amount;
-		$post['L_QTY0'] = '1';
-		$post['invnum'] = $order_id;
-		$post['currencycode'] = $gateway['currency'];
+		$post['PAYMENTREQUEST_0_AMT'] = $amount;
+		$post['L_PAYMENTREQUEST_0_DESC0'] = 'Invoice #' . $order_id;
+		$post['L_PAYMENTREQUEST_0_AMT0'] = $amount;
+		$post['L_PAYMENTREQUEST_0_QTY0'] = '1';
+		$post['PAYMENTREQUEST_0_INVNUM'] = $order_id;
+		$post['PAYMENTREQUEST_0_CURRENCYCODE'] = $gateway['currency'];
 
 		$response = $this->Process($post_url, $post);
 
@@ -242,21 +242,21 @@ class paypal_standard
 			}
 
 			if (isset($customer['address_1']) and !empty($customer['address_1'])) {
-				$post['SHIPTONAME'] = $customer['first_name'] . ' ' . $customer['last_name'];
-				$post['SHIPTOSTREET'] = $customer['address_1'];
-				$post['SHIPTOSTREET2'] = $customer['address_2'];
-				$post['SHIPTOCITY'] = $customer['city'];
-				$post['SHIPTOSTATE'] = $customer['state'];
-				$post['SHIPTOZIP'] = $customer['postal_code'];
-				$post['SHIPTOCOUNTRYCODE'] = $customer['country'];
-				$post['SHIPTOPHONENUM'] = $customer['phone'];
+				$post['PAYMENTREQUEST_0_SHIPTONAME'] = $customer['first_name'] . ' ' . $customer['last_name'];
+				$post['PAYMENTREQUEST_0_SHIPTOSTREET'] = $customer['address_1'];
+				$post['PAYMENTREQUEST_0_SHIPTOSTREET2'] = $customer['address_2'];
+				$post['PAYMENTREQUEST_0_SHIPTOCITY'] = $customer['city'];
+				$post['PAYMENTREQUEST_0_SHIPTOSTATE'] = $customer['state'];
+				$post['PAYMENTREQUEST_0_SHIPTOZIP'] = $customer['postal_code'];
+				$post['PAYMENTREQUEST_0_SHIPTOCOUNTRYCODE'] = $customer['country'];
+				$post['PAYMENTREQUEST_0_SHIPTOPHONENUM'] = $customer['phone'];
 			}
 
-			$post['paymentaction'] = 'sale';
+			$post['PAYMENTREQUEST_0_PAYMENTACTION'] = 'sale';
 			$post['user'] = $gateway['user'];
 			$post['pwd'] = $gateway['pwd'];
 			$post['signature'] = $gateway['signature'];
-			$post['AMT'] = $amount;
+			$post['PAYMENTREQUEST_0_AMT'] = $amount;
 
 			$item_description = 'One-time payment';
 
@@ -266,11 +266,11 @@ class paypal_standard
 				$item_description = $subscription['plan']['name'];
 			}
 
-			$post['L_DESC0'] = $item_description;
-			$post['L_AMT0'] = $amount;
-			$post['L_QTY0'] = '1';
-			$post['invnum'] = $subscription_id;
-			$post['currencycode'] = $gateway['currency'];
+			$post['L_PAYMENTREQUEST_0_DESC0'] = $item_description;
+			$post['L_PAYMENTREQUEST_0_AMT0'] = $amount;
+			$post['L_PAYMENTREQUEST_0_QTY0'] = '1';
+			$post['PAYMENTREQUEST_0_INVNUM'] = $subscription_id;
+			$post['PAYMENTREQUEST_0_CURRENCYCODE'] = $gateway['currency'];
 		}
 		else {
 			// This is a normal recurring charge, not being treated as a 1-time charge.
@@ -297,13 +297,13 @@ class paypal_standard
 				$post['name'] = $customer['first_name'] . ' ' . $customer['last_name'];
 			}
 
-			$post['PAYMENTACTION'] = 'sale';
+			$post['PAYMENTREQUEST_0_PAYMENTACTION'] = 'sale';
 			$post['user'] = $gateway['user'];
 			$post['pwd'] = $gateway['pwd'];
 			$post['signature'] = $gateway['signature'];
-			$post['AMT'] = $amount;
-			$post['invnum'] = $subscription_id;
-			$post['currencycode'] = $gateway['currency'];
+			$post['PAYMENTREQUEST_0_AMT'] = $amount;
+			$post['PAYMENTREQUEST_0_INVNUM'] = $subscription_id;
+			$post['PAYMENTREQUEST_0_CURRENCYCODE'] = $gateway['currency'];
 			$post['L_BILLINGTYPE0'] = 'RecurringPayments';
 
 			$item_description = 'Recurring payment';
@@ -314,19 +314,19 @@ class paypal_standard
 				$item_description = $subscription['plan']['name'];
 			}
 
-			$post['L_DESC0'] = $item_description;
-			$post['L_AMT0'] = $amount;
-			$post['L_QTY0'] = '1';
+			$post['L_PAYMENTREQUEST_0_DESC0'] = $item_description;
+			$post['L_PAYMENTREQUEST_0_AMT0'] = $amount;
+			$post['L_PAYMENTREQUEST_0_QTY0'] = '1';
 
 			if (isset($customer['address_1']) and !empty($customer['address_1'])) {
-				$post['SHIPTONAME'] = $customer['first_name'] . ' ' . $customer['last_name'];
-				$post['SHIPTOSTREET'] = $customer['address_1'];
-				$post['SHIPTOSTREET2'] = $customer['address_2'];
-				$post['SHIPTOCITY'] = $customer['city'];
-				$post['SHIPTOSTATE'] = $customer['state'];
-				$post['SHIPTOZIP'] = $customer['postal_code'];
-				$post['SHIPTOCOUNTRYCODE'] = $customer['country'];
-				$post['SHIPTOPHONENUM'] = $customer['phone'];
+				$post['PAYMENTREQUEST_0_SHIPTOSTREET'] = $customer['first_name'] . ' ' . $customer['last_name'];
+				$post['PAYMENTREQUEST_0_SHIPTOSTREET'] = $customer['address_1'];
+				$post['PAYMENTREQUEST_0_SHIPTOSTREET2'] = $customer['address_2'];
+				$post['PAYMENTREQUEST_0_SHIPTOCITY'] = $customer['city'];
+				$post['PAYMENTREQUEST_0_SHIPTOSTATE'] = $customer['state'];
+				$post['PAYMENTREQUEST_0_SHIPTOZIP'] = $customer['postal_code'];
+				$post['PAYMENTREQUEST_0_SHIPTOCOUNTRYCODE'] = $customer['country'];
+				$post['PAYMENTREQUEST_0_SHIPTOPHONENUM'] = $customer['phone'];
 			}
 
 			// handle first charges unless there's a free trial
@@ -672,12 +672,18 @@ class paypal_standard
 
 			$response = $this->Process($url, $post);
 
-			if ($response['PAYMENTSTATUS'] == 'Completed' or $response['PAYMENTSTATUS'] == 'Pending' or $response['PAYMENTSTATUS'] == 'Processed') {
+			if ($this->debug)
+			{
+				$this->log_it('PayPal Express DoExpressCheckoutPayment Request: ', $post);
+				$this->log_it('PayPal Express DoExpressCheckoutPayment Response: ', $response);
+			}
+
+			if ($response['PAYMENTINFO_0_PAYMENTSTATUS'] == 'Completed' or $response['PAYMENTINFO_0_PAYMENTSTATUS'] == 'Pending' or $response['PAYMENTINFO_0_PAYMENTSTATUS'] == 'Processed') {
 				// we're good
 
 				// save authorization (transaction id #)
 				$CI->load->model('order_authorization_model');
-				$CI->order_authorization_model->SaveAuthorization($charge['id'], $response['TRANSACTIONID']);
+				$CI->order_authorization_model->SaveAuthorization($charge['id'], $response['PAYMENTINFO_0_TRANSACTIONID']);
 
 				$CI->charge_model->SetStatus($charge['id'], 1);
 				TriggerTrip('charge', $client_id, $charge['id']);
@@ -767,7 +773,7 @@ class paypal_standard
 						$this->log_it('PayPal Express Callback Confirm Recur - First Charge Response: ', $response_charge);
 					}
 
-					if (!isset($response_charge) or $response_charge['PAYMENTSTATUS'] != 'Completed' and $response_charge['PAYMENTSTATUS'] != 'Pending' and $response_charge['PAYMENTSTATUS'] != 'Processed') {
+					if (!isset($response_charge) or $response_charge['PAYMENTINFO_0_PAYMENTSTATUS'] != 'Completed' and $response_charge['PAYMENTINFO_0_PAYMENTSTATUS'] != 'Pending' and $response_charge['PAYMENTINFO_0_PAYMENTSTATUS'] != 'Processed') {
 						die('Your initial PayPal payment failed.  <a href="' . $data['cancel_url'] . '">Go back to merchant</a>.');
 					}
 					else {
@@ -777,8 +783,8 @@ class paypal_standard
 						$CI->load->model('order_authorization_model');
 
 						// we may not have the transaction ID if it's Pending
-						$response_charge['TRANSACTIONID'] = (isset($response_charge['TRANSACTIONID'])) ? $response_charge['TRANSACTIONID'] : 'pending_payment';
-						$CI->order_authorization_model->SaveAuthorization($order_id, $response_charge['TRANSACTIONID']);
+						$response_charge['PAYMENTINFO_0_TRANSACTIONID'] = (isset($response_charge['PAYMENTINFO_0_TRANSACTIONID'])) ? $response_charge['PAYMENTINFO_0_TRANSACTIONID'] : 'pending_payment';
+						$CI->order_authorization_model->SaveAuthorization($order_id, $response_charge['PAYMENTINFO_0_TRANSACTIONID']);
 
 						$CI->charge_model->SetStatus($order_id, 1);
 					}
@@ -957,6 +963,7 @@ class paypal_standard
 	{
 		$file = FCPATH .'writeable/gateway_log.txt';
 
+		$content = '';
 		$content .= "# $heading\n";
 		$content .= date('Y-m-d H:i:s') ."\n\n";
 		$content .= print_r($params, true);
