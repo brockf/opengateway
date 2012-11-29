@@ -614,7 +614,7 @@ class Gateway_model extends Model
 		if (isset($recur['amount'])) {
 			$recur['amount'] = $recur['amount'];
 		}
-		elseif (is_object($plan_details) and isset($plan_details->amount)) {
+		elseif (isset($plan_details) and is_object($plan_details) and isset($plan_details->amount)) {
 			$recur['amount'] = $plan_details->amount;
 		}
 		else {
