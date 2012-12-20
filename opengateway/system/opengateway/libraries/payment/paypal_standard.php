@@ -76,14 +76,29 @@ class paypal_standard
 														'type' => 'select',
 														'options' => array(
 																		'USD' => 'US Dollar',
-																		'CAD' => 'Canadian Dollar',
-																		'CHF' => 'Swiss Franc',
-																		'EUR' => 'Euro',
-																		'GBP' => 'UK Pound',
 																		'AUD' => 'Australian Dollar',
+																		'CAD' => 'Canadian Dollar',
+																		'EUR' => 'Euro',
+																		'GBP' => 'British Pound',
 																		'JPY' => 'Japanese Yen',
-																		'NOK' => 'Norwegian Krones',
-																		'SGD' => 'Singapore Dollar'
+																		'NZD' => 'New Zealand Dollar',
+																		'CHF' => 'Swiss Franc',
+																		'HKD' => 'Hong Kong Dollar',
+																		'SGD' => 'Singapore Dollar',
+																		'SEK' => 'Swedish Krona',
+																		'DKK' => 'Danish Krone',
+																		'PLN' => 'Polish Zloty',
+																		'NOK' => 'Norwegian Krone',
+																		'HUF' => 'Hungarian Forint',
+																		'CZK' => 'Czech Koruna',
+																		'ILS' => 'Israeli New Shekel',
+																		'MXN' => 'Mexican Peso',
+																		'BRL' => 'Brazilian Real',
+																		'MYR' => 'Malaysian Ringgit',
+																		'PHP' => 'Philippine Peso',
+																		'TWD' => 'New Taiwan Dollar',
+																		'THB' => 'Thai Baht',
+																		'TRY' => 'Turkish Lira'
 																	)
 														)
 											);
