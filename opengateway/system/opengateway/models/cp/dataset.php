@@ -139,9 +139,9 @@ class Dataset extends Model {
     		$xml_params = '';
 			while (list($name,$value) = each($params)) {
 				// commented out - do we want to keep offset/limit?
-				//if ($name != 'limit' and $name !='offset') {
+				if ($name != 'limit' and $name !='offset') {
 					$xml_params .= "<$name>$value</$name>";
-				//}
+				}
 			}
 			reset($params);
 
