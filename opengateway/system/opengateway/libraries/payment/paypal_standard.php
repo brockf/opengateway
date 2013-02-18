@@ -9,7 +9,7 @@ class paypal_standard
 	public $same_day_every_month = FALSE;
 
 	// If set to TRUE, it will log data sent to and received from PayPal in /writeable/gateway_log.txt.
-	private $debug	= false;
+	private $debug	= true;
 
 	//--------------------------------------------------------------------
 
@@ -134,8 +134,8 @@ class paypal_standard
 		$post['ALLOWNOTE'] = '0';
 		$post['LOCALECODE'] = $client['country'];
 		$post['SOLUTIONTYPE'] = 'Sole';
-		$post['landingpage'] = 'Billing';
-		$post['channeltype'] = 'Merchant';
+		$post['LANDINGPAGE'] = 'Billing';
+		$post['CHANNELTYPE'] = 'Merchant';
 
 		if (isset($customer['email'])) {
 			$post['email'] = $customer['email'];
@@ -244,7 +244,7 @@ class paypal_standard
 			$post['addroverride'] = '1';
 			$post['allownote'] = '0';
 			$post['localecode'] = $client['country'];
-			$post['solutiontype'] = 'Sole';
+			$post['SOLUTIONTYPE'] = 'Sole';
 			$post['landingpage'] = 'Billing';
 			$post['channeltype'] = 'Merchant';
 
@@ -334,7 +334,7 @@ class paypal_standard
 			$post['L_PAYMENTREQUEST_0_QTY0'] = '1';
 
 			if (isset($customer['address_1']) and !empty($customer['address_1'])) {
-				$post['PAYMENTREQUEST_0_SHIPTOSTREET'] = $customer['first_name'] . ' ' . $customer['last_name'];
+				$post['PAYMENTREQUEST_0_SHIPTONAME'] = $customer['first_name'] . ' ' . $customer['last_name'];
 				$post['PAYMENTREQUEST_0_SHIPTOSTREET'] = $customer['address_1'];
 				$post['PAYMENTREQUEST_0_SHIPTOSTREET2'] = $customer['address_2'];
 				$post['PAYMENTREQUEST_0_SHIPTOCITY'] = $customer['city'];
