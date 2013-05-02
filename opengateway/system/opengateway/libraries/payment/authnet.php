@@ -2,30 +2,30 @@
 
 /*
 	Developer Test Info:
-	
+
 	Visa: 4222222222222
-	Amount: A dollar amount equal to the response code you wish to mimic. 
+	Amount: A dollar amount equal to the response code you wish to mimic.
 		Success: 1.00
 		Declined: 2.00
 */
 class authnet
 {
 	var $settings;
-	
-	private $debug = true;
-	
+
+	private $debug = false;
+
 	//---------------------------------------------------------------
-	
+
 	function authnet() {
 		$this->settings = $this->Settings();
 	}
-	
+
 	//---------------------------------------------------------------
 
 	function Settings()
 	{
 		$settings = array();
-		
+
 		$settings['name'] = 'Authorize.net';
 		$settings['class_name'] = 'authnet';
 		$settings['external'] = FALSE;
@@ -42,7 +42,7 @@ class authnet
 		$settings['requires_customer_ip'] = 0;
 		$settings['required_fields'] = array(
 										'enabled',
-										'mode', 
+										'mode',
 										'login_id',
 										'transaction_key',
 										'accept_visa',
@@ -51,7 +51,7 @@ class authnet
 										'accept_dc',
 										'accept_amex'
 										);
-										
+
 		$settings['field_details'] = array(
 										'enabled' => array(
 														'text' => 'Enable this gateway?',
@@ -118,23 +118,23 @@ class authnet
 																	)
 														)
 											);
-		
+
 		return $settings;
 	}
-	
+
 	//---------------------------------------------------------------
-	
-	function TestConnection($client_id, $gateway) 
+
+	function TestConnection($client_id, $gateway)
 	{
 		$post_url = $this->GetAPIUrl($gateway);
-		
+
 		$post_values = array(
 			"x_login"			=> $gateway['login_id'],
-			"x_tran_key"		=> $gateway['transaction_key'],		
+			"x_tran_key"		=> $gateway['transaction_key'],
 			"x_version"			=> "3.1",
 			"x_delim_data"		=> "TRUE",
 			"x_delim_char"		=> "|",
-			"x_relay_response"	=> "FALSE",		
+			"x_relay_response"	=> "FALSE",
 			"x_type"			=> "AUTH_CAPTURE",
 			"x_method"			=> "CC",
 			"x_card_num"		=> '4222222222222',
@@ -142,57 +142,58 @@ class authnet
 			"x_amount"			=> 1,
 			"x_test_request"    => TRUE
 		);
-		
+
 		$post_string = "";
 		foreach( $post_values as $key => $value )
 			{ $post_string .= "$key=" . urlencode( $value ) . "&"; }
 		$post_string = rtrim( $post_string, "& " );
-		
+
 		$order_id = 0;
 		$response = $this->Process($order_id, $post_url, $post_string, TRUE);
-		
+
 		$CI =& get_instance();
-		
+
 		if($response['success']){
 			return TRUE;
 		} else {
 			return FALSE;
 		}
-		
+
 		return $response;
 	}
-	
+
 	//---------------------------------------------------------------
-	
+
 	function Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card)
-	{	
+	{
 		$CI =& get_instance();
-		
+
 		$post_url = $this->GetAPIUrl($gateway);
-		
+
 		$post_values = array(
 			"x_login"			=> $gateway['login_id'],
-			"x_tran_key"		=> $gateway['transaction_key'],		
+			"x_tran_key"		=> $gateway['transaction_key'],
 			"x_version"			=> "3.1",
 			"x_delim_data"		=> "TRUE",
 			"x_delim_char"		=> "|",
-			"x_relay_response"	=> "FALSE",		
+			"x_relay_response"	=> "FALSE",
 			"x_type"			=> "AUTH_CAPTURE",
 			"x_method"			=> "CC",
 			"x_card_num"		=> $credit_card['card_num'],
 			"x_exp_date"		=> $credit_card['exp_month'] . '/' . substr($credit_card['exp_year'],-2,2),
 			"x_amount"			=> $amount,
-			"x_invoice_num"		=> $order_id
+			"x_invoice_num"		=> $order_id,
+			"x_description"		=> 'Order #'. $order_id,
 		);
-			
+
 		if ($gateway['mode'] == 'test') {
 			$post_values['x_test_request'] = 'TRUE';
 		}
 
 		if(isset($credit_card['cvv'])) {
 			$post_values['x_card_code'] = $credit_card['cvv'];
-		}	
-		
+		}
+
 		if (isset($customer['customer_id'])) {
 			$post_values['x_first_name'] = $customer['first_name'];
 			$post_values['x_last_name'] = $customer['last_name'];
@@ -204,23 +205,24 @@ class authnet
 			$post_values['x_state'] = $customer['state'];
 			$post_values['x_zip'] = $customer['postal_code'];
 			$post_values['x_country'] = $customer['country'];
+			$post_values['x_email'] = $customer['email'];
 		}
-			
+
 		// build NVP post string
 		$post_string = "";
 		foreach($post_values as $key => $value) {
 			$post_string .= "$key=" . urlencode( $value ) . "&";
 		}
 		$post_string = rtrim($post_string, "& ");
-		
+
 		$response = $this->Process($order_id, $post_url, $post_string);
-		
+
 		if ($this->debug)
 		{
 			$this->log_it('Charge Params: ', $post_string);
 			$this->log_it('Charge Response: ', $response);
 		}
-		
+
 		if($response['success']){
 			$response_array = array('charge_id' => $order_id);
 			$response = $CI->response->TransactionResponse(1, $response_array);
@@ -228,19 +230,19 @@ class authnet
 			$response_array = array('reason' => $response['reason']);
 			$response = $CI->response->TransactionResponse(2, $response_array);
 		}
-		
+
 		return $response;
 	}
-	
+
 	//---------------------------------------------------------------
-	
+
 	function Recur ($client_id, $gateway, $customer, $amount, $charge_today, $start_date, $end_date, $interval, $credit_card, $subscription_id, $total_occurrences = FALSE)
-	{		
+	{
 		$CI =& get_instance();
-		
+
 		// Get our customer array cleaned up so that invalide XML characters will not cause issues.
 		$this->EncodeArray($customer);
-		
+
 		// Create a new authnet profile if one doesn't exist
 		$CI->db->select('api_customer_reference');
 		$CI->db->join('client_gateways', 'subscriptions.gateway_id = client_gateways.client_gateway_id', 'inner');
@@ -250,36 +252,36 @@ class authnet
 		$CI->db->where('subscriptions.active', 1);
 		$CI->db->where('subscriptions.customer_id',$customer['customer_id']);
 		$current_profile = $CI->db->get('subscriptions');
-		
+
 		if ($current_profile->num_rows() > 0) {
 			// save the profile ID
 			$current_profile = $current_profile->row_array();
 			$profile_id = $current_profile['api_customer_reference'];
-			
+
 			// get payment profile to see if a matching one exists
 			$payment_profiles = $this->GetCustomerProfile($profile_id, $gateway);
-			
+
 			// In case there are multiple profiles, make sure ours matches via last 4 of card.
 			if (isset($payment_profiles->profile->paymentProfiles)) {
 				foreach ($payment_profiles->profile->paymentProfiles as $payment_profile) {
 					$card_number = (string)$payment_profile->payment->creditCard->cardNumber;
-					
+
 					if (substr($card_number, -4, 4) == substr($credit_card['card_num'],-4,4)) {
 						$payment_profile_id = (string)$payment_profile->customerPaymentProfileId;
 						$current_payment_profile = $payment_profile;
 					}
 				}
 			}
-			
+
 		}
-		else {	
+		else {
 			$response = $this->CreateProfile($gateway, $subscription_id, $customer);
-			
+
 			if(isset($response) and !empty($response['success'])) {
-				$profile_id = $response['profile_id'];	
+				$profile_id = $response['profile_id'];
 			}
 		}
-		
+
 		if (empty($profile_id)) {
 			$add_text = (isset($response['reason'])) ? $response['reason'] : FALSE;
 			$CI->recurring_model->DeleteRecurring($subscription_id);
@@ -289,36 +291,36 @@ class authnet
 		// save the api_customer_reference
 		$CI->load->model('recurring_model');
 		$CI->recurring_model->SaveApiCustomerReference($subscription_id, $profile_id);
-		
+
 		if (!isset($payment_profile_id) or empty($payment_profile_id)) {
 			// Create the payment profile
 			$response = $this->CreatePaymentProfile($profile_id, $gateway, $credit_card, $customer);
 			if(isset($response) and is_array($response) and isset($response['payment_profile_id'])) {
-				$payment_profile_id = $response['payment_profile_id'];	
+				$payment_profile_id = $response['payment_profile_id'];
 			}
 		}
 		else {
 			// We have a payment profile ID, so update the customer's information at AuthNet.
 			$this->UpdateCustomerProfile($profile_id, $payment_profile_id, $gateway, $current_payment_profile, $customer);
 		}
-		
+
 		if (empty($payment_profile_id)) {
 			$add_text = (isset($response['reason'])) ? $response['reason'] : FALSE;
 			$CI->recurring_model->DeleteRecurring($subscription_id);
 			die($CI->response->Error(5006, $add_text));
 		}
-		
+
 		// Save the api_payment_reference
 		$CI->recurring_model->SaveApiPaymentReference($subscription_id, $payment_profile_id);
-		
+
 		// If a payment is to be made today, process it.
 		if ($charge_today === TRUE) {
 			// Create an order for today's payment
 			$CI->load->model('charge_model');
 			$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
-			
+
 			$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $profile_id, $payment_profile_id, $amount);
-			
+
 			if($response['success'] == TRUE){
 				$CI->charge_model->SetStatus($order_id, 1);
 				$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
@@ -326,25 +328,25 @@ class authnet
 			} else {
 				// Make the subscription inactive
 				$CI->recurring_model->MakeInactive($subscription_id);
-				
+
 				$response_array = array('reason' => $response['reason']);
 				$response = $CI->response->TransactionResponse(2, $response_array);
 			}
 		} else {
 			$response = $CI->response->TransactionResponse(100, array('recurring_id' => $subscription_id));
 		}
-		
+
 		return $response;
 	}
-	
+
 	//--------------------------------------------------------------------
-	
+
 	/*
 		Method: UpdateCustomerProfile()
-		
-		Updates the customer's payment profile stored at Authorize.net with the latest 
+
+		Updates the customer's payment profile stored at Authorize.net with the latest
 		customer information.
-		
+
 		Parameters:
 			$profile_id	- the customer's profile id.
 			$payment_profile_id	- The customer's payment profile id
@@ -354,19 +356,19 @@ class authnet
 	*/
 	function UpdateCustomerProfile($profile_id, $payment_profile_id, $gateway, $orig, $new) {
 		$CI =& get_instance();
-		
+
 		$new = (object)$new;
-		
+
 		// Clean up our address into a single entity for transferring to AuthNet
 		if (isset($new->address_2) && !empty($new->address_2))
 		{
 			$new->address_1 = $new->address_1 .', '. $new->address_2;
 		}
-		
+
 		$post_url = $this->GetAPIUrl($gateway, 'arb');
-		
+
 		//--------------------------------------------------------------------
-		
+
 		$company	= isset($new->company) ? $new->company : $orig->billTo->company;
 		$address	= isset($new->address_1) ? $new->address_1 : $orig->billTo->address;
 		$city		= isset($new->city) ? $new->city : $orig->billTo->city;
@@ -374,9 +376,9 @@ class authnet
 		$zip		= isset($new->zip) ? $new->zip : $orig->billTo->zip;
 		$country 	= isset($new->country) ? $new->country : $orig->billTo->country;
 		$phoneNumber	= isset($new->phoneNumber) ? $new->phoneNumber : $orig->billTo->phoneNumber;
-		
+
 		//--------------------------------------------------------------------
-		
+
 		$content = '<?xml version="1.0" encoding="utf-8"?>
 					<updateCustomerPaymentProfileRequest
 					xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd">
@@ -387,7 +389,7 @@ class authnet
 					<customerProfileId>' . $profile_id . '</customerProfileId>
 					<paymentProfile>
 						<billTo>';
-		
+
 		$content .= "<firstName>{$orig->first_name}</firstName>";
 		$content .= "<lastName>{$orig->last_name}</lastName>";
 		$content .= "<company>$company</company>";
@@ -396,20 +398,20 @@ class authnet
 		$content .= "<state>$state</state>";
 		$content .= "<zip>$zip</zip>";
 		$content .= "<phoneNumber>$phoneNumber</phoneNumber>";
-		
+
 		$content .= '	</billTo>
 						<payment>
 							<creditCard>';
-		
+
 		$content .= "<cardNumber>{$orig->payment->creditCard->cardNumber}</cardNumber>";
 		$content .= "<expirationDate>{$orig->payment->creditCard->expirationDate}</expirationDate>";
-		
+
 		$content .= '		</creditCard>
 						</payment>
 						<customerPaymentProfileId>'. $payment_profile_id . '</customerPaymentProfileId>
 					</paymentProfile>
 				</updateCustomerPaymentProfileRequest>';
-		
+
 		$request = curl_init($post_url); // initiate curl object
 		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
 		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
@@ -418,18 +420,18 @@ class authnet
 		curl_setopt($request, CURLOPT_SSL_VERIFYPEER, FALSE);   // Verify it belongs to the server.
 	    curl_setopt($request, CURLOPT_SSL_VERIFYHOST, FALSE);   // Check common exists and matches the server host name
 		$post_response = curl_exec($request); // execute curl post and store results in $post_response
-		
+
 		curl_close($request); // close curl object
 	}
-	
+
 	//--------------------------------------------------------------------
-	
+
 	function Refund ($client_id, $gateway, $charge, $authorization)
-	{	
+	{
 		$CI =& get_instance();
-		
+
 		$post_url = $this->GetAPIUrl($gateway);
-		
+
 		$post_values = array(
 			"x_login"			=> $gateway['login_id'],
 			"x_tran_key"		=> $gateway['transaction_key'],
@@ -444,14 +446,14 @@ class authnet
 			"x_card_num"		=> $charge['card_last_four'],
 			"x_exp_date"		=> date('m') . substr((date('Y')+1),-2,2)
 			);
-			
+
 		$post_string = "";
 		foreach( $post_values as $key => $value ) {
 			$post_string .= "$key=" . urlencode( $value ) . "&";
 		}
-		
+
 		$post_string = rtrim( $post_string, "& " );
-		
+
 		$request = curl_init($post_url); // initiate curl object
 		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
 		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
@@ -460,14 +462,14 @@ class authnet
 	    curl_setopt($request, CURLOPT_SSL_VERIFYHOST, FALSE);   // Check common exists and matches the server host name
 		$post_response = curl_exec($request); // execute curl post and store results in $post_response
 		curl_close ($request); // close curl object
-		
+
 		$response = explode('|',$post_response);
 
 		if (!isset($response[1])) {
 			// the array is malformed
 			return FALSE;
 		}
-		
+
 		if ($response[0] == '1') {
 			return TRUE;
 		}
@@ -487,14 +489,14 @@ class authnet
 				"x_card_num"		=> $charge['card_last_four'],
 				"x_exp_date"		=> date('m') . substr((date('Y')+1),-2,2)
 				);
-				
+
 			$post_string = "";
 			foreach( $post_values as $key => $value ) {
 				$post_string .= "$key=" . urlencode( $value ) . "&";
 			}
-			
+
 			$post_string = rtrim( $post_string, "& " );
-			
+
 			$request = curl_init($post_url); // initiate curl object
 			curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
 			curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
@@ -503,9 +505,9 @@ class authnet
 		    curl_setopt($request, CURLOPT_SSL_VERIFYHOST, FALSE);   // Check common exists and matches the server host name
 			$post_response = curl_exec($request); // execute curl post and store results in $post_response
 			curl_close ($request); // close curl object
-			
+
 			$response = explode('|',$post_response);
-			
+
 			if (!isset($response[1])) {
 				// array is malford
 				return FALSE;
@@ -521,24 +523,24 @@ class authnet
 			}
 		}
 	}
-	
+
 	//---------------------------------------------------------------
-	
+
 	function CancelRecurring($client_id, $subscription)
-	{	
+	{
 		return TRUE;
 	}
-	
+
 	//---------------------------------------------------------------
-	
+
 	function CreateProfile($gateway, $subscription_id, $customer = array())
 	{
 		$CI =& get_instance();
-		
+
 		$post_url = $this->GetAPIUrl($gateway, 'arb');
-		
+
 		$email = (isset($customer['email']) and !empty($customer['email'])) ? "<email>" . $customer['email'] . "</email>" : '';
-		
+
 		$content =
 		"<?xml version=\"1.0\" encoding=\"utf-8\"?>" .
 		"<createCustomerProfileRequest xmlns=\"AnetApi/xml/v1/schema/AnetApiSchema.xsd\">".
@@ -552,7 +554,7 @@ class authnet
 		$email.
 		"</profile>".
 		"</createCustomerProfileRequest>";
-		
+
 		$request = curl_init($post_url); // initiate curl object
 		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
 		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
@@ -561,19 +563,19 @@ class authnet
 		curl_setopt($request, CURLOPT_SSL_VERIFYPEER, FALSE);   // Verify it belongs to the server.
 	    curl_setopt($request, CURLOPT_SSL_VERIFYHOST, FALSE);   // Check common exists and matches the server host name
 		$post_response = curl_exec($request); // execute curl post and store results in $post_response
-//echo '<pre>'; die(var_dump($post_response));	
+//echo '<pre>'; die(var_dump($post_response));
 		curl_close($request); // close curl object
-		
+
 		@$response = simplexml_load_string($post_response);
-		
+
 		if ($this->debug)
 		{
 			$this->log_it('CreateProfile Params: ', $content);
 			$this->log_it('CreateProfile Response: ', $response);
 		}
-		
+
 		$return = array();
-		
+
 		if($response->messages->resultCode == 'Ok') {
 			$return['success'] = TRUE;
 			$return['profile_id'] = (string)$response->customerProfileId;
@@ -581,21 +583,21 @@ class authnet
 			$return['success'] = FALSE;
 			$return['reason'] = (string)$response->messages->message->text;
 		}
-		
-		return $return;		
+
+		return $return;
 	}
-	
+
 	//---------------------------------------------------------------
-	
+
 	function CreatePaymentProfile($profile_id, $gateway, $credit_card, $customer)
 	{
 		$CI =& get_instance();
-		
+
 		$post_url = $this->GetAPIUrl($gateway, 'arb');
-		
+
 		$first_name = $customer['first_name'];
 		$last_name = $customer['last_name'];
-		
+
 		if (!empty($customer['address_1']) /*and strlen($customer['state']) == 2*/) {
 			$customer_details =  "<company>" . $customer['company'] . "</company>".
 								 "<address>" . $customer['address_1'] . "</address>".
@@ -611,9 +613,9 @@ class authnet
 		else {
 			$customer_details = '';
 		}
-		
+
 		$card_code = (isset($credit_card['cvv'])) ? "<cardCode>" . $credit_card['cvv'] . '</cardCode>' : '';
-		
+
 		$content =
 		"<?xml version=\"1.0\" encoding=\"utf-8\"?>" .
 		"<createCustomerPaymentProfileRequest xmlns=\"AnetApi/xml/v1/schema/AnetApiSchema.xsd\">" .
@@ -638,9 +640,9 @@ class authnet
 		"</payment>".
 		"</paymentProfile>".
 		"<validationMode>testMode</validationMode>\n";
-		 
+
 		$content .= "</createCustomerPaymentProfileRequest>";
-		
+
 		$request = curl_init($post_url); // initiate curl object
 		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
 		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
@@ -649,19 +651,19 @@ class authnet
 	    curl_setopt($request, CURLOPT_SSL_VERIFYHOST, FALSE);   // Check common exists and matches the server host name
 		curl_setopt($request, CURLOPT_POSTFIELDS, $content); // use HTTP POST to send form data
 		$post_response = curl_exec($request); // execute curl post and store results in $post_response
-		
+
 		curl_close($request); // close curl object
-		
+
 		@$response = simplexml_load_string($post_response);
-		
+
 		if ($this->debug)
 		{
 			$this->log_it('CreatePaymentProfile Params: ', $content);
 			$this->log_it('CreatePaymentProfile Response: ', $response);
 		}
-		
+
 		$return = array();
-		
+
 		if($response->messages->resultCode == 'Ok') {
 			$return['success'] = TRUE;
 			$return['payment_profile_id'] = (string)$response->customerPaymentProfileId;
@@ -669,17 +671,17 @@ class authnet
 			$return['success'] = FALSE;
 			$return['reason'] = (string)$response->messages->message->text;
 		}
-		
+
 		return $return;
 	}
-	
+
 	//---------------------------------------------------------------
-	
+
 	function GetCustomerProfile ($profile_id, $gateway) {
 		$CI =& get_instance();
-		
+
 		$post_url = $this->GetAPIUrl($gateway, 'arb');
-		
+
 		$content = '<?xml version="1.0" encoding="utf-8"?>
 					<getCustomerProfileRequest
 					xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd">
@@ -689,7 +691,7 @@ class authnet
 					</merchantAuthentication>
 					<customerProfileId>' . $profile_id . '</customerProfileId>
 					</getCustomerProfileRequest>';
-		
+
 		$request = curl_init($post_url); // initiate curl object
 		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
 		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
@@ -698,34 +700,34 @@ class authnet
 		curl_setopt($request, CURLOPT_SSL_VERIFYPEER, FALSE);   // Verify it belongs to the server.
 	    curl_setopt($request, CURLOPT_SSL_VERIFYHOST, FALSE);   // Check common exists and matches the server host name
 		$post_response = curl_exec($request); // execute curl post and store results in $post_response
-		
+
 		curl_close($request); // close curl object
-		
+
 		@$response = simplexml_load_string($post_response);
-		
+
 		if ($this->debug)
 		{
 			$this->log_it('GetCustomerProfile Params: ', $content);
 			$this->log_it('GetCustomerProfile Response: ', $response);
 		}
-		
+
 		return $response;
 	}
-	
+
 	//--------------------------------------------------------------------
-	
+
 	function AutoRecurringCharge ($client_id, $order_id, $gateway, $params) {
 		return $this->ChargeRecurring($client_id, $gateway, $order_id, $params['api_customer_reference'], $params['api_payment_reference'], $params['amount']);
 	}
-	
+
 	//---------------------------------------------------------------
-	
+
 	function ChargeRecurring($client_id, $gateway, $order_id, $profile_id, $payment_profile_id, $amount)
-	{		
+	{
 		$CI =& get_instance();
-		
+
 		$post_url = $this->GetAPIUrl($gateway, 'arb');
-		
+
 		$content =
 		"<?xml version=\"1.0\" encoding=\"utf-8\"?>" .
 		"<createCustomerProfileTransactionRequest xmlns=\"AnetApi/xml/v1/schema/AnetApiSchema.xsd\">" .
@@ -735,16 +737,17 @@ class authnet
 	    </merchantAuthentication>".
 		"<transaction>".
 		"<profileTransAuthCapture>".
-		"<amount>" . $amount . "</amount>". 
+		"<amount>" . $amount . "</amount>".
 		"<customerProfileId>" . $profile_id . "</customerProfileId>".
 		"<customerPaymentProfileId>" . $payment_profile_id . "</customerPaymentProfileId>".
 		"<order>".
 		"<invoiceNumber>".$order_id."</invoiceNumber>".
+		"<description>Order #".$order_id."</description>".
 		"</order>".
 		"</profileTransAuthCapture>".
 		"</transaction>
 		</createCustomerProfileTransactionRequest>";
-		
+
 		$request = curl_init($post_url); // initiate curl object
 		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
 		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
@@ -753,17 +756,17 @@ class authnet
 		curl_setopt($request, CURLOPT_SSL_VERIFYPEER, FALSE);   // Verify it belongs to the server.
 	    curl_setopt($request, CURLOPT_SSL_VERIFYHOST, FALSE);   // Check common exists and matches the server host name
 		$post_response = curl_exec($request); // execute curl post and store results in $post_response
-		
+
 		curl_close($request); // close curl object
-		
+
 		@$post_response = simplexml_load_string($post_response);
-		
+
 		if ($this->debug)
 		{
 			$this->log_it('ChargeRecurring Params: ', $content);
 			$this->log_it('ChargeRecurring Response: ', $post_response);
 		}
-		
+
 		if($post_response->messages->resultCode == 'Ok') {
 			// Get the auth code
 			$post_response = explode(',', $post_response->directResponse);
@@ -774,23 +777,23 @@ class authnet
 			$response['success'] = FALSE;
 			$response['reason'] = (string)$post_response->messages->message->text[0];
 		}
-		
-		return $response;	
+
+		return $response;
 	}
-	
+
 	//---------------------------------------------------------------
-	
+
 	function UpdateRecurring()
-	{ 
+	{
 		return TRUE;
 	}
-	
+
 	//---------------------------------------------------------------
-	
+
 	function Process($order_id, $post_url, $post_string, $test = FALSE)
 	{
 		$CI =& get_instance();
-		
+
 		$request = curl_init($post_url); // initiate curl object
 		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
 		curl_setopt($request, CURLOPT_VERBOSE, 1);
@@ -799,23 +802,23 @@ class authnet
 		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
 		curl_setopt($request, CURLOPT_POSTFIELDS, $post_string); // use HTTP POST to send form data
 		$post_response = curl_exec($request); // execute curl post and store results in $post_response
-//	echo '<pre>'; die(print_r($post_response));	
+//	echo '<pre>'; die(print_r($post_response));
 		curl_close ($request); // close curl object
-		
+
 		$response = explode('|',$post_response);
 
 		if(!isset($response[1])) {
 			$response['success'] = FALSE;
 			return $response;
 		}
-		
+
 		if ($test) {
 			if($response[0] == 1) {
 				$response['success'] = TRUE;
 			} else {
 				$response['success'] = FALSE;
 			}
-	
+
 			return $response;
 		}
 		// Get the response.  1 for the first part meant that it was successful.  Anything else and it failed
@@ -823,12 +826,12 @@ class authnet
 			$CI->load->model('order_authorization_model');
 			$CI->order_authorization_model->SaveAuthorization($order_id, $response[6], $response[4]);
 			$CI->charge_model->SetStatus($order_id, 1);
-			
+
 			$response['success'] = TRUE;
 		} else {
 			$CI->load->model('charge_model');
 			$CI->charge_model->SetStatus($order_id, 0);
-			
+
 			$response['success'] = FALSE;
 			$response['reason'] = $response[3];
 		}
@@ -836,9 +839,9 @@ class authnet
 		return $response;
 
 	}
-	
+
 	//---------------------------------------------------------------
-	
+
 	function GetAPIUrl ($gateway, $mode = FALSE) {
 		if ($mode == FALSE) {
 			// Get the proper URL
@@ -870,15 +873,15 @@ class authnet
 				break;
 			}
 		}
-		
+
 		return $post_url;
 	}
-	
+
 	//---------------------------------------------------------------
-	
+
 	/**
 	 * Htmlspecialchars all individual items in an array.
-	 * 
+	 *
 	 */
 	function EncodeArray(&$items = null)
 	{
@@ -886,7 +889,7 @@ class authnet
 		{
 			return;
 		}
-		
+
 		foreach ($items as $item => &$value)
 		{
 			if (is_string($value))
@@ -899,35 +902,36 @@ class authnet
 			}
 		}
 	}
-	
+
 	//---------------------------------------------------------------
-	
+
 	/*
 		Method: log_it()
-		
+
 		Logs the transaction to a file. Helpful with debugging callback
 		transactions, since we can't actually see what's going on.
-		
+
 		Parameters:
 			$heading	- A string to be placed above the resutls
 			$params		- Typically an array to print_r out so that we can inspect it.
 	*/
-	public function log_it($heading, $params) 
+	public function log_it($heading, $params)
 	{
 		$file = FCPATH .'writeable/gateway_log.txt';
-		
+
+		$content  = '';
 		$content .= "\n\n//---------------------------------------------------------------\n";
 		$content .= "\n\n[{$this->settings['name']}] $heading\n";
 		$content .= date('Y-m-d H:i:s') ."\n\n";
 		$content .= print_r($params, true);
 		file_put_contents($file, $content, FILE_APPEND);
 	}
-	
+
 	//--------------------------------------------------------------------
-	
+
 	/*
 	function Auth($client_id, $order_id, $gateway, $customer, $params, $credit_card)
-	{	
+	{
 		// Get the proper URL
 		switch($gateway['mode'])
 		{
@@ -941,14 +945,14 @@ class authnet
 				$post_url = $gateway['url_dev'];
 			break;
 		}
-		
+
 		$post_values = array(
 			"x_login"			=> $gateway['login_id'],
-			"x_tran_key"		=> $gateway['transaction_key'],		
+			"x_tran_key"		=> $gateway['transaction_key'],
 			"x_version"			=> "3.1",
 			"x_delim_data"		=> "TRUE",
 			"x_delim_char"		=> "|",
-			"x_relay_response"	=> "FALSE",		
+			"x_relay_response"	=> "FALSE",
 			"x_type"			=> "AUTH_ONLY",
 			"x_method"			=> "CC",
 			"x_card_num"		=> $credit_card['card_num'],
@@ -958,8 +962,8 @@ class authnet
 
 		if(isset($credit_card->cvv)) {
 			$post_values['x_card_code'] = $credit_card['cvv'];
-		}	
-		
+		}
+
 		if(isset($params['customer_id'])) {
 			$post_values['x_first_name'] = $customer['first_name'];
 			$post_values['x_last_name'] = $customer['last_name'];
@@ -967,20 +971,20 @@ class authnet
 			$post_values['x_state'] = $customer['state'];
 			$post_values['x_zip'] = $customer['postal_code'];
 		}
-		
+
 		if(isset($params['description'])) {
 			$post_values['x_description'] = $params['description'];
 		}
-			
+
 		$post_string = "";
 		foreach( $post_values as $key => $value )
 			{ $post_string .= "$key=" . urlencode( $value ) . "&"; }
 		$post_string = rtrim( $post_string, "& " );
-		
+
 		$response = $this->Process($order_id, $post_url, $post_string);
-		
+
 		$CI =& get_instance();
-		
+
 		if($response['success']){
 			$response_array = array('charge_id' => $order_id);
 			$response = $CI->response->TransactionResponse(1, $response_array);
@@ -988,14 +992,14 @@ class authnet
 			$response_array = array('reason' => $response['reason']);
 			$response = $CI->response->TransactionResponse(2, $response_array);
 		}
-		
+
 		return $response;
 	}
-	
+
 	function Capture($client_id, $order_id, $gateway, $customer, $params)
-	{	
+	{
 		$CI =& get_instance();
-		
+
 		// Get the proper URL
 		switch($gateway['mode'])
 		{
@@ -1009,32 +1013,32 @@ class authnet
 				$post_url = $gateway['url_dev'];
 			break;
 		}
-		
+
 		// Get the tran id
 		$CI->load->model('order_authorization_model');
 		$order = $CI->order_authorization_model->GetAuthorization($order_id);
-		
+
 		$post_values = array(
 			"x_login"			=> $gateway['login_id'],
 			"x_tran_key"		=> $gateway['transaction_key'],
-		
+
 			"x_version"			=> "3.1",
 			"x_delim_data"		=> "TRUE",
 			"x_delim_char"		=> "|",
 			"x_relay_response"	=> "FALSE",
-		
+
 			"x_type"			=> "PRIOR_AUTH_CAPTURE",
 			"x_method"			=> "CC",
 			"x_tran_id"			=> $order->tran_id
 			);
-			
+
 		$post_string = "";
 		foreach( $post_values as $key => $value )
 			{ $post_string .= "$key=" . urlencode( $value ) . "&"; }
 		$post_string = rtrim( $post_string, "& " );
-		
+
 		$response = $this->Process($order_id, $post_url, $post_string);
-		
+
 		if($response['success']){
 			$response_array = array('charge_id' => $order_id);
 			$response = $CI->response->TransactionResponse(1, $response_array);
@@ -1042,7 +1046,7 @@ class authnet
 			$response_array = array('reason' => $response['reason']);
 			$response = $CI->response->TransactionResponse(2, $response_array);
 		}
-		
+
 		return $response;
 	}*/
 }
