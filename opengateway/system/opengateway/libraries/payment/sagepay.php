@@ -565,7 +565,7 @@ class sagepay
 			</script>
 		</head>
 		<body onload='OnLoadEvent()'>
-			<form name='form' action='{$data['ACSURL']}' method='post'>
+			<form name='form' action='{" . urlencode($data['ACSURL']) . "}' method='post'>
 				<input type='hidden' name='PaReq' value='" . str_pad($data['PAReq'], $pareqy, "=") . "' />
 				<input type='hidden' name='TermUrl' value='{$return_url}' />
 				<input type='hidden' name='MD' value='{$data['MD']}' />
