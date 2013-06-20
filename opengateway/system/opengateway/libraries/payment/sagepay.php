@@ -43,7 +43,7 @@ class sagepay
 										'mode',
 										'vendor',
 										'currency',
-										'3dsecure',
+										'_3dsecure',
 										'accept_visa',
 										'accept_mc',
 										'accept_discover',
@@ -59,7 +59,7 @@ class sagepay
 																		'1' => 'Enabled',
 																		'0' => 'Disabled')
 														),
-										'3dsecure' => array(
+										'_3dsecure' => array(
 														'text' => 'Use 3D Secure?',
 														'type' => 'radio',
 														'options' => array(
@@ -156,7 +156,7 @@ class sagepay
 
 	//--------------------------------------------------------------------
 
-	function Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card, $return_url, $cancel_url, $txtype = 'PAYMENT')
+	function Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card, $return_url, $cancel_url, $custom=array(), $txtype = 'PAYMENT')
 	{
 		$post_url = $this->GetAPIUrl($gateway);
 
@@ -194,7 +194,7 @@ class sagepay
 		/*
 			3D Secure
 		*/
-		if ($gateway['3dsecure'] == 1)
+		if ($gateway['_3dsecure'] == 1)
 		{
 			$post_values['Apply3DSecure'] = 0;
 		}
@@ -278,11 +278,11 @@ class sagepay
 			$this->ci->charge_data_model->Save($order_id, 'PAReq', $response['PAReq']);
 			$this->ci->charge_data_model->Save($order_id, 'ACSURL', $response['ACSURL']);
 
-//			$this->ci->charge_data_model->Save($order_id, 'return_url', $return_url);
-//			$this->ci->charge_data_model->Save($order_id, 'cancel_url', $cancel_url);
+			$this->ci->charge_data_model->Save($order_id, 'return_url', $return_url);
+			$this->ci->charge_data_model->Save($order_id, 'cancel_url', $cancel_url);
 
-			$this->ci->charge_data_model->Save($order_id, 'return_url', "https://www.edapt.org.uk/payment/complete");
-			$this->ci->charge_data_model->Save($order_id, 'cancel_url', "https://www.edapt.org.uk/payment/failure");
+			//$this->ci->charge_data_model->Save($order_id, 'return_url', "https://www.edapt.org.uk/payment/complete");
+			//$this->ci->charge_data_model->Save($order_id, 'cancel_url', "https://www.edapt.org.uk/payment/failure");
 
 			$url = site_url('callback/sagepay/form_redirect/'. $order_id);
 
@@ -372,7 +372,7 @@ class sagepay
 			// generate a fake random Order ID - this isn't a true order
 			// If 3DAuth is added, then we have to create a real order
 			// but we'll do it with a $0 value.
-			if ($gateway['3dsecure'] == '1')
+			if ($gateway['_3dsecure'] == '1')
 			{
 				$CI->load->model('charge_model');
 				$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
@@ -381,7 +381,7 @@ class sagepay
 			{
 				$order_id = rand(100000,1000000);
 			}
-			$response = $this->Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card, $return_url, $cancel_url, 'AUTHENTICATE');
+			$response = $this->Charge($client_id, $order_id, $gateway, $customer, $amount, $credit_card, $return_url, $cancel_url, array(), 'AUTHENTICATE');
 
 			/*
 				If this is a 3D Secure response, we need to redirect the
@@ -565,7 +565,7 @@ class sagepay
 			</script>
 		</head>
 		<body onload='OnLoadEvent()'>
-			<form name='form' action='{" . urlencode($data['ACSURL']) . "}' method='post'>
+			<form name='form' action='" . $data['ACSURL'] . "' method='post'>
 				<input type='hidden' name='PaReq' value='" . str_pad($data['PAReq'], $pareqy, "=") . "' />
 				<input type='hidden' name='TermUrl' value='{$return_url}' />
 				<input type='hidden' name='MD' value='{$data['MD']}' />
@@ -726,6 +726,11 @@ class sagepay
 		curl_setopt($request, CURLOPT_POSTFIELDS, $post_string); // use HTTP POST to send form data
 		curl_setopt($request, CURLOPT_SSL_VERIFYPEER, TRUE); // uncomment this line if you get no gateway response.
 		$post_response = curl_exec($request); // execute curl post and store results in $post_response
+
+		if ($this->debug)
+		{
+			$this->log_it('Process CURL Error:', curl_error($request));
+		}
 
 		curl_close ($request); // close curl object
 
