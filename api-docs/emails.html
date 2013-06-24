@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Emails | OpenGateway Documentation</title>
+	<link href="css/style.css" rel="stylesheet" type="text/css" media="screen" />
+</head>
+<body>
+	<div id="page_head">
+		<h1>API Documentation</h1>
+	</div>
+	<div id="wrapper">
+		<div id="navigation">
+			<ul>
+				<li><a href="index.html">Getting Started</a></li>
+				<li class="parent">Method Reference
+					<ul class="children">
+						<li><a href="charges.html">Charges</a></li>
+						<li><a href="recurring.html">Recurring Charges</a></li>
+						<li><a href="paypal.html">Using PayPal Express Checkout</a></li>
+						<li><a href="coupons.html">Coupons</a></li>
+						<li><a href="customers.html">Customers</a></li>
+						<li><a href="plans.html">Recurring Plans</a></li>
+						<li><a href="emails.html">Emails</a></li>
+						<li><a href="gateways.html">Gateways</a></li>
+						<li><a href="clients.html">Clients</a></li>
+					</ul>
+				</li>
+				<li class="parent">General Reference
+					<ul class="children">
+						<li><a href="integrations.html">Gateway Integrations</a></li>
+						<li><a href="datatypes.html">Datatypes</a></li>
+						<li><a href="glossary.html">Glossary</a></li>
+					</ul>
+				</li>
+				<li class="parent">Troubleshooting
+					<ul class="children">
+						<li><a href="error-codes.html">Error Codes</a></li>
+						<li><a href="faq.html">FAQ</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div id="content">
+			<h1>Emails</h1>
+			<p>Emails are an important part of any billing system.  People receive receipts for purchases, administrators receive notices
+			of payment, subscribers receive renewal notices, etc.  This functionality is powered by OpenGateway's powerful email trigger
+			system.  You can create emails and attach them to any one of many "system triggers".  When this trigger is tripped, an email
+			will be sent just as you have configured it to be.</p>
+			<p>These triggers are identical to the triggers used when sending Post notifications for <a href="recurring.html">recurring charges</a>:</p>	
+			<ul>
+				<li>Charge (system name: "charge")</li>
+				<li>New Recurring (system name: "recurring_new")</li>
+				<li>Recurring Charge (system name: "recurring_charge")</li>
+				<li>Recurring Expiration (system name: "recurring_expire")</li>
+				<li>Recurring Cancellation (system name: "recurring_cancel")</li>
+				<li>Recurring to Expire in a Week (system name: "recurring_expiring_in_week")</li>
+				<li>Recurring to Expire in a Month (system name: "recurring_expiring_in_month")</li>
+				<li>Recurring to Autocharge in a Week (system name: "recurring_autorecur_in_week")</li>
+				<li>Recurring to Autocharge in a Month (system name: "recurring_autorecur_in_month")</li>
+				<li>New Customer (system name: "new_customer")</li>
+			</ul>
+			<h2>Variables</h2>
+			<p>Depending on the trigger, there are optional variables that can be placed in the <span class="request">email_subject</span>
+			and <span class="email_body">email_body</span> in the form of <span class="code">[[VARIABLE_NAME]]</span>.  They will be
+			dynamically replaced upon sending the email.</p>
+			<p>To see what variables are available for each system trigger, make a call to <a href="#getemailvariables">GetEmailVariables</a>.</p>
+			
+			<h2>Formatting Dates in Emails</h2>
+
+			<p>Date variables are often available in emails for things like the Next Charge Date, Order Date, etc.  You are able to specify the
+			format for these dates.  For example, while the date variable may be "2010-09-19", you can print this as:</p>
+			<ul>
+				<li>September 19, 2010</li>
+				<li>Sep 19, 2010</li>
+				<li>2010.09.19</li>
+				<li>19-Sep-2010</li>
+				<li>etc.</li>
+			</ul>
+			
+			<p>Formatting is done by passing a parameter with the variable.  For Example: <span class="code">[[NEXT_CHARGE_DATE|"M d, Y"]]</span>.  The second parameter (in quotation marks)
+			tells the application how to display the dates.  You can specify any date format using either of PHP's <a href="http://www.php.net/date">date()</a>
+			and <a href="http://www.php.net/strftime">strftime()</a> formatting styles.</p>
+
+			<h2>Object Data</h2>
+			<p>The following data can be sent in the <a href="#newemail">NewEmail</a> and <a href="#updateemail">UpdateEmail</a>
+			methods.</p>
+			<table class="data" cellpadding="0" cellspacing="0">
+				<thead>
+					<tr>
+						<td>Variable</td>
+						<td>Type</td>
+						<td>Required</td>
+						<td>Format/Example</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><span class="request">trigger_id</span></td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td class="yes">yes</td>
+						<td>The system name of the email trigger (e.g. "charge", "new_customer")</td>
+					</tr>
+					<tr>
+						<td><span class="request">email_subject</span></td>
+						<td><a href="datatypes.html#string">email_subject</a></td>
+						<td class="yes">yes</td>
+						<td>The subject of the email being sent, may include dynamically-generated variables.</td>
+					</tr>
+					<tr>
+						<td><span class="request">email_body</span></td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td class="yes">yes</td>
+						<td>The body of the email, may include dynamically-generated variables.</td>
+					</tr>
+					<tr>
+						<td><span class="request">is_html</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td>yes</td>
+						<td>Set to "1" to send the email with proper HTML headers.  The <span class="request">email_body</span> should be in HTML
+						format.</td>
+					</tr>
+					<tr>
+						<td><span class="request">from_name</span></td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td class="yes">yes</td>
+						<td>The name of the sender.</td>
+					</tr>
+					<tr>
+						<td><span class="request">plan_id</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>Only send the email when the action involves a plan of this type.  Can also be "0" for All Plans (but <i>must</i> involve a plan), or "-1" for No Plans.  Leave blank or don't include as a parameter to have it send for any plan or non-plan.</td>
+					</tr>
+					<tr>
+						<td><span class="request">to_address</span></td>
+						<td><a href="datatypes.html#email">email</a> or <a href="datatypes.html#string">string</a></td>
+						<td class="yes">yes</td>
+						<td>The email address to send the email to.  To send to the current customer, enter "customer".  To send to the email attached to your client account, set to "client".</td>
+					</tr>
+					<tr>
+						<td><span class="request">bcc_address</span></td>
+						<td><a href="datatypes.html#email">email</a> or <a href="datatypes.html#string">string</a></td>
+						<td class="yes">yes</td>
+						<td>The email address to send a Blind Carbon Copy of the email to. To send to the email attached to your client account, set to "client".</td>
+					</tr>
+				</tbody>
+			</table>
+			<h2>Method: <a name="newemail">NewEmail</a></h2>
+			<p>Create a new system email.  Should include all required parameters in Object Data and whichever optional parameters necessary.</p>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> - "600" upon success.</li>
+				<li><span class="response">response_text</span> - A verbose description of the response_code.</li>
+				<li><span class="response">email_id</span> - The ID of the email created.</li>
+			</ul>
+			
+			<h2>Method: <a name="updateemail">UpdateEmail</a></h2>
+			<p>Update a system email.</p>
+			<p>Request data:</p>
+			<ul>
+				<li><span class="request">email_id</span> - The system ID of the email to update.</li>
+				<li>Any of the variables in the Object Data.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> - "601" upon success.</li>
+				<li><span class="response">response_text</span> - A verbose description of the response_code.</li>
+			</ul>
+			
+			<h2>Method: <a name="deleteemail">DeleteEmail</a></h2>
+			<p>Delete an email from the system.</p>
+			<p>Request data:</p>
+			<ul>
+				<li><span class="request">email_id</span> - The system ID of the email to delete.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> - "602" upon success.</li>
+				<li><span class="response">response_text</span> - A verbose description of the response_code.</li>
+			</ul>
+			<h2>Method: <a name="getemail">GetEmail</a></h2>
+			<p>Get a specific email by its ID.</p>
+			<p>Request data:</p>
+			<ul>
+				<li><span class="request">email_id</span> - The system ID of the email to retrieve.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li>A <span class="response">email</span> node with all data available in the format of the Object Data.</li>
+			</ul>
+			<h2>Method: <a name="getemails">GetEmails</a></h2>
+			<p>Returns emails, with optional filters.  If a request is made without any filters, the latest created 100 active emails
+			are returned.</p>
+			<p>Optional filters:</p>
+			<ul>
+				<li><span class="request">email_id</span></li>
+				<li><span class="request">plan_id</span></li>
+				<li><span class="request">to_address</span></li>
+				<li><span class="request">email_subject</span></li>
+				<li><span class="request">deleted</span> - Set to "1" to retrieve deleted emails.  Default: "0" (only active emails).</li>
+				<li><span class="request">offset</span> - Retrieval will begin after <i>offset</i> # of records.  Useful for pagination.  Default: 0.</li>
+				<li><span class="request">limit</span> - The total number of records to retrieve, beginning at the offset.  Maximum: 100.  Default: 100.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">results</span> - Number of records in this response</li>
+				<li><span class="response">total_results</span> - Total # of records to retrieve.  Use <span class="request">offset</span> to gather all records over multiple iterated requests.</li>
+				<li><span class="response">emails</span>
+				<ul>
+					<li>A <span class="response">email</span> node for each returned recurring charge
+					<ul>
+						<li>All data available for the email, as per the Object Data.</li>
+					</ul>
+					</li>
+				</ul></li>
+			</ul>
+			
+			<h2>Method: <a name="getemailvariables">GetEmailVariables</a></h2>
+			<p>Retrieve a list of all available dynamic variables for a particular email trigger.  This is useful
+			when creating a new email.</p>
+			<p>Request data:</p>
+			<ul>
+				<li><span class="request">trigger</span> - The system name of the trigger being requested.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">variables</span>
+					<ul>
+						<li>A <span class="response">variable</span> node for each variable.</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div id="footer">
+		<p class="powered">Powered by the <a href="http://www.opengateway.net/">OpenGateway Billing Engine</a>.
+		<p class="copyright">Copyright &copy; 2009-2010, Electric Function, Inc.  All Rights Reserved.</p>
+		<div style="clear:both"></div>
+	</div>
+</body>
+</html>

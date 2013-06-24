@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>PayPal | OpenGateway Documentation</title>
+	<link href="css/style.css" rel="stylesheet" type="text/css" media="screen" />
+</head>
+<body>
+	<div id="page_head">
+		<h1>API Documentation</h1>
+	</div>
+	<div id="wrapper">
+		<div id="navigation">
+			<ul>
+				<li><a href="index.html">Getting Started</a></li>
+				<li class="parent">Method Reference
+					<ul class="children">
+						<li><a href="charges.html">Charges</a></li>
+						<li><a href="recurring.html">Recurring Charges</a></li>
+						<li><a href="paypal.html">Using PayPal Express Checkout</a></li>
+						<li><a href="coupons.html">Coupons</a></li>
+						<li><a href="customers.html">Customers</a></li>
+						<li><a href="plans.html">Recurring Plans</a></li>
+						<li><a href="emails.html">Emails</a></li>
+						<li><a href="gateways.html">Gateways</a></li>
+						<li><a href="clients.html">Clients</a></li>
+					</ul>
+				</li>
+				<li class="parent">General Reference
+					<ul class="children">
+						<li><a href="integrations.html">Gateway Integrations</a></li>
+						<li><a href="datatypes.html">Datatypes</a></li>
+						<li><a href="glossary.html">Glossary</a></li>
+					</ul>
+				</li>
+				<li class="parent">Troubleshooting
+					<ul class="children">
+						<li><a href="error-codes.html">Error Codes</a></li>
+						<li><a href="faq.html">FAQ</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div id="content">
+			<h1>Using PayPal Express Checkout</h1>
+			<p>Most payment gateways integrate with OpenGateway so that the users stay on your site and the transactions occur in a one-time API call
+			such as <a href="recurring.html">Recur</a> or <a href="charges.html">Charge</a>.  However, PayPal Express Checkout requires users
+			to leave your site and enter their PayPal or credit card information on a PayPal check out page.  So, by it's nature, this
+			gateway functions a little differently than the others.  This documentation covers how Charge and Recur requests differ
+			when using the PayPal Express Checkout gateway.</p>
+			<ul>
+				<li>
+					<b>Send <span class="request">&lt;return_url&gt;</span> and <span class="request">&lt;cancel_url&gt;</span> elements in the
+					root node of your request.</b><br />
+					<span class="request">return_url</span> should specify the complete web address to refer users to after making their purchase.<br />
+					<span class="request">cancel_url</span> should specify the complete web address to refer users to if they choose to abort the payment
+					process.
+				</li>
+				<li>
+					<b>You cannot process charges on behalf of others.</b><br />
+					While many integrations of OpenGateway include a virtual terminal where you can enter credit card information and charge a card,
+					PayPal doesn't allow this because, as stated above, the purchasing customer leaves your site to complete payment.
+				</li>
+				<li>
+					<b>You should not include a <span class="request">credit_card</span> node in your request, as the user is redirected to PayPal
+					and will enter their payment details there.</b>
+				</li>
+			</ul>			
+		</div>
+	</div>
+	<div id="footer">
+		<p class="powered">Powered by the <a href="http://www.opengateway.net/">OpenGateway Billing Engine</a>.
+		<p class="copyright">Copyright &copy; 2009-2010, Electric Function, Inc.  All Rights Reserved.</p>
+		<div style="clear:both"></div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Plans | OpenGateway Documentation</title>
+	<link href="css/style.css" rel="stylesheet" type="text/css" media="screen" />
+</head>
+<body>
+	<div id="page_head">
+		<h1>API Documentation</h1>
+	</div>
+	<div id="wrapper">
+		<div id="navigation">
+			<ul>
+				<li><a href="index.html">Getting Started</a></li>
+				<li class="parent">Method Reference
+					<ul class="children">
+						<li><a href="charges.html">Charges</a></li>
+						<li><a href="recurring.html">Recurring Charges</a></li>
+						<li><a href="paypal.html">Using PayPal Express Checkout</a></li>
+						<li><a href="coupons.html">Coupons</a></li>
+						<li><a href="customers.html">Customers</a></li>
+						<li><a href="plans.html">Recurring Plans</a></li>
+						<li><a href="emails.html">Emails</a></li>
+						<li><a href="gateways.html">Gateways</a></li>
+						<li><a href="clients.html">Clients</a></li>
+					</ul>
+				</li>
+				<li class="parent">General Reference
+					<ul class="children">
+						<li><a href="integrations.html">Gateway Integrations</a></li>
+						<li><a href="datatypes.html">Datatypes</a></li>
+						<li><a href="glossary.html">Glossary</a></li>
+					</ul>
+				</li>
+				<li class="parent">Troubleshooting
+					<ul class="children">
+						<li><a href="error-codes.html">Error Codes</a></li>
+						<li><a href="faq.html">FAQ</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div id="content">
+			<h1>Plans</h1>
+			<p>Recurring plans store information that can be applied to future <a href="recurring.html">recurring charges</a>.
+			They are useful for tracking the subscription status of a user (look for users subscribed to plan X) and making
+			simpler <a href="recurring.html">Recur</a> requests by only including a <span class="request">plan_id</span> in
+			the <span class="request">recur</span> node as opposed to specifying each detail of the subscription such as charge interval,
+			notification URL, free trial, etc.
+			<h2>Object Data</h2>
+			<table class="data" cellpadding="0" cellspacing="0">
+				<thead>
+					<tr>
+						<td>Variable</td>
+						<td>Type</td>
+						<td>Required</td>
+						<td>Format/Example</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>id</td>
+						<td><a href="datatypes.html#automatic">automatic</a></td>
+						<td></td>
+						<td>123456789</td>
+					</tr>
+					<tr>
+						<td>type</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>Either "free" or "paid".</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td class="yes">yes</td>
+						<td>e.g., "Gold Plan"</td>
+					</tr>
+					<tr>
+						<td>amount</td>
+						<td><a href="datatypes.html#money">money</a></td>
+						<td class="yes">yes</td>
+						<td>The amount to charge each charge interval (e.g, "10.95").</td>
+					</tr>
+					<tr>
+						<td>interval</td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td class="yes">yes</td>
+						<td>The number of days between charges (e.g, "30").</td>
+					</tr>
+					<tr>
+						<td>occurrences</td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>The total number of occurrences for the subscription (e.g, "5" for 5 total charges).  Default: Infinite.</td>
+					</tr>
+					<tr>
+						<td>free_trial</td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>If set, each subscription begins with a free trial of this many days (e.g, "7").</td>
+					</tr>
+					<tr>
+						<td>notification_url</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>A URL to send HTTP POST notifications recurring-related events such as expirations, cancellations, payments, etc. (detailed <a href="recurring.html">here</a>).</td>
+					</tr>
+				</tbody>
+			</table>
+			<h2>Method: <a name="newplan">NewPlan</a></h2>
+			<p>Create a new recurring plan.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">plan_type</span> ("free" or "paid"), not required after v1.91</li>
+				<li><span class="request">amount</span></li>
+				<li><span class="request">interval</span></li>
+				<li><span class="request">name</span></li>
+			</ul>
+			<p>Optional data:</p>
+			<ul>
+				<li>Any/all of the object data above, except <span class="response">id</span>.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> of "500", upon success.</li>
+				<li><span class="response">plan_id</span> - The ID of the new plan.</li>
+			</ul>
+			<h2>Method: <a name="updateplan">UpdatePlan</a></h2>
+			<p>Update an existing plan.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">plan_id</span></li>
+			</ul>
+			<p>Optional data:</p>
+			<ul>
+				<li>Any/all of the object data above, except <span class="response">id</span>.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> of "501", upon success.</li>
+			</ul>
+			<h2>Method: <a name="deleteplan">DeletePlan</a></h2>
+			<p>Delete an existing plan.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">plan_id</span></li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> of "502", upon success.</li>
+			</ul>
+			<h2>Method: <a name="getplan">GetPlan</a></h2>
+			<p>Gets a record for an individual plan.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">plan_id</span> - The ID of the plan.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">plan</span>
+				<ul>
+					<li>All available plan data.</li>
+					<li><span class="response">num_customers</span> - Number of active subscribers to this plan.</li>
+					<li><span class="response">status</span> - Either "active" or "deleted".</li>
+				</ul>
+			</ul>
+			<h2>Method: <a name="getplans">GetPlans</a></h2>
+			<p>Searches all plans.  If a request is made without any filters, the first 100 plan records, ordered by "id",
+			are returned.</p>
+			<p>Optional filters:</p>
+			<ul>
+				<li>Any of the variables listed under Object Data, except <span class="request">id</span>.</li>
+				<li><span class="request">deleted</span> - Set to "1" to retrieve only deleted customers.  Default: 0 (only active).</li>
+				<li><span class="request">offset</span> - Retrieval will begin after <i>offset</i> # of records.  Useful for pagination.  Default: 0.</li>
+				<li><span class="request">limit</span> - The total number of records to retrieve, beginning at the offset.  Maximum: 100.  Default: 100.</li>
+				<li><span class="request">sort</span> - The field on which to sort retrieved records.  Default: "id".  Available values:
+					<ul>
+						<li>id</li>
+						<li>amount</li>
+					</ul>
+				</li>
+				<li><span class="request">sort_dir</span> - The direction in which to sort retrieved records.  Default: "asc".  Can also be "desc".</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">results</span> - Number of records in this response</li>
+				<li><span class="response">total_results</span> - Total # of records to retrieve.  Use <span class="request">offset</span> to gather all records over multiple iterated requests.</li>
+				<li><span class="response">plans</span>
+					<ul>
+						<li>A <span class="response">plan</span> node for each returned plan.
+							<ul>
+								<li>All data available for the plan, in the format of GetPlan.</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div id="footer">
+		<p class="powered">Powered by the <a href="http://www.opengateway.net/">OpenGateway Billing Engine</a>.
+		<p class="copyright">Copyright &copy; 2009-2010, Electric Function, Inc.  All Rights Reserved.</p>
+		<div style="clear:both"></div>
+	</div>
+</body>
+</html>

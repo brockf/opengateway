@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>OpenGateway Documentation</title>
+	<link href="css/style.css" rel="stylesheet" type="text/css" media="screen" />
+</head>
+<body>
+	<div id="page_head">
+		<h1>API Documentation</h1>
+	</div>
+	<div id="wrapper">
+		<div id="navigation">
+			<ul>
+				<li><a href="index.html">Getting Started</a></li>
+				<li class="parent">Method Reference
+					<ul class="children">
+						<li><a href="charges.html">Charges</a></li>
+						<li><a href="recurring.html">Recurring Charges</a></li>
+						<li><a href="paypal.html">Using PayPal Express Checkout</a></li>
+						<li><a href="coupons.html">Coupons</a></li>
+						<li><a href="customers.html">Customers</a></li>
+						<li><a href="plans.html">Recurring Plans</a></li>
+						<li><a href="emails.html">Emails</a></li>
+						<li><a href="gateways.html">Gateways</a></li>
+						<li><a href="clients.html">Clients</a></li>
+					</ul>
+				</li>
+				<li class="parent">General Reference
+					<ul class="children">
+						<li><a href="integrations.html">Gateway Integrations</a></li>
+						<li><a href="datatypes.html">Datatypes</a></li>
+						<li><a href="glossary.html">Glossary</a></li>
+					</ul>
+				</li>
+				<li class="parent">Troubleshooting
+					<ul class="children">
+						<li><a href="error-codes.html">Error Codes</a></li>
+						<li><a href="faq.html">FAQ</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div id="content">
+			<h1>Getting Started</h1>
+			<p>The <a href="http://www.opengateway.net/">OpenGateway Billing Engine</a> is multi-gateway single payment
+			and recurring billing payment engine built for integration by web developers.  Through it's simple API and control panel
+			(used optionally, depending on how heavily you rely on the API), OpenGateway handles every aspect of accepting
+			payments online from subscription plans to billing records and billing-related emails.</p>
+			<h2>Intended Audience</h2>
+			<p>This API documentation is intended for web developers who have access to an OpenGateway billing server.  With
+			your <a href="glossary.html#api-identifier">API Identifier</a> and <a href="glossary.html#api-secret-key">API Secret Key</a>,
+			you have permission to submit requests.</p>
+			<p>Developers should have knowledge in a programming language such as PHP, .NET, Python, Perl, or Ruby and
+			have knowledge of web service usage and how to create simple XML requests.</p>
+			<h2>What is the API for?</h2>
+			<p>With the API, you can access every functional aspect of the billing platform.  For those who want to use only
+			certain elements of the API (e.g., to <a href="charges.html">charge</a> credit cards, setup
+			<a href="recurring.html">recurring charges</a>, or <a href="customers.html">create new customer records</a>),
+			the OpenGateway control panel (located at your <a href="glossary.html#root-installation-folder">root installation folder</a>)
+			can handle the less common administrative aspects of your billing setup such as payment gateways, email triggers,
+			and recurring plans.</p>
+			<p>An example usage of the API would be to:</p>
+			<ul>
+				<li>Create a new <a href="customers.html">customer record</a>.</li>
+				<li>Setup a <a href="recurring.html">recurring payment</a> for that customer.</li>
+				<li>When that customer attempts to access a subscribers-only area of your website, <a href="customers.html">check to see
+				if that customer has an active subscription to that plan</a>.</li>
+			</ul>
+			<h2>Documentation Legend</h2>
+			<p>All request parameters will be highlighted like this: <span class="request">request_parameter</span>.</p>
+			<p>All response variables will be highlighted like this: <span class="response">response_variable</span>.</p>
+			<p>Example code will appear in similar boxes colour-coded as either requests or responses.</p>
+			<h2>Authentication</h2>
+			<p>All API requests are authenticated with an <a href="glossary.html#api-identifier">API Identifier</a> and
+			<a href="glossary.html#api-secret-key">API Secret Key</a> passed in the request.</p>
+			<p>Example Request:</p>
+			<pre class="request">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;request&gt;
+	&lt;authentication&gt;
+		&lt;api_id&gt;FAKE000API000ID&lt;/api_id&gt;
+	        &lt;secret_key&gt;FAKE000API000SECRET000KEY&lt;/secret_key&gt;
+	&lt;/authentication&gt;
+	&lt;type&gt;GetCustomers&lt;/type&gt;
+	&lt;limit&gt;50&lt;/limit&gt;
+&lt;/request&gt;</pre>
+			<h2>Request Format</h2>
+			<p>Requests must be made in XML format and sent via an HTTP POST call to the OpenGateway platform server.  A secure (https://)
+			connection is required (as per the recommended configuration) for requests that contain credit card information.  Requests should be
+			posted to the API URL.  This located at your <a href="glossary.html#root-installation-folder">root installation folder</a>/api.  So, if
+			you have OpenGateway installed at http://opengateway.example.com, you would use the following URL's:
+			<pre>http://opengateway.example.com/api // URL for non-credit card requests
+https://opengateway.example.com/api // URL for credit card requests</pre>
+			<p>Each request must be accompanied by an <span class="request">authentication</span> node with an <span class="request">api_id</span>
+			and <span class="request">secret_key</span> as well as a <span class="request">type</span> value which specifies the API
+			method to be called (e.g. "NewCustomer", "Charge", or "GetPlan").  All other request parameters vary depending on the API method.</p>
+			<p>In the "Method Reference" section of this documentation, you will find an example of each type of API request, required
+			and optional parameters, as well as the response format with examples.</p>
+			<p>Using PHP, an API request might look like this:</p>
+			<pre class="request">&lt;?php
+
+$post_url = 'https://opengateway.example.com/api';
+
+$poststring = '&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;request&gt;
+	&lt;authentication&gt;
+		&lt;api_id&gt;FAKE000API000ID&lt;/api_id&gt;
+		&lt;secret_key&gt;FAKE000API000SECRET000KEY&lt;/secret_key&gt;
+	&lt;/authentication&gt;
+	&lt;type&gt;Charge&lt;/type&gt;
+	&lt;gateway_id&gt;594082&lt;/gateway_id&gt;
+	&lt;credit_card&gt;
+		&lt;card_num&gt;0000123412341234&lt;/card_num&gt;
+		&lt;exp_month&gt;12&lt;/exp_month&gt;
+		&lt;exp_year&gt;2015&lt;/exp_year&gt;
+		&lt;cvv&gt;123&lt;/cvv&gt;
+	&lt;/credit_card&gt;
+	&lt;amount&gt;95.00&lt;/amount&gt;
+&lt;/request&gt;';
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL,$post_url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $poststring); 
+
+$response = curl_exec($ch); 
+
+if(curl_errno($ch))
+{
+    echo curl_error($ch);
+    curl_close($ch);
+    die();
+} else {
+    curl_close($ch);
+
+    /**
+    * deal with the $response
+    * because this was a charge, we'll look for &quot;response_code&quot; == 1
+    * to indicate success
+    */
+}</pre>
+			<h2>Response Format</h2>
+			<p>Responses can be in XML, JSON, or serialized PHP format.  The default response format is XML.  To request another
+			format, send a <span class="request">format</span> parameter with a value of either "json" or "php".</p>
+			<p>Example response in XML format (for a <b>GetCustomer</b> call):</p>
+			<pre class="response">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;response&gt;
+  &lt;customer&gt;
+    &lt;id&gt;140&lt;/id&gt;
+    &lt;internal_id/&gt;
+    &lt;first_name&gt;Joe&lt;/first_name&gt;
+    &lt;last_name&gt;Customer&lt;/last_name&gt;
+    &lt;company/&gt;
+    &lt;address_1&gt;12345 Ontario St.&lt;/address_1&gt;
+    &lt;address_2/&gt;
+    &lt;city&gt;Toronto&lt;/city&gt;
+    &lt;state&gt;ON&lt;/state&gt;
+    &lt;postal_code&gt;A1B2C3&lt;/postal_code&gt;
+    &lt;country&gt;CA&lt;/country&gt;
+    &lt;email&gt;joe@example.com&lt;/email&gt;
+    &lt;phone/&gt;
+    &lt;plans&gt;
+      &lt;plan&gt;
+        &lt;id&gt;123456789&lt;/id&gt;
+        &lt;type&gt;paid&lt;/type&gt;
+        &lt;name&gt;Fake Plan&lt;/name&gt;
+        &lt;amount&gt;14.95&lt;/amount&gt;
+        &lt;interval&gt;30&lt;/interval&gt;
+        &lt;notification_url&gt;http://www.example.com/post.php&lt;/notification_url&gt;
+        &lt;status&gt;active&lt;/status&gt;
+      &lt;/plan&gt;
+    &lt;/plans&gt;
+  &lt;/customer&gt;
+&lt;/response&gt;</pre>
+		</div>
+		<h2>CodeIgniter</h2>
+		<p>OpenGateway is powered by the <a href="http://www.codeigniter.com">CodeIgniter</a> PHP framework.</p>
+	</div>
+	<div id="footer">
+		<p class="powered">Powered by the <a href="http://www.opengateway.net/">OpenGateway Billing Engine</a>.
+		<p class="copyright">Copyright &copy; 2009-2010, Electric Function, Inc.  All Rights Reserved.</p>
+		<div style="clear:both"></div>
+	</div>
+</body>
+</html>

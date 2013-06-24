@@ -1,0 +1,294 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Clients | OpenGateway Documentation</title>
+	<link href="css/style.css" rel="stylesheet" type="text/css" media="screen" />
+</head>
+<body>
+	<div id="page_head">
+		<h1>API Documentation</h1>
+	</div>
+	<div id="wrapper">
+		<div id="navigation">
+			<ul>
+				<li><a href="index.html">Getting Started</a></li>
+				<li class="parent">Method Reference
+					<ul class="children">
+						<li><a href="charges.html">Charges</a></li>
+						<li><a href="recurring.html">Recurring Charges</a></li>
+						<li><a href="paypal.html">Using PayPal Express Checkout</a></li>
+						<li><a href="coupons.html">Coupons</a></li>
+						<li><a href="customers.html">Customers</a></li>
+						<li><a href="plans.html">Recurring Plans</a></li>
+						<li><a href="emails.html">Emails</a></li>
+						<li><a href="gateways.html">Gateways</a></li>
+						<li><a href="clients.html">Clients</a></li>
+					</ul>
+				</li>
+				<li class="parent">General Reference
+					<ul class="children">
+						<li><a href="integrations.html">Gateway Integrations</a></li>
+						<li><a href="datatypes.html">Datatypes</a></li>
+						<li><a href="glossary.html">Glossary</a></li>
+					</ul>
+				</li>
+				<li class="parent">Troubleshooting
+					<ul class="children">
+						<li><a href="error-codes.html">Error Codes</a></li>
+						<li><a href="faq.html">FAQ</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div id="content">
+			<h1>Clients</h1>
+			<p>Clients are the accounts which have access via the API and control panel to the OpenGateway
+			billing engine.  There are three types of clients:</p>
+			<ul>
+				<li><b>Administrators</b> - Can create accounts of any type, and edit/suspend/delete any account from the server.</li>
+				<li><b>Service Providers</b> - Can create end user accounts, and edit/suspend/delete accounts which they have created.</li>
+				<li><b>End Users</b> - Can only edit their own account.</li>
+			</ul>
+			<h2>Object Data</h2>
+			<table class="data" cellpadding="0" cellspacing="0">
+				<thead>
+					<tr>
+						<td>Variable</td>
+						<td>Type</td>
+						<td>Required</td>
+						<td>Format/Example</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>id</td>
+						<td><a href="datatypes.html#automatic">automatic</a></td>
+						<td></td>
+						<td>123456789</td>
+					</tr>
+					<tr>
+						<td>client_type</td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>"3" = Administrator, "1" = Service Provider, "0" = End User</td>
+					</tr>
+					<tr>
+						<td>parent_id</td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>The client ID of the parent account, if available.</td>
+					</tr>
+					<tr>
+						<td>api_id</td>
+						<td><a href="datatypes.html#string">api_id</a></td>
+						<td></td>
+						<td>The client's API Identifier string.</td>
+					</tr>
+					<tr>
+						<td>secret_key</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>The secret key used in API requests.</td>
+					</tr>
+					<tr>
+						<td>username</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>The username of the client account.</td>
+					</tr>
+					<tr>
+						<td>first_name</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td class="yes">yes</td>
+						<td>Joe</td>
+					</tr>
+					<tr>
+						<td>last_name</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td class="yes">yes</td>
+						<td>Smith</td>
+					</tr>
+					<tr>
+						<td>address_1</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>12345 Fake St.</td>
+					</tr>
+					<tr>
+						<td>address_2</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>For apartment/unit/suite #'s, eg. "Unit 2".</td>
+					</tr>
+					<tr>
+						<td>city</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>Toronto</td>
+					</tr>
+					<tr>
+						<td>state</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>The state/province/region of the customer.  For the US and Canada, this must be supplied as the two letter abbreviation, eg. "ON"</td>
+					</tr>
+					<tr>
+						<td>country</td>
+						<td><a href="datatypes.html#country">country</a></td>
+						<td></td>
+						<td>The ISO 3166-1 alpha-2 code of the customer's country, e.g. "CA", "US".</td>
+					</tr>
+					<tr>
+						<td>postal_code</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>The zip or postal code of the user, e.g. "A1B2C3", "90210".</td>
+					</tr>
+					<tr>
+						<td>email</td>
+						<td><a href="datatypes.html#email">email</a></td>
+						<td></td>
+						<td>A valid email address for the customer.</td>
+					</tr>
+					<tr>
+						<td>phone</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>1-555-555-0000</td>
+					</tr>
+					<tr>
+						<td>timezone</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>The timezone offset of the user (e.g., "UM12").  Available options: UM12 (-12 GMT) to UM1, UTC (GMT), and UP1 to UP12 (+12 GMT).</td>
+					</tr>
+				</tbody>
+			</table>
+			<h2>Method: <a name="newclient">NewClient</a></h2>
+			<p>Create a new client.  Only available to Administrators and Service Providers.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">first_name</span></li>
+				<li><span class="request">last_name</span></li>
+				<li><span class="request">company</span></li>
+				<li><span class="request">email</span></li>
+				<li><span class="request">username</span></li>
+				<li><span class="request">password</span></li>
+			</ul>
+			<p>Optional data:</p>
+			<ul>
+				<li>Any/all of the object data above, except <span class="response">id</span>, <span class="response">secret_key</span>, <span class="response">api_id</span>.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> of "300", upon success.</li>
+				<li><span class="response">client_id</span> - The ID of the new client.</li>
+				<li><span class="response">api_id</span> - The auto-generated API Identifier of the client.</li>
+				<li><span class="response">secret_key</span> - The auto-generated Secret Key of the client.</li>
+			</ul>
+			<h2>Method: <a name="updateclient">UpdateClient</a></h2>
+			<p>Update an existing client.  You must have ownership of this account.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">client_id</span></li>
+			</ul>
+			<p>Optional data:</p>
+			<ul>
+				<li>Any/all of the object data above, except <span class="response">id</span>, <span class="response">secret_key</span>, <span class="response">api_id</span>.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> of "301", upon success.</li>
+			</ul>
+			<h2>Method: <a name="updateaccount">UpdateAccount</a></h2>
+			<p>Update your own client account.</p>
+			<p>Required data:</p>
+			<ul>
+				<li>n/a</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> of "301", upon success.</li>
+			</ul>
+			<h2>Method: <a name="suspendclient">SuspendClient</a></h2>
+			<p>Suspend API and Control Panel access for a client.  You must have ownership of this account.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">client_id</span> - The ID of the client.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> of "302", upon success.</li>
+			</ul>
+			<h2>Method: <a name="unsuspendclient">UnsuspendClient</a></h2>
+			<p>Re-instate API and Control Panel access for a client.  You must have ownership of this account.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">client_id</span> - The ID of the client.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> of "303", upon success.</li>
+			</ul>
+			<h2>Method: <a name="deleteclient">DeleteClient</a></h2>
+			<p>Delete a client account.  You must have ownership of this account.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">client_id</span> - The ID of the client.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> of "304", upon success.</li>
+			</ul>
+			<h2>Method: <a name="getclient">GetClient</a></h2>
+			<p>Get data for a client account.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">client_id</span> - The ID of the client.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li>A <span class="response">client</span> node with all data in Object Data.</li>
+			</ul>
+			<h2>Method: <a name="getclients">GetClients</a></h2>
+			<p>Searches all clients.  If a request is made without any filters all clients under your authenticated account are returned.</p>
+			<p>Optional filters:</p>
+			<ul>
+				<li><span class="request">suspended</span> - Set to "1" to retrieve only suspended accounts, "0" to receive only non-suspended accounts.  Default: All accounts.</li>
+				<li><span class="request">username</span> - The client's username.</li>
+				<li><span class="request">email</span> - The client's email.</li>
+				<li><span class="request">sort</span> - The field on which to sort retrieved records.  Default: "id".  Available values:
+					<ul>
+						<li>id</li>
+						<li>username</li>
+						<li>email</li>
+						<li>first_name</li>
+						<li>last_name</li>
+					</ul>
+				</li>
+				<li><span class="request">sort_dir</span> - The direction in which to sort retrieved records.  Default: "asc".  Can also be "desc".</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">results</span> - Number of records in this response</li>
+				<li><span class="response">total_results</span> - Total # of records to retrieve.  Use <span class="request">offset</span> to gather all records over multiple iterated requests.</li>
+				<li><span class="response">clients</span>
+					<ul>
+						<li>A <span class="response">client</span> node for each returned client.
+							<ul>
+								<li>All data available for the client, in the format of GetClient.</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div id="footer">
+		<p class="powered">Powered by the <a href="http://www.opengateway.net/">OpenGateway Billing Engine</a>.
+		<p class="copyright">Copyright &copy; 2009-2010, Electric Function, Inc.  All Rights Reserved.</p>
+		<div style="clear:both"></div>
+	</div>
+</body>
+</html>

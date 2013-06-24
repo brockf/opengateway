@@ -1,0 +1,314 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Error Codes | OpenGateway Documentation</title>
+	<link href="css/style.css" rel="stylesheet" type="text/css" media="screen" />
+</head>
+<body>
+	<div id="page_head">
+		<h1>API Documentation</h1>
+	</div>
+	<div id="wrapper">
+		<div id="navigation">
+			<ul>
+				<li><a href="index.html">Getting Started</a></li>
+				<li class="parent">Method Reference
+					<ul class="children">
+						<li><a href="charges.html">Charges</a></li>
+						<li><a href="recurring.html">Recurring Charges</a></li>
+						<li><a href="paypal.html">Using PayPal Express Checkout</a></li>
+						<li><a href="coupons.html">Coupons</a></li>
+						<li><a href="customers.html">Customers</a></li>
+						<li><a href="plans.html">Recurring Plans</a></li>
+						<li><a href="emails.html">Emails</a></li>
+						<li><a href="gateways.html">Gateways</a></li>
+						<li><a href="clients.html">Clients</a></li>
+					</ul>
+				</li>
+				<li class="parent">General Reference
+					<ul class="children">
+						<li><a href="integrations.html">Gateway Integrations</a></li>
+						<li><a href="datatypes.html">Datatypes</a></li>
+						<li><a href="glossary.html">Glossary</a></li>
+					</ul>
+				</li>
+				<li class="parent">Troubleshooting
+					<ul class="children">
+						<li><a href="error-codes.html">Error Codes</a></li>
+						<li><a href="faq.html">FAQ</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div id="content">
+			<h1>Error Codes</h1>
+			<p>The system attempts to generate helpful error codes that help you fix/improve your application.  A comprehensive
+			list of all error codes is below:</p>
+			<table class="data" cellpadding="0" cellspacing="0">
+				<thead>
+					<tr>
+						<td style="width:15%">Code</td>
+						<td style="width:85%">Text</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>1000</td>
+						<td>Invalid request.</td>
+					</tr>
+						<tr>
+						<td>1001</td>
+						<td>Unable to authenticate.</td>
+					</tr>
+						<tr>
+						<td>1002</td>
+						<td>Invalid request type.</td>
+					</tr>
+						<tr>
+						<td>1004</td>
+						<td>Required fields are missing for this request</td>
+					</tr>
+						<tr>
+						<td>1005</td>
+						<td>Gateway type is required.</td>
+					</tr>
+						<tr>
+						<td>1006</td>
+						<td>Invalid format passed.  Acceptable formats: xml, php, and json.</td>
+					</tr>
+						<tr>
+						<td>1007</td>
+						<td>Invalid country.</td>
+					</tr>
+						<tr>
+						<td>1008</td>
+						<td>Invalid email address</td>
+					</tr>
+						<tr>
+						<td>1010</td>
+						<td>A secure SSL connection is required.</td>
+					</tr>
+						<tr>
+						<td>1009</td>
+						<td>Unspecified error in request.</td>
+					</tr>
+						<tr>
+						<td>1011</td>
+						<td>Invalid timezone.</td>
+					</tr>
+						<tr>
+						<td>1012</td>
+						<td>For USA and Canada addresses, a valid 2-letter state/province abbreviation is required.</td>
+					</tr>
+						<tr>
+						<td>2000</td>
+						<td>Client is not authorized to create new clients.</td>
+					</tr>
+						<tr>
+						<td>2001</td>
+						<td>Invalid External API.</td>
+					</tr>
+						<tr>
+						<td>2002</td>
+						<td>Username is already in use.</td>
+					</tr>
+						<tr>
+						<td>2003</td>
+						<td>Password must contain only letters and numbers and be greater than 5 characters in length.</td>
+					</tr>
+						<tr>
+						<td>2004</td>
+						<td>Invalid client ID.</td>
+					</tr>
+						<tr>
+						<td>2005</td>
+						<td>Error contacting payment gateway.</td>
+					</tr>
+						<tr>
+						<td>2006</td>
+						<td>Only administrators can create new Service Provider accounts.</td>
+					</tr>
+						<tr>
+						<td>2007</td>
+						<td>Invalid client_type.</td>
+					</tr>
+						<tr>
+						<td>3000</td>
+						<td>Invalid gateway ID for this client.</td>
+					</tr>
+						<tr>
+						<td>3001</td>
+						<td>Gateway ID is required.</td>
+					</tr>
+						<tr>
+						<td>3002</td>
+						<td>Client ID is required.</td>
+					</tr>
+						<tr>
+						<td>4000</td>
+						<td>Invalid customer ID.</td>
+					</tr>
+						<tr>
+						<td>4001</td>
+						<td>Invalid charge ID.</td>
+					</tr>
+						<tr>
+						<td>5000</td>
+						<td>A valid Recurring ID is required.</td>
+					</tr>
+						<tr>
+						<td>5001</td>
+						<td>Start date cannot be in the past.</td>
+					</tr>
+						<tr>
+						<td>5002</td>
+						<td>End date cannot be in the past</td>
+					</tr>
+						<tr>
+						<td>5003</td>
+						<td>End date must be later than start date.</td>
+					</tr>
+						<tr>
+						<td>5004</td>
+						<td>A customer ID or cardholder name must be supplied.</td>
+					</tr>
+						<tr>
+						<td>5005</td>
+						<td>Error creating customer profile.</td>
+					</tr>
+						<tr>
+						<td>5006</td>
+						<td>Error creating customer payment profile.</td>
+					</tr>
+						<tr>
+						<td>5007</td>
+						<td>Dates must be valid and in YYYY-MM-DD format.</td>
+					</tr>
+						<tr>
+						<td>5008</td>
+						<td>Invalid credit card number</td>
+					</tr>
+						<tr>
+						<td>5009</td>
+						<td>Invalid amount.</td>
+					</tr>
+						<tr>
+						<td>5010</td>
+						<td>Recurring details are required.</td>
+					</tr>
+						<tr>
+						<td>5011</td>
+						<td>Invalid interval.</td>
+					</tr>
+						<tr>
+						<td>5012</td>
+						<td>A valid description is required.</td>
+					</tr>
+						<tr>
+						<td>5013</td>
+						<td>This transaction requires a billing address.  If no customer ID is supplied, first_name, last_name, address_1, city, state, postal_code, and country are required as part of the customer parameter.</td>
+					</tr>
+						<tr>
+						<td>5014</td>
+						<td>Error cancelling subscription</td>
+					</tr>
+						<tr>
+						<td>5015</td>
+						<td>You cannot modify the plan_id via UpdateRecurring.  You must use ChangeRecurringPlan to upgrade or downgrade a recurring charge.</td>
+					</tr>
+						<tr>
+						<td>5016</td>
+						<td>Recurring billings cannot be updated for this gateway. You must cancel the existing subscription and create a new one.</td>
+					</tr>
+						<tr>
+						<td>5017</td>
+						<td>Gateway is disabled.</td>
+					</tr>
+					<tr>
+						<td>5018</td>
+						<td>This gateway requires customer information to be processed.  Please include a customer_id of an existing customer or a customer node with new customer information in your request.</td>
+					</tr>
+					<tr>
+						<td>5019</td>
+						<td>This gateway requires the purchasing customer's IP address.  Please include a customer_ip_address node in your request.</td>
+					</tr>
+					<tr>
+						<td>5020</td>
+						<td>This gateway does not allow refunds via the API.</td>
+					</tr>
+					<tr>
+						<td>5021</td>
+						<td>Only active gateways can be updated with new credit card details.</td>
+					</tr>
+					<tr>
+						<td>5022</td>
+						<td>This subscription is free - updating credit card details is futile.</td>
+					</tr>
+					<tr>
+						<td>5023</td>
+						<td>The new gateway you have chosen requires customer information but this customer record currently doesn't exist.  Please use UpdateCustomer to add full customer details for this user before calling UpdateCreditCard.</td>
+					</tr>
+						<tr>
+						<td>6000</td>
+						<td>A valid Charge ID is required.</td>
+					</tr>
+						<tr>
+						<td>6001</td>
+						<td>A valid Customer ID is required.</td>
+					</tr>
+						<tr>
+						<td>6002</td>
+						<td>A valid Recurring ID is required</td>
+					</tr>
+						<tr>
+						<td>6003</td>
+						<td>Nothing to update.</td>
+					</tr>
+						<tr>
+						<td>6005</td>
+						<td>Error updating Recurring details.</td>
+					</tr>
+						<tr>
+						<td>6006</td>
+						<td>A valid Plan ID is required.</td>
+					</tr>
+						<tr>
+						<td>7000</td>
+						<td>Invalid plan type.</td>
+					</tr>
+						<tr>
+						<td>7001</td>
+						<td>Invalid Plan ID.</td>
+					</tr>
+						<tr>
+						<td>7002</td>
+						<td>Invalid Free Trial amount.</td>
+					</tr>
+						<tr>
+						<td>7003</td>
+						<td>Invalid occurrences amount.</td>
+					</tr>
+						<tr>
+						<td>8000</td>
+						<td>Invalid Email Trigger.</td>
+					</tr>
+						<tr>
+						<td>8001</td>
+						<td>A valid Email ID is required.</td>
+					</tr>
+						<tr>
+						<td>8002</td>
+						<td>Email body must be encoded.</td>
+					</tr>	
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div id="footer">
+		<p class="powered">Powered by the <a href="http://www.opengateway.net/">OpenGateway Billing Engine</a>.
+		<p class="copyright">Copyright &copy; 2009-2010, Electric Function, Inc.  All Rights Reserved.</p>
+		<div style="clear:both"></div>
+	</div>
+</body>
+</html>

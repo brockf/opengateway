@@ -1,0 +1,387 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Charges | OpenGateway Documentation</title>
+	<link href="css/style.css" rel="stylesheet" type="text/css" media="screen" />
+</head>
+<body>
+	<div id="page_head">
+		<h1>API Documentation</h1>
+	</div>
+	<div id="wrapper">
+		<div id="navigation">
+			<ul>
+				<li><a href="index.html">Getting Started</a></li>
+				<li class="parent">Method Reference
+					<ul class="children">
+						<li><a href="charges.html">Charges</a></li>
+						<li><a href="recurring.html">Recurring Charges</a></li>
+						<li><a href="paypal.html">Using PayPal Express Checkout</a></li>
+						<li><a href="coupons.html">Coupons</a></li>
+						<li><a href="customers.html">Customers</a></li>
+						<li><a href="plans.html">Recurring Plans</a></li>
+						<li><a href="emails.html">Emails</a></li>
+						<li><a href="gateways.html">Gateways</a></li>
+						<li><a href="clients.html">Clients</a></li>
+					</ul>
+				</li>
+				<li class="parent">General Reference
+					<ul class="children">
+						<li><a href="integrations.html">Gateway Integrations</a></li>
+						<li><a href="datatypes.html">Datatypes</a></li>
+						<li><a href="glossary.html">Glossary</a></li>
+					</ul>
+				</li>
+				<li class="parent">Troubleshooting
+					<ul class="children">
+						<li><a href="error-codes.html">Error Codes</a></li>
+						<li><a href="faq.html">FAQ</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div id="content">
+			<h1>Charges</h1>
+			<p>Charges are individual payments made with a credit card.  Charges can be linked to
+			<a href="recurring.html">recurring charges</a> and/or <a href="customers.html">customers</a>.  However,
+			charges can also exist without a link to either a customer or a recurring charge.</p>
+			<p>Charges are processed immediately via the <a href="gateways.html">gateway</a> specified by the <span class="request">gateway_id</span> in
+			the request or by the default gateway associated with the API client.  If there is only one gateway associated with the
+			API account, this gateway will be for the charge.</p>
+			<p>Charges can be created and records of charges can be retrieved.  However, charges cannot be updated and/or deleted
+			because the records serve as receipts for payments made via external payment gateways.  To refund or void charges,
+			one should access their specific payment gateway's control panel.</p>			
+			<h2>Method: <a name="charge">Charge</a></h2>
+			<p>This method is the heart of the billing engine.  A Charge request represents a payment made via a <a href="gateways.html">payment gateway</a>.
+			One makes a request of this type to charge a credit card.</p>
+			<p>To create subscription charges, you will not use this method.  You will use the <a href="recurring.html#recur">Recur</a> method.  However,
+			all individual charges for a recurring subscription are stored in the charges database and returned in <a href="#getcharge">GetCharge</a>
+			and <a href="#getcharges">GetCharges</a> requests.</p>
+			<p>Charge requests can be linked to customers via either a <span class="request">customer_id</span> or an embedded <span class="request">customer</span>
+			node embedded within this request to the API.  For more information on embedding customer data in a Charge request, see the <a href="customers.html">customers</a>
+			page.</p>
+			<p><b>How to add a free charge to a customer (e.g., for records purposes):</b><br />
+			Pass <span class="request">amount</span> as "0".  Complete dummy credit card
+			information with "0000000000000000" as the credit card number and any future expire date.  Your gateway will not be passed
+			this charge.</p>
+			<p>Request data:</p>
+			<table class="data" cellpadding="0" cellspacing="0">
+				<thead>
+					<tr>
+						<td>Variable</td>
+						<td>Type</td>
+						<td>Required</td>
+						<td>Format/Example</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><span class="request">amount</span></td>
+						<td><a href="datatypes.html#money">money</a></td>
+						<td class="yes">yes</td>
+						<td>e.g. "45.67"</td>
+					</tr>
+					<tr>
+						<td><span class="request">coupon</span></td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>A coupon code that relates to a coupon in the database (e.g., "TEST123").  If the coupon code is invalid, it will be ignored.</td>
+					</tr>
+					<tr>
+						<td><span class="request">credit_card</span></td>
+						<td>node</td>
+						<td class="yes">yes</td>
+						<td>All credit card sub-nodes must be included with accurate credit card information regarding the purchaser.</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="request">card_num</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td class="yes">yes</td>
+						<td>The purchaser's credit card number, e.g. "1234567809876543".</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="request">name</span></td>
+						<td><a href="datatypes.html#int">string</a></td>
+						<td class="yes">yes</td>
+						<td>The purchaser's name.  This must match the name on the credit card.</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="request">exp_month</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td class="yes">yes</td>
+						<td>The purchaser's credit card expiry month with 2-digit representation, e.g. "10".</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="request">exp_year</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td class="yes">yes</td>
+						<td>The purchaser's credit card expiry year with 2-digit representation, e.g. "14".</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="request">cvv</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td class="yes">yes</td>
+						<td>The purchaser's credit card CVV2/security number.  It's required for any card where it is available.  If not available on the card, send this parameter as empty.</td>
+					</tr>
+					<tr>
+						<td><span class="request">gateway_id</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>The system ID for the payment gateway used for the charge.  If left empty, the default/only gateway will be used.</td>
+					</tr>
+					<tr>
+						<td><span class="request">customer_id</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>The ID of the customer to link the charge to, e.g. "4".  Only include this parameter if you are not embedding customer information below.  Charges do not need
+						to be linked to a customer.</td>
+					</tr>
+					<tr>
+						<td><span class="request">customer</span></td>
+						<td>node</td>
+						<td></td>
+						<td>Include sub-nodes with any/all available customer data.  For more information, see the "Embedding customer data in Charge/Recur requests"
+						on the <a href="customers.html">customers</a> page.  Only include this parameter if you are not including a <span class="request">customer_id</span>.  Charges
+						do not need to be linked to a customer.</td>
+					</tr>
+					<tr>
+						<td><span class="request">customer_ip_address</span></td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>You can optionally send the purchaser's IP address.</td>
+					</tr>		
+					</tbody>
+			</table>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> - "1" upon success, "2" upon failure.</li>
+				<li><span class="response">response_text</span> - A verbose description of the response_code.</li>
+				<li><span class="response">charge_id</span> - The ID of the charge record.</li>
+				<li><span class="response">customer_id</span> - The ID of the new customer, if a <span class="request">customer</span> node was embedded
+				in the request.</li>
+				<li><span class="response">amount</span> - The amount of the charge, useful for coupon-adjusted requests.</li>
+			</ul>
+			<h2>Method: <a name="refund">Refund</a></h2>
+			<p>Refunds a successful charge.</p>
+			<p><b>Note:</b> Not all gateways allow refunds via their API.  This method will return an error (code = 5020) if this is the case.  It
+			will also return an error if the charging gateway was disabled/deleted, or if the charge cannot be found in the database.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">charge_id</span>- The ID of the charge to refund.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> - "50" upon success, "51" upon failure.</li>
+				<li><span class="response">response_text</span> - A verbose description of the response_code.</li>
+			</ul>
+			<h2>Method: <a name="getcharge">GetCharge</a></h2>
+			<p>Retrieves available information about a previous charge.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">charge_id</span> - The ID of the charge record.</li>
+			</ul>
+			<p>Response data:</p>
+			<table class="data" cellpadding="0" cellspacing="0">
+				<thead>
+					<tr>
+						<td>Variable</td>
+						<td>Type</td>
+						<td>Required</td>
+						<td>Format/Example</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><span class="response">id</span></td>
+						<td><a href="datatypes.html#automatic">automatic</a></td>
+						<td></td>
+						<td>123456789</td>
+					</tr>
+					<tr>
+						<td><span class="response">gateway_id</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>The system ID for the payment gateway used for the charge.</td>
+					</tr>
+					<tr>
+						<td><span class="response">date</span></td>
+						<td><a href="datatypes.html#date">date</a></td>
+						<td></td>
+						<td>The date of the charge.</td>
+					</tr>
+					<tr>
+						<td><span class="response">amount</span></td>
+						<td><a href="datatypes.html#money">money</a></td>
+						<td class="yes">yes</td>
+						<td>e.g. "45.67"</td>
+					</tr>
+					<tr>
+						<td><span class="response">card_last_four</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>The last four digits of the charged credit card.</td>
+					</tr>
+					<tr>
+						<td><span class="response">recurring_id</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>The ID of the recurring charge related to this individual charge.  Only returned if a recurring charge is available.</td>
+					</tr>
+					<tr>
+						<td><span class="response">status</span></td>
+						<td><a href="datatypes.html#string">string</a> (<a href="datatypes.html#automatic">automatic</a>)</td>
+						<td></td>
+						<td>"ok" if the charge was successful, "failed" if the charge was unsuccessful.</td>
+					</tr>
+					<tr>
+						<td colspan="4">If a <span class="request">customer_id</span> is passed in a <a href="#charge">Charge</a> request, a
+						<span class="response">customer</span> node is returned with all available data in the format of a <a href="customers.html#getcustomer">GetCustomer</a>
+						request.</td>	
+					</tr>			
+					</tbody>
+			</table>
+			<p>Example simple response:</p>
+			<pre class="response">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;response&gt;
+  &lt;charge&gt;
+    &lt;id&gt;140&lt;/id&gt;
+    &lt;gateway_id&gt;12345&lt;/gateway_id&gt;
+    &lt;amount&gt;24.95&lt;/amount&gt;
+    &lt;date&gt;2009-05-29 22:11:44&lt;/date&gt;
+    &lt;card_last_four&gt;9876&lt;/card_last_four&gt;
+    &lt;status&gt;ok&lt;/status&gt;
+  &lt;/charge&gt;
+&lt;/response&gt;</pre>
+			<p>Example response with customer information and linked to a recurring charge:</p>
+			<pre class="response">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;response&gt;
+  &lt;charge&gt;
+    &lt;id&gt;140&lt;/id&gt;
+    &lt;gateway_id&gt;12346&lt;/gateway_id&gt;
+    &lt;amount&gt;15.35&lt;/amount&gt;
+    &lt;date&gt;2009-05-14 11:25:14&lt;/date&gt;
+    &lt;card_last_four&gt;5467&lt;/card_last_four&gt;
+    &lt;recurring_id&gt;192824&lt;/recurring_id&gt;
+    &lt;status&gt;ok&lt;/status&gt;
+    &lt;refunded&gt;0&lt;/refunded&gt;
+    &lt;customer&gt;
+	    &lt;id&gt;140&lt;/id&gt;
+	    &lt;internal_id/&gt;
+	    &lt;first_name&gt;Joe&lt;/first_name&gt;
+	    &lt;last_name&gt;Customer&lt;/last_name&gt;
+	    &lt;company/&gt;
+	    &lt;address_1&gt;12345 Ontario St.&lt;/address_1&gt;
+	    &lt;address_2/&gt;
+	    &lt;city&gt;Toronto&lt;/city&gt;
+	    &lt;state&gt;ON&lt;/state&gt;
+	    &lt;postal_code&gt;A1B2C3&lt;/postal_code&gt;
+	    &lt;country&gt;CA&lt;/country&gt;
+	    &lt;email&gt;joe@example.com&lt;/email&gt;
+	    &lt;phone/&gt;
+  	&lt;/customer&gt;
+  &lt;/charge&gt;
+&lt;/response&gt;</pre>
+			<h2>Method: <a name="getcharges">GetCharges</a></h2>
+			<p>Returns records of charges, with optional filters.  If a request is made without any filters, the latest 100 active customer records are
+			returned.</p>
+			<p>Optional filters:</p>
+			<ul>
+				<li><span class="request">id</span></li>
+				<li><span class="request">recurring_id</span> - Get all charges linked to a recurring charge.</li>
+				<li><span class="request">gateway_id</span></li>
+				<li><span class="request">customer_id</span></li>
+				<li><span class="request">customer_last_name</span></li>
+				<li><span class="request">customer_internal_id</span></li>
+				<li><span class="request">recurring_only</span> - Set to "1" to only retrieve charges linked to recurring charges.</li>
+				<li><span class="request">status</span> - Values: "ok", "refunded", or "failed".  If not present in the request, all transactions are returned regardless of status.</li>
+				<li><span class="request">offset</span> - Retrieval will begin after <i>offset</i> # of records.  Useful for pagination.  Default: 0.</li>
+				<li><span class="request">limit</span> - The total number of records to retrieve, beginning at the offset.  Maximum: 100.  Default: 100.</li>
+				<li><span class="request">sort</span> - The field on which to sort retrieved records.  Default: "date".  Available values:
+					<ul>
+						<li>customer_first_name</li>
+						<li>customer_last_name</li>
+						<li>date</li>
+						<li>amount</li>
+					</ul>
+				</li>
+				<li><span class="request">sort_dir</span> - The direction in which to sort retrieved records.  Default: "desc".  Can also be "asc".</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">results</span> - Number of records in this response</li>
+				<li><span class="response">total_results</span> - Total # of records to retrieve.  Use <span class="request">offset</span> to gather all records over multiple iterated requests.</li>
+				<li><span class="response">charges</span>
+				<ul>
+					<li>A <span class="response">charge</span> node for each returned charge
+					<ul>
+						<li>All data available for the charge, in the format of <a name="#getcharge">GetCharge</a>.</li>
+					</ul>
+					</li>
+				</ul></li>
+			</ul>
+			<p>Example response:</p>
+			<pre class="response">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;response&gt;
+  &lt;results&gt;2&lt;/results&gt;
+  &lt;total_results&gt;2&lt;/total_results&gt;
+  &lt;charges&gt;
+     &lt;charge&gt;
+       &lt;id&gt;140&lt;/id&gt;
+       &lt;gateway_id&gt;12345&lt;/gateway_id&gt;
+       &lt;amount&gt;24.95&lt;/amount&gt;
+       &lt;date&gt;2009-05-29 22:11:44&lt;/date&gt;
+       &lt;card_last_four&gt;9876&lt;/card_last_four&gt;
+       &lt;status&gt;ok&lt;/status&gt;
+       &lt;refunded&gt;1&lt;/refunded&gt;
+       &lt;refund_date&gt;2009-06-14 12:11:09&lt;/refund_date&gt;
+     &lt;/charge&gt;
+     &lt;charge&gt;
+       &lt;id&gt;140&lt;/id&gt;
+       &lt;gateway_id&gt;12346&lt;/gateway_id&gt;
+       &lt;amount&gt;15.35&lt;/amount&gt;
+       &lt;date&gt;2009-05-14 11:25:14&lt;/date&gt;
+       &lt;card_last_four&gt;5467&lt;/card_last_four&gt;
+       &lt;recurring_id&gt;192824&lt;/recurring_id&gt;
+       &lt;status&gt;ok&lt;/status&gt;
+       &lt;customer&gt;
+	      &lt;id&gt;140&lt;/id&gt;
+	      &lt;internal_id/&gt;
+	      &lt;first_name&gt;Joe&lt;/first_name&gt;
+	      &lt;last_name&gt;Customer&lt;/last_name&gt;
+	      &lt;company/&gt;
+	      &lt;address_1&gt;12345 Ontario St.&lt;/address_1&gt;
+	      &lt;address_2/&gt;
+	      &lt;city&gt;Toronto&lt;/city&gt;
+	      &lt;state&gt;ON&lt;/state&gt;
+	      &lt;postal_code&gt;A1B2C3&lt;/postal_code&gt;
+	      &lt;country&gt;CA&lt;/country&gt;
+	      &lt;email&gt;joe@example.com&lt;/email&gt;
+	      &lt;phone/&gt;
+       &lt;/customer&gt;
+     &lt;/charge&gt;
+  &lt;/charges&gt;
+&lt;/response&gt;</pre>
+		    <h2>Method: <a name="getlatestcharge">GetLatestCharge</a></h2>
+			<p>Retrieves available information about a previous charge <i>for a customer</i>.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">customer_id</span> - The ID of the customer.</li>
+			</ul>
+			<p>Optional data:</p>
+			<ul>
+				<li><span class="request">gateway_id</span> - Only retrieve data for this gateway ID.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li>All charge data (in the format of <a href="#getcharge">GetCharge</a>).</li>
+			</ul>
+		</div>
+	</div>
+	<div id="footer">
+		<p class="powered">Powered by the <a href="http://www.opengateway.net/">OpenGateway Billing Engine</a>.
+		<p class="copyright">Copyright &copy; 2009-2010, Electric Function, Inc.  All Rights Reserved.</p>
+		<div style="clear:both"></div>
+	</div>
+</body>
+</html>

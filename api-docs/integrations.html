@@ -1,0 +1,373 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Gateway Integrations | OpenGateway Documentation</title>
+	<link href="css/style.css" rel="stylesheet" type="text/css" media="screen" />
+</head>
+<body>
+	<div id="page_head">
+		<h1>API Documentation</h1>
+	</div>
+	<div id="wrapper">
+		<div id="navigation">
+			<ul>
+				<li><a href="index.html">Getting Started</a></li>
+				<li class="parent">Method Reference
+					<ul class="children">
+						<li><a href="charges.html">Charges</a></li>
+						<li><a href="recurring.html">Recurring Charges</a></li>
+						<li><a href="paypal.html">Using PayPal Express Checkout</a></li>
+						<li><a href="coupons.html">Coupons</a></li>
+						<li><a href="customers.html">Customers</a></li>
+						<li><a href="plans.html">Recurring Plans</a></li>
+						<li><a href="emails.html">Emails</a></li>
+						<li><a href="gateways.html">Gateways</a></li>
+						<li><a href="clients.html">Clients</a></li>
+					</ul>
+				</li>
+				<li class="parent">General Reference
+					<ul class="children">
+						<li><a href="integrations.html">Gateway Integrations</a></li>
+						<li><a href="datatypes.html">Datatypes</a></li>
+						<li><a href="glossary.html">Glossary</a></li>
+					</ul>
+				</li>
+				<li class="parent">Troubleshooting
+					<ul class="children">
+						<li><a href="error-codes.html">Error Codes</a></li>
+						<li><a href="faq.html">FAQ</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div id="content">
+			<h1>Payment Library Creation Guide</h1>
+
+				<p>Developers are able to create new payment gateways that work seamlessly with the OpenGateway system. This guide will provide a broad overview of how to do this.</p>
+				
+				<p>This guide is intended for intermediate/advanced PHP developers. It will explain the OpenGateway requirements for a payment gateway.  However, it should be noted
+				that the gateway you are attempting to integrate will have its own procedure for communicating with their payment systems.  You will require
+				API/integration documentation for the payment gateway.  A knowledge of working with XML and SOAP may be required, depending on the gateway's API.</p>
+				
+				<p>Each gateway is a simple combination of a single PHP class library stored at <b>/system/opengateway/libraries/payment/</b> and a single database
+				table entry registering the gateway.</p>
+				
+				<p><b>It is highly suggested that you take a look at at least one current gateway file to understand how gateway integrations work.</b></p>
+				
+				<h3>Database Requirements</h3>
+				
+				<p>In order for a payment gateway to be recognized, you must add a new record entry in the  <b>external_apis</b> table. The table has the following fields: </p>
+				
+				<table class="data" cellpadding="0" cellspacing="0">
+					<thead>
+						<tr>
+							<td>Field</td>
+							<td>Description</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>name</td>
+							<td>The system name for the payment gateway. This must be a single word and may not contain any spaces.</td>
+						</tr>
+						<tr>
+							<td>display_name</td>
+							<td>The name as displayed within the interface.</td>
+						</tr>
+						<tr>
+							<td>prod_url</td>
+							<td>The URL gateway requests are sent to non-recurring Charges in production/live mode.</td>
+						</tr>
+						<tr>
+							<td>test_url</td>
+							<td>The URL gateway requests are sent to non-recurring Charges in test mode.</td>
+						</tr>
+						<tr>
+							<td>dev_url</td>
+							<td>The URL gateway requests are sent to non-recurring Charges in development mode.</td>
+						</tr>
+						<tr>
+							<td>arb_prod_url</td>
+							<td>The URL gateway requests are sent to Recurring Charges in production/live mode.</td>
+						</tr>
+						<tr>
+							<td>arb_test_url</td>
+							<td>The URL gateway requests are sent to Recurring Charges in test mode.</td>
+						</tr>
+						<tr>
+							<td>arb_dev_url</td>
+							<td>The URL gateway requests are sent to Recurring Charges in test mode.</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<p>Only the <span class="request">name</span> and <span class="request">display_name</span> fields are required.  However, most gateways stored the
+				API endpoint URLs for their gateway in this table, as opposed to hard-coding them into the PHP library file.</p>
+				
+				<h3>File Location</h3>
+				
+				<p>The gateway class library file is located at <b>/system/opengateway/libraries/payment/</b>. The name of the file should match the <b>name</b> entered in the database.</p>
+				
+				<h3>Payment Class Structure</h3>
+				
+				<p>The gateway file will contain a single class, sharing the same name as the <b>name</b> entry in the database. </p>
+				
+				<p>It must have a public attribute variable called <span class="request">$settings</span>.</p>
+				
+				<p>At this point, your class should look something like below.</p>
+				
+				<pre class="request">class my_gateway {
+
+	var $settings;
+	
+	function __construct() 
+	{
+		$this->settings = $this->Settings();
+	}
+
+	function Settings () {
+		$this->settings = array();
+	}
+}
+				</pre>
+				
+				<h3>Required Methods</h3>
+				
+				<p>There are 5 methods that are required for the gateway to function.</p>
+				
+					<p><i>void</i> <b>Settings()</b> - Returns an array of all settings for the gateway.  This is a highly structured array.  More information below.</p>
+					<p><i>boolean</i> <b>TestConnection()</b> - Called when the client attempts to setup the gateway. Should attempt a connection with the gateway and verify that the client information is correct.
+						<br/>Parameters:
+						<ul>
+							<li><i>int</i> <b>$client_id</b> - An int with the client's ID.</li>
+							<li><i>int</i> <b>$gateway</b> - An array with the gateway information. (See below).</li>
+						</ul>
+						<br />Returns: <		
+					</p>
+					<p><i>array</i> <b>Charge()</b> - Handles a single, non-recurring charge.
+						<br/>Parameters:
+						<ul>
+							<li><i>int</i> <b>$client_id</b> - An int with the client's ID.</li>
+							<li><i>int</i> <b>$order_id</b> - An int with the order's ID.</li>
+							<li><i>array</i> <b>$gateway</b> - An array with the gateway information. (See below).</li>
+							<li><i>array</i> <b>$customer</b> - An array with the customer's information. (See below).</li>
+							<li><i>float</i> <b>$amount</b> - The total amount to charge.</li>
+							<li><i>array</i> <b>$credit_card</b> - An array with the credit card information that will be used.</li>
+						</ul>
+					</p>
+					<p><i>array</i> <b>Recur()</b> - Called when an initial Recur charge comes through to create a subscription.
+						<br/>Parameters:
+						<ul>
+							<li><i>int</i> <b>$client_id</b> - An int with the client's ID.</li>
+							<li><i>array</i> <b>$gateway</b> - An array with the gateway information. (See below).</li>
+							<li><i>array</i> <b>$customer</b> - An array with the customer information. (See below).</li>
+							<li><i>float</i> <b>$amount</b> - The total amount to charge.</li>
+							<li><i>boolean</i> <b>$charge_today</b> - Whether the card should be charged when the subcription is first created.</li>
+							<li><i>string</i> <b>$start_date</b> - The day the subscription should start.</li>
+							<li><i>string</i> <b>$end_date</b> - The day the subscription should end.</li>
+							<li><i>int</i> <b>$interval</b> - The number of days between subscription charges.</li>
+							<li><i>string</i> <b>$credit_card</b> - An array with the credit card information. (See below).</li>
+							<li><i>int</i> <b>$subscription_id</b> - An int with the subscription's ID.</li>
+							<li><i>int</i><b>$total_occurences</b> - FALSE or an int with the total number of charges.</li>
+						</ul>
+					</p>
+					<p><i>boolean</i> <b>AutoRecurringCharge()</b> - Called whenever a subscription should be charged after the initial creation.
+						<br/>Parameters:
+						<ul>
+							<li><i>int</i> <b>$client_id</b> - An int with the client's ID.</li>
+							<li><i>int</i> <b>$order_id</b> - An in with the order's ID.</li>
+							<li><i>array</i> <b>$gateway</b> - An array with the gateway's information. (See below).</li>
+							<li><i>array</i> <b>$params</b> - An array of extra information.</li>
+						</ul>
+					</p>
+					<p><i>array</i> <b>CancelRecurring()</b> - Called whenever a subscription is cancelled. If your gateway doesn't support API-driven cancellations, just return TRUE.
+						<br/>Parameters:
+						<ul>
+							<li><i>int</i> <b>$client_id</b> - An int with the client's ID.</li>
+							<li><i>array</i> <b>$subscription</b> - An array with the subscription information. (See below).</li>
+						</ul>
+					</p>
+					<p><i>boolean</i> <b>UpdateRecurring()</b> - Called when the client needs to change their subscription information. If your gateway doesn't support API-driven updates, just return <span class="response">FALSE</span>.
+						<br/>Parameters:
+						<ul>
+							<li><i>int</i> <b>$client_id</b> - An int with the client's ID.</li>
+							<li><i>array</i> <b>$gateway</b> - An array with the gateway's information. (See below).</li>
+							<li><i>array</i> <b>$subscription</b> - An array with the subscription's information. (See below).</li>
+							<li><i>array</i> <b>$customer</b> - An array with the customer's information. (See below).</li>
+							<li><i>array</i> <b>$params</b> - An array of extra information.</li>
+						</ul>
+					</p>
+				
+				<h3>Settings Array</h3>
+				
+				<p>The following array contains the required information that each gateway must specify.</p>
+				
+				<p>
+					<ul>
+						<li><i>string</i> <b>name</b> - The system name of the gateway. Can not contain spaces.</li>
+						<li><i>string</i> <b>class_name</b> - The name of the gateway class.</li>
+						<li><i>boolean</i> <b>external</b> - Set to TRUE if the gateway redirects to an external checkout (e.g., PayPal), else FALSE.</li>
+						<li><i>boolean</i> <b>no_credit_card</b> - Set to TRUE if the gateway Charge and Recur requests require credit card information in a <span class="request">credit_card</span> node.</li>
+						<li><i>string</i> <b>description</b> - The description that shows up in the gateway selection screen.</li>
+						<li><i>int</i> <b>is_preferred</b> - Set to TRUE.</li>
+						<li><i>string</i> <b>setup_fee</b> - The dollar amount to setup an account. Shown in the gateway selection screen.</li>
+						<li><i>string</i> <b>monthly_fee</b> - The monthly fee the account costs. Shown in the gateway selection screen.</li>
+						<li><i>string</i> <b>transaction_fee</b> - The amount charged per transaction. Shown in the gateway selection screen.</li>
+						<li><i>string</i> <b>purchase_link</b> - The URL to visit to sign up for an account. Shown in the gateway selection screen.</li>
+						<li><i>int</i> <b>allows_updates</b> - If 0, the gateway API does not support updating client/subscription information. If 1, it does support it.</li>
+						<li><i>int</i> <b>allows_refunds</b> - If 0, the gateway API does not support refunding charges. If 1, it does support it.</li>
+						<li><i>int</i> <b>requires_customer_information</b> - Set to TRUE if the Charge and Recur requests require either a <span class="request">customer_id</span> or a complete <span class="request">customer</span> node for a proper request.</li>
+						<li><i>int</i> <b>requires_customer_ip</b> - If 1, the customer's IP address is made available to pass to the gateway.</li>
+						<li><i>array</i> <b>required_fields</b> - An array of values that hold the information you will request during gateway setup. You can create any values you like here, but there are 2 required values: 
+							<ul>
+								<li>enabled</li>
+								<li>mode</li>
+							</ul>
+						</li>
+						<li><i>array</i> <b>field_details</b> - A multidimensional array that holds the details of the required fields.</li>
+					</ul>
+				</p>
+				
+				<p>Field Detail Array</p>
+				
+				<p>Each item in the field_details array must specify the type, title and options available during setup. We will use the <i>enabled</i> and <i>mode</i> fields to demonstrate the proper format:</p>
+				
+				<pre>'enabled' => array(
+	'text' => 'Enable this gateway?',
+	'type' => 'radio',
+	'options' => array(
+		'1' => 'Enabled',
+		'0' => 'Disabled')
+),
+'mode' => array(
+	'text' => 'Mode',
+	'type' => 'select',
+	'options' => array(
+		'live' => 'Live Mode',
+		'test' => 'Test Mode',
+		'dev' => 'Development Server'
+	)
+)
+				</pre>
+				
+				<p>The following keys are available to use in the field_detail arrays:
+					<ul>
+						<li><i>string</i> <b>text</b> - The name that is displayed in the gateway setup screen.</li>
+						<li><i>string</i> <b>type</b> - The type of field shown. Valid values are: <b>radio, select,</b> and <b>text</b>.</li>
+					</ul>
+				</p>
+				
+				<p>If the field type contains options, like an HTML radio group, or select dropdown, the <b>options</b> array must also be supplied. In the options array, the key represents the value, while the value represents the text to display on the page.</p>
+				
+				<h3>Common Parameter Arrays</h3>
+				
+				<p>The following arrays are used in many of the required methods, above. </p>
+				
+				<p><span class="request">$gateway</span> - Any additional array elements specified in the settings array are also included in this array.<br/>
+					<ul>
+						<li><i>string</i> <b>url_live</b></li>
+						<li><i>string</i> <b>url_test</b></li>
+						<li><i>string</i> <b>url_dev</b></li>
+						<li><i>string</i> <b>arb_url_live</b></li>
+						<li><i>string</i> <b>arb_url_test</b></li>
+						<li><i>string</i> <b>arb_url_dev</b></li>
+						<li><i>string</i> <b>name</b></li>
+						<li><i>string</i> <b>alias</b></li>
+						<li><i>int</i> <b>enabled</b></li>
+						<li><i>int</i> <b>gateway_id</b></li>
+						<li><i>string</i> <b>mode</b></li>
+						<li><i>int</i> <b>customer_id</b></li>
+					</ul>
+				</p>
+				
+				<p><span class="request">$customer</span><br/>
+					<ul>
+						<li><i>int</i> <b>id</b> - Int with the customer's ID.</li>
+						<li><i>int</i> <b>internal_id</b> </li>
+						<li><i>string</i> <b>first_name</b></li>
+						<li><i>string</i> <b>last_name</b></li>
+						<li><i>string</i> <b>company</b></li>
+						<li><i>string</i> <b>address_1</b></li>
+						<li><i>string</i> <b>address_2</b></li>
+						<li><i>string</i> <b>city</b></li>
+						<li><i>string</i> <b>state</b> - 2-digit state abbreviation</li>
+						<li><i>string</i> <b>postal_code</b></li>
+						<li><i>string</i> <b>country</b> - 2-digit country code</li>
+						<li><i>string</i> <b>email</b></li>
+						<li><i>string</i> <b>phone</b></li>
+					</ul>
+				</p>
+				
+				<p><span class="request">$credit_card</span><br/>
+					<ul>
+						<li><i>string</i> <b>name</b> - Full name on credit card.</li>
+						<li><i>string</i> <b>card_num</b></li>
+						<li><i>int</i> <b>exp_month</b> - 2-digit month</li>
+						<li><i>int</i> <b>exp_year</b> - 4-digit year</li>
+						<li><i>int</i> <b>cvv</b> - 3-digit card verification code</li>
+						<li><i>string</i> <b>card_type</b></li>
+					</ul></p>
+				
+				<p><span class="request">$subscription</span><br/>
+					<ul>
+						<li><i>int</i> <b>subscription_id</b></li>
+						<li><i>int</i> <b>client_id</b></li>
+						<li><i>int</i> <b>gateway_id</b></li>
+						<li><i>int</i> <b>customer_id</b></li>
+						<li><i>int</i> <b>plan_id</b></li>
+						<li><i>string</i> <b>notification_url</b> - The URL to return to after gateway charges. Used by PayPal.</li>
+						<li><i>string</i> <b>start_date</b> - YYYY-MM-DD</li>
+						<li><i>string</i> <b>end_date</b> - YYYY-MM-DD</li>
+						<li><i>string</i> <b>last_charge</b> - YYYY-MM-DD</li>
+						<li><i>string</i> <b>next_charge</b> - YYYY-MM-DD</li>
+						<li><i>int</i> <b>number_charge_failures</b></li>
+						<li><i>int</i> <b>number_occurrences</b></li>
+						<li><i>int</i> <b>charge_interval</b></li>
+						<li><i>float</i> <b>amount</b></li>
+						<li><i>string</i> <b>card_last_four</b></li>
+						<li><i>string</i> <b>api_customer_reference</b></li>
+						<li><i>string</i> <b>api_payment_refernce</b></li>
+						<li><i>string</i> <b>api_auth_number</b></li>
+						<li><i>int</i> <b>active</b></li>
+						<li><i>int</i> <b>renewed</b></li>
+						<li><i>int</i> <b>updated</b></li>
+						<li><i>string</i> <b>cancel_date</b> - YYYY-MM-DD HH:MM:SS</li>
+						<li><i>string</i> <b>timestamp</b></li>
+						<li><i>int</i> <b>client_gateway_id</b></li>
+						<li><i>int</i> <b>external_api_id</b></li>
+						<li><i>string</i> <b>alias</b></li>
+						<li><i>int</i> <b>enabled</b></li>
+						<li><i>int</i> <b>deleted</b></li>
+						<li><i>string</i> <b>create_date</b> - YYYY-MM-DD</li>
+						<li><i>string</i> <b>name</b></li>
+						<li><i>string</i> <b>display_name</b></li>
+						<li><i>string</i> <b>prod_url</b></li>
+						<li><i>string</i> <b>test_url</b></li>
+						<li><i>string</i> <b>dev_url</b></li>
+						<li><i>string</i> <b>arb_prod_url</b></li>
+						<li><i>string</i> <b>arb_test_url</b></li>
+						<li><i>string</i> <b>arb_dev_url</b></li>
+					</ul></p>
+				
+				<h3>Example Flows</h3>
+				
+				<p>There are two primary types of gateways, as far as the application flow is concerned.</p>
+				
+				<p><b>Internal Processors</b></p>
+				
+				<p>Internal processors allow the user to enter their payment information on your site. Most of the supported gateways fall into this category, including Authorize.net.</p>
+				
+				<p><b>External Processors</b></p>
+				
+				<p>External processors require the user to fill out the form on their site, and then redirect the user back to your site, where the processing is completed within OpenGateway. PayPal Standard is a primary example of how this works.</p>
+
+		</div>
+	</div>
+	<div id="footer">
+		<p class="powered">Powered by the <a href="http://www.opengateway.net/">OpenGateway Billing Engine</a>.
+		<p class="copyright">Copyright &copy; 2009-2010, Electric Function, Inc.  All Rights Reserved.</p>
+		<div style="clear:both"></div>
+	</div>
+</body>
+</html>

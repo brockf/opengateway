@@ -1,0 +1,585 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Recurring Charges | OpenGateway Documentation</title>
+	<link href="css/style.css" rel="stylesheet" type="text/css" media="screen" />
+</head>
+<body>
+	<div id="page_head">
+		<h1>API Documentation</h1>
+	</div>
+	<div id="wrapper">
+		<div id="navigation">
+			<ul>
+				<li><a href="index.html">Getting Started</a></li>
+				<li class="parent">Method Reference
+					<ul class="children">
+						<li><a href="charges.html">Charges</a></li>
+						<li><a href="recurring.html">Recurring Charges</a></li>
+						<li><a href="paypal.html">Using PayPal Express Checkout</a></li>
+						<li><a href="coupons.html">Coupons</a></li>
+						<li><a href="customers.html">Customers</a></li>
+						<li><a href="plans.html">Recurring Plans</a></li>
+						<li><a href="emails.html">Emails</a></li>
+						<li><a href="gateways.html">Gateways</a></li>
+						<li><a href="clients.html">Clients</a></li>
+					</ul>
+				</li>
+				<li class="parent">General Reference
+					<ul class="children">
+						<li><a href="integrations.html">Gateway Integrations</a></li>
+						<li><a href="datatypes.html">Datatypes</a></li>
+						<li><a href="glossary.html">Glossary</a></li>
+					</ul>
+				</li>
+				<li class="parent">Troubleshooting
+					<ul class="children">
+						<li><a href="error-codes.html">Error Codes</a></li>
+						<li><a href="faq.html">FAQ</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div id="content">
+			<h1>Recurring Charges</h1>
+			<p>Recurring charges are subscription payments that are linked to a customer record.  Customers are billed $X.XX every X days.  Recurring
+			charges can be linked to <a href="plans.html">Recurring Plans</a> via a <span class="request">plan_id</span> or can be independent subscriptions.</p>
+			<p>Recurring charges that do not have a free trial are processed immediately via the <a href="gateways.html">gateway</a> specified by the <span class="request">gateway_id</span> in
+			the request or by the default gateway associated with the API client.  If there is only one gateway associated with the
+			API account, this gateway will be for the charge and all subsequent charges related to the subscription.</p>
+			<h2>Notifications</h2>
+			<p>You have the option of specifying a <span class="request">notification_url</span> for each subscription created.  These notification URL's
+			can also be specified in <a href="plans.html">Recurring Plans</a>.  If a subscription is linked to a <span class="request">notification_url</span>,
+			an HTTP POST request will be sent to this URL when any of the following actions occur:</p>
+			<ul>
+				<li>Charge (posted as: "charge")</li>
+				<li>New Recurring (posted as: "new_recurring")</li>
+				<li>Recurring Charge (posted as: "recurring_charge")</li>
+				<li>Recurring Expiration (posted as: "recurring_expire")</li>
+				<li>Recurring Cancellation (posted as: "recurring_cancel")</li>
+				<li>Recurring to Expire in a Week (posted as: "recurring_expiring_in_week")</li>
+				<li>Recurring to Expire in a Month (posted as: "recurring_expiring_in_month")</li>
+				<li>Recurring to Autocharge in a Week (posted as: "recurring_autorecur_in_week")</li>
+				<li>Recurring to Autocharge in a Month (posted as: "recurring_autorecur_in_month")</li>
+				<li>New Customer (posted as: "new_customer")</li>
+			</ul>
+			<p>Each HTTP POST request will include the following variables:</p>
+		    <ul>
+		    	<li>"action" - The action that tripped the notification (one from the list above).</li>
+			   	<li>"client_id" - Your client ID.</li>
+			   	<li>"secret_key" - Your API secret key.</li>
+			   	<li>"plan_id" - The ID of the plan.</li>
+			   	<li>"customer_id" - The ID of the customer.</li>
+			   	<li>"recurring_id" - The ID of the recurring subscription.</li>
+			   	<li>"charge_id" - The ID of the specific charge, if the event relates to a charge.</li>
+		    </ul>		
+			<h2>Method: <a name="recur">Recur</a></h2>
+			<p>A Recur request creates a subscription via a <a href="gateways.html">payment gateway</a>.
+			One makes a request of this type to charge a credit card at a consistent interval.</p>
+			<p>All individual charges for a recurring subscription are stored in the charges database and returned in <a href="#getcharge">GetCharge</a>
+			and <a href="#getcharges">GetCharges</a> requests.  These request will return a <span class="response">recurring_id</span> - the
+			ID of the recurring payment scheme that generated the individual charge.</p>
+			<p>Recur requests can be linked to customers via either a <span class="request">customer_id</span> or an embedded <span class="request">customer</span>
+			node embedded within this request to the API.  For more information on embedding customer data in a Recur request, see the <a href="customers.html">customers</a>
+			page.  If neither a <span class="request">customer_id</span> or <span class="request">customer</span> node are included in the request,
+			a customer record will be created automatically from the included <span class="request">credit_card > name</span> variable.  Because
+			of this procedure, <i>all recurring charges are linked to a customer record</i>.</p>
+			<p><b>How to charge a different fee for the first interval (e.g. charge $2.99 up-front but $9.99 per month afterwards):</b><br />
+			To charge a different fee for the first interval than subsequent intervals, specify a different value for the parent
+			<span class="request">amount</span> parameter.  Then, if you aren't using a plan, specify the recurring fee in
+			<span class="request">recur > amount</span>.  If you are using a plan, the latter parameter is not required.</p>
+			<p><b>How to add a free recurring charge to an account (e.g., to link a customer to a plan):</b><br />
+			Pass <span class="request">amount</span> and <span class="request">recur > amount</span> as "0".  Complete dummy credit card
+			information with "0000000000000000" as the credit card number and any future expire date.  Your gateway will not be passed
+			this charge.</p>
+			<p>Request data:</p>
+			<table class="data" cellpadding="0" cellspacing="0">
+				<thead>
+					<tr>
+						<td>Variable</td>
+						<td>Type</td>
+						<td>Required</td>
+						<td>Format/Example</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><span class="request">amount</span></td>
+						<td><a href="datatypes.html#money">money</a></td>
+						<td class="yes">yes</td>
+						<td>e.g. "45.67".  This amount is charged upon creation of the subscription.  This price will be charged for the first recurring interval.</td>
+					</tr>
+					<tr>
+						<td><span class="request">coupon</span></td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>A coupon code that relates to a coupon in the database (e.g., "TEST123").  If the coupon code is invalid, it will be ignored.</td>
+					</tr>
+					<tr>
+						<td><span class="request">credit_card</span></td>
+						<td>node</td>
+						<td class="yes">yes</td>
+						<td>All credit card sub-nodes must be included with accurate credit card information regarding the purchaser.</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="request">card_num</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td class="yes">yes</td>
+						<td>The purchaser's credit card number, e.g. "1234567809876543".</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="request">name</span></td>
+						<td><a href="datatypes.html#int">string</a></td>
+						<td class="yes">yes</td>
+						<td>The purchaser's name.  This must match the name on the credit card.</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="request">exp_month</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td class="yes">yes</td>
+						<td>The purchaser's credit card expiry month with 2-digit representation, e.g. "10".</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="request">exp_year</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td class="yes">yes</td>
+						<td>The purchaser's credit card expiry year with 2-digit representation, e.g. "14".</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="request">cvv</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td class="yes">yes</td>
+						<td>The purchaser's credit card CVV2/security number.  It's required for any card where it is available.  If not available on the card, send this parameter as empty.</td>
+					</tr>
+					<tr>
+						<td><span class="request">gateway_id</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>The system ID for the payment gateway used for the charge.  If left empty, the default/only gateway will be used.</td>
+					</tr>
+					<tr>
+						<td><span class="request">customer_id</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>The ID of the customer to link the charge to, e.g. "4".  Only include this parameter if you are not embedding customer information below.  Charges do not need
+						to be linked to a customer.</td>
+					</tr>
+					<tr>
+						<td><span class="request">customer</span></td>
+						<td>node</td>
+						<td></td>
+						<td>Include sub-nodes with any/all available customer data.  For more information, see the "Embedding customer data in Charge/Recur requests"
+						on the <a href="customers.html">customers</a> page.  Only include this parameter if you are not including a <span class="request">customer_id</span>.  Charges
+						do not need to be linked to a customer.</td>
+					</tr>
+					<tr>
+						<td><span class="request">customer_ip_address</span></td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>You can optionally send the purchaser's IP address.</td>
+					</tr>	
+					<tr>
+						<td><span class="request">renew</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>If an existing "recurring_id" is passed in this parameter, expiration notices/POSTS will not be sent for the old subscription, because we know that this new subscription is renewing it.</td>
+					</tr>
+					<tr>
+						<td><span class="request">recur</span></td>
+						<td>node</td>
+						<td class="yes">yes</td>
+						<td>The "recur" node specifies the characteristics of this subscription payment.</td>
+					</tr>	
+					<tr>
+						<td class="subnode"><span class="request">plan_id</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>To use a set of pre-determined and shared characteristics for a subscription payment, it can be linked to a <span class="request">plan_id</span>.
+						This gives the added ability to check which plans a customer is currently subscribed to with
+						<a href="customers.html#getcustomer">GetCustomer</a>, or pull all customers who are currently
+						subscribed to a plan with <a href="customers.html#getcustomers">GetCustomers</a> and the optional <span class="request">plan_id</span> filter.<br /><br />
+						If a <span class="request">plan_id</span> is given, no other parameters are required in the <span class="request">recur</span> node.
+						However, if you pass any other parameters, they will override the plan's default values.  For example, passing an
+						<span class="request">amount</span> parameter in the <span class="request">recur</span> node will change the subscription
+						fee altogether.</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="request">interval</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>Required if no <span class="request">plan_id</span> is passed.  The interval is
+						the number of days between subscription payments.  For example, a monthly subscription could be represented as an interval of "30"
+						or "31".</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="request">amount</span></td>
+						<td><a href="datatypes.html#money">money</a></td>
+						<td></td>
+						<td>The amount to charge the user every "interval" days.  If not included in the request, it will default to the plan's amount (if a
+						<span class="request">plan_id</span> is passed) and, if not linked to plan, the main <span class="request">amount</span> parameter
+						will be used.</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="request">free_trial</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>The number of days to wait before charging the first subscription payment.  If passed, this will override the <span class="request">start_date</span> value.</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="request">occurrences</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>The total number of times to charge the user (inclusive of the first charge).</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="request">start_date</span></td>
+						<td><a href="datatypes.html#shortdate">shortdate</a></td>
+						<td></td>
+						<td>This is the date at which you would like to start the subscription payments.  It will override the start_date automatically created by a free_trial, if given.</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="request">end_date</span></td>
+						<td><a href="datatypes.html#shortdate">shortdate</a></td>
+						<td></td>
+						<td>The date at which this recurring charge will never be charged again to the customer.  If passed, this will override the <span class="request">occurrences</span> value.</td>
+					</tr>
+					</tbody>
+			</table>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> - "100" upon success, "2" upon failure.</li>
+				<li><span class="response">response_text</span> - A verbose description of the response_code.</li>
+				<li><span class="response">recurring_id</span> - The ID of the recurring charge.</li>
+				<li><span class="response">charge_id</span> - The ID of the charge record, if the a charge was made immediately.  Recurring
+				charges are only delayed if a <span class="request">start_date</span> after today is passed or if a <span class="request">free_trial</span>
+				value is set.</li>
+				<li><span class="response">customer_id</span> - The ID of the new customer created and linked to the recurring charge.  This is only returned
+				if a <span class="request">customer_id</span> was not passed in the request (and thus a new customer record was created).</li>
+				<li><span class="response">amount</span> - The amount of the initial charge, useful for coupon-adjusted requests.</li>
+				<li><span class="response">recur_amount</span> - The amount of the recurring charge.</li>
+				<li><span class="response">free_trial</span> - The number of days prior to the start of the subscription.</li>
+				<li><span class="response">start_date</span> - The start date of the subscription.</li>
+			</ul>
+			<h2>Method: <a name="updatecreditcard">UpdateCreditCard</a></h2>
+			<p>Updates the credit card associated with a subscription.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">recurring_id</span></li>
+				<li><span class="request">credit_card</span>
+					<ul>
+						<li><span class="request">card_num</span></li>
+						<li><span class="request">name</span></li>
+						<li><span class="request">exp_month</span></li>
+						<li><span class="request">exp_year</span></li>
+						<li><span class="request">cvv</span> (optional)</li>
+					</ul>
+				</li>
+			</ul>
+			<p>Optional data:</p>
+			<ul>
+				<li><span class="request">plan_id</span></li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> - "104" upon success, "105" upon failure.</li>
+				<li><span class="response">response_text</span> - A verbose description of the response_code.</li>
+				<li><span class="response">recurring_id</span> - The ID of the <b>NEW</b> recurring charge.  OpenGateway creates a new subscription from this new data.</li>
+			</ul>
+			<h2>Method: <a name="getrecurring">GetRecurring</a></h2>
+			<p>Retrieves available information about a recurring charge.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">recurring_id</span> - The ID of the recurring charge.</li>
+			</ul>
+			<p>Response data:</p>
+			<table class="data" cellpadding="0" cellspacing="0">
+				<thead>
+					<tr>
+						<td>Variable</td>
+						<td>Type</td>
+						<td>Required</td>
+						<td>Format/Example</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><span class="response">id</span></td>
+						<td><a href="datatypes.html#automatic">automatic</a></td>
+						<td></td>
+						<td>123456789</td>
+					</tr>
+					<tr>
+						<td><span class="response">gateway_id</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>The system ID for the payment gateway used for each charge related to this recurring charge.</td>
+					</tr>
+					<tr>
+						<td><span class="response">date_created</span></td>
+						<td><a href="datatypes.html#date">shortdate</a></td>
+						<td></td>
+						<td>The date that the recurring charge was created.</td>
+					</tr>
+					<tr>
+						<td><span class="response">amount</span></td>
+						<td><a href="datatypes.html#money">money</a></td>
+						<td class="yes">yes</td>
+						<td>The amount of the recurring charge, e.g. "45.67"</td>
+					</tr>
+					<tr>
+						<td><span class="response">interval</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>The number of days between subscription charges.</td>
+					</tr>
+					<tr>
+						<td><span class="response">start_date</span></td>
+						<td><a href="datatypes.html#shortdate">shortdate</a></td>
+						<td></td>
+						<td>The start date of the subscription.</td>
+					</tr>
+					<tr>
+						<td><span class="response">end_date</span></td>
+						<td><a href="datatypes.html#shortdate">shortdate</a></td>
+						<td></td>
+						<td>The date at which this subscription will not be charged again.</td>
+					</tr>
+					<tr>
+						<td><span class="response">next_charge_date</span></td>
+						<td><a href="datatypes.html#shortdate">shortdate</a></td>
+						<td></td>
+						<td>The date that the next subscription payment will be made.</td>
+					</tr>
+					<tr>
+						<td><span class="response">number_occurrences</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>The number of times that the "amount" will be charged to the customer, inclusive of the first payment.</td>
+					</tr>
+					<tr>
+						<td><span class="response">notification_url</span></td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>The URL at which notifications will be posted to.  Empty if no URL is set.</td>
+					</tr>
+					<tr>
+						<td><span class="response">status</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>Either "active" or "inactive", depending on if the subscription is ongoing or completed/cancelled.</td>
+					</tr>
+					<tr>
+						<td><span class="response">customer</span></td>
+						<td>node</td>
+						<td></td>
+						<td>A node containing all available customer information for the customer linked to this recurring charge.</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="response">id</span></td>
+						<td><a href="datatypes.html#automatic">automatic</a></td>
+						<td></td>
+						<td>123456789</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="response">internal_id</span></td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>A username or user ID in your own records, e.g. "fakeusername", "98765432".</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="response">first_name</span></td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td class="yes">yes</td>
+						<td>Joe</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="response">last_name</span></td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td class="yes">yes</td>
+						<td>Smith</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="response">address_1</span></td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>12345 Fake St.</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="response">address_2</span></td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>For apartment/unit/suite #'s, eg. "Unit 2".</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="response">city</span></td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>Toronto</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="response">state</span></td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>The state/province/region of the customer, eg. "ON".</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="response">country</span></td>
+						<td><a href="datatypes.html#country">country</a></td>
+						<td></td>
+						<td>The ISO 3166-1 alpha-2 code of the customer's country, e.g. "CA", "US".</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="response">postal_code</span></td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>The zip or postal code of the user, e.g. "A1B2C3", "90210".</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="response">email</span></td>
+						<td><a href="datatypes.html#email">email</a></td>
+						<td></td>
+						<td>A valid email address for the customer.</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="response">phone</span></td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>1-555-555-0000</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="response">date_created</span></td>
+						<td><a href="datatypes.html#date">date</a></td>
+						<td></td>
+						<td>The date the customer record was created, e.g. 2009-05-29 04:44:04</td>
+					</tr>
+					<tr>
+						<td><span class="response">plan</span></td>
+						<td>node</td>
+						<td></td>
+						<td>If this recurring charge is linked to a <a href="plans.html">Recurring Plan</a>, the plan
+						information is returned in a node.</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="response">id</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>The ID of the linked plan.</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="response">type</span></td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>Either "free" or "paid" depending on the price of the subscription.</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="response">name</span></td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>The name of the recurring plan.</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="response">amount</span></td>
+						<td><a href="datatypes.html#money">money</a></td>
+						<td></td>
+						<td>The amount charged at each interval.</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="response">interval</span></td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td></td>
+						<td>The number of days between each individual charge for the recurring charge.</td>
+					</tr>
+					<tr>
+						<td class="subnode"><span class="response">notification_url</span></td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>The URL to POST notifications to for recurring charges of this plan type.</td>
+					</tr>
+				</tbody>
+			</table>
+			<h2>Method: <a name="getrecurrings">GetRecurrings</a></h2>
+			<p>Returns records of recurring charges, with optional filters.  If a request is made without any filters, the latest created 100 active recurring charges
+			are	returned.</p>
+			<p>Optional filters:</p>
+			<ul>
+				<li><span class="request">id</span></li>
+				<li><span class="request">gateway_id</span></li>
+				<li><span class="request">customer_id</span></li>
+				<li><span class="request">customer_last_name</span></li>
+				<li><span class="request">customer_internal_id</span></li>
+				<li><span class="request">created_before</span> - A date in the format of <a href="datatypes.html#date">date</a>.</li>
+				<li><span class="request">created_after</span> - A date in the format of <a href="datatypes.html#date">date</a>.</li>
+				<li><span class="request">amount</span> - Only pull recurring charges that charge this amount.</li>
+				<li><span class="request">active</span> - Set to "0" to retrieve inactive recurring charges.  Default: "1" (only active recurring charges).</li>
+				<li><span class="request">plan_id</span> - Only retrieve recurring charges linked to this plan.</li>
+				<li><span class="request">offset</span> - Retrieval will begin after <i>offset</i> # of records.  Useful for pagination.  Default: 0.</li>
+				<li><span class="request">limit</span> - The total number of records to retrieve, beginning at the offset.  Maximum: 100.  Default: 100.</li>
+				<li><span class="request">sort</span> - The field on which to sort retrieved records.  Default: "date".  Available values:
+					<ul>
+						<li>customer_first_name</li>
+						<li>customer_last_name</li>
+						<li>date (the date the recurring charge was created)</li>
+						<li>amount</li>
+					</ul>
+				</li>
+				<li><span class="request">sort_dir</span> - The direction in which to sort retrieved records.  Default: "desc".  Can also be "asc".</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">results</span> - Number of records in this response</li>
+				<li><span class="response">total_results</span> - Total # of records to retrieve.  Use <span class="request">offset</span> to gather all records over multiple iterated requests.</li>
+				<li><span class="response">recurrings</span>
+				<ul>
+					<li>A <span class="response">recurring</span> node for each returned recurring charge
+					<ul>
+						<li>All data available for the recurring charge, in the format of <a name="#getrecurring">GetRecurring</a>.</li>
+					</ul>
+					</li>
+				</ul></li>
+			</ul>
+		    <h2>Method: <a name="changerecurringplan">ChangeRecurringPlan</a></h2>
+			<p>Change the plan of a recurring charge.  This will update the interval, amount, notification_url, and plan_id of the recurring charge.  It will
+			not affect the start_date, end_date, date_created, or total_occurrences.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">recurring_id</span> - The ID of the recurring charge.</li>
+				<li><span class="request">plan_id</span> - The ID of the new plan to link the recurring charge too.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">recurring_id</span> - The ID of the updated recurring charge.</li>
+			</ul>
+			<h2>Method: <a name="updaterecurring">UpdateRecurring</a></h2>
+			<p>Updates a recurring charge.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">recurring_id</span></li>
+			</ul>
+			<p>Optional data that can be updated:</p>
+			<ul>
+				<li><span class="request">recurring_id</span></li>
+				<li><span class="request">customer_id</span></li>
+				<li><span class="request">notification_url</span></li>
+				<li><span class="request">amount</span></li>
+				<li><span class="request">recur</span>
+					<ul>
+						<li><span class="request">interval</span></li>
+					</ul>
+				</li>
+			</ul>
+			<h2>Method: <a name="cancelrecurring">CancelRecurring</a></h2>
+			<p>Cancels an active recurring charge.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">recurring_id</span></li>
+			</ul>
+		</div>
+	</div>
+	<div id="footer">
+		<p class="powered">Powered by the <a href="http://www.opengateway.net/">OpenGateway Billing Engine</a>.
+		<p class="copyright">Copyright &copy; 2009-2010, Electric Function, Inc.  All Rights Reserved.</p>
+		<div style="clear:both"></div>
+	</div>
+</body>
+</html>

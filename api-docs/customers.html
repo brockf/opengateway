@@ -1,0 +1,395 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Customers | OpenGateway Documentation</title>
+	<link href="css/style.css" rel="stylesheet" type="text/css" media="screen" />
+</head>
+<body>
+	<div id="page_head">
+		<h1>API Documentation</h1>
+	</div>
+	<div id="wrapper">
+		<div id="navigation">
+			<ul>
+				<li><a href="index.html">Getting Started</a></li>
+				<li class="parent">Method Reference
+					<ul class="children">
+						<li><a href="charges.html">Charges</a></li>
+						<li><a href="recurring.html">Recurring Charges</a></li>
+						<li><a href="paypal.html">Using PayPal Express Checkout</a></li>
+						<li><a href="coupons.html">Coupons</a></li>
+						<li><a href="customers.html">Customers</a></li>
+						<li><a href="plans.html">Recurring Plans</a></li>
+						<li><a href="emails.html">Emails</a></li>
+						<li><a href="gateways.html">Gateways</a></li>
+						<li><a href="clients.html">Clients</a></li>
+					</ul>
+				</li>
+				<li class="parent">General Reference
+					<ul class="children">
+						<li><a href="integrations.html">Gateway Integrations</a></li>
+						<li><a href="datatypes.html">Datatypes</a></li>
+						<li><a href="glossary.html">Glossary</a></li>
+					</ul>
+				</li>
+				<li class="parent">Troubleshooting
+					<ul class="children">
+						<li><a href="error-codes.html">Error Codes</a></li>
+						<li><a href="faq.html">FAQ</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div id="content">
+			<h1>Customers</h1>
+			<p>When posting a one-time or recurring charge to OpenGateway, you have the option of linking the payment to a
+			customer record.  If you do not supply either an existing <span class="request">customer_id</span> or
+			a <span class="request">customer</span> node with customer information for a recurring charge, a new customer record
+			will automatically create a customer record and return the new <span class="response">customer_id</span> in the
+			successful transaction response.</p>
+			<p>Customer records can be created, update, and deleted via the API.  Furthermore, you can request data about
+			certain customers or search all customers using search filters.</p>
+			<h2>Object Data</h2>
+			<table class="data" cellpadding="0" cellspacing="0">
+				<thead>
+					<tr>
+						<td>Variable</td>
+						<td>Type</td>
+						<td>Required</td>
+						<td>Format/Example</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>id</td>
+						<td><a href="datatypes.html#automatic">automatic</a></td>
+						<td></td>
+						<td>123456789</td>
+					</tr>
+					<tr>
+						<td>internal_id</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>A username or user ID in your own records, e.g. "fakeusername", "98765432".</td>
+					</tr>
+					<tr>
+						<td>first_name</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td class="yes">yes</td>
+						<td>Joe</td>
+					</tr>
+					<tr>
+						<td>last_name</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td class="yes">yes</td>
+						<td>Smith</td>
+					</tr>
+					<tr>
+						<td>address_1</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>12345 Fake St.</td>
+					</tr>
+					<tr>
+						<td>address_2</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>For apartment/unit/suite #'s, eg. "Unit 2".</td>
+					</tr>
+					<tr>
+						<td>city</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>Toronto</td>
+					</tr>
+					<tr>
+						<td>state</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>The state/province/region of the customer.  For the US and Canada, this must be supplied as the two letter abbreviation, eg. "ON"</td>
+					</tr>
+					<tr>
+						<td>country</td>
+						<td><a href="datatypes.html#country">country</a></td>
+						<td></td>
+						<td>The ISO 3166-1 alpha-2 code of the customer's country, e.g. "CA", "US".</td>
+					</tr>
+					<tr>
+						<td>postal_code</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>The zip or postal code of the user, e.g. "A1B2C3", "90210".</td>
+					</tr>
+					<tr>
+						<td>email</td>
+						<td><a href="datatypes.html#email">email</a></td>
+						<td></td>
+						<td>A valid email address for the customer.</td>
+					</tr>
+					<tr>
+						<td>phone</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td></td>
+						<td>1-555-555-0000</td>
+					</tr>
+					<tr>
+						<td>date_created</td>
+						<td><a href="datatypes.html#date">date</a> (<a href="datatypes.html#automatic">automatic</a>)</td>
+						<td></td>
+						<td>The date the record was created, e.g. 2009-05-29 04:44:04</td>
+					</tr>
+				</tbody>
+			</table>
+			<h2>Embedding customer data in Charge/Recur requests</h2>
+			<p>To minimize the number of requests necessary, API users who want to link charges to customers do not have to
+			call both <a href="#newcustomer">NewCustomer</a> and a <a href="charge.html#charge">Charge</a> or <a href="recurring.html#recur">Recur</a>
+			request to link the charge to a new customer.  You can embed a <span class="request">customer</span> node within
+			either of these requests and a new customer will be created automatically.  If you do embed new customer data in a request,
+			a <span class="response">customer_id</span> will be returned in the response, along with other variables such as
+			<span class="response">response_code</span> and <span class="response">charge_id</span>.</p>
+			<p>Example request:</p>
+			<pre class="request">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;request&gt;
+	&lt;authentication&gt;
+		&lt;api_id&gt;FAKE000API000ID&lt;/api_id&gt;
+		&lt;secret_key&gt;FAKE000API000SECRET000KEY&lt;/secret_key&gt;
+	&lt;/authentication&gt;
+	&lt;type&gt;Charge&lt;/type&gt;
+	&lt;gateway_id&gt;594082&lt;/gateway_id&gt;
+	&lt;customer&gt;
+		&lt;first_name&gt;Joe&lt;/first_name&gt;
+		&lt;last_name&gt;Customer&lt;/last_name&gt;
+		&lt;address_1&gt;1345 Ontario Street&lt;/address_1&gt;
+		&lt;address_2&gt;Apt 1&lt;/address_2&gt;
+		&lt;city&gt;Toronto&lt;/city&gt;
+		&lt;state&gt;ON&lt;/state&gt;
+		&lt;postal_code&gt;A1B2C3&lt;/postal_code&gt;
+		&lt;country&gt;CA&lt;/country&gt;
+	&lt;/customer&gt;
+	&lt;credit_card&gt;
+		&lt;card_num&gt;0000123412341234&lt;/card_num&gt;
+		&lt;exp_month&gt;12&lt;/exp_month&gt;
+		&lt;exp_year&gt;2015&lt;/exp_year&gt;
+		&lt;cvv&gt;123&lt;/cvv&gt;
+	&lt;/credit_card&gt;
+	&lt;amount&gt;95.00&lt;/amount&gt;
+&lt;/request&gt;</pre>
+			<h2>Linking Charge/Recur requests to existing customers</h2>
+			<p>If a customer already exists in the system, you can link a new <a href="charge.html#charge">Charge</a>
+			or <a href="recurring.html#recur">Recur</a> request to this customer by embedding a <span class="request">customer_id</span>
+			node in your request.</p>
+			<p>Example request:</p>
+			<pre class="request">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;request&gt;
+	&lt;authentication&gt;
+		&lt;api_id&gt;FAKE000API000ID&lt;/api_id&gt;
+		&lt;secret_key&gt;FAKE000API000SECRET000KEY&lt;/secret_key&gt;
+	&lt;/authentication&gt;
+	&lt;type&gt;Charge&lt;/type&gt;
+	&lt;gateway_id&gt;594082&lt;/gateway_id&gt;
+	&lt;customer_id&gt;123456789&lt;/customer_id&gt;
+	&lt;credit_card&gt;
+		&lt;card_num&gt;0000123412341234&lt;/card_num&gt;
+		&lt;exp_month&gt;12&lt;/exp_month&gt;
+		&lt;exp_year&gt;2015&lt;/exp_year&gt;
+		&lt;cvv&gt;123&lt;/cvv&gt;
+	&lt;/credit_card&gt;
+	&lt;amount&gt;95.00&lt;/amount&gt;
+&lt;/request&gt;</pre>
+			<h2>Method: <a name="newcustomer">NewCustomer</a></h2>
+			<p>Customer records can be created through this method.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">first_name</span></li>
+				<li><span class="request">last_name</span></li>
+			</ul>
+			<p>Optional data:</p>
+			<ul>
+				<li>Any/all of the object data above, except <span class="response">id</span>.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> of "200", upon success.</li>
+				<li><span class="response">customer_id</span> - The ID of the new customer</li>
+			</ul>
+			<h2>Method: <a name="updatecustomer">UpdateCustomer</a></h2>
+			<p>Update an existing customer record.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">customer_id</span></li>
+			</ul>
+			<p>Optional data:</p>
+			<ul>
+				<li>Any/all of the object data above, except <span class="response">id</span>.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> of "201", upon success.</li>
+			</ul>
+			<h2>Method: <a name="deletecustomer">DeleteCustomer</a></h2>
+			<p>Delete an existing customer record.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">customer_id</span></li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> of "202", upon success.</li>
+			</ul>
+			<h2>Method: <a name="getcustomer">GetCustomer</a></h2>
+			<p>Gets a record for an individual customer.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">customer_id</span> - The ID of the customer record.  This is not the <span class="request">internal_id</span>.</li>
+			</ul>
+			<p>All available customer data is returned in the response, including a node of any active
+			<a href="glossary.html#recurring-plans">recurring plans</a> linked to the user.</p>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">customer</span>
+				<ul>
+					<li>All available customer data.</li>
+					<li><span class="response">status</span> - Either "active" or "deleted".</li>
+					<li>If the user has active plans, a <span class="response">plans</span> node filled with each plan's data.</li>
+				</ul>
+			</ul>
+			<p>Example response:</p>
+			<pre class="response">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;response&gt;
+  &lt;customer&gt;
+    &lt;id&gt;140&lt;/id&gt;
+    &lt;internal_id/&gt;
+    &lt;first_name&gt;Joe&lt;/first_name&gt;
+    &lt;last_name&gt;Customer&lt;/last_name&gt;
+    &lt;company/&gt;
+    &lt;address_1&gt;12345 Ontario St.&lt;/address_1&gt;
+    &lt;address_2/&gt;
+    &lt;city&gt;Toronto&lt;/city&gt;
+    &lt;state&gt;ON&lt;/state&gt;
+    &lt;postal_code&gt;A1B2C3&lt;/postal_code&gt;
+    &lt;country&gt;CA&lt;/country&gt;
+    &lt;email&gt;joe@example.com&lt;/email&gt;
+    &lt;phone/&gt;
+    &lt;date_created&gt;2009-05-29 04:44:44&lt;/date_created&gt;
+    &lt;plans&gt;
+      &lt;plan&gt;
+        &lt;id&gt;123456789&lt;/id&gt;
+        &lt;type&gt;paid&lt;/type&gt;
+        &lt;name&gt;Fake Plan&lt;/name&gt;
+        &lt;amount&gt;14.95&lt;/amount&gt;
+        &lt;interval&gt;30&lt;/interval&gt;
+        &lt;notification_url&gt;http://www.example.com/post.php&lt;/notification_url&gt;
+        &lt;status&gt;active&lt;/status&gt;
+      &lt;/plan&gt;
+    &lt;/plans&gt;
+  &lt;/customer&gt;
+&lt;/response&gt;</pre>
+			<h2>Method: <a name="getcustomers">GetCustomers</a></h2>
+			<p>Searches all customers.  If a request is made without any filters, the first 100 customer records, ordered by "last_name",
+			are returned.</p>
+			<p>Optional filters:</p>
+			<ul>
+				<li>Any of the variables listed under Object Data, except <span class="request">id</span>.</li>
+				<li><span class="request">plan_id</span> - Only retrieve customers with an active recurring plan of this ID.</li>
+				<li><span class="request">active_recurring</span> - Only retrieve customers with an active recurring charge of any kind.</li>
+				<li><span class="request">deleted</span> - Set to "1" to retrieve only deleted customers.  Default: 0.</li>
+				<li><span class="request">offset</span> - Retrieval will begin after <i>offset</i> # of records.  Useful for pagination.  Default: 0.</li>
+				<li><span class="request">limit</span> - The total number of records to retrieve, beginning at the offset.  Maximum: 100.  Default: 100.</li>
+				<li><span class="request">sort</span> - The field on which to sort retrieved records.  Default: "last_name".  Available values:
+					<ul>
+						<li>first_name</li>
+						<li>last_name</li>
+						<li>date</li>
+					</ul>
+				</li>
+				<li><span class="request">sort_dir</span> - The direction in which to sort retrieved records.  Default: "asc".  Can also be "desc".</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">results</span> - Number of records in this response</li>
+				<li><span class="response">total_results</span> - Total # of records to retrieve.  Use <span class="request">offset</span> to gather all records over multiple iterated requests.</li>
+				<li><span class="response">customers</span>
+				<ul>
+					<li>A <span class="response">customer</span> node for each returned customer
+					<ul>
+						<li>All data available for the customer, in the format of GetCustomer.</li>
+					</ul>
+					</li>
+				</ul></li>
+			</ul>
+			<p>Example response:</p>
+			<pre class="response">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;response&gt;
+  &lt;results&gt;3&lt;/results&gt;
+  &lt;total_results&gt;3&lt;/total_results&gt;
+  &lt;customers&gt;
+    &lt;customer&gt;
+      &lt;id&gt;5&lt;/id&gt;
+      &lt;internal_id/&gt;
+      &lt;first_name&gt;Joe&lt;/first_name&gt;
+      &lt;last_name&gt;Customer&lt;/last_name&gt;
+      &lt;company/&gt;
+      &lt;address_1&gt;12345 Toronto St.&lt;/address_1&gt;
+      &lt;address_2/&gt;
+      &lt;city&gt;Toronto&lt;/city&gt;
+      &lt;state&gt;ON&lt;/state&gt;
+      &lt;postal_code&gt;A1BC2D&lt;/postal_code&gt;
+      &lt;country&gt;CA&lt;/country&gt;
+      &lt;email/&gt;
+      &lt;phone/&gt;
+      &lt;date_created&gt;2009-05-19 11:11:08&lt;/date_created&gt;
+    &lt;/customer&gt;
+    &lt;customer&gt;
+      &lt;id&gt;4&lt;/id&gt;
+      &lt;internal_id/&gt;
+      &lt;first_name&gt;Paul&lt;/first_name&gt;
+      &lt;last_name&gt;Other&lt;/last_name&gt;
+      &lt;company/&gt;
+      &lt;address_1&gt;54321 Manitoba St.&lt;/address_1&gt;
+      &lt;address_2&gt;Unit 6&lt;/address_2&gt;
+      &lt;city&gt;Winnipeg&lt;/city&gt;
+      &lt;state&gt;MB&lt;/state&gt;
+      &lt;postal_code&gt;A1B2C3&lt;/postal_code&gt;
+      &lt;country&gt;CA&lt;/country&gt;
+      &lt;email/&gt;
+      &lt;phone/&gt;
+      &lt;date_created&gt;2009-04-17 04:44:44&lt;/date_created&gt;
+    &lt;/customer&gt;
+    &lt;customer&gt;
+      &lt;id&gt;3&lt;/id&gt;
+      &lt;internal_id/&gt;
+      &lt;first_name&gt;Carl&lt;/first_name&gt;
+      &lt;last_name&gt;Simpson&lt;/last_name&gt;
+      &lt;company/&gt;
+      &lt;address_1/&gt;
+      &lt;address_2/&gt;
+      &lt;city/&gt;
+      &lt;state/&gt;
+      &lt;postal_code/&gt;
+      &lt;country/&gt;
+      &lt;email/&gt;
+      &lt;phone/&gt;
+      &lt;date_created&gt;2009-03-06 14:23:44&lt;/date_created&gt;
+      &lt;plans&gt;
+        &lt;plan&gt;
+          &lt;id&gt;50593&lt;/id&gt;
+          &lt;type&gt;paid&lt;/type&gt;
+          &lt;name&gt;Fake Plan&lt;/name&gt;
+          &lt;amount&gt;90.00&lt;/amount&gt;
+          &lt;interval&gt;365&lt;/interval&gt;
+          &lt;notification_url/&gt;
+          &lt;status&gt;active&lt;/status&gt;
+        &lt;/plan&gt;
+      &lt;/plans&gt;
+    &lt;/customer&gt;
+&lt;/response&gt;</pre>
+		</div>
+	</div>
+	<div id="footer">
+		<p class="powered">Powered by the <a href="http://www.opengateway.net/">OpenGateway Billing Engine</a>.
+		<p class="copyright">Copyright &copy; 2009-2010, Electric Function, Inc.  All Rights Reserved.</p>
+		<div style="clear:both"></div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Gateways | OpenGateway Documentation</title>
+	<link href="css/style.css" rel="stylesheet" type="text/css" media="screen" />
+</head>
+<body>
+	<div id="page_head">
+		<h1>API Documentation</h1>
+	</div>
+	<div id="wrapper">
+		<div id="navigation">
+			<ul>
+				<li><a href="index.html">Getting Started</a></li>
+				<li class="parent">Method Reference
+					<ul class="children">
+						<li><a href="charges.html">Charges</a></li>
+						<li><a href="recurring.html">Recurring Charges</a></li>
+						<li><a href="paypal.html">Using PayPal Express Checkout</a></li>
+						<li><a href="coupons.html">Coupons</a></li>
+						<li><a href="customers.html">Customers</a></li>
+						<li><a href="plans.html">Recurring Plans</a></li>
+						<li><a href="emails.html">Emails</a></li>
+						<li><a href="gateways.html">Gateways</a></li>
+						<li><a href="clients.html">Clients</a></li>
+					</ul>
+				</li>
+				<li class="parent">General Reference
+					<ul class="children">
+						<li><a href="integrations.html">Gateway Integrations</a></li>
+						<li><a href="datatypes.html">Datatypes</a></li>
+						<li><a href="glossary.html">Glossary</a></li>
+					</ul>
+				</li>
+				<li class="parent">Troubleshooting
+					<ul class="children">
+						<li><a href="error-codes.html">Error Codes</a></li>
+						<li><a href="faq.html">FAQ</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div id="content">
+			<h1>Gateways</h1>
+			<p>Gateways are used to process <a href="charges.html">Charges</a> and <a href="recurring.html">Recurring Charges</a>.
+			<h2>Object Data</h2>
+			<p>All variables for each gateway are required in <a href="gateways.html#newgateway">NewGateway</a> calls.  They may also be updated in UpdateGateway calls
+			but are not required in that request type.</p>
+			<p>Pay attention to the "Gateway" specifier below, as this shows which variables are required for which gateway.</p>
+			<table class="data" cellpadding="0" cellspacing="0">
+				<thead>
+					<tr>
+						<td>Variable</td>
+						<td>Type</td>
+						<td>Gateway</td>
+						<td>Format/Example</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>id</td>
+						<td><a href="datatypes.html#automatic">automatic</a></td>
+						<td>n/a</td>
+						<td>123456789</td>
+					</tr>
+					<tr>
+						<td>gateway_type</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td>all</td>
+						<td>Either "authnet", "paypal", "sagepay", or "exact", at the present time.</td>
+					</tr>
+					<tr>
+						<td>enabled</td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td>all</td>
+						<td>Set to "1" for enabled, "0" for disabled.</td>
+					</tr>
+					<tr>
+						<td>alias</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td>optional for all</td>
+						<td>Specify a nickname for the gateway (to override the default name like "Authorize.net") (Optional).</td>
+					</tr>
+					<tr>
+						<td>mode</td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td>all</td>
+						<td>"1" for Live Transactions, "2" for Test Transactions.  Optional variants:
+							<ul>
+								<li>"3" - Authorize.net Developer Server</li>
+								<li>"3" - SagePay Simulator</li>
+								<li>"3" - PayPal Sandbox</li>
+							</ul>
+						</td>
+					</tr>
+					<tr>
+						<td>accept_visa</td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td>all</td>
+						<td>Accept VISA cards?  "1" to accept, "0" to reject.</td>
+					</tr>
+					<tr>
+						<td>accept_mc</td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td>all</td>
+						<td>Accept MasterCards?  "1" to accept, "0" to reject.</td>
+					</tr>
+					<tr>
+						<td>accept_discover</td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td>all</td>
+						<td>Accept Discover cards?  "1" to accept, "0" to reject.</td>
+					</tr>
+					<tr>
+						<td>accept_dc</td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td>all</td>
+						<td>Accept Diner's Club Cards?  "1" to accept, "0" to reject.</td>
+					</tr>
+					<tr>
+						<td>accept_amex</td>
+						<td><a href="datatypes.html#int">int</a></td>
+						<td>all</td>
+						<td>Accept American Express?  "1" to accept, "0" to reject.</td>
+					</tr>
+					<tr>
+						<td>login_id</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td>authnet</td>
+						<td>The Login ID generated in your Authorize.net control panel.</td>
+					</tr>
+					<tr>
+						<td>transaction_key</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td>authnet</td>
+						<td>The Transaction Key generated in your Authorize.net control panel.</td>
+					</tr>
+					<tr>
+						<td>terminal_id</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td>exact</td>
+						<td>The Terminal ID for your E-xact gateway account.</td>
+					</tr>
+					<tr>
+						<td>user</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td>paypal</td>
+						<td>The API Username for your PayPal Pro account.</td>
+					</tr>
+					<tr>
+						<td>pwd</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td>paypal</td>
+						<td>The API Password for your PayPal Pro account.</td>
+					</tr>
+					<tr>
+						<td>signature</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td>paypal</td>
+						<td>The API Signature for your PayPal Pro account.</td>
+					</tr>
+					<tr>
+						<td>currency</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td>paypal</td>
+						<td>The currency for this gateway: "USD", "CAD", "EUR", "GBP", "AUD", or "JPY".</td>
+					</tr>
+					<tr>
+						<td>vendor</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td>sagepay</td>
+						<td>Your vendor identifier at SagePay.</td>
+					</tr>
+					<tr>
+						<td>currency</td>
+						<td><a href="datatypes.html#string">string</a></td>
+						<td>sagepay</td>
+						<td>The currency for this gateway: "USD", "CAD", "EUR", "GBP", "AUD", "JPY", "CHF", "DKK", "HKD", "IDR", "LUF", "NOK", "NZD", "SEK", "SGD", or "TRL".</td>
+					</tr>
+				</tbody>
+			</table>
+			<h2>Method: <a name="newgateway">NewGateway</a></h2>
+			<p>Gateways can be created through this method.</p>
+			<p>Required data:</p>
+			<ul>
+				<li>All variables in Object Data relating to "all" gateways and specific to your gateway.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> of "400", upon success.</li>
+				<li><span class="response">gateway_id</span> - The ID of the new gateway.</li>
+			</ul>
+			<h2>Method: <a name="updategateway">UpdateGateway</a></h2>
+			<p>Update an existing gateway.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">gateway_id</span></li>
+			</ul>
+			<p>Optional data:</p>
+			<ul>
+				<li>Any/all of the object data relating to your gateway, except <span class="response">id</span>.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> of "401", upon success.</li>
+			</ul>
+			<h2>Method: <a name="makedefaultgateway">MakeDefaultGateway</a></h2>
+			<p>Makes the selected gateway the default gateway.  This gateway will be used for all transactions that did not
+			specify a <span class="request">gateway_id</span> in the request.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">gateway_id</span></li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> of "403", upon success.</li>
+			</ul>
+			<h2>Method: <a name="deletegateway">DeleteGateway</a></h2>
+			<p>Delete an existing gateway.</p>
+			<p>Required data:</p>
+			<ul>
+				<li><span class="request">gateway_id</span></li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">response_code</span> of "402", upon success.</li>
+			</ul>
+			<h2>Method: <a name="getgateways">GetGateways</a></h2>
+			<p>Returns a list of gateway names and ID's.</p>
+			<p>Optional filters:</p>
+			<ul>
+				<li><span class="request">deleted</span> - Set to "1" to retrieve deleted gateways, or else it will only retrieve active gateways.</li>
+				<li><span class="request">offset</span> - Retrieval will begin after <i>offset</i> # of records.  Useful for pagination.  Default: 0.</li>
+				<li><span class="request">limit</span> - The total number of records to retrieve, beginning at the offset.  Maximum: 100.  Default: 100.</li>
+			</ul>
+			<p>Response data:</p>
+			<ul>
+				<li><span class="response">results</span> - Number of records in this response</li>
+				<li><span class="response">total_results</span> - Total # of records to retrieve.  Use <span class="request">offset</span> to gather all records over multiple iterated requests.</li>
+				<li><span class="response">gateways</span>
+				<ul>
+					<li>A <span class="response">gateway</span> node for each returned customer
+					<ul>
+						<li><span class="repsonse">id</span> - The Gateway ID.</li>
+						<li><span class="response">gateway</span> - Either the gateway name (e.g., "Authorize.net") or the gateway alias, if one exists.</li>
+						<li><span class="response">date_created</span></li>
+					</ul>
+					</li>
+				</ul></li>
+			</ul>
+		</div>
+	</div>
+	<div id="footer">
+		<p class="powered">Powered by the <a href="http://www.opengateway.net/">OpenGateway Billing Engine</a>.
+		<p class="copyright">Copyright &copy; 2009-2010, Electric Function, Inc.  All Rights Reserved.</p>
+		<div style="clear:both"></div>
+	</div>
+</body>
+</html>

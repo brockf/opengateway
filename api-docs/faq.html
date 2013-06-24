@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Frequently Asked Questions | OpenGateway Documentation</title>
+	<link href="css/style.css" rel="stylesheet" type="text/css" media="screen" />
+</head>
+<body>
+	<div id="page_head">
+		<h1>API Documentation</h1>
+	</div>
+	<div id="wrapper">
+		<div id="navigation">
+			<ul>
+				<li><a href="index.html">Getting Started</a></li>
+				<li class="parent">Method Reference
+					<ul class="children">
+						<li><a href="charges.html">Charges</a></li>
+						<li><a href="recurring.html">Recurring Charges</a></li>
+						<li><a href="paypal.html">Using PayPal Express Checkout</a></li>
+						<li><a href="coupons.html">Coupons</a></li>
+						<li><a href="customers.html">Customers</a></li>
+						<li><a href="plans.html">Recurring Plans</a></li>
+						<li><a href="emails.html">Emails</a></li>
+						<li><a href="gateways.html">Gateways</a></li>
+						<li><a href="clients.html">Clients</a></li>
+					</ul>
+				</li>
+				<li class="parent">General Reference
+					<ul class="children">
+						<li><a href="integrations.html">Gateway Integrations</a></li>
+						<li><a href="datatypes.html">Datatypes</a></li>
+						<li><a href="glossary.html">Glossary</a></li>
+					</ul>
+				</li>
+				<li class="parent">Troubleshooting
+					<ul class="children">
+						<li><a href="error-codes.html">Error Codes</a></li>
+						<li><a href="faq.html">FAQ</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div id="content">
+			<h1>Frequently Asked Questions</h1>
+			<p><b>What is an API?</b></p>
+			<p>An API, or Application Programming Interface, is a way for programmers to write software that communicates with other software.
+			In this case, the OpenGateway API allows web developers to communicate with OpenGateway to handle credit card payments
+			across multiple gateways and websites.  OpenGateway takes care of a lot of the hassle of web payments and thus makes
+			web developers' lives easier.</p>
+			<p><b>I'm still confused, who should I talk to?</b></p>
+			<p>Any intermediate or advanced web developer should have experience with XML-based Web API's and thus have the knowledge
+			to integrate OpenGateway into your website.  Contact a web developer or <a href="http://www.opengateway.net">OpenGateway</a>
+			to find a developer for your project.  Or, better yet, there may be a plugin already out there that harnesses the power of
+			OpenGateway and integrates it with your website's platform (ie. no development fees!).</p>
+			<p><b>Where do I find my API ID and Secret Key?</b></p>
+			<p>You can view these in the control panel under Settings > API Access.  They should be kept secure at all times.</p>
+			<p><b>My Secret Key isn't secret anymore, what should I do?</b></p>
+			<p>You should immediately regenerate your API access credentials in the control panel and update
+			your plugin software to use these new credentials.  Anyone attempting to access your account via the old credentials
+			will not be able to.  You should also update your account password as an added security measure.</p>
+			<p><b>How do I know what format to send my requests in?  Which variables are required?</b></p>
+			<p>This API documentation contains a list of all API Methods and the request data that must be sent with them.  Any non-required
+			fields can be left out of the request.  If you miss a field, you will receive an error.</p>
+			<p>Most of the methods also include an example request to help you, though these often include non-required fields.  OpenGateway
+			is meant to be as simple as possible for programmers to use so look to see if the information you are sending is actually required.</p>
+		</div>
+	</div>
+	<div id="footer">
+		<p class="powered">Powered by the <a href="http://www.opengateway.net/">OpenGateway Billing Engine</a>.
+		<p class="copyright">Copyright &copy; 2009-2010, Electric Function, Inc.  All Rights Reserved.</p>
+		<div style="clear:both"></div>
+	</div>
+</body>
+</html>

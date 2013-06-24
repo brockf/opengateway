@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Coupons | OpenGateway Documentation</title>
+	<link href="css/style.css" rel="stylesheet" type="text/css" media="screen" />
+</head>
+<body>
+	<div id="page_head">
+		<h1>API Documentation</h1>
+	</div>
+	<div id="wrapper">
+		<div id="navigation">
+			<ul>
+				<li><a href="index.html">Getting Started</a></li>
+				<li class="parent">Method Reference
+					<ul class="children">
+						<li><a href="charges.html">Charges</a></li>
+						<li><a href="recurring.html">Recurring Charges</a></li>
+						<li><a href="paypal.html">Using PayPal Express Checkout</a></li>
+						<li><a href="coupons.html">Coupons</a></li>
+						<li><a href="customers.html">Customers</a></li>
+						<li><a href="plans.html">Recurring Plans</a></li>
+						<li><a href="emails.html">Emails</a></li>
+						<li><a href="gateways.html">Gateways</a></li>
+						<li><a href="clients.html">Clients</a></li>
+					</ul>
+				</li>
+				<li class="parent">General Reference
+					<ul class="children">
+						<li><a href="integrations.html">Gateway Integrations</a></li>
+						<li><a href="datatypes.html">Datatypes</a></li>
+						<li><a href="glossary.html">Glossary</a></li>
+					</ul>
+				</li>
+				<li class="parent">Troubleshooting
+					<ul class="children">
+						<li><a href="error-codes.html">Error Codes</a></li>
+						<li><a href="faq.html">FAQ</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div id="content">
+			<h1>Coupons</h1>
+			<p>Coupons are codes included in either a <span class="request">Charge</span> or <span class="request">Recur</span> request that
+			do one of the following:</p>
+			<ul>
+				<li>Reduce the payment amount (for single charges)</li>
+				<li>Reduce the initial payment amount (for recurring charges)</li>
+				<li>Reduce the recurring payment amount (for recurring charges)</li>
+				<li>Reduce both the initial/recurring charge amounts (for recurring charges)</li>
+				<li>Add/modify the free trial (in days) (for recurring charges)</li>
+			</ul>
+			<p>Coupon values can be either a percentage of the current amount being charged or a set dollar amount.</p>
+			<p>They can also be limited specific plans.</p>
+			<h2>Using Coupons</h2>
+			<p>To use coupons, you must first define coupons in your control panel.</p>
+			<p>After that, simply send a <span class="request">coupon</span> node in your XML Charge or Recur request.  It will automatically be validated
+			and modify the payment accordingly.</p>
+			<h2>Charge/Recur Responses</h2>
+			<p>When a coupon code is used, OpenGateway will adjust the amount, recurring amount, free trial, etc. on its end.  However,
+			some applications may require that these adjusted values be stored locally.  For this reason, the following additional parameters
+			will be now returned in a <b>Charge</b> and <b>Recur</b> API requests:</p>
+			<ul>
+				<li>Charge
+					<ul>
+						<li><span class="response">amount</span> - The (possibly adjusted) amount of the payment.</li>
+					</ul>
+				</li>
+				<li>
+					Recur
+					<ul>
+						<li><span class="response">amount</span> - The (possibly adjusted) amount of the initial charge.</li>
+						<li><span class="response">recur_amount</span> - The (possibly adjusted) amount of the recurring charge.</li>
+						<li><span class="response">free_trial</span> - The (possibly adjusted) number of days before the first charge.</li>
+						<li><span class="response">start_date</span> - The (possibly adjusted) start date for the subscription.</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div id="footer">
+		<p class="powered">Powered by the <a href="http://www.opengateway.net/">OpenGateway Billing Engine</a>.
+		<p class="copyright">Copyright &copy; 2009-2010, Electric Function, Inc.  All Rights Reserved.</p>
+		<div style="clear:both"></div>
+	</div>
+</body>
+</html>
