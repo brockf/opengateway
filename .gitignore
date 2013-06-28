@@ -1,1 +1,11 @@
-.DS_Store
+*.DS_Store
+
+# Ignore folders with custom or
+# temporary files that don't need
+# storing with the repo
+system/opengateway/config/config.php
+system/opengateway/config/database.php
+system/opengateway/config/installed.php
+system/logs/*
+writeable/gateway_log.txt
+writeable/rev_chart*.png
