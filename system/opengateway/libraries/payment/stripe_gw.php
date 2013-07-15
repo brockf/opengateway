@@ -302,32 +302,40 @@ class Stripe_gw {
 	{
 		$CI =& get_instance();
 
-		// Create an order for today's payment
-		$CI->load->model('charge_model');
+		// set customer ID
 		$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
-		$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
-
+		
 		// Create the recurring seed - Done this way for token based API's.
 		$response = $this->CreateProfile($client_id, $gateway, $customer, $credit_card, $subscription_id, $amount, $order_id);
-
-		// Process today's payment
-		if ($charge_today === TRUE) {
-			$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $response['customer_id'], $amount);
-
-			if($response['success'] === TRUE){
-				$CI->charge_model->SetStatus($order_id, 1);
-				$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
-				$response = $CI->response->TransactionResponse(100, $response_array);
+		
+		if ($response['success'] == true) {
+			// Process today's payment
+			if ($charge_today === TRUE) {
+				// Create an order for today's payment
+				$CI->load->model('charge_model');
+				$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
+			
+				$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $response['customer_id'], $amount);
+	
+				if ($response['success'] === TRUE){
+					$CI->charge_model->SetStatus($order_id, 1);
+					$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
+					$response = $CI->response->TransactionResponse(100, $response_array);
+				} else {
+					// Make the subscription inactive
+					$CI->recurring_model->MakeInactive($subscription_id);
+					$CI->charge_model->SetStatus($order_id, 0);
+	
+					$response_array = array('reason' => $response['ResponseSummary']['StatusDescription']);
+					$response = $CI->response->TransactionResponse(2, $response_array);
+				}
 			} else {
-				// Make the subscription inactive
-				$CI->recurring_model->MakeInactive($subscription_id);
-				$CI->charge_model->SetStatus($order_id, 0);
-
-				$response_array = array('reason' => $response['ResponseSummary']['StatusDescription']);
-				$response = $CI->response->TransactionResponse(2, $response_array);
+				$response = $CI->response->TransactionResponse(100, array('recurring_id' => $subscription_id));
 			}
-		} else {
-			$response = $CI->response->TransactionResponse(100, array('recurring_id' => $subscription_id));
+		}
+		else {
+			$response_array = array('reason' => $response['reason']);
+			$response = $CI->response->TransactionResponse(2, $response_array);
 		}
 
 		return $response;
