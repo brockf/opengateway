@@ -8,7 +8,12 @@ class Cron extends Controller {
 	{
 		parent::__construct();
 
-		set_time_limit(300);
+		// give lots of time for processing
+		set_time_limit(0);
+		
+		// if wget times out, or the user stops requesting, don't end the cron processing
+		// http://stackoverflow.com/questions/2291524/does-wget-timeout
+		ignore_user_abort(TRUE);
 	}
 
 	//--------------------------------------------------------------------
