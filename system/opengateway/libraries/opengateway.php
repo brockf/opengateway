@@ -18,6 +18,11 @@ class OpenGateway
 	public $api_id;
 	public $secret_key;
 	
+	public function __construct () {
+		// initiate parameter storage
+		$this->params = new stdClass();
+	}
+	
 	/**
 	* Authenticate
 	*
@@ -61,22 +66,15 @@ class OpenGateway
 	* @return bool TRUE;
 	*/
     public function Param($name, $value, $parent = FALSE)  {
-    /*
-    	// prep value for XML
-    	$value = (is_numeric($value)) ? $value : $this->xmlEntities($this->utf8tohtml($value));
-    
-        if($parent) {
-       	   $this->params->$parent->$name = (string)$value;
+        if (!empty($parent)) {
+        	// initiate parent parameter storage
+        	if (!isset($this->params->$parent)) {
+	        	$this->params->$parent = new stdClass();
+        	}
+        	
+       	    $this->params->$parent->$name = $this->xmlEntities($this->utf8tohtml($value));
         } else {
-      	   $this->params->$name = (string)$value;
-        }
-        
-        return TRUE;
-        */
-        if($parent) {
-       	   $this->params->$parent->$name = $this->xmlEntities($this->utf8tohtml($value));
-        } else {
-      	   $this->params->$name = $this->xmlEntities($this->utf8tohtml($value));
+        	$this->params->$name = $this->xmlEntities($this->utf8tohtml($value));
         }
         
         return true;
