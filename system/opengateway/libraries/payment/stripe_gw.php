@@ -28,6 +28,8 @@ class Stripe_gw {
 	*/
 	private $debug = false;
 
+	private $currency = 'USD';
+
 	//--------------------------------------------------------------------
 
 	public function __construct()
@@ -206,7 +208,7 @@ class Stripe_gw {
 
 		$data = array(
 			'amount'	=> $amount,
-			'currency'	=> 'usd',			// Currently, the only available option
+			'currency'	=> $this->currency,
 			'card'		=> array(
 				'number'			=> $credit_card['card_num'],
 				'exp_month'			=> $credit_card['exp_month'],
@@ -304,19 +306,19 @@ class Stripe_gw {
 
 		// set customer ID
 		$customer['customer_id'] = (isset($customer['customer_id'])) ? $customer['customer_id'] : FALSE;
-		
+
 		// Create the recurring seed - Done this way for token based API's.
 		$response = $this->CreateProfile($client_id, $gateway, $customer, $credit_card, $subscription_id, $amount, $order_id);
-		
+
 		if ($response['success'] == true) {
 			// Process today's payment
 			if ($charge_today === TRUE) {
 				// Create an order for today's payment
 				$CI->load->model('charge_model');
 				$order_id = $CI->charge_model->CreateNewOrder($client_id, $gateway['gateway_id'], $amount, $credit_card, $subscription_id, $customer['customer_id'], $customer['ip_address']);
-			
+
 				$response = $this->ChargeRecurring($client_id, $gateway, $order_id, $response['customer_id'], $amount);
-	
+
 				if ($response['success'] === TRUE){
 					$CI->charge_model->SetStatus($order_id, 1);
 					$response_array = array('charge_id' => $order_id, 'recurring_id' => $subscription_id);
@@ -325,7 +327,7 @@ class Stripe_gw {
 					// Make the subscription inactive
 					$CI->recurring_model->MakeInactive($subscription_id);
 					$CI->charge_model->SetStatus($order_id, 0);
-	
+
 					$response_array = array('reason' => $response['ResponseSummary']['StatusDescription']);
 					$response = $CI->response->TransactionResponse(2, $response_array);
 				}
@@ -430,7 +432,7 @@ class Stripe_gw {
 
 		$data = array(
 			'amount'	=> $amount * 100,
-			'currency'	=> 'usd',
+			'currency'	=> $this->currency,
 			'customer'	=> $customer_id
 		);
 

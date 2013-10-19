@@ -6,7 +6,7 @@ class sagepay
 {
 	var $settings;
 
-	private $debug = true;
+	private $debug = false;
 
 	private $ci;
 
@@ -845,6 +845,8 @@ class sagepay
 	*/
 	public function log_it($heading, $params)
 	{
+		$content = '';
+
 		$file = FCPATH .'writeable/gateway_log.txt';
 
 		$content .= "# $heading\n";
