@@ -161,7 +161,7 @@ class Client_model extends Model
 							'api_id'			=> $api_id,
 							'secret_key'		=> $secret_key,
 							'username'			=> $params['username'],
-							'password'			=> md5($params['password'])
+							'password'			=> md5($params['password'] . $params['email'])
 							);
 		$this->db->insert('clients', $insert_data);
 
@@ -333,7 +333,9 @@ class Client_model extends Model
 			if(!$valid_pass) {
 				die($this->response->Error(2003));
 			}
-			$update_data['password'] = md5($params['password']);
+			
+			$use_email = (isset($params['email'])) ? $params['email'] : $client->email;
+			$update_data['password'] = md5($params['password'] . $use_email);
 		}
 
 		$request_client = $this->GetClientDetails($client_id);

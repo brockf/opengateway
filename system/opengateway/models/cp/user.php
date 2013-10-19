@@ -14,13 +14,16 @@ class User extends Model {
 
     function Login ($username, $password) {
 		$this->db->where('username',$username);
-		$this->db->where('password',md5($password));
 		$this->db->where('suspended','0');
 		$this->db->where('deleted','0');
 		$query = $this->db->get('clients');
 
 		if ($query->num_rows() > 0) {
 			$client = $query->row_array();
+			
+			if ($client['password'] != md5($password) && ($client['password'] != md5($password . $client['email']))) {
+				return FALSE;
+			}
 		}
 		else {
 			return false;
