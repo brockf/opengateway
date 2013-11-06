@@ -16,8 +16,8 @@ if (!isset($form)) {
 			);
 
 } ?>
-<?=$this->load->view(branded_view('cp/header'), array('head_files' => '<link type="text/css" rel="stylesheet" href="' . branded_include('js/jwysiwyg/jquery.wysiwyg.css') . '" />
-<script type="text/javascript" src="' . branded_include('js/jwysiwyg/jquery.wysiwyg.js') . '"></script>
+<?=$this->load->view(branded_view('cp/header'), array('head_files' => '<link type="text/css" rel="stylesheet" href="' . branded_include('css/tinyeditor.css') . '" />
+<script type="text/javascript" src="' . branded_include('js/tiny.editor.packed.js') . '"></script>
 <script type="text/javascript" src="' . branded_include('js/form.email.js') . '"></script>'));?>
 <h1><?=$form_title;?></h1>
 <form class="form" id="form_email" method="post" action="<?=site_url($form_action);?>">
