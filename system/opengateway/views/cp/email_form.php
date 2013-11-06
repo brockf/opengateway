@@ -95,7 +95,7 @@ if (!isset($form)) {
 			<input type="hidden" name="is_html" id="is_html" value="<?=$form['is_html'];?>" autocomplete="off" />
 		</li>
 		<li>
-			<textarea class="full required" id="email_body" name="email_body"><?=$form['email_body'];?></textarea>
+			<textarea class="full" id="email_body" name="email_body"><?=$form['email_body'];?></textarea>
 		</li>
 		<li>
 			<div id="email_variables">

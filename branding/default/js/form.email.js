@@ -52,7 +52,6 @@ $(document).ready(function () {
 				footer: true,
 				fonts: ['Verdana','Arial','Georgia','Trebuchet MS'],
 				xhtml: true,
-				cssfile: 'custom.css',
 				bodyid: 'editor',
 				footerclass: 'tinyeditor-footer',
 				toggle: {text: 'source', activetext: 'wysiwyg', cssclass: 'toggle'},
