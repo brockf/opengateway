@@ -34,14 +34,32 @@ class Notifications {
 			}
 			
 			$postfields = rtrim($postfields, '&');
+			
+			// are we sending this to ExpressionEngine? If so, let's convert to a GET request...
+			// this is so Membrr and EE Donations continue to work with OG after EE 2.7
+			// made all POST requests require XID's...
+			if (strpos($item['url'], 'ACT=') !== FALSE) {
+				$is_ee = TRUE;
+			}
+			else {
+				$is_ee = FALSE;
+			}
+			
+			if ($is_ee == TRUE) {
+				$item['url'] = $item['url'] . '&' . $postfields;
+			}
 		
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); 
 			curl_setopt($ch, CURLOPT_URL,$item['url']);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-			curl_setopt($ch, CURLOPT_POST, 1);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields); 
+			
+			if ($is_ee == FALSE) {
+				curl_setopt($ch, CURLOPT_POST, 1);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields); 
+			}
+			
 			curl_exec($ch); 
 			$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 			curl_close($ch);

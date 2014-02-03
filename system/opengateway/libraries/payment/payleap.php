@@ -165,7 +165,8 @@ class payleap {
 	 */
 	function TestConnection($client_id, $gateway) 
 	{	
-	
+		return TRUE;
+		
 		$data  = array(
 			'Username'	=> $gateway['username'],
 			'Password'	=> $gateway['password'],
