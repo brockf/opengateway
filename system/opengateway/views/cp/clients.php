@@ -20,7 +20,7 @@ if (!empty($this->dataset->data)) {
 			<td><?=$row['username'];?></td>
 			<td><?=$row['last_name'];?>, <?=$row['first_name'];?></td>
 			<td><?=$row['email'];?></td>
-			<td><? if ($row['suspended'] == '1') { ?><span class="suspended"><img src="<?=site_url('images/failed.png');?>" alt="Suspended" /> Suspended</span><? } else { ?>Active<? } ?></td>
+			<td><? if ($row['suspended'] == '1') { ?><span class="suspended"><img src="<?=branded_include('images/failed.png');?>" alt="Suspended" /> Suspended</span><? } else { ?>Active<? } ?></td>
 			<td class="options"><a href="<?=site_url('clients/edit/' . $row['id']);?>">edit</a></td>
 		</tr>
 	<?
