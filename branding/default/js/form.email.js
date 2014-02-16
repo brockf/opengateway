@@ -9,6 +9,11 @@ $(document).ready(function () {
 		$('[name="bcc_address"][value="email"]').attr('checked',true);
 	});
 	
+	// make sure the WYSIWYG edits save to source when we submit
+    $("#form_email").submit(function() {
+        editor.post(); 
+    });
+	
 	// html toggle
 	// do toggle if is_html == 1
 	if ($('#is_html').val() == '1') {
