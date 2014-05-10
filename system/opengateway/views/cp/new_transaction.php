@@ -28,7 +28,7 @@ begin processing transactions, you should <a href="<?=site_url('settings/new_gat
 							<select name="coupon">
 							<option value="">No coupon</option>
 								<? foreach ($coupons as $coupon) { ?>
-									<? if ($coupon['end_date'] === FALSE or (strtotime($coupon['end_date'])+84600) > time()) { ?>
+									<? if ($coupon['end_date'] === FALSE or (strtotime($coupon['end_date'])+86400) > time()) { ?>
 										<option value="<?=$coupon['code'];?>"><?=$coupon['code'];?> - <?=$coupon['name'];?></option>
 									<? } ?>
 								<? } ?>
