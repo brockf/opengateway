@@ -53,7 +53,7 @@ class Notifications {
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); 
 			curl_setopt($ch, CURLOPT_URL,$item['url']);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+			@curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 			curl_setopt($ch, CURLOPT_TIMEOUT, 5);
 			
 			if ($is_ee == FALSE) {
